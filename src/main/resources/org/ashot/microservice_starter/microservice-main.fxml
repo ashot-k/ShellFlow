@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
+    <children>
+        <Button fx:id="newEntryBtn2" layoutX="50.0" layoutY="417.0" mnemonicParsing="false" onAction="#newEntry" text="Add new entry" />
+        <Button fx:id="executeAllBtn" layoutX="789.0" layoutY="417.0" mnemonicParsing="false" onAction="#executeAll" text="Run All" />
+        <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="50.0" layoutY="37.0" prefHeight="375.0" prefWidth="800.0">
+            <content>
+                <VBox fx:id="container" prefHeight="341.0" prefWidth="462.0" />
+            </content>
+        </ScrollPane>
+      <MenuBar layoutY="1.0" prefHeight="17.0" prefWidth="900.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+               <items>
+                  <MenuItem fx:id="saveBtn" mnemonicParsing="false" onAction="#save" text="Save" />
+                  <MenuItem fx:id="loadBtn" mnemonicParsing="false" onAction="#load" text="Load" />
+               </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem fx:id="newEntryButton" mnemonicParsing="false" onAction="#newEntry" text="Add new Entry" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Text fx:id="osInfo" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523" />
+      <Slider fx:id="delayPerCmd" layoutX="350.0" layoutY="423.0" majorTickUnit="4.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+      <Text layoutX="359.0" layoutY="474.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Text>
+    </children>
+</AnchorPane>
