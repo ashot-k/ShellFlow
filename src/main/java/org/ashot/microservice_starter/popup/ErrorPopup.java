@@ -10,9 +10,9 @@ import org.ashot.microservice_starter.Main;
 
 public class ErrorPopup {
     //    private final String cssFileLocation = this.getClass().getResource("main.css").toExternalForm();
-    private static Stage errorPopup;
+    private static Stage errorPopupStage;
 
-    public static void errorPopup(String msg) {
+    public static Text errorPopup(String msg) {
         Stage errorStage = new Stage();
         VBox errorContainer = new VBox();
         Text text = new Text();
@@ -31,10 +31,11 @@ public class ErrorPopup {
         errorStage.setTitle("Error");
         errorStage.setResizable(false);
         errorStage.show();
-        errorPopup = errorStage;
+        errorPopupStage = errorStage;
+        return text;
     }
 
     public static void closeErrorPopup() {
-        errorPopup.close();
+        errorPopupStage.close();
     }
 }

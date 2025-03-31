@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -14,10 +17,10 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
     <children>
         <Button fx:id="newEntryBtn2" layoutX="50.0" layoutY="417.0" mnemonicParsing="false" onAction="#newEntry" text="Add new entry" />
-        <Button fx:id="executeAllBtn" layoutX="789.0" layoutY="417.0" mnemonicParsing="false" onAction="#executeAll" text="Run All" />
-        <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="50.0" layoutY="37.0" prefHeight="375.0" prefWidth="800.0">
+        <Button fx:id="executeAllBtn" disable="true" layoutX="786.0" layoutY="417.0" mnemonicParsing="false" onAction="#executeAll" prefHeight="18.0" prefWidth="100.0" text="Run All" />
+        <ScrollPane fitToHeight="true" fitToWidth="true" layoutY="42.0" prefHeight="361.0" prefWidth="900.0">
             <content>
-                <VBox fx:id="container" prefHeight="341.0" prefWidth="462.0" />
+                <VBox fx:id="container" prefHeight="349.0" prefWidth="898.0" />
             </content>
         </ScrollPane>
       <MenuBar layoutY="1.0" prefHeight="17.0" prefWidth="900.0">
@@ -37,10 +40,16 @@
       </MenuBar>
       <Text fx:id="osInfo" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523" />
       <Slider fx:id="delayPerCmd" layoutX="350.0" layoutY="423.0" majorTickUnit="4.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
-      <Text layoutX="359.0" layoutY="474.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
+      <Text layoutX="349.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
          <font>
-            <Font size="10.0" />
+            <Font size="11.0" />
          </font>
       </Text>
+      <CheckBox fx:id="sequentialOption" layoutX="588.0" layoutY="421.0" mnemonicParsing="false" text="Sequential">
+         <tooltip>
+            <Tooltip text="Run commands in sequence" />
+         </tooltip>
+      </CheckBox>
+      <TextField fx:id="sequentialName" layoutX="588.0" layoutY="450.0" prefHeight="26.0" prefWidth="160.0" promptText="Window name" visible="false" />
     </children>
 </AnchorPane>

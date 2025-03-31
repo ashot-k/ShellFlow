@@ -1,23 +1,30 @@
 package org.ashot.microservice_starter;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import org.ashot.microservice_starter.data.Entry;
+import org.ashot.microservice_starter.data.*;
+import org.ashot.microservice_starter.popup.ErrorPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static org.ashot.microservice_starter.data.TextFieldType.typeToShort;
 
 public class Controller implements Initializable {
     @FXML
@@ -26,43 +33,81 @@ public class Controller implements Initializable {
     private Text osInfo;
     @FXML
     private Slider delayPerCmd;
+    @FXML
+    private CheckBox sequentialOption;
+    @FXML
+    private TextField sequentialName;
+    @FXML
+    private Button executeAllBtn;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
+        container.getChildren().addListener((ListChangeListener<Node>) c -> {
+            executeAllBtn.setDisable(container.getChildren().isEmpty());
+        });
+        sequentialOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            sequentialName.setVisible(newValue);
+        });
     }
 
     public void newEntry(ActionEvent e) {
         Entry entry = new Entry(container);
         container.getChildren().add(entry.buildEmptyEntry(container.getChildren() != null ? container.getChildren().size() : 0));
     }
-    private void newEntry(String cmd, String path, String name){
+
+    private void newEntry(String cmd, String path, String name) {
         Entry entry = new Entry(container);
         container.getChildren().add(entry.buildEntry(cmd, path, name, container.getChildren() != null ? container.getChildren().size() : 0));
     }
 
     public void executeAll() {
-        ObservableList<Node> children = container.getChildren();
-        for (int j = 0; j < children.size(); j++) {
-            Node i = children.get(j);
-            if (i instanceof HBox) {
-                Optional<Node> optionalBtn = ((HBox) i).getChildren()
-                        .stream()
-                        .filter(node -> node.getId() != null && node.getId().contains("execute"))
-                        .findFirst();
-                if (optionalBtn.isPresent()) {
-                    Button b = (Button) optionalBtn.get();
-                    long timeInMS = (long) (j * delayPerCmd.getValue());
-                    //TODO fix delay
-                    Thread t = new Thread(b::fire);
-                    try {
-                        Thread.sleep(timeInMS);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    t.start();
-                }
+        ObservableList<Node> entryChildren = container.getChildren();
+        StringBuilder seqCommands = new StringBuilder();
+        for (int idx = 0; idx < entryChildren.size(); idx++) {
+            Node node = entryChildren.get(idx);
+            if (!(node instanceof HBox)) {
+                continue;
             }
+            String name = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.NAME, idx);
+            String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND, idx);
+            String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH, idx);
+            if (!sequentialOption.isSelected()) {
+                try {
+                    CommandExecution.execute(name, path.isEmpty() ? "/" : path, name, sequentialOption.isSelected());
+                    long timeInMS = calculateDelay(idx);
+                    CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
+                    new Thread(t).start();
+                } catch (IOException e) {
+                    ErrorPopup.errorPopup(e.getMessage());
+                }
+            } else {
+                handleSequentialCommandChain(seqCommands, command, path, idx, entryChildren.size());
+            }
+        }
+        if (!sequentialOption.isSelected()) return;
+        try {
+            CommandExecution.execute(seqCommands.toString(), null, sequentialName.getText(), sequentialOption.isSelected());
+        } catch (IOException e) {
+            ErrorPopup.errorPopup(e.getMessage());
+        }
+    }
+
+    private long calculateDelay(int multiplier) {
+        return (long) (multiplier * delayPerCmd.getValue()) * 1000;
+    }
+
+    private void handleSequentialCommandChain(StringBuilder seqCommands, String command, String path, int idx, int total) {
+        if (path != null && !path.isEmpty()) {
+            seqCommands.append("cd ").append(path).append(";");
+        }
+        seqCommands
+                .append(command).append(";")
+                .append("sleep ").append(delayPerCmd.getValue()).append("s");
+        if (idx == total - 1) {
+            seqCommands.append(";");
+        } else {
+            seqCommands.append(" && ");
         }
     }
 
@@ -70,26 +115,28 @@ public class Controller implements Initializable {
         saveToFile();
     }
 
+    public void load(ActionEvent e) {
+        loadFromFile();
+    }
+
     private void saveToFile() {
         File fileToSave = Utils.chooseFile(true);
-        if(fileToSave == null) return;
+        if (fileToSave == null) return;
         JSONArray jsonData = Utils.createJSONArray(container);
         Utils.writeDataToFile(fileToSave, jsonData);
     }
 
-    public void load(ActionEvent e) throws IOException {
-        loadFromFile();
-    }
-    private void loadFromFile() throws IOException{
+    private void loadFromFile() {
         File fileToLoad = Utils.chooseFile(false);
-        if(fileToLoad == null) return;
+        if (fileToLoad == null) return;
+        //TODO validate structure
         JSONArray jsonData = Utils.createJSONArray(fileToLoad);
         container.getChildren().clear();
-        for (Object j: jsonData){
-            if(j instanceof JSONObject jsonObject){
-                String name = jsonObject.get("name").toString();
-                String path = jsonObject.get("path").toString();
-                String cmd = jsonObject.get("cmd").toString();
+        for (Object j : jsonData) {
+            if (j instanceof JSONObject jsonObject) {
+                String name = jsonObject.get(typeToShort(TextFieldType.NAME)).toString();
+                String path = jsonObject.get(typeToShort(TextFieldType.PATH)).toString();
+                String cmd = jsonObject.get(typeToShort(TextFieldType.COMMAND)).toString();
                 newEntry(cmd, path, name);
             }
         }

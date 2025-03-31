@@ -13,6 +13,11 @@
     -fx-spacing: 30px;
     -fx-alignment: center;
 }
+.output-message{
+    -fx-padding: 20px;
+    -fx-spacing: 30px;
+    -fx-alignment: center;
+}
 .close-btn{
     -fx-background-color: transparent;
     -fx-padding: 0 0 12px 0;

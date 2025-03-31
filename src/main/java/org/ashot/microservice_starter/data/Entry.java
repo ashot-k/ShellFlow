@@ -6,7 +6,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.popup.ErrorPopup;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Entry {
@@ -29,9 +28,9 @@ public class Entry {
         execute.setId("execute-" + idx);
         execute.setOnAction(actionEvent -> {
             try {
-                String nameSelected = Fields.getTextFieldContentFromContainer(nameContainer, TextFieldType.NAME);
-                String commandSelected = Fields.getTextFieldContentFromContainer(commandContainer, TextFieldType.COMMAND);
-                String pathSelected = Fields.getTextFieldContentFromContainer(pathContainer, TextFieldType.PATH);
+                String nameSelected = Fields.getTextFieldContentFromContainer(nameContainer, TextFieldType.NAME, idx);
+                String commandSelected = Fields.getTextFieldContentFromContainer(commandContainer, TextFieldType.COMMAND, idx);
+                String pathSelected = Fields.getTextFieldContentFromContainer(pathContainer, TextFieldType.PATH, idx);
                 execute(commandSelected, pathSelected, nameSelected);
             } catch (IOException | InterruptedException e) {
                 ErrorPopup.errorPopup(e.getMessage());
@@ -46,19 +45,6 @@ public class Entry {
     }
 
     private static void execute(String command, String path, String name) throws IOException, InterruptedException {
-        //adjust for different os
-        File dir = new File(path.isEmpty() ? "/" : path);
-        if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-            try {
-                new ProcessBuilder("cmd.exe", "/c", "start", name, "wsl.exe", "-e", "bash", "-c", command + "; exec bash")
-                        .directory(dir)
-                        .start();
-            }catch (IOException i){
-                new ProcessBuilder("konsole", "-e", "bash", "-c", command + "; exec bash")
-                        .directory(dir)
-                        .start();
-            }
-        }
+        CommandExecution.execute(command, path.isEmpty() ? "/" : path, name, false);
     }
-
 }
