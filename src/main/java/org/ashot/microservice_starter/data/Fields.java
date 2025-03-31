@@ -3,6 +3,7 @@ package org.ashot.microservice_starter.data;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 
@@ -42,16 +43,10 @@ public class Fields {
         return label;
     }
 
-    public static String getTextFieldContentFromContainer(VBox v, TextFieldType type) {
-        if(type == null || v == null || v.getChildren() == null){
+    public static String getTextFieldContentFromContainer(Pane v, TextFieldType type, int idx) {
+        if (v.getChildren().isEmpty() || type == null) {
             return null;
         }
-        for (Node node : v.getChildren()) {
-            String id = node.getId();
-            if (id != null && id.contains(TextFieldType.typeToShort(type))) {
-                return ((TextField) node).getText();
-            }
-        }
-        return null;
+        return ((TextField) v.lookup("#" + TextFieldType.typeToShort(type) + "-" + idx)).getText();
     }
 }

@@ -2,12 +2,10 @@ package org.ashot.microservice_starter;
 
 import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -31,6 +29,5 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(RESIZABLE);
         stage.show();
-
     }
 }

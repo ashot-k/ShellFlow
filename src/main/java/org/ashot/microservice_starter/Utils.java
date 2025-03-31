@@ -10,7 +10,10 @@ import org.ashot.microservice_starter.popup.ErrorPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 
@@ -78,7 +81,8 @@ public class Utils {
         }
         return jsonArray;
     }
-    public static JSONArray createJSONArray(File file){
+
+    public static JSONArray createJSONArray(File file) {
         try {
             String jsonContent = Files.readString(file.toPath());
             return new JSONArray(jsonContent);
@@ -87,18 +91,22 @@ public class Utils {
         }
         return null;
     }
-    public static File chooseFile(boolean saveMode){
+
+    public static File chooseFile(boolean saveMode) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", (".json"));
         fileChooser.setSelectedExtensionFilter(extensions);
-        if(saveMode) {
+        if (saveMode) {
             fileChooser.setInitialFileName("entries.json");
             fileChooser.setTitle("Choose file destination");
             return fileChooser.showSaveDialog(null);
-        }
-        else{
+        } else {
             fileChooser.setTitle("Choose file");
             return fileChooser.showOpenDialog(null);
         }
+    }
+
+    public static String getTerminalArgument() {
+        return System.getenv("TERM").equalsIgnoreCase("gnome-terminal") ? "--" : "-e";
     }
 }
