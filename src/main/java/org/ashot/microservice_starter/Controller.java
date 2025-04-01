@@ -104,11 +104,16 @@ public class Controller implements Initializable {
 
     private void handleSequentialCommandChain(StringBuilder seqCommands, String command, String path, int idx, int total) {
         if (path != null && !path.isEmpty()) {
-            seqCommands.append("cd ").append(path).append(";");
+            seqCommands.append("cd ").append(path).append(" && ");
         }
-        seqCommands
-                .append(command).append(";")
-                .append("sleep ").append(delayPerCmd.getValue()).append("s");
+        if(idx == 0){
+            seqCommands.append(command);
+        }
+        else {
+            seqCommands
+                    .append("sleep ").append(delayPerCmd.getValue()).append("s").append(" && ")
+                    .append(command);
+        }
         if (idx == total - 1) {
             seqCommands.append(";");
         } else {
