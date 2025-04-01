@@ -16,7 +16,7 @@ public class OutputPopup {
     private static Stage outputPopupStage;
     private static final int SIZE_X = 700;
     private static final int SIZE_Y = 450;
-    private static final boolean RESIZABLE = false;
+    private static final boolean RESIZABLE = true;
     private static final int TEXT_OFFSET = 50;
     private static final int TEXT_SIZE = 24;
 
@@ -49,6 +49,7 @@ public class OutputPopup {
 
         outputStage.setScene(scene);
         outputStage.setTitle(title);
+        outputStage.setResizable(RESIZABLE);
         outputStage.show();
         outputPopupStage = outputStage;
         return text;

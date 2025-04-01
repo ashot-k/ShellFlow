@@ -1,5 +1,5 @@
 .root{
-   -fx-font-family: "Lucida Console"
+   -fx-font-family: "Lucida Console";
    -fx-padding: 10px;
 }
 
@@ -8,6 +8,12 @@
     -fx-spacing: 15px;
     -fx-alignment: bottom-center;
 }
+
+.name-field, .path-field, .command-field{
+    /* -fx-width */
+    /* -fx-pref-width: 250px; */
+}
+
 .error-message{
     -fx-padding: 20px;
     -fx-spacing: 30px;

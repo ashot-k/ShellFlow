@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import org.ashot.microservice_starter.Main;
 
 public class ErrorPopup {
-    //    private final String cssFileLocation = this.getClass().getResource("main.css").toExternalForm();
     private static Stage errorPopupStage;
 
     public static Text errorPopup(String msg) {

@@ -1,9 +1,9 @@
 package org.ashot.microservice_starter.data;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.popup.ErrorPopup;
 
 import java.io.IOException;
@@ -21,27 +21,35 @@ public class Entry {
 
     public HBox buildEntry(String command, String path, String name, int idx) {
         Button deleteEntryBtn = Buttons.deleteEntryButton();
-        VBox nameContainer = Fields.createFieldWithLabel(TextFieldType.NAME, name, idx);
-        VBox commandContainer = Fields.createFieldWithLabel(TextFieldType.COMMAND, command, idx);
-        VBox pathContainer = Fields.createFieldWithLabel(TextFieldType.PATH, path, idx);
+        TextField nameField = Fields.createField(TextFieldType.NAME, name, idx);
+        TextField commandField = Fields.createField(TextFieldType.COMMAND, command, idx);
+        TextField pathField = Fields.createField(TextFieldType.PATH, path, idx);
         Button execute = new Button("Execute");
         execute.setId("execute-" + idx);
         execute.setOnAction(actionEvent -> {
             try {
-                String nameSelected = Fields.getTextFieldContentFromContainer(nameContainer, TextFieldType.NAME, idx);
-                String commandSelected = Fields.getTextFieldContentFromContainer(commandContainer, TextFieldType.COMMAND, idx);
-                String pathSelected = Fields.getTextFieldContentFromContainer(pathContainer, TextFieldType.PATH, idx);
+                String nameSelected = nameField.getText();
+                String commandSelected = commandField.getText();
+                String pathSelected = pathField.getText();
                 execute(commandSelected, pathSelected, nameSelected);
             } catch (IOException | InterruptedException e) {
                 ErrorPopup.errorPopup(e.getMessage());
             }
         });
-        HBox container = new HBox(deleteEntryBtn, nameContainer, commandContainer, pathContainer, execute);
-        container.getStyleClass().add("entry");
+        HBox row = new HBox(deleteEntryBtn, nameField, commandField, pathField, execute);
+        row.getStyleClass().add("entry");
+
+        nameField.getStyleClass().add("name-field");
+        pathField.getStyleClass().add("path-field");
+        commandField.getStyleClass().add("command-field");
+
+        nameField.setPromptText("Name");
+        pathField.setPromptText("Path");
+        commandField.setPromptText("Command");
         deleteEntryBtn.setOnAction(actionEvent -> {
-            this.container.getChildren().remove(container);
+            this.container.getChildren().remove(row);
         });
-        return container;
+        return row;
     }
 
     private static void execute(String command, String path, String name) throws IOException, InterruptedException {

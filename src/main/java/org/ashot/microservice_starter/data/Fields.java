@@ -15,6 +15,10 @@ public class Fields {
         return setupContainer(label, field);
     }
 
+    public static TextField createField(TextFieldType type, String text, int idx) {
+        return setupTextField(type, text, idx);
+    }
+
     private static VBox setupContainer(Node... nodes) {
         VBox container = new VBox();
         container.getChildren().addAll(nodes);
