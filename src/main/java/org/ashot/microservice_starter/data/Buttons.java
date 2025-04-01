@@ -44,8 +44,10 @@ public class Buttons {
     public static Button orderingButton(boolean direction, int idx){
         Button btn = new Button();
         if(direction){
+            //todo replace hardcoded id prefix
             btn.setId("move-up-" + idx);
             btn.setOnAction(actionEvent -> setupOrderingButton(true, (HBox) btn.getParent().getParent()));
+            //todo replace hardcoded icon file names with class containing them
             btn.setGraphic(new ImageView(new Image(Utils.getIconAsInputStream("arrow-up.png"), BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
         }else{
             btn.setId("move-down-" + idx);
