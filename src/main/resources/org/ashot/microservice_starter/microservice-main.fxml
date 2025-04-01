@@ -14,16 +14,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
     <children>
-        <Button fx:id="newEntryBtn2" layoutX="50.0" layoutY="417.0" mnemonicParsing="false" onAction="#newEntry" text="Add new entry" />
-        <Button fx:id="executeAllBtn" disable="true" layoutX="786.0" layoutY="417.0" mnemonicParsing="false" onAction="#executeAll" prefHeight="18.0" prefWidth="100.0" text="Run All" />
-        <ScrollPane fitToHeight="true" fitToWidth="true" layoutY="42.0" prefHeight="361.0" prefWidth="900.0">
-            <content>
-                <VBox fx:id="container" prefHeight="349.0" prefWidth="898.0" />
-            </content>
-        </ScrollPane>
-      <MenuBar layoutY="1.0" prefHeight="17.0" prefWidth="900.0">
+      <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="1000.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
                <items>
@@ -38,18 +31,29 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Text fx:id="osInfo" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523" />
-      <Slider fx:id="delayPerCmd" layoutX="350.0" layoutY="423.0" majorTickUnit="4.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
-      <Text layoutX="349.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
+        <ScrollPane fitToHeight="true" fitToWidth="true" layoutY="42.0" prefHeight="361.0" prefWidth="1000.0">
+            <content>
+                <VBox fx:id="container" prefHeight="349.0" prefWidth="898.0" />
+            </content>
+        </ScrollPane>
+        <Button fx:id="newEntryBtn2" layoutX="19.0" layoutY="410.0" mnemonicParsing="false" onAction="#newEntry" prefHeight="26.0" prefWidth="58.0" text="Add" />
+      <Slider fx:id="delayPerCmd" layoutX="400.0" layoutY="416.0" majorTickUnit="4.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+      <Text layoutX="399.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
          <font>
             <Font size="11.0" />
          </font>
       </Text>
-      <CheckBox fx:id="sequentialOption" layoutX="588.0" layoutY="421.0" mnemonicParsing="false" text="Sequential">
+      <CheckBox fx:id="sequentialOption" layoutX="726.0" layoutY="414.0" mnemonicParsing="false" text="Sequential">
          <tooltip>
             <Tooltip text="Run commands in sequence" />
          </tooltip>
       </CheckBox>
-      <TextField fx:id="sequentialName" layoutX="588.0" layoutY="450.0" prefHeight="26.0" prefWidth="160.0" promptText="Window name" visible="false" />
+      <TextField fx:id="sequentialName" layoutX="726.0" layoutY="450.0" prefHeight="27.0" prefWidth="160.0" promptText="Window name" visible="false" />
+        <Button fx:id="executeAllBtn" disable="true" layoutX="911.0" layoutY="410.0" mnemonicParsing="false" onAction="#executeAll" prefHeight="26.0" prefWidth="75.0" text="Run All" />
+      <Button fx:id="currentCmd" layoutX="375.0" layoutY="500.0" mnemonicParsing="false" onAction="#printCurrentCmd" prefHeight="26.0" prefWidth="250.0" text="Show commands executed" visible="false" />
+      <Text fx:id="osInfo" layoutX="14.0" layoutY="517.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523">
+         <font>
+            <Font size="12.0" />
+         </font></Text>
     </children>
 </AnchorPane>

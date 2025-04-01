@@ -35,7 +35,7 @@ public class ErrorPopup {
         return text;
     }
 
-    public static void closeErrorPopup() {
+    public static void closePopup() {
         errorPopupStage.close();
     }
 }

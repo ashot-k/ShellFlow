@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private static final int SIZE_X = 900;
-    private static final int SIZE_Y = 500;
+    private static final int SIZE_X = 1000;
+    private static final int SIZE_Y = 550;
     private static final boolean RESIZABLE = false;
     private final String cssFileLocation = this.getClass().getResource("main.css").toExternalForm();
 

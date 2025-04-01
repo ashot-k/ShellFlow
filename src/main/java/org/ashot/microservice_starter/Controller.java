@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.*;
 import org.ashot.microservice_starter.popup.ErrorPopup;
+import org.ashot.microservice_starter.popup.OutputPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -39,6 +40,10 @@ public class Controller implements Initializable {
     private TextField sequentialName;
     @FXML
     private Button executeAllBtn;
+    @FXML
+    private Button currentCmd;
+
+    private String currentCmdText = "";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,6 +67,7 @@ public class Controller implements Initializable {
     }
 
     public void executeAll() {
+        currentCmdText = "";
         ObservableList<Node> entryChildren = container.getChildren();
         StringBuilder seqCommands = new StringBuilder();
         for (int idx = 0; idx < entryChildren.size(); idx++) {
@@ -73,20 +79,19 @@ public class Controller implements Initializable {
             String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND, idx);
             String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH, idx);
             if (!sequentialOption.isSelected()) {
-                try {
-                    CommandExecution.execute(name, path.isEmpty() ? "/" : path, name, sequentialOption.isSelected());
-                    long timeInMS = calculateDelay(idx);
-                    CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
-                    new Thread(t).start();
-                } catch (IOException e) {
-                    ErrorPopup.errorPopup(e.getMessage());
-                }
+                currentCmdText = setCurrentCmdText(command);
+                currentCmd.setVisible(true);
+                long timeInMS = calculateDelay(idx);
+                CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
+                new Thread(t).start();
             } else {
                 handleSequentialCommandChain(seqCommands, command, path, idx, entryChildren.size());
             }
         }
         if (!sequentialOption.isSelected()) return;
         try {
+            currentCmd.setVisible(true);
+            currentCmdText = setCurrentCmdText(seqCommands.toString());
             CommandExecution.execute(seqCommands.toString(), null, sequentialName.getText(), sequentialOption.isSelected());
         } catch (IOException e) {
             ErrorPopup.errorPopup(e.getMessage());
@@ -140,6 +145,14 @@ public class Controller implements Initializable {
                 newEntry(cmd, path, name);
             }
         }
+    }
+    private String setCurrentCmdText(String text){
+        String newText = currentCmdText + "\n" + text;
+        currentCmd.setVisible(true);
+        return newText;
+    }
+    public void printCurrentCmd(ActionEvent e){
+        OutputPopup.outputPopup(currentCmdText, "Commands Executed");
     }
 
 }
