@@ -57,13 +57,13 @@ public class Controller implements Initializable {
     }
 
     public void newEntry(ActionEvent e) {
-        Entry entry = new Entry(container);
-        container.getChildren().add(entry.buildEmptyEntry(container.getChildren() != null ? container.getChildren().size() : 0));
+        Entry entry = new Entry();
+        container.getChildren().add(entry.buildEmptyEntry(container, container.getChildren() != null ? container.getChildren().size() : 0));
     }
 
     private void newEntry(String cmd, String path, String name) {
-        Entry entry = new Entry(container);
-        container.getChildren().add(entry.buildEntry(cmd, path, name, container.getChildren() != null ? container.getChildren().size() : 0));
+        Entry entry = new Entry();
+        container.getChildren().add(entry.buildEntry(container, cmd, path, name, container.getChildren() != null ? container.getChildren().size() : 0));
     }
 
     public void executeAll() {
