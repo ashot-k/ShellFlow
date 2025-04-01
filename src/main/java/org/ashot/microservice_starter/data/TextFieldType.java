@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.data;
 
 public enum TextFieldType {
+    //todo add all types (execution, delete, ordering)
     COMMAND, PATH, NAME;
 
     public static String typeToShort(TextFieldType type) {

@@ -6,7 +6,7 @@
 #container .entry{
     -fx-padding: 10px;
     -fx-spacing: 15px;
-    -fx-alignment: bottom-center;
+    -fx-alignment: center;
 }
 
 .name-field, .path-field, .command-field{
@@ -14,17 +14,26 @@
     /* -fx-pref-width: 250px; */
 }
 
+.ordering-container{
+    -fx-spacing: 5px
+}
+
+.ordering-container *{
+}
+
 .error-message{
     -fx-padding: 20px;
     -fx-spacing: 30px;
     -fx-alignment: center;
 }
+
 .output-message{
     -fx-padding: 20px;
     -fx-spacing: 30px;
     -fx-alignment: center;
 }
+
 .close-btn{
     -fx-background-color: transparent;
-    -fx-padding: 0 0 12px 0;
+    -fx-padding: 0 0 0 0;
 }
