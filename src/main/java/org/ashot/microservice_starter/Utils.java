@@ -67,15 +67,10 @@ public class Utils {
         JSONArray jsonArray = new JSONArray();
         for (int idx = 0; idx < container.getChildren().size(); idx++) {
             Node current = container.getChildren().get(idx);
-            if (!(current instanceof HBox)) continue;
-
+            if (!(current instanceof HBox currentRow)) continue;
             JSONObject object = new JSONObject();
-
-            for (Node labelFieldContainer : ((HBox) current).getChildren()) {
-                if (!(labelFieldContainer instanceof VBox)) continue;
-                for (Node n : ((VBox) labelFieldContainer).getChildren()) {
-                    object = addEntryToJSONObject(object, n, idx);
-                }
+            for (Node n : currentRow.getChildren()) {
+                object = addEntryToJSONObject(object, n, idx);
             }
             jsonArray.put(object);
         }
