@@ -77,10 +77,10 @@ public class Utils {
         return jsonArray;
     }
 
-    public static JSONArray createJSONArray(File file) {
+    public static JSONObject createJSONArray(File file) {
         try {
             String jsonContent = Files.readString(file.toPath());
-            return new JSONArray(jsonContent);
+            return new JSONObject(jsonContent);
         } catch (IOException e) {
             ErrorPopup.errorPopup(e.getMessage());
         }

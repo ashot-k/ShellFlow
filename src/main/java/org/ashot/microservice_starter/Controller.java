@@ -133,16 +133,21 @@ public class Controller implements Initializable {
         File fileToSave = Utils.chooseFile(true);
         if (fileToSave == null) return;
         JSONArray jsonData = Utils.createJSONArray(container);
-        Utils.writeDataToFile(fileToSave, jsonData);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("entries", jsonData);
+        jsonObject.put("delay", delayPerCmd.getValue());
+        jsonObject.put("sequential", sequentialOption.isSelected());
+        jsonObject.put("sequentialName", sequentialName.getText());
+        Utils.writeDataToFile(fileToSave, jsonObject);
     }
 
     private void loadFromFile() {
         File fileToLoad = Utils.chooseFile(false);
         if (fileToLoad == null) return;
-        //TODO validate structure
-        JSONArray jsonData = Utils.createJSONArray(fileToLoad);
+        JSONObject jsonData = Utils.createJSONArray(fileToLoad);
+        JSONArray jsonArray = jsonData.getJSONArray("entries");
         container.getChildren().clear();
-        for (Object j : jsonData) {
+        for (Object j : jsonArray) {
             if (j instanceof JSONObject jsonObject) {
                 String name = jsonObject.get(typeToShort(TextFieldType.NAME)).toString();
                 String path = jsonObject.get(typeToShort(TextFieldType.PATH)).toString();
@@ -150,11 +155,21 @@ public class Controller implements Initializable {
                 newEntry(cmd, path, name);
             }
         }
+        delayPerCmd.setValue(jsonData.getDouble("delay"));
+        sequentialOption.setSelected(jsonData.getBoolean("sequential"));
+        sequentialName.setText(jsonData.getString("sequentialName"));
+        sequentialName.setVisible(sequentialOption.isSelected());
+        executeAllBtn.setDisable(container.getChildren().isEmpty());
+        resetCurrentCmdText();
     }
     private String setCurrentCmdText(String text){
         String newText = currentCmdText + "\n" + text;
         currentCmd.setVisible(true);
         return newText;
+    }
+    private void resetCurrentCmdText(){
+        currentCmdText = "";
+        currentCmd.setVisible(false);
     }
     public void printCurrentCmd(ActionEvent e){
         OutputPopup.outputPopup(currentCmdText, "Commands Executed");
