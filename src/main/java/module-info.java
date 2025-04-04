@@ -3,6 +3,8 @@ module org.ashot.microservice_starter {
     requires atlantafx.base;
     requires org.json;
     requires java.xml;
+    requires java.logging;
+    requires org.testfx;
 
 
     opens org.ashot.microservice_starter to javafx.fxml;

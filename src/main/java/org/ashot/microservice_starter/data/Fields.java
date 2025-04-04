@@ -1,10 +1,8 @@
 package org.ashot.microservice_starter.data;
 
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 
 public class Fields {
@@ -14,6 +12,12 @@ public class Fields {
     }
 
     private static TextField setupTextField(TextFieldType type, String text, int idx) {
+        if(text == null){
+            text = "";
+        }
+        if(type == null){
+            throw new NullPointerException("TextFieldType can't be null");
+        }
         TextField field = new TextField();
         field.setId(typeToId(type, idx));
         field.setText(text);
@@ -28,6 +32,10 @@ public class Fields {
         if (v.getChildren().isEmpty() || type == null) {
             return null;
         }
-        return ((TextField) v.lookup("#" + TextFieldType.typeToShort(type) + "-" + idx)).getText();
+        Node n = v.lookup("#" + TextFieldType.typeToShort(type) + "-" + idx);
+        if (!(n instanceof TextField field)) {
+            return null;
+        }
+        return field.getText();
     }
 }
