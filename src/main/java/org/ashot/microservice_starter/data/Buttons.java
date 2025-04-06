@@ -41,16 +41,14 @@ public class Buttons {
     }
 
     //direction false -> down true -> up
-    public static Button orderingButton(boolean direction, int idx){
+    public static Button orderingButton(boolean direction){
         Button btn = new Button();
         if(direction){
             //todo replace hardcoded id prefix
-            btn.setId("move-up-" + idx);
             btn.setOnAction(actionEvent -> setupOrderingButton(true, (HBox) btn.getParent().getParent()));
             //todo replace hardcoded icon file names with class containing them
             btn.setGraphic(new ImageView(new Image(Utils.getIconAsInputStream("arrow-up.png"), BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
         }else{
-            btn.setId("move-down-" + idx);
             btn.setOnAction(actionEvent -> setupOrderingButton(false, (HBox) btn.getParent().getParent()));
             btn.setGraphic(new ImageView(new Image(Utils.getIconAsInputStream("arrow-down.png"), BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
         }
@@ -91,9 +89,9 @@ public class Buttons {
         }
     }
     public static Button executeBtn(TextField nameField, TextField commandField, TextField pathField, int idx) {
-        Button execute = new Button("Execute");
-        execute.setId("execute-" + idx);
-        execute.setOnAction(actionEvent -> {
+        Button executeBtn = new Button("Execute");
+        executeBtn.setId("execute-" + idx);
+        executeBtn.setOnAction(actionEvent -> {
             try {
                 String nameSelected = nameField.getText();
                 String commandSelected = commandField.getText();
@@ -103,7 +101,7 @@ public class Buttons {
                 ErrorPopup.errorPopup(e.getMessage());
             }
         });
-        return execute;
+        return executeBtn;
     }
     private static void execute(String command, String path, String name) throws IOException, InterruptedException {
         CommandExecution.execute(command, path.isEmpty() ? "/" : path, name, false);

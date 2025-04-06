@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class FieldsTest {
     private static Logger logger = Logger.getLogger(FieldsTest.class.getName());
 
-
     @Test
     void createFieldReturnsProperField() {
         logger.info("createFieldReturnsProperField");

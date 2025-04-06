@@ -106,14 +106,11 @@ public class Controller implements Initializable {
         if (path != null && !path.isEmpty()) {
             seqCommands.append("cd ").append(path).append(" && ");
         }
-        if(idx == 0){
-            seqCommands.append(command);
-        }
-        else {
+        if(idx != 0 && delayPerCmd.getValue() > 0){
             seqCommands
-                    .append("sleep ").append(delayPerCmd.getValue()).append("s").append(" && ")
-                    .append(command);
+                    .append("sleep ").append(delayPerCmd.getValue()).append("s").append(" && ");
         }
+        seqCommands.append(command);
         if (idx == total - 1) {
             seqCommands.append(";");
         } else {

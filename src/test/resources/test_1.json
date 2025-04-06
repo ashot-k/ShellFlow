@@ -1,0 +1,17 @@
+{
+  "entries": [
+   {
+    "path": "/",
+    "name": "cmd_1",
+    "cmd": "ls"
+   },
+   {
+    "path": "/",
+    "name": "cmd_2",
+    "cmd": "ls -l"
+   }
+  ],
+  "delay": 12,
+  "sequential": true,
+  "sequentialName": "whatever"
+}

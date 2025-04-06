@@ -36,17 +36,7 @@ public class Utils {
         }
     }
 
-    public static void writeDataToFile(File fileToSave, JSONArray data) {
-        try {
-            FileWriter f = new FileWriter(fileToSave);
-            data.write(f, 1, 1);
-            f.close();
-        } catch (IOException ex) {
-            ErrorPopup.errorPopup(ex.getMessage());
-        }
-    }
-
-    public static JSONObject addEntryToJSONObject(JSONObject object, Node node, int idx) {
+    private static JSONObject addEntryToJSONObject(JSONObject object, Node node, int idx) {
         if (node instanceof TextField field) {
             String id = node.getId();
             String nameType = TextFieldType.typeToShort(TextFieldType.NAME);

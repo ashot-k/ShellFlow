@@ -30,11 +30,12 @@ public class Entry {
         row.getChildren().addAll(deleteEntryBtn, nameField, pathField, commandField, execute);
         row.getStyleClass().add("entry");
 
-        Button moveUpBtn = Buttons.orderingButton(true, idx);
-        Button moveDownBtn = Buttons.orderingButton(false, idx);
+        Button moveUpBtn = Buttons.orderingButton(true);
+        Button moveDownBtn = Buttons.orderingButton(false);
         VBox orderingContainer = new VBox();
         orderingContainer.getChildren().addAll(moveUpBtn, moveDownBtn);
         orderingContainer.getStyleClass().add("ordering-container");
+        orderingContainer.setId("ordering-container-" + idx);
         row.getChildren().add(orderingContainer);
         return row;
     }
