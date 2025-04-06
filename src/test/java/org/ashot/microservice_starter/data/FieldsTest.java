@@ -9,7 +9,8 @@ import org.testfx.framework.junit5.ApplicationExtension;
 
 import java.util.logging.Logger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @ExtendWith(ApplicationExtension.class)

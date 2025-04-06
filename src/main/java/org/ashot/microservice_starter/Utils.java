@@ -60,7 +60,7 @@ public class Utils {
             if (!(current instanceof HBox currentRow)) continue;
             JSONObject object = new JSONObject();
             for (Node n : currentRow.getChildren()) {
-                object = addEntryToJSONObject(object, n, idx);
+                addEntryToJSONObject(object, n, idx);
             }
             jsonArray.put(object);
         }

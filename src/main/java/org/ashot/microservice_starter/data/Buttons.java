@@ -1,7 +1,5 @@
 package org.ashot.microservice_starter.data;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
@@ -103,7 +101,7 @@ public class Buttons {
         });
         return executeBtn;
     }
-    private static void execute(String command, String path, String name) throws IOException, InterruptedException {
+    private static void execute(String command, String path, String name) throws IOException {
         CommandExecution.execute(command, path.isEmpty() ? "/" : path, name, false);
     }
 }
