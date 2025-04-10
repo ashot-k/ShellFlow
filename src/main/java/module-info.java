@@ -4,7 +4,6 @@ module org.ashot.microservice_starter {
     requires org.json;
     requires java.xml;
     requires java.logging;
-    requires org.testfx;
 
 
     opens org.ashot.microservice_starter to javafx.fxml;

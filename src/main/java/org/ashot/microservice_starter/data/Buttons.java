@@ -20,7 +20,7 @@ public class Buttons {
 
     public static Button deleteEntryButton(Pane container, HBox row, int idx) {
         Button btn = new Button("");
-        btn.setId("delete-" + idx);
+        btn.setId(ButtonType.typeToShort(ButtonType.DELETE) + "-" + idx);
         btn.setOnAction(actionEvent -> {
             container.getChildren().remove(row);
         });
@@ -42,13 +42,11 @@ public class Buttons {
     public static Button orderingButton(boolean direction){
         Button btn = new Button();
         if(direction){
-            //todo replace hardcoded id prefix
             btn.setOnAction(actionEvent -> setupOrderingButton(true, (HBox) btn.getParent().getParent()));
-            //todo replace hardcoded icon file names with class containing them
-            btn.setGraphic(new ImageView(new Image(Utils.getIconAsInputStream("arrow-up.png"), BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
+            btn.setGraphic(new ImageView(new Image(Icons.getArrowUpIcon() , BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
         }else{
             btn.setOnAction(actionEvent -> setupOrderingButton(false, (HBox) btn.getParent().getParent()));
-            btn.setGraphic(new ImageView(new Image(Utils.getIconAsInputStream("arrow-down.png"), BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
+            btn.setGraphic(new ImageView(new Image(Icons.getArrowDownIcon(), BUTTON_ICON_SIZE, BUTTON_ICON_SIZE, true, false)));
         }
         return btn;
     }
@@ -88,14 +86,14 @@ public class Buttons {
     }
     public static Button executeBtn(TextField nameField, TextField commandField, TextField pathField, int idx) {
         Button executeBtn = new Button("Execute");
-        executeBtn.setId("execute-" + idx);
+        executeBtn.setId(ButtonType.typeToShort(ButtonType.EXECUTION) + "-" + idx);
         executeBtn.setOnAction(actionEvent -> {
             try {
                 String nameSelected = nameField.getText();
                 String commandSelected = commandField.getText();
                 String pathSelected = pathField.getText();
                 execute(commandSelected, pathSelected, nameSelected);
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 ErrorPopup.errorPopup(e.getMessage());
             }
         });

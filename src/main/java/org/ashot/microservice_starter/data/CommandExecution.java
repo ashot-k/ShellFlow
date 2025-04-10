@@ -28,10 +28,14 @@ public class CommandExecution {
         }
 
         name = "\"" + name + "\"";
+        if(!seqOption) {
+            command = "cd " + path + " && " + command;
+        }
         logger.log(INFO, "Path: " + path);
         logger.log(INFO, "Name: " + name);
         logger.log(INFO, "Executing command: " + command);
         logger.log(INFO, "\n");
+
         if (System.getProperty("os.name").toLowerCase().contains("linux")) {
             try {
                 new ProcessBuilder("cmd.exe", "/c", "start", name, "wsl.exe", "-e", "bash", "-c", command + " exec bash").directory(new File(seqOption ? "/" : path)).start();

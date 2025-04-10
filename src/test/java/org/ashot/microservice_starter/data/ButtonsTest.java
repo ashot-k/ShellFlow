@@ -22,7 +22,7 @@ class ButtonsTest {
         v.getChildren().add(h);
         Button b = Buttons.deleteEntryButton(v, h, 0);
         Assertions.assertAll(
-                () -> assertEquals("delete-0", b.getId()),
+                () -> assertEquals(ButtonType.typeToShort(ButtonType.DELETE) + "-0", b.getId()),
                 () -> assertDoesNotThrow(b::fire),
                 () -> assertEquals(0, v.getChildren().size())
         );

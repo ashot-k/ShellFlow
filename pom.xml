@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>microservice_starter</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <name>microservice_starter</name>
 
     <properties>
@@ -71,12 +71,23 @@
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
             <version>4.0.18</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <addModules>org.ashot.microservice_starter</addModules>
+                    <launcher>
+                        <name>Microservice Starter App</name>
+                    </launcher>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -107,22 +118,84 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>target/mods</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>target/mods</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.4</version>
+
+                <configuration>
+                    <name>Microservice-Starter</name>
+<!--                    <runtimeImage>${java.home}</runtimeImage>-->
+                    <appVersion>${project.version}</appVersion>
+                    <vendor>org.ashot</vendor>
+                    <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
+                    <modulePaths>
+                        <modulePath>target/mods</modulePath>
+                    </modulePaths>
+                    <destination>target/dist</destination>
+                    <javaOptions>
+                        <option>--enable-preview</option>
+                        <option>-Dfile.encoding=UTF-8</option>
+                    </javaOptions>
+                </configuration>
+
+                <executions>
+                   <!-- <execution>
+                        <id>win</id>
+                        <configuration>
+                            <icon>icons/icon.ico</icon>
+                            <winMenu>true</winMenu>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>linux</id>
+                        <configuration>
+                            <type>APP_IMAGE</type>
+                            <icon>icons/icon.png</icon>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.6.0</version>
                 <configuration>
                     <name>Microservice Starter</name>
-                    <appVersion>0.0.1</appVersion>
-                    <vendor>com.example</vendor>
-                    <destination>target</destination>
-                    <module>org.ashot.microservice_starter</module>
+                    <appVersion>0.0.3</appVersion>
+                    <vendor>org.ashot</vendor>
+                    <destination>out</destination>
+                    <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
                     <runtimeImage>target/App</runtimeImage>
                     <mainClass>org.ashot.microservice_starter.Main</mainClass>
                     <type>APP_IMAGE</type>
-                    <winDirChooser>true</winDirChooser>
-                    <winShortcut>true</winShortcut>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 </project>
