@@ -5,14 +5,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 
+import static org.ashot.microservice_starter.data.constant.TextFieldType.typeToShort;
+
 
 public class Fields {
 
-    public static TextField createField(TextFieldType type, String text, int idx) {
-        return setupTextField(type, text, idx);
+    public static TextField createField(TextFieldType type, String text) {
+        return setupTextField(type, text);
     }
 
-    private static TextField setupTextField(TextFieldType type, String text, int idx) {
+    private static TextField setupTextField(TextFieldType type, String text) {
         if(text == null){
             text = "";
         }
@@ -20,31 +22,27 @@ public class Fields {
             throw new NullPointerException("TextFieldType can't be null");
         }
         TextField field = new TextField();
-        field.setId(typeToId(type, idx));
+        field.setId(typeToShort(type));
         field.setText(text);
         return field;
     }
 
-    private static String typeToId(TextFieldType type, int idx) {
-        return TextFieldType.getIdPrefix(type) + idx;
-    }
-
-    public static String getTextFieldContentFromContainer(Pane v, TextFieldType type, int idx) {
+    public static String getTextFieldContentFromContainer(Pane v, TextFieldType type) {
         if (v.getChildren().isEmpty() || type == null) {
             return null;
         }
-        Node n = v.lookup("#" + TextFieldType.typeToShort(type) + "-" + idx);
+        Node n = v.lookup("#" + typeToShort(type));
         if (!(n instanceof TextField field)) {
             return null;
         }
         return field.getText();
     }
 
-    public static TextField getTextFieldFromContainer(Pane v, TextFieldType type, int idx) {
+    public static TextField getTextFieldFromContainer(Pane v, TextFieldType type) {
         if (v.getChildren().isEmpty() || type == null) {
             return null;
         }
-        Node n = v.lookup("#" + TextFieldType.typeToShort(type) + "-" + idx);
+        Node n = v.lookup("#" + typeToShort(type));
         if (!(n instanceof TextField field)) {
             return null;
         }

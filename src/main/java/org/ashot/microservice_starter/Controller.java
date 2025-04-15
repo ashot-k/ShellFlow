@@ -8,11 +8,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import org.ashot.microservice_starter.data.*;
+import org.ashot.microservice_starter.data.CommandExecution;
+import org.ashot.microservice_starter.data.CommandExecutionThread;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.Fields;
@@ -36,7 +37,7 @@ public class Controller implements Initializable {
     @FXML
     private ScrollPane scrollPane;
     @FXML
-    private GridPane container;
+    private FlowPane container;
     @FXML
     private AnchorPane optionsPane;
     @FXML
@@ -69,14 +70,16 @@ public class Controller implements Initializable {
         Entry entry = new Entry();
         int idx = container.getChildren() != null ? container.getChildren().size() : 0;
         HBox newEntryContainer = entry.buildEmptyEntry(container, idx);
-        container.addRow(container.getRowCount(), newEntryContainer);
+        container.getChildren().add(newEntryContainer);
+//        container.addRow(container.getRowCount(), newEntryContainer);
     }
 
     private void newEntry(String cmd, String path, String name) {
         Entry entry = new Entry();
         int idx = container.getChildren() != null ? container.getChildren().size() : 0;
         HBox newEntryContainer = entry.buildEntry(container, cmd, path, name, idx);
-        container.addRow(container.getRowCount(), newEntryContainer);
+        container.getChildren().add(newEntryContainer);
+//        container.addRow(container.getRowCount(), newEntryContainer);
     }
 
     public void executeAll() {
@@ -88,9 +91,9 @@ public class Controller implements Initializable {
             if (!(node instanceof HBox)) {
                 continue;
             }
-            String name = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.NAME, idx);
-            String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND, idx);
-            String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH, idx);
+            String name = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.NAME);
+            String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND);
+            String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH);
             if (!sequentialOption.isSelected()) {
                 currentCmdText = setCurrentCmdText(command);
                 currentCmd.setVisible(true);

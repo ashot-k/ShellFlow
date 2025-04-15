@@ -22,16 +22,9 @@
         </menus>
       </MenuBar>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" layoutX="0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1200.0">
-            <content>
-            <GridPane fx:id="container" prefWidth="1198.0">
-               <columnConstraints>
-                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="0.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
-               </rowConstraints>
-            </GridPane>
-            </content>
+         <content>
+            <FlowPane fx:id="container" prefHeight="398.0" prefWidth="1200.0" />
+         </content>
         </ScrollPane>
       <AnchorPane fx:id="optionsPane" layoutX="88.0" layoutY="486.0" prefHeight="180.0" prefWidth="1025.0">
          <children>

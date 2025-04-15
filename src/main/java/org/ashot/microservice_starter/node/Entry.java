@@ -19,21 +19,21 @@ public class Entry {
     public HBox buildEntry(Pane container, String command, String path, String name, int idx) {
         HBox row = new HBox();
 
-        TextField nameField = Fields.createField(TextFieldType.NAME, name, idx);
+        TextField nameField = Fields.createField(TextFieldType.NAME, name);
         nameField.getStyleClass().add("name-field");
         nameField.setPromptText("Name");
         nameField.setPrefWidth(PREF_NAME_FIELD_WIDTH);
-        TextField commandField = Fields.createField(TextFieldType.COMMAND, command, idx);
+        TextField commandField = Fields.createField(TextFieldType.COMMAND, command);
         commandField.getStyleClass().add("command-field");
         commandField.setPromptText("Command");
         commandField.setPrefWidth(PREF_COMMAND_FIELD_WIDTH);
-        TextField pathField = Fields.createField(TextFieldType.PATH, path, idx);
+        TextField pathField = Fields.createField(TextFieldType.PATH, path);
         pathField.getStyleClass().add("path-field");
         pathField.setPromptText("Path");
         pathField.setPrefWidth(PREF_PATH_FIELD_WIDTH);
 
-        Button execute = Buttons.executeBtn(nameField, commandField, pathField, idx);
-        Button deleteEntryBtn = Buttons.deleteEntryButton(container, row, idx);
+        Button execute = Buttons.executeBtn(nameField, commandField, pathField);
+        Button deleteEntryBtn = Buttons.deleteEntryButton(container, row);
         row.getChildren().addAll(deleteEntryBtn, nameField, pathField, commandField, execute);
         row.getStyleClass().add("entry");
 
@@ -42,7 +42,7 @@ public class Entry {
         VBox orderingContainer = new VBox();
         orderingContainer.getChildren().addAll(moveUpBtn, moveDownBtn);
         orderingContainer.getStyleClass().add("ordering-container");
-        orderingContainer.setId("ordering-container-" + idx);
+        orderingContainer.setId("ordering-container");
         row.getChildren().add(orderingContainer);
         return row;
     }

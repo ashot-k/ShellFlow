@@ -1,6 +1,5 @@
 package org.ashot.microservice_starter.node;
 
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
@@ -10,8 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import org.ashot.microservice_starter.Utils;
-import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.CommandExecution;
+import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 
@@ -21,9 +20,9 @@ public class Buttons {
     public static final int SIZE = 24;
     private static final int ORDERING_BUTTON_SIZE = 12;
 
-    public static Button deleteEntryButton(Pane container, HBox row, int idx) {
+    public static Button deleteEntryButton(Pane container, HBox row) {
         Button btn = new Button("");
-        btn.setId(ButtonType.typeToShort(ButtonType.DELETE) + "-" + idx);
+        btn.setId(ButtonType.typeToShort(ButtonType.DELETE));
         btn.setOnAction(actionEvent -> {
             container.getChildren().remove(row);
         });
@@ -60,36 +59,18 @@ public class Buttons {
         if(direction){
             if (idxOfCurrent == 0) return;
             parent.getChildren().remove(row);
-            HBox rowAtIdx = (HBox) parent.getChildren().get(idxOfCurrent - 1);
             parent.getChildren().add(idxOfCurrent - 1, row);
-            HBox orderedRow = (HBox) parent.getChildren().get(idxOfCurrent - 1);
-            swapChildrenNodeIds(idxOfCurrent, idxOfCurrent - 1, orderedRow, rowAtIdx);
         }
         else{
             if (idxOfCurrent == parent.getChildren().size() - 1) return;
             parent.getChildren().remove(row);
-            HBox rowAtIdx = (HBox) parent.getChildren().get(idxOfCurrent);
             parent.getChildren().add(idxOfCurrent + 1, row);
-            HBox orderedRow = (HBox) parent.getChildren().get(idxOfCurrent + 1);
-            swapChildrenNodeIds(idxOfCurrent, idxOfCurrent + 1, orderedRow, rowAtIdx);
         }
     }
 
-    private static void swapChildrenNodeIds(int idx1, int idx2, HBox hbox1, HBox hbox2){
-        for (Node node: hbox1.getChildren()){
-            if(node.getId() != null){
-                node.setId(node.getId().replace(idx1 + "", idx2 + ""));
-            }
-        }
-        for (Node node: hbox2.getChildren()){
-            if(node.getId() != null){
-                node.setId(node.getId().replace(idx2 + "", idx1 + ""));
-            }
-        }
-    }
-    public static Button executeBtn(TextField nameField, TextField commandField, TextField pathField, int idx) {
+    public static Button executeBtn(TextField nameField, TextField commandField, TextField pathField) {
         Button executeBtn = new Button("Execute");
-        executeBtn.setId(ButtonType.typeToShort(ButtonType.EXECUTION) + "-" + idx);
+        executeBtn.setId(ButtonType.typeToShort(ButtonType.EXECUTION));
         executeBtn.setOnAction(actionEvent -> {
             try {
                 String nameSelected = nameField.getText();

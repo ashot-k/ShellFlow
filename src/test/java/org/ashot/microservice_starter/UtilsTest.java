@@ -1,10 +1,10 @@
 package org.ashot.microservice_starter;
 
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import org.ashot.microservice_starter.node.Fields;
+import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.node.Fields;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
@@ -74,10 +74,10 @@ class UtilsTest {
 
     @Test
     void testCreateJSONArray() {
-        GridPane container = new GridPane();
-        TextField field = Fields.createField(TextFieldType.NAME, "test_name", 0);
-        TextField field2 = Fields.createField(TextFieldType.PATH, "test_path", 0);
-        TextField field3 = Fields.createField(TextFieldType.COMMAND, "test_command", 0);
+        Pane container = new Pane();
+        TextField field = Fields.createField(TextFieldType.NAME, "test_name");
+        TextField field2 = Fields.createField(TextFieldType.PATH, "test_path");
+        TextField field3 = Fields.createField(TextFieldType.COMMAND, "test_command");
         HBox hBox = new HBox(field, field2, field3);
         container.getChildren().add(hBox);
         JSONArray object = Utils.createJSONArray(container);

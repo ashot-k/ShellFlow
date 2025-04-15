@@ -1,18 +1,18 @@
 package org.ashot.microservice_starter.data;
 
 import org.ashot.microservice_starter.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.System.Logger.Level.INFO;
 
 public class CommandExecution {
 
-    private static final Logger logger = System.getLogger(CommandExecution.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CommandExecution.class);
 
     public static void execute(String command, String path, String name, boolean seqOption) throws IOException {
         if (!seqOption) {
@@ -23,11 +23,7 @@ public class CommandExecution {
             command = "cd " + path + " && " + command;
         }
         name = formatName(name);
-        logger.log(INFO, """
-                Path: {}
-                Name: {}
-                Command: {}
-                """, path, name, command);
+        logger.info("Path: {} Name: {} Command: {}", path, name, command);
 
 
         //TODO adjust for different os
@@ -39,14 +35,10 @@ public class CommandExecution {
                 new ProcessBuilder("konsole", Utils.getTerminalArgument(), "bash", "-c", command + " exec bash").directory(new File(seqOption ? "/" : path)).start();
             }
         }else if (getSystemOS().contains("windows")){
-            System.out.println(command);
             try {
-//                command = command.replace(";", "");
-//                command = "\"" + command + "\"";
-//                new ProcessBuilder("cmd.exe", "/c", "start", name, "cmd", "/k", command).directory(new File(seqOption ? "/" : path)).start();
                 new ProcessBuilder("cmd.exe", "/c", "start", name, "wsl.exe", "-e", "bash", "-c", command + " exec bash").start();
             } catch (IOException i) {
-                System.out.println(i);
+                logger.error(i.getMessage());
             }
         }
     }

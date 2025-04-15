@@ -13,7 +13,4 @@ public enum TextFieldType {
         }
         return null;
     }
-    public static String getIdPrefix(TextFieldType type) {
-        return TextFieldType.typeToShort(type) + "-";
-    }
 }

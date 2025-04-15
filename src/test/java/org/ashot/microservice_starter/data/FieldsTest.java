@@ -7,38 +7,36 @@ import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testfx.framework.junit5.ApplicationExtension;
 
-import java.util.logging.Logger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(ApplicationExtension.class)
 class FieldsTest {
-    private static Logger logger = Logger.getLogger(FieldsTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(FieldsTest.class);
 
     @Test
     void createFieldReturnsProperField() {
         logger.info("createFieldReturnsProperField");
         TextFieldType type = TextFieldType.COMMAND;
         String text = "test";
-        int idx = 1;
-        TextField field = Fields.createField(type, text, idx);
-        assertEquals(TextFieldType.getIdPrefix(type) + idx, field.getId(), "Field ID is not correct");
+        TextField field = Fields.createField(type, text);
+        assertEquals(TextFieldType.typeToShort(type), field.getId(), "Field ID is not correct");
         assertEquals(text, field.getText(), "Field text is not correct");
     }
 
     @Test
     void createFieldReturnsProperFieldThrowsExceptionForNullType() {
         logger.info("createFieldReturnsProperFieldThrowsExceptionForNullType");
-        assertThrows(NullPointerException.class, () -> Fields.createField(null, null, 1));
+        assertThrows(NullPointerException.class, () -> Fields.createField(null, null));
     }
     @Test
     void createFieldSetsEmptyTextForNullText() {
         logger.info("createFieldSetsEmptyTextForNullText");
-        TextField field = Fields.createField(TextFieldType.PATH, null, 1);
+        TextField field = Fields.createField(TextFieldType.PATH, null);
         assertEquals("", field.getText(), "Field text was not set to empty for null text argument");
     }
     @Test
@@ -47,14 +45,14 @@ class FieldsTest {
         Pane v = new Pane();
         Text f = new Text();
         v.getChildren().add(f);
-        assertEquals(null, Fields.getTextFieldContentFromContainer(v, TextFieldType.COMMAND, 0), "Text field is not null");
+        assertNull(Fields.getTextFieldContentFromContainer(v, TextFieldType.COMMAND), "Text field is not null");
     }
     @Test
     void getTextFieldContentFromContainerReturnsProperText() {
         logger.info("getTextFieldContentFromContainerReturnsNullForContainerWithoutTextField");
         Pane v = new Pane();
-        TextField f = Fields.createField(TextFieldType.NAME, "test", 0);
+        TextField f = Fields.createField(TextFieldType.NAME, "test");
         v.getChildren().add(f);
-        assertEquals("test", Fields.getTextFieldContentFromContainer(v, TextFieldType.NAME, 0), "Text content returned is not correct");
+        assertEquals("test", Fields.getTextFieldContentFromContainer(v, TextFieldType.NAME), "Text content returned is not correct");
     }
 }
