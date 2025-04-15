@@ -5,20 +5,20 @@
 
 #container .entry{
     -fx-padding: 10px;
-    -fx-spacing: 15px;
+    -fx-spacing: 10px;
     -fx-alignment: center;
 }
 
 .name-field, .path-field, .command-field{
-    /* -fx-width */
     /* -fx-pref-width: 250px; */
 }
 
 .ordering-container{
-    -fx-spacing: 5px
+    -fx-spacing: 2px
 }
 
 .ordering-container *{
+     -fx-background-color: transparent;
 }
 
 .error-message{

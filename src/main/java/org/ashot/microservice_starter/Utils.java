@@ -2,8 +2,8 @@ package org.ashot.microservice_starter;
 
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.TextFieldType;
 import org.ashot.microservice_starter.popup.ErrorPopup;
@@ -53,7 +53,7 @@ public class Utils {
         return object;
     }
 
-    public static JSONArray createJSONArray(VBox container) {
+    public static JSONArray createJSONArray(GridPane container) {
         JSONArray jsonArray = new JSONArray();
         for (int idx = 0; idx < container.getChildren().size(); idx++) {
             Node current = container.getChildren().get(idx);

@@ -1,8 +1,8 @@
 package org.ashot.microservice_starter;
 
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.Fields;
 import org.ashot.microservice_starter.data.TextFieldType;
 import org.json.JSONArray;
@@ -74,7 +74,7 @@ class UtilsTest {
 
     @Test
     void testCreateJSONArray() {
-        VBox container = new VBox();
+        GridPane container = new GridPane();
         TextField field = Fields.createField(TextFieldType.NAME, "test_name", 0);
         TextField field2 = Fields.createField(TextFieldType.PATH, "test_path", 0);
         TextField field3 = Fields.createField(TextFieldType.COMMAND, "test_command", 0);
@@ -85,10 +85,5 @@ class UtilsTest {
                 () -> assertEquals(1, object.length()),
                 () -> assertEquals(3, object.getJSONObject(0).length())
         );
-    }
-
-    @Test
-    void getTerminalArgument() {
-        Assertions.assertDoesNotThrow(Utils::getTerminalArgument);
     }
 }

@@ -6,13 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.*;
 import org.ashot.microservice_starter.popup.ErrorPopup;
@@ -29,7 +27,15 @@ import static org.ashot.microservice_starter.data.TextFieldType.typeToShort;
 
 public class Controller implements Initializable {
     @FXML
-    private VBox container;
+    private AnchorPane anchorPane;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private ScrollPane scrollPane;
+    @FXML
+    private GridPane container;
+    @FXML
+    private AnchorPane optionsPane;
     @FXML
     private Text osInfo;
     @FXML
@@ -58,16 +64,20 @@ public class Controller implements Initializable {
 
     public void newEntry(ActionEvent e) {
         Entry entry = new Entry();
-        container.getChildren().add(entry.buildEmptyEntry(container, container.getChildren() != null ? container.getChildren().size() : 0));
+        int idx = container.getChildren() != null ? container.getChildren().size() : 0;
+        HBox newEntryContainer = entry.buildEmptyEntry(container, idx);
+        container.addRow(container.getRowCount(), newEntryContainer);
     }
 
     private void newEntry(String cmd, String path, String name) {
         Entry entry = new Entry();
-        container.getChildren().add(entry.buildEntry(container, cmd, path, name, container.getChildren() != null ? container.getChildren().size() : 0));
+        int idx = container.getChildren() != null ? container.getChildren().size() : 0;
+        HBox newEntryContainer = entry.buildEntry(container, cmd, path, name, idx);
+        container.addRow(container.getRowCount(), newEntryContainer);
     }
 
     public void executeAll() {
-        currentCmdText = "";
+        resetCurrentCmdText();
         ObservableList<Node> entryChildren = container.getChildren();
         StringBuilder seqCommands = new StringBuilder();
         for (int idx = 0; idx < entryChildren.size(); idx++) {

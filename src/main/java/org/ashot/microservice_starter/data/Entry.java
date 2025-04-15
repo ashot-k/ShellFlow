@@ -7,6 +7,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class Entry {
+    private static final double PREF_NAME_FIELD_WIDTH = 150;
+    private static final double PREF_PATH_FIELD_WIDTH = 250;
+    private static final double PREF_COMMAND_FIELD_WIDTH = 200;
 
     public HBox buildEmptyEntry(Pane v, int idx) {
         return buildEntry(v, "", "", "", idx);
@@ -18,12 +21,15 @@ public class Entry {
         TextField nameField = Fields.createField(TextFieldType.NAME, name, idx);
         nameField.getStyleClass().add("name-field");
         nameField.setPromptText("Name");
+        nameField.setPrefWidth(PREF_NAME_FIELD_WIDTH);
         TextField commandField = Fields.createField(TextFieldType.COMMAND, command, idx);
         commandField.getStyleClass().add("command-field");
         commandField.setPromptText("Command");
+        commandField.setPrefWidth(PREF_COMMAND_FIELD_WIDTH);
         TextField pathField = Fields.createField(TextFieldType.PATH, path, idx);
         pathField.getStyleClass().add("path-field");
         pathField.setPromptText("Path");
+        pathField.setPrefWidth(PREF_PATH_FIELD_WIDTH);
 
         Button execute = Buttons.executeBtn(nameField, commandField, pathField, idx);
         Button deleteEntryBtn = Buttons.deleteEntryButton(container, row, idx);

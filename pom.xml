@@ -164,38 +164,15 @@
                 </configuration>
 
                 <executions>
-                   <!-- <execution>
-                        <id>win</id>
-                        <configuration>
-                            <icon>icons/icon.ico</icon>
-                            <winMenu>true</winMenu>
-                        </configuration>
-                    </execution>-->
                     <execution>
-                        <id>linux</id>
+                        <id>app-image</id>
                         <configuration>
                             <type>APP_IMAGE</type>
-                            <icon>icons/icon.png</icon>
+<!--                            <icon>icons/icon.png</icon>-->
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-            <!--<plugin>
-                <groupId>org.panteleyev</groupId>
-                <artifactId>jpackage-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <configuration>
-                    <name>Microservice Starter</name>
-                    <appVersion>0.0.3</appVersion>
-                    <vendor>org.ashot</vendor>
-                    <destination>out</destination>
-                    <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
-                    <runtimeImage>target/App</runtimeImage>
-                    <mainClass>org.ashot.microservice_starter.Main</mainClass>
-                    <type>APP_IMAGE</type>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 </project>
