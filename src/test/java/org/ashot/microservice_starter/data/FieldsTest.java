@@ -3,6 +3,8 @@ package org.ashot.microservice_starter.data;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.node.Fields;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
@@ -24,7 +26,7 @@ class FieldsTest {
         String text = "test";
         int idx = 1;
         TextField field = Fields.createField(type, text, idx);
-        assertEquals(TextFieldTypeId.getIdPrefix(type) + idx, field.getId(), "Field ID is not correct");
+        assertEquals(TextFieldType.getIdPrefix(type) + idx, field.getId(), "Field ID is not correct");
         assertEquals(text, field.getText(), "Field text is not correct");
     }
 

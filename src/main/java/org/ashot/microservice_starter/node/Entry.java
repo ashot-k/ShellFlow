@@ -1,10 +1,11 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.node;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.ashot.microservice_starter.data.constant.TextFieldType;
 
 public class Entry {
     private static final double PREF_NAME_FIELD_WIDTH = 150;

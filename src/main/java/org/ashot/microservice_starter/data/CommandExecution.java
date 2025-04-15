@@ -23,10 +23,11 @@ public class CommandExecution {
             command = "cd " + path + " && " + command;
         }
         name = formatName(name);
-        logger.log(INFO, "Path: " + path);
-        logger.log(INFO, "Name: " + name);
-        logger.log(INFO, "Executing command: " + command);
-        logger.log(INFO, "\n");
+        logger.log(INFO, """
+                Path: {}
+                Name: {}
+                Command: {}
+                """, path, name, command);
 
 
         //TODO adjust for different os

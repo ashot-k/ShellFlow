@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.data.constant;
 
 import org.ashot.microservice_starter.Utils;
 

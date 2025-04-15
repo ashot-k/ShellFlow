@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.data.constant;
 
 public enum TextFieldType {
     COMMAND, PATH, NAME;
@@ -12,5 +12,8 @@ public enum TextFieldType {
             return "name";
         }
         return null;
+    }
+    public static String getIdPrefix(TextFieldType type) {
+        return TextFieldType.typeToShort(type) + "-";
     }
 }

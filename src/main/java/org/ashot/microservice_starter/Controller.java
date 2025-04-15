@@ -13,8 +13,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.*;
-import org.ashot.microservice_starter.popup.ErrorPopup;
-import org.ashot.microservice_starter.popup.OutputPopup;
+import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.node.Entry;
+import org.ashot.microservice_starter.node.Fields;
+import org.ashot.microservice_starter.node.popup.ErrorPopup;
+import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,7 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static org.ashot.microservice_starter.data.TextFieldType.typeToShort;
+import static org.ashot.microservice_starter.data.constant.TextFieldType.typeToShort;
 
 public class Controller implements Initializable {
     @FXML

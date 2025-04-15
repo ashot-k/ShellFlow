@@ -5,8 +5,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import org.ashot.microservice_starter.data.TextFieldType;
-import org.ashot.microservice_starter.popup.ErrorPopup;
+import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

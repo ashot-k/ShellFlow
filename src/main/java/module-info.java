@@ -8,6 +8,6 @@ module org.ashot.microservice_starter {
 
     opens org.ashot.microservice_starter to javafx.fxml;
     exports org.ashot.microservice_starter;
-    exports org.ashot.microservice_starter.popup;
-    opens org.ashot.microservice_starter.popup to javafx.fxml;
+    exports org.ashot.microservice_starter.node.popup;
+    opens org.ashot.microservice_starter.node.popup to javafx.fxml;
 }

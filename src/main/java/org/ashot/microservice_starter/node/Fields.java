@@ -1,8 +1,9 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.node;
 
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import org.ashot.microservice_starter.data.constant.TextFieldType;
 
 
 public class Fields {
@@ -25,7 +26,7 @@ public class Fields {
     }
 
     private static String typeToId(TextFieldType type, int idx) {
-        return TextFieldTypeId.getIdPrefix(type) + idx;
+        return TextFieldType.getIdPrefix(type) + idx;
     }
 
     public static String getTextFieldContentFromContainer(Pane v, TextFieldType type, int idx) {

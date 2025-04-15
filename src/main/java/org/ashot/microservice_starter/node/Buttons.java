@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.node;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -10,7 +10,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import org.ashot.microservice_starter.Utils;
-import org.ashot.microservice_starter.popup.ErrorPopup;
+import org.ashot.microservice_starter.data.constant.ButtonType;
+import org.ashot.microservice_starter.data.CommandExecution;
+import org.ashot.microservice_starter.data.constant.Icons;
+import org.ashot.microservice_starter.node.popup.ErrorPopup;
 
 import java.io.IOException;
 

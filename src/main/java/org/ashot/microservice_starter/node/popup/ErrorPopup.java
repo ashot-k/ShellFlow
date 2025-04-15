@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.popup;
+package org.ashot.microservice_starter.node.popup;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
