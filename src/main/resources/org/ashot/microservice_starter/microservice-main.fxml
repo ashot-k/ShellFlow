@@ -23,7 +23,7 @@
       </MenuBar>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" layoutX="0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1200.0">
          <content>
-            <FlowPane fx:id="container" prefHeight="398.0" prefWidth="1200.0" />
+            <FlowPane fx:id="container" alignment="TOP_CENTER" prefHeight="398.0" prefWidth="1200.0" />
          </content>
         </ScrollPane>
       <AnchorPane fx:id="optionsPane" layoutX="88.0" layoutY="486.0" prefHeight="180.0" prefWidth="1025.0">
