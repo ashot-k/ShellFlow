@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.CommandExecution;
 import org.ashot.microservice_starter.data.CommandExecutionThread;
@@ -40,6 +37,8 @@ public class Controller implements Initializable {
     private FlowPane container;
     @FXML
     private AnchorPane optionsPane;
+    @FXML
+    private GridPane options;
     @FXML
     private Text osInfo;
     @FXML
@@ -71,7 +70,6 @@ public class Controller implements Initializable {
         int idx = container.getChildren() != null ? container.getChildren().size() : 0;
         HBox newEntryContainer = entry.buildEmptyEntry(container, idx);
         container.getChildren().add(newEntryContainer);
-//        container.addRow(container.getRowCount(), newEntryContainer);
     }
 
     private void newEntry(String cmd, String path, String name) {
@@ -79,7 +77,6 @@ public class Controller implements Initializable {
         int idx = container.getChildren() != null ? container.getChildren().size() : 0;
         HBox newEntryContainer = entry.buildEntry(container, cmd, path, name, idx);
         container.getChildren().add(newEntryContainer);
-//        container.addRow(container.getRowCount(), newEntryContainer);
     }
 
     public void executeAll() {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
     <children>
-      <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="27.0" prefWidth="1200.0">
+      <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="30.0" prefWidth="1200.0" useSystemMenuBar="true">
         <menus>
           <Menu mnemonicParsing="false" text="File">
                <items>
@@ -26,27 +27,22 @@
             <FlowPane fx:id="container" alignment="TOP_CENTER" prefHeight="398.0" prefWidth="1200.0" />
          </content>
         </ScrollPane>
-      <AnchorPane fx:id="optionsPane" layoutX="88.0" layoutY="486.0" prefHeight="180.0" prefWidth="1025.0">
+      <AnchorPane fx:id="optionsPane" layoutX="-2.0" layoutY="486.0" prefHeight="180.0" prefWidth="1200.0">
          <children>
-            <GridPane alignment="CENTER" prefHeight="149.0" prefWidth="1025.0">
+            <GridPane id="options" alignment="CENTER" prefHeight="180.0" prefWidth="1200.0">
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Text fx:id="osInfo" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="189.01416015625" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                  </Text>
                     <Button fx:id="newEntryBtn2" mnemonicParsing="false" onAction="#newEntry" prefHeight="26.0" prefWidth="100.0" text="Add" />
-                  <VBox alignment="CENTER" style="-fx-spacing: 8px;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <VBox alignment="CENTER_LEFT" style="-fx-spacing: 8px;" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                      <children>
                         <CheckBox fx:id="sequentialOption" mnemonicParsing="false" text="Sequential">
                            <tooltip>
@@ -57,7 +53,7 @@
                      </children>
                   </VBox>
                   <Button fx:id="currentCmd" mnemonicParsing="false" onAction="#printCurrentCmd" prefHeight="26.0" prefWidth="250.0" text="Show commands executed" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                    <Button fx:id="executeAllBtn" disable="true" mnemonicParsing="false" onAction="#executeAll" prefHeight="26.0" prefWidth="100.0" text="Run All" GridPane.columnIndex="2" />
+                    <Button fx:id="executeAllBtn" disable="true" mnemonicParsing="false" onAction="#executeAll" prefHeight="30.0" prefWidth="160.0" text="Run All" GridPane.columnIndex="2" />
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
                         <Slider fx:id="delayPerCmd" majorTickUnit="4.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
@@ -68,10 +64,18 @@
                         </Text>
                      </children>
                   </VBox>
+                  <Text fx:id="osInfo" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="250.01416015625" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Text>
                </children>
+               <padding>
+                  <Insets bottom="25.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
             </GridPane>
          </children>
       </AnchorPane>
-      <Separator layoutX="-11.0" layoutY="465.0" prefHeight="0.0" prefWidth="1200.0" />
+      <Separator layoutY="465.0" prefHeight="0.0" prefWidth="1200.0" />
     </children>
 </AnchorPane>

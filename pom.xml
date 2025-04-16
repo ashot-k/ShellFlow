@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>microservice_starter</artifactId>
-    <version>0.0.4</version>
+    <version>0.4.2</version>
     <name>microservice_starter</name>
 
     <properties>
@@ -147,21 +147,19 @@
                 <version>1.6.4</version>
 
                 <configuration>
-                    <name>Microservice-Starter</name>
-<!--                    <runtimeImage>${java.home}</runtimeImage>-->
+                    <name>microservice-starter-${project.version}</name>
                     <appVersion>${project.version}</appVersion>
                     <vendor>org.ashot</vendor>
                     <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
                     <modulePaths>
                         <modulePath>target/mods</modulePath>
                     </modulePaths>
-                    <destination>target/dist</destination>
+                    <destination>output</destination>
                     <javaOptions>
                         <option>--enable-preview</option>
                         <option>-Dfile.encoding=UTF-8</option>
                     </javaOptions>
                 </configuration>
-
                 <executions>
                     <execution>
                         <id>app-image</id>
