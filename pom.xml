@@ -155,6 +155,8 @@
                     <name>microservice-starter-${project.version}</name>
                     <appVersion>${project.version}</appVersion>
                     <vendor>org.ashot</vendor>
+<!--                    for linux app-image-->
+<!--                    <runtimeImage>${java.home}</runtimeImage>-->
                     <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
                     <modulePaths>
                         <modulePath>target/mods</modulePath>
