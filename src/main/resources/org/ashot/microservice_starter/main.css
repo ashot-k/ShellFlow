@@ -17,7 +17,9 @@
 }
 
 .ordering-container *{
+/*
      -fx-background-color: transparent;
+*/
 }
 
 .error-message{

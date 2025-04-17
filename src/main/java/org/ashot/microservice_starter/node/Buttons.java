@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class Buttons {
     public static final int SIZE = 24;
-    private static final int ORDERING_BUTTON_SIZE = 12;
+    private static final int ORDERING_BUTTON_SIZE = 36;
 
     public static Button deleteEntryButton(Pane container, HBox row) {
         Button btn = new Button("");
@@ -45,10 +45,12 @@ public class Buttons {
         Button btn = new Button();
         if(direction){
             btn.setOnAction(actionEvent -> setupOrderingButton(true, (HBox) btn.getParent().getParent()));
-            btn.setGraphic(new ImageView(new Image(Icons.getArrowUpIcon() , ORDERING_BUTTON_SIZE, ORDERING_BUTTON_SIZE, true, false)));
+//            btn.setGraphic(new ImageView(new Image(Icons.getArrowUpIcon() , ORDERING_BUTTON_SIZE, ORDERING_BUTTON_SIZE, true, false)));
+            btn.setGraphic(Icons.getChevronUpIcon(ORDERING_BUTTON_SIZE));
         }else{
             btn.setOnAction(actionEvent -> setupOrderingButton(false, (HBox) btn.getParent().getParent()));
-            btn.setGraphic(new ImageView(new Image(Icons.getArrowDownIcon(), ORDERING_BUTTON_SIZE, ORDERING_BUTTON_SIZE, true, false)));
+//            btn.setGraphic(new ImageView(new Image(Icons.getArrowDownIcon(), ORDERING_BUTTON_SIZE, ORDERING_BUTTON_SIZE, true, false)));
+            btn.setGraphic(Icons.getChevronDownIcon(ORDERING_BUTTON_SIZE));
         }
         return btn;
     }

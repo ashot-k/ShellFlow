@@ -3,8 +3,10 @@ module org.ashot.microservice_starter {
     requires atlantafx.base;
     requires org.json;
     requires java.xml;
-    requires java.logging;
     requires org.slf4j;
+    requires org.kordamp.ikonli.core;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.bootstrapicons;
 
 
     opens org.ashot.microservice_starter to javafx.fxml;
