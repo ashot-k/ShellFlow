@@ -1,6 +1,13 @@
 package org.ashot.microservice_starter.data;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Utils;
+import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.node.Fields;
+import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.ashot.microservice_starter.Utils.calculateDelay;
+import static org.ashot.microservice_starter.Utils.getSystemOS;
+import static org.ashot.microservice_starter.data.CommandFormatUtils.*;
 
 
 public class CommandExecution {
@@ -18,14 +29,10 @@ public class CommandExecution {
         if (!seqOption) {
             List<String> unformattedCommands = new ArrayList<>(List.of(command.split(";")));
             command = formatCommands(unformattedCommands);
-        }
-        if(!seqOption) {
             command = "cd " + path + " && " + command;
         }
         name = formatName(name);
-        logger.info("Path: {} Name: {} Command: {}", path, name, command);
-
-
+        logger.info("Name: {} Path: {} Command: {}", name, path, command);
         //TODO adjust for different os
         if (getSystemOS().contains("linux")) {
             try {
@@ -42,31 +49,37 @@ public class CommandExecution {
             }
         }
     }
-    private static String getSystemOS(){
-       return System.getProperty("os.name").toLowerCase();
-    }
 
-    private static String formatCommands(List<String> list) {
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            String command = list.get(i);
-            s.append(command);
-            if (i < list.size() - 1) {
-                s.append(" && ");
+    public static String executeAll(Pane container, boolean seqOption, String seqName, int delayPerCmd) {
+        String currentCmdText = "";
+        ObservableList<Node> entryChildren = container.getChildren();
+        StringBuilder seqCommands = new StringBuilder();
+        for (int idx = 0; idx < entryChildren.size(); idx++) {
+            Node node = entryChildren.get(idx);
+            if (!(node instanceof HBox)) {
+                continue;
+            }
+            String name = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.NAME);
+            String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND);
+            String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH);
+            if (!seqOption) {
+                currentCmdText = currentCmdText.isEmpty() ? command : currentCmdText + "\n" + command;
+                long timeInMS = calculateDelay(idx, delayPerCmd);
+                CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
+                new Thread(t).start();
             } else {
-                s.append(";");
+                handleSequentialCommandChain(seqCommands, command, path, idx, entryChildren.size(), delayPerCmd);
             }
         }
-        return s.toString();
-    }
-    private static String formatName(String name){
-        if(name.isBlank()){
-            name = "ms-starter-command";
-        }else {
-            name = name.replace(" ","-");
+        if(seqOption) {
+            try {
+                currentCmdText = seqCommands.toString();
+                CommandExecution.execute(seqCommands.toString(), null, seqName, true);
+            } catch (IOException e) {
+                ErrorPopup.errorPopup(e.getMessage());
+            }
         }
-
-        name = "\"" + name + "\"";
-        return name;
+        return currentCmdText;
     }
+
 }

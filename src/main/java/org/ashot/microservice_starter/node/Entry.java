@@ -8,15 +8,15 @@ import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 
 public class Entry {
-    private static final double PREF_NAME_FIELD_WIDTH = 150;
-    private static final double PREF_PATH_FIELD_WIDTH = 250;
-    private static final double PREF_COMMAND_FIELD_WIDTH = 200;
+    private static final double PREF_NAME_FIELD_WIDTH = 200;
+    private static final double PREF_PATH_FIELD_WIDTH = 300;
+    private static final double PREF_COMMAND_FIELD_WIDTH = 300;
 
-    public HBox buildEmptyEntry(Pane v, int idx) {
-        return buildEntry(v, "", "", "", idx);
+    public HBox buildEmptyEntry(Pane v) {
+        return buildEntry(v, "", "", "");
     }
 
-    public HBox buildEntry(Pane container, String command, String path, String name, int idx) {
+    public HBox buildEntry(Pane container, String name, String path, String command) {
         HBox row = new HBox();
 
         TextField nameField = Fields.createField(TextFieldType.NAME, name);
@@ -42,7 +42,6 @@ public class Entry {
         VBox orderingContainer = new VBox();
         orderingContainer.getChildren().addAll(moveUpBtn, moveDownBtn);
         orderingContainer.getStyleClass().add("ordering-container");
-        orderingContainer.setId("ordering-container");
         row.getChildren().add(orderingContainer);
         return row;
     }

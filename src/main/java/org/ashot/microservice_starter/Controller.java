@@ -1,26 +1,23 @@
 package org.ashot.microservice_starter;
 
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.CommandExecution;
-import org.ashot.microservice_starter.data.CommandExecutionThread;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Entry;
-import org.ashot.microservice_starter.node.Fields;
-import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -67,68 +64,18 @@ public class Controller implements Initializable {
 
     public void newEntry(ActionEvent e) {
         Entry entry = new Entry();
-        int idx = container.getChildren() != null ? container.getChildren().size() : 0;
-        HBox newEntryContainer = entry.buildEmptyEntry(container, idx);
-        container.getChildren().add(newEntryContainer);
+        container.getChildren().add(entry.buildEmptyEntry(container));
     }
 
-    private void newEntry(String cmd, String path, String name) {
+    private void newEntry(String name, String path, String cmd) {
         Entry entry = new Entry();
-        int idx = container.getChildren() != null ? container.getChildren().size() : 0;
-        HBox newEntryContainer = entry.buildEntry(container, cmd, path, name, idx);
-        container.getChildren().add(newEntryContainer);
+        container.getChildren().add(entry.buildEntry(container, name, path, cmd));
     }
 
     public void executeAll() {
         resetCurrentCmdText();
-        ObservableList<Node> entryChildren = container.getChildren();
-        StringBuilder seqCommands = new StringBuilder();
-        for (int idx = 0; idx < entryChildren.size(); idx++) {
-            Node node = entryChildren.get(idx);
-            if (!(node instanceof HBox)) {
-                continue;
-            }
-            String name = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.NAME);
-            String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND);
-            String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH);
-            if (!sequentialOption.isSelected()) {
-                currentCmdText = setCurrentCmdText(command);
-                currentCmd.setVisible(true);
-                long timeInMS = calculateDelay(idx);
-                CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
-                new Thread(t).start();
-            } else {
-                handleSequentialCommandChain(seqCommands, command, path, idx, entryChildren.size());
-            }
-        }
-        if (!sequentialOption.isSelected()) return;
-        try {
-            currentCmd.setVisible(true);
-            currentCmdText = setCurrentCmdText(seqCommands.toString());
-            CommandExecution.execute(seqCommands.toString(), null, sequentialName.getText(), sequentialOption.isSelected());
-        } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
-        }
-    }
-
-    private long calculateDelay(int multiplier) {
-        return (long) (multiplier * delayPerCmd.getValue()) * 1000;
-    }
-
-    private void handleSequentialCommandChain(StringBuilder seqCommands, String command, String path, int idx, int total) {
-        if (path != null && !path.isEmpty()) {
-            seqCommands.append("cd ").append(path).append(" && ");
-        }
-        if(idx != 0 && delayPerCmd.getValue() > 0){
-            seqCommands
-                    .append("sleep ").append(delayPerCmd.getValue()).append("s").append(" && ");
-        }
-        seqCommands.append(command);
-        if (idx == total - 1) {
-            seqCommands.append(";");
-        } else {
-            seqCommands.append(" && ");
-        }
+        String commands = CommandExecution.executeAll(container, sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
+        setCurrentCmdText(commands, currentCmd);
     }
 
     public void save(ActionEvent e) {
@@ -142,12 +89,7 @@ public class Controller implements Initializable {
     private void saveToFile() {
         File fileToSave = Utils.chooseFile(true);
         if (fileToSave == null) return;
-        JSONArray jsonData = Utils.createJSONArray(container);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("entries", jsonData);
-        jsonObject.put("delay", delayPerCmd.getValue());
-        jsonObject.put("sequential", sequentialOption.isSelected());
-        jsonObject.put("sequentialName", sequentialName.getText());
+        JSONObject jsonObject = Utils.createSaveJSONObject(container, (int) delayPerCmd.getValue(), sequentialOption.isSelected(), sequentialName.getText());
         Utils.writeDataToFile(fileToSave, jsonObject);
     }
 
@@ -162,7 +104,7 @@ public class Controller implements Initializable {
                 String name = jsonObject.get(typeToShort(TextFieldType.NAME)).toString();
                 String path = jsonObject.get(typeToShort(TextFieldType.PATH)).toString();
                 String cmd = jsonObject.get(typeToShort(TextFieldType.COMMAND)).toString();
-                newEntry(cmd, path, name);
+                newEntry(name, path, cmd);
             }
         }
         delayPerCmd.setValue(jsonData.getDouble("delay"));
@@ -172,10 +114,10 @@ public class Controller implements Initializable {
         executeAllBtn.setDisable(container.getChildren().isEmpty());
         resetCurrentCmdText();
     }
-    private String setCurrentCmdText(String text){
-        String newText = currentCmdText + "\n" + text;
+
+    private void setCurrentCmdText(String text, Button currentCmd){
+        currentCmdText = text;
         currentCmd.setVisible(true);
-        return newText;
     }
     private void resetCurrentCmdText(){
         currentCmdText = "";

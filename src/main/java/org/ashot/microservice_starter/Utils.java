@@ -25,6 +25,15 @@ public class Utils {
     public static InputStream getIconAsInputStream(String iconName) {
         return Main.class.getResourceAsStream("icons/" + iconName);
     }
+    public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName){
+        JSONArray entries= Utils.createJSONArray(container);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("entries", entries);
+        jsonObject.put("delay", delayPerCmd);
+        jsonObject.put("sequential", seqOption);
+        jsonObject.put("sequentialName", seqName);
+        return jsonObject;
+    }
 
     public static void writeDataToFile(File fileToSave, JSONObject data) {
         try {
@@ -91,7 +100,15 @@ public class Utils {
         }
     }
 
+    public static int calculateDelay(int multiplier, int delayPerCmd) {
+        return multiplier * delayPerCmd * 1000;
+    }
+
     public static String getTerminalArgument() {
         return System.getenv("TERM").equalsIgnoreCase("gnome-terminal") ? "--" : "-e";
+    }
+
+    public static String getSystemOS(){
+        return System.getProperty("os.name").toLowerCase();
     }
 }
