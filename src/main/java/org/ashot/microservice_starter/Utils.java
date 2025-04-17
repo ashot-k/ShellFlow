@@ -5,10 +5,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,8 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 
 public class Utils {
+
+    private static final Logger log = LoggerFactory.getLogger(Utils.class);
+
     public static URL getIcon(String iconName) {
         return Main.class.getResource("icons/" + iconName);
     }
@@ -76,7 +83,7 @@ public class Utils {
         return jsonArray;
     }
 
-    public static JSONObject createJSONArray(File file) {
+    public static JSONObject createJSONObject(File file) {
         try {
             String jsonContent = Files.readString(file.toPath());
             return new JSONObject(jsonContent);
@@ -86,10 +93,11 @@ public class Utils {
         return null;
     }
 
-    public static File chooseFile(boolean saveMode) {
+    public static File chooseFile(boolean saveMode, String initialDir) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", (".json"));
         fileChooser.setSelectedExtensionFilter(extensions);
+        fileChooser.setInitialDirectory(new File(initialDir));
         if (saveMode) {
             fileChooser.setInitialFileName("entries.json");
             fileChooser.setTitle("Choose file destination");
@@ -110,5 +118,73 @@ public class Utils {
 
     public static String getSystemOS(){
         return System.getProperty("os.name").toLowerCase();
+    }
+
+    public static JSONObject setupFolders(){
+        try {
+            JSONObject jsonObject = null;
+            File file = new File("dirs.json");
+            if(file.exists()){
+                String jsonContent = Files.readString(file.toPath());
+                jsonObject = new JSONObject(jsonContent);
+            }
+            else if (file.createNewFile()){
+                jsonObject = new JSONObject();
+                jsonObject.put(DirType.LAST_LOADED.name(), ".");
+                jsonObject.put(DirType.LAST_SAVED.name(), ".");
+                jsonObject.put(DirType.RECENT.name(), new JSONArray());
+                writeDataToFile(file, jsonObject);
+            }
+            return jsonObject;
+        } catch (IOException e) {
+            ErrorPopup.errorPopup(e.getMessage());
+        }
+        return null;
+    }
+
+    public static JSONObject saveDirReference(DirType dirType, String path){
+        if(path == null) return null;
+        JSONObject jsonObject = null;
+        try {
+            File file = new File("dirs.json");
+            jsonObject = new JSONObject(Files.readString(file.toPath()));
+            jsonObject.put(dirType.name(), path);
+            writeDataToFile(file, jsonObject);
+        }catch (IOException e){
+            ErrorPopup.errorPopup(e.getMessage());
+        }
+        return jsonObject;
+    }
+    public static JSONObject saveRecentDir(String path){
+        if(path == null) return null;
+        JSONObject jsonObject = null;
+        try {
+            File file = new File("dirs.json");
+            jsonObject = new JSONObject(Files.readString(file.toPath()));
+            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
+            List<Object> list = recents.toList();
+            list.removeIf((element)-> element.toString().equals(path));
+            list.addFirst(path);
+            recents.clear();
+            recents.putAll(list);
+            jsonObject.put(DirType.RECENT.name(), recents);
+            writeDataToFile(file, jsonObject);
+        }catch (IOException e){
+            ErrorPopup.errorPopup(e.getMessage());
+        }
+        return jsonObject;
+    }
+    public static JSONArray getRecentFiles(){
+        JSONObject jsonObject = null;
+        File file = new File("dirs.json");
+        String jsonContent = null;
+        try {
+            jsonContent = Files.readString(file.toPath());
+            jsonObject = new JSONObject(jsonContent);
+            return (JSONArray) jsonObject.get(DirType.RECENT.name());
+        } catch (IOException e) {
+            ErrorPopup.errorPopup(e.getMessage());
+        }
+        return null;
     }
 }

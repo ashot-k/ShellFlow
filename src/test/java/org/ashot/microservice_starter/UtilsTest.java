@@ -60,7 +60,7 @@ class UtilsTest {
 
     @Test
     void createJSONArrayConstructsCorrectObjectFromFile() {
-        JSONObject object = Utils.createJSONArray(new File("src/test/resources/test_1.json"));
+        JSONObject object = Utils.createJSONObject(new File("src/test/resources/test_1.json"));
         JSONArray entries = (JSONArray) object.get("entries");
         Assertions.assertAll(
                 () -> assertNotNull(entries),
