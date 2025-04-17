@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -31,10 +31,9 @@ public class OutputPopup {
         Text text = new Text();
         text.setText(msg);
         text.setWrappingWidth(scene.getWidth() - TEXT_OFFSET);
-        text.setX(100); text.setY(0);
         text.setFont(Font.font(TEXT_SIZE));
 
-        VBox outputContainer = new VBox();
+        HBox outputContainer = new HBox();
         outputContainer.getChildren().add(text);
         outputContainer.getStyleClass().add("output-message");
         scrollPane.setContent(outputContainer);

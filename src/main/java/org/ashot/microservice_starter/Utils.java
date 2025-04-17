@@ -1,11 +1,13 @@
 package org.ashot.microservice_starter;
 
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.constant.DirType;
+import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONArray;
@@ -16,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -25,13 +25,6 @@ public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    public static URL getIcon(String iconName) {
-        return Main.class.getResource("icons/" + iconName);
-    }
-
-    public static InputStream getIconAsInputStream(String iconName) {
-        return Main.class.getResourceAsStream("icons/" + iconName);
-    }
     public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName){
         JSONArray entries= Utils.createJSONArray(container);
         JSONObject jsonObject = new JSONObject();
@@ -58,11 +51,11 @@ public class Utils {
             String nameType = TextFieldType.typeToShort(TextFieldType.NAME);
             String cmdType = TextFieldType.typeToShort(TextFieldType.COMMAND);
             String pathType = TextFieldType.typeToShort(TextFieldType.PATH);
-            if (id.contains(nameType)) {
+            if (nameType != null && id.contains(nameType)) {
                 object.put(nameType, field.getText());
-            } else if (id.contains(cmdType)) {
+            } else if (cmdType != null && id.contains(cmdType)) {
                 object.put(cmdType, field.getText());
-            } else if (id.contains(pathType)) {
+            } else if (pathType != null && id.contains(pathType)) {
                 object.put(pathType, field.getText());
             }
         }
@@ -71,8 +64,7 @@ public class Utils {
 
     public static JSONArray createJSONArray(Pane container) {
         JSONArray jsonArray = new JSONArray();
-        for (int idx = 0; idx < container.getChildren().size(); idx++) {
-            Node current = container.getChildren().get(idx);
+        for (Node current : container.getChildren()) {
             if (!(current instanceof HBox currentRow)) continue;
             JSONObject object = new JSONObject();
             for (Node n : currentRow.getChildren()) {
@@ -186,5 +178,36 @@ public class Utils {
             ErrorPopup.errorPopup(e.getMessage());
         }
         return null;
+    }
+    public static boolean removeRecentFile(String path){
+        JSONObject jsonObject = null;
+        File file = new File("dirs.json");
+        String jsonContent = null;
+        try {
+            jsonContent = Files.readString(file.toPath());
+            jsonObject = new JSONObject(jsonContent);
+            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
+            List<Object> list = recents.toList();
+            list.removeIf((element)-> element.toString().equals(path));
+            recents.clear();
+            recents.putAll(list);
+            jsonObject.put(DirType.RECENT.name(), recents);
+            writeDataToFile(file, jsonObject);
+            return true;
+        } catch (IOException e) {
+            ErrorPopup.errorPopup(e.getMessage());
+        }
+        return false;
+
+    }
+
+    public static void setupOSInfo(Button osInfo){
+        String os = System.getProperty("os.name");
+        if(os.toLowerCase().contains("linux")){
+            osInfo.setGraphic(Icons.getLinuxIcon(36));
+        }else if (os.toLowerCase().contains("windows")){
+            osInfo.setGraphic(Icons.getWindowsIcon(36));
+        }
+        osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
     }
 }

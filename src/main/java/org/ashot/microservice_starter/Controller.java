@@ -6,13 +6,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
-import org.ashot.microservice_starter.data.CommandExecution;
 import org.ashot.microservice_starter.data.constant.DirType;
+import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.json.JSONArray;
@@ -22,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.ashot.microservice_starter.data.constant.TextFieldType.typeToShort;
@@ -29,21 +29,17 @@ import static org.ashot.microservice_starter.data.constant.TextFieldType.typeToS
 public class Controller implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     @FXML
-    private AnchorPane anchorPane;
-    @FXML
-    private MenuBar menuBar;
+    private MenuItem loadBtn;
     @FXML
     private Menu openRecent;
     @FXML
-    private ScrollPane scrollPane;
+    private MenuItem saveBtn;
     @FXML
     private FlowPane container;
     @FXML
-    private AnchorPane optionsPane;
+    private Button osInfo;
     @FXML
-    private GridPane options;
-    @FXML
-    private Text osInfo;
+    private Button newEntryBtn;
     @FXML
     private Slider delayPerCmd;
     @FXML
@@ -62,16 +58,26 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
+        Utils.setupOSInfo(osInfo);
+        loadBtn.setGraphic(Icons.getOpenIcon(18));
+        openRecent.setGraphic(Icons.getOpenRecentIcon(18));
+        saveBtn.setGraphic(Icons.getSaveIcon(18));
+        newEntryBtn.setGraphic(Icons.getAddButtonIcon(24));
+        newEntryBtn.setContentDisplay(ContentDisplay.RIGHT);
+        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
+        executeAllBtn.setContentDisplay(ContentDisplay.RIGHT);
+        executeAllBtn.setGraphicTextGap(12);
         container.getChildren().addListener((ListChangeListener<Node>) c -> {
             executeAllBtn.setDisable(container.getChildren().isEmpty());
         });
-        sequentialOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        sequentialOption.selectedProperty().addListener((_, _, newValue) -> {
             sequentialName.setVisible(newValue);
         });
-        openRecent.setOnShowing(event -> refreshRecentlyOpenedFolders());
+        openRecent.setOnShowing(e -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
+        newEntry(null);
     }
+
     private void loadRecentFolders(){
         JSONObject dirs = Utils.setupFolders();
         lastSaved = (String) dirs.get(DirType.LAST_SAVED.name());
@@ -79,14 +85,43 @@ public class Controller implements Initializable {
         refreshRecentlyOpenedFolders();
     }
 
+    private void refreshRecentlyOpenedFolders(){
+        List<String> toRemove = disabledRecentFoldersToRemove();
+        openRecent.getItems().clear();
+        JSONArray recentFolders = Utils.getRecentFiles();
+        for (Object s : recentFolders.toList()){
+            String recentFolder = s.toString();
+            if(toRemove.contains(recentFolder)){
+                Utils.removeRecentFile(recentFolder);
+            }
+            MenuItem m = new MenuItem();
+            m.setText(recentFolder);
+            m.setOnAction(_ ->{
+                File file = new File(recentFolder);
+                if(file.exists()){
+                    loadFromFile(file);
+                }
+            });
+            m.setDisable(!new File(recentFolder).exists());
+            openRecent.getItems().add(m);
+        }
+    }
+    private List<String> disabledRecentFoldersToRemove(){
+        List<String> list = new ArrayList<>();
+        for(MenuItem m : openRecent.getItems()){
+            if(m.isDisable()){
+                list.add(m.getText());
+            }
+        }
+        return list;
+    }
+
     public void newEntry(ActionEvent e) {
-        Entry entry = new Entry();
-        container.getChildren().add(entry.buildEmptyEntry(container));
+        container.getChildren().add(new Entry().buildEmptyEntry(container));
     }
 
     private void newEntry(String name, String path, String cmd) {
-        Entry entry = new Entry();
-        container.getChildren().add(entry.buildEntry(container, name, path, cmd));
+        container.getChildren().add(new Entry().buildEntry(container, name, path, cmd));
     }
 
     public void executeAll() {
@@ -98,8 +133,8 @@ public class Controller implements Initializable {
     public void save(ActionEvent e) {
         loadRecentFolders();
         File savedFile = chooseFile(true);
-        saveToFile(savedFile);
         if(savedFile != null) {
+            saveToFile(savedFile);
             Utils.saveDirReference(DirType.LAST_SAVED, savedFile.getParent());
         }
     }
@@ -107,28 +142,11 @@ public class Controller implements Initializable {
     public void load(ActionEvent e) {
         loadRecentFolders();
         File loadedFile = chooseFile(false);
-        loadFromFile(loadedFile);
         if(loadedFile != null) {
+            loadFromFile(loadedFile);
             Utils.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
             Utils.saveRecentDir(loadedFile.getAbsolutePath());
             refreshRecentlyOpenedFolders();
-        }
-    }
-    private void refreshRecentlyOpenedFolders(){
-        openRecent.getItems().clear();
-        JSONArray recentFolders = Utils.getRecentFiles();
-        for (Object s : recentFolders.toList()){
-            String recentFolder = s.toString();
-            MenuItem m = new MenuItem();
-            m.setText(recentFolder);
-            m.setOnAction((actionEvent)->{
-                File file = new File(recentFolder);
-                if(file.exists()){
-                    loadFromFile(file);
-                }
-            });
-            m.setDisable(!new File(recentFolder).exists());
-            openRecent.getItems().add(m);
         }
     }
 
@@ -162,14 +180,7 @@ public class Controller implements Initializable {
     }
 
     private File chooseFile(boolean save){
-        File file = null;
-        if(save){
-            file = Utils.chooseFile(true, lastSaved);
-        }
-        else{
-            file = Utils.chooseFile(false, lastLoaded);
-        }
-        return file;
+        return Utils.chooseFile(save, save ? lastSaved : lastLoaded);
     }
 
     private void setCurrentCmdText(String text, Button currentCmd){
@@ -183,5 +194,10 @@ public class Controller implements Initializable {
     public void printCurrentCmd(ActionEvent e){
         OutputPopup.outputPopup(currentCmdText, "Commands Executed");
     }
-
+    public void lightMode(ActionEvent e){
+        Main.setThemeMode(false);
+    }
+    public void darkMode(ActionEvent e){
+        Main.setThemeMode(true);
+    }
 }

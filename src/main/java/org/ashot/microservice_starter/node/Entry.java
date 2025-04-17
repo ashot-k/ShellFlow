@@ -9,8 +9,8 @@ import org.ashot.microservice_starter.data.constant.TextFieldType;
 
 public class Entry {
     private static final double PREF_NAME_FIELD_WIDTH = 200;
-    private static final double PREF_PATH_FIELD_WIDTH = 300;
-    private static final double PREF_COMMAND_FIELD_WIDTH = 300;
+    private static final double PREF_PATH_FIELD_WIDTH = 350;
+    private static final double PREF_COMMAND_FIELD_WIDTH = 350;
 
     public HBox buildEmptyEntry(Pane v) {
         return buildEntry(v, "", "", "");

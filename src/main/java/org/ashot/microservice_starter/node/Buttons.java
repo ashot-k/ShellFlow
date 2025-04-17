@@ -1,41 +1,26 @@
 package org.ashot.microservice_starter.node;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
-import org.ashot.microservice_starter.Utils;
-import org.ashot.microservice_starter.data.CommandExecution;
 import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Icons;
+import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 
 import java.io.IOException;
 
 public class Buttons {
-    public static final int SIZE = 24;
-    private static final int ORDERING_BUTTON_SIZE = 36;
+    public static final int SIZE = 18;
+    public static final int EXECUTE_BUTTON_SIZE = 42;
+    public static final int CLOSE_BUTTON_SIZE = 32;
 
     public static Button deleteEntryButton(Pane container, HBox row) {
-        Button btn = new Button("");
+        Button btn = new Button("", Icons.getCloseButtonIcon(CLOSE_BUTTON_SIZE));
         btn.setId(ButtonType.typeToShort(ButtonType.DELETE));
-        btn.setOnAction(actionEvent -> {
-            container.getChildren().remove(row);
-        });
-        Image closeImg = new Image(
-                Utils.getIconAsInputStream("close-icon.png"),
-                SIZE, SIZE,
-                true, false
-        );
-        btn.setShape(new Circle(SIZE));
-        btn.setMaxSize(SIZE, SIZE);
-        btn.setMinSize(SIZE, SIZE);
-        btn.setGraphic(new ImageView(closeImg));
-        btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        btn.setOnAction(_ -> container.getChildren().remove(row));
         btn.getStyleClass().add("close-btn");
         return btn;
     }
@@ -44,18 +29,16 @@ public class Buttons {
     public static Button orderingButton(boolean direction){
         Button btn = new Button();
         if(direction){
-            btn.setOnAction(actionEvent -> setupOrderingButton(true, (HBox) btn.getParent().getParent()));
-//            btn.setGraphic(new ImageView(new Image(Icons.getArrowUpIcon() , ORDERING_BUTTON_SIZE, ORDERING_BUTTON_SIZE, true, false)));
-            btn.setGraphic(Icons.getChevronUpIcon(ORDERING_BUTTON_SIZE));
+            btn.setOnAction(actionEvent -> performOrdering(true, (HBox) btn.getParent().getParent()));
+            btn.setGraphic(Icons.getChevronUpIcon(SIZE));
         }else{
-            btn.setOnAction(actionEvent -> setupOrderingButton(false, (HBox) btn.getParent().getParent()));
-//            btn.setGraphic(new ImageView(new Image(Icons.getArrowDownIcon(), ORDERING_BUTTON_SIZE, ORDERING_BUTTON_SIZE, true, false)));
-            btn.setGraphic(Icons.getChevronDownIcon(ORDERING_BUTTON_SIZE));
+            btn.setOnAction(actionEvent -> performOrdering(false, (HBox) btn.getParent().getParent()));
+            btn.setGraphic(Icons.getChevronDownIcon(SIZE));
         }
         return btn;
     }
 
-    private static void setupOrderingButton(boolean direction, HBox row){
+    private static void performOrdering(boolean direction, HBox row){
         Pane parent = (Pane) row.getParent();
         int idxOfCurrent = parent.getChildren().indexOf(row);
         if(direction){
@@ -71,9 +54,10 @@ public class Buttons {
     }
 
     public static Button executeBtn(TextField nameField, TextField commandField, TextField pathField) {
-        Button executeBtn = new Button("Execute");
+        Button executeBtn = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
+        executeBtn.setBackground(Background.EMPTY);
         executeBtn.setId(ButtonType.typeToShort(ButtonType.EXECUTION));
-        executeBtn.setOnAction(actionEvent -> {
+        executeBtn.setOnAction(_ -> {
             try {
                 String nameSelected = nameField.getText();
                 String commandSelected = commandField.getText();

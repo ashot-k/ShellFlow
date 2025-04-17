@@ -1,27 +1,92 @@
 package org.ashot.microservice_starter.data.constant;
 
-import org.ashot.microservice_starter.Utils;
-import org.kordamp.ikonli.bootstrapicons.BootstrapIcons;
-import org.kordamp.ikonli.javafx.FontIcon;
+import javafx.scene.paint.Color;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import java.io.InputStream;
+import static org.ashot.microservice_starter.data.constant.IconUtils.setHover;
+import static org.ashot.microservice_starter.data.constant.IconUtils.setHoverToBrighter;
 
 public class Icons {
-    private static final String CHEVRON_UP_ICON_NAME = "bi-chevron-up";
-    private static final String CHEVRON_DOWN_ICON_NAME = "bi-chevron-down";
+     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
 
-    private static FontIcon getIcon(String name){
-       return new FontIcon(BootstrapIcons.findByDescription(name));
+    public static Glyph getChevronUpIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHEVRON_UP);
+        icon.size(size);
+        icon.color(Color.GRAY);
+        setHoverToBrighter(icon, Color.GRAY);
+        return icon;
     }
-
-    public static FontIcon getChevronUpIcon(int size){
-        FontIcon fontIcon = getIcon(CHEVRON_UP_ICON_NAME);
-        fontIcon.setIconSize(size);
-        return fontIcon;
+    public static Glyph getChevronDownIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHEVRON_DOWN);
+        icon.size(size);
+        icon.color(Color.GRAY);
+        setHoverToBrighter(icon, Color.GRAY);
+        return icon;
     }
-    public static FontIcon getChevronDownIcon(int size){
-        FontIcon fontIcon = getIcon(CHEVRON_DOWN_ICON_NAME);
-        fontIcon.setIconSize(size);
-        return fontIcon;
+    public static Glyph getCloseButtonIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
+        icon.size(size);
+        icon.color(Color.INDIANRED);
+        setHover(icon, Color.INDIANRED, Color.CRIMSON);
+        return icon;
+    }
+    public static Glyph getExecuteButtonIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLAY_CIRCLE);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getExecuteAllButtonIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLAY);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getAddButtonIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLUS_CIRCLE);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getLinuxIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.LINUX);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getWindowsIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.WINDOWS);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getOpenIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getOpenRecentIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN_ALT);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
+    public static Glyph getSaveIcon(int size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.SAVE);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
     }
 }

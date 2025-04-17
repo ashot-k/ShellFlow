@@ -15,32 +15,12 @@ import org.testfx.framework.junit5.ApplicationExtension;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 class UtilsTest {
-
-    @Test
-    void getIcon() {
-        URL iconURL = Utils.getIcon("close-icon.png");
-        Assertions.assertAll(
-                () -> assertNotNull(iconURL),
-                () -> assertTrue(new File(iconURL.toURI()).exists())
-        );
-    }
-
-    @Test
-    void getIconAsInputStream() {
-        InputStream iconStream = Utils.getIconAsInputStream("close-icon.png");
-        Assertions.assertAll(
-                () -> assertNotNull(iconStream),
-                () -> assertDoesNotThrow(()-> assertNotNull(iconStream.readAllBytes()))
-        );
-    }
 
     @Test
     void writeDataToFile(@TempDir File tempDir) {

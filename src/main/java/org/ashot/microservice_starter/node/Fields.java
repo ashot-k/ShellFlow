@@ -37,15 +37,4 @@ public class Fields {
         }
         return field.getText();
     }
-
-    public static TextField getTextFieldFromContainer(Pane v, TextFieldType type) {
-        if (v.getChildren().isEmpty() || type == null) {
-            return null;
-        }
-        Node n = v.lookup("#" + typeToShort(type));
-        if (!(n instanceof TextField field)) {
-            return null;
-        }
-        return field;
-    }
 }

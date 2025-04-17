@@ -18,9 +18,7 @@ public class ErrorPopup {
         text.setText(msg);
         text.setWrappingWidth(380);
         Button close = new Button("Close");
-        close.setOnAction(actionEvent1 -> {
-            errorStage.close();
-        });
+        close.setOnAction(actionEvent -> errorStage.close());
         errorContainer.getChildren().add(text);
         errorContainer.getChildren().add(close);
         errorContainer.getStyleClass().add("error-message");

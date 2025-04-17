@@ -14,12 +14,11 @@
 
 .ordering-container{
     -fx-spacing: 2px
+     -fx-pref-width: 250px;
 }
 
 .ordering-container *{
-/*
-     -fx-background-color: transparent;
-*/
+    -fx-background-color: transparent;
 }
 
 .error-message{
@@ -29,7 +28,7 @@
 }
 
 .output-message{
-    -fx-padding: 20px;
+    -fx-padding: 20px 20px 20px 20px;
     -fx-spacing: 30px;
     -fx-alignment: center;
 }

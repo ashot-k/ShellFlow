@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.execution;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.ashot.microservice_starter.Utils.calculateDelay;
 import static org.ashot.microservice_starter.Utils.getSystemOS;
-import static org.ashot.microservice_starter.data.CommandFormatUtils.*;
+import static org.ashot.microservice_starter.execution.CommandFormatUtils.*;
 
 
 public class CommandExecution {

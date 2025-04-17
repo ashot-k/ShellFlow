@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.execution;
 
 import java.util.List;
 

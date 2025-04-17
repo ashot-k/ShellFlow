@@ -1,4 +1,6 @@
-package org.ashot.microservice_starter.data;
+package org.ashot.microservice_starter.execution;
+
+import org.ashot.microservice_starter.node.popup.ErrorPopup;
 
 import java.io.IOException;
 
@@ -21,7 +23,7 @@ public class CommandExecutionThread implements Runnable {
             Thread.sleep(delay);
             CommandExecution.execute(cmd, path, name, false);
         } catch (InterruptedException | IOException e) {
-            throw new RuntimeException(e);
+            ErrorPopup.errorPopup(e.getMessage());
         }
     }
 }
