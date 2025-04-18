@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
@@ -54,7 +55,8 @@ public class CommandExecution {
             }
         }else if (getSystemOS().contains("windows")){
             try {
-                new ProcessBuilder("cmd.exe", "/c", "start", name, "wsl.exe", "-e", "bash", "-c", command + " exec bash").start();
+                Process process = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command ).start();
+                runInNewTab(process, name);
             } catch (IOException i) {
                 logger.error(i.getMessage());
             }
@@ -97,8 +99,8 @@ public class CommandExecution {
         TabPane tabs = controller.getTabs();
         Tab tab = new Tab(name.replace("\"", ""));
         tabs.getTabs().add(tab);
-        Text outputNode = new Text();
-        tab.setContent(outputNode);
+        ScrollPane scrollPane = new ScrollPane(new Text());
+        tab.setContent(scrollPane);
         tab.setClosable(true);
         CommandOutputThread thread = new CommandOutputThread(tab, process);
         new Thread(thread).start();

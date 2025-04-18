@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.execution;
 
 import javafx.application.Platform;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -20,29 +21,15 @@ public class CommandOutputThread implements Runnable{
     }
     @Override
     public void run() {
-      /*
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = "";
-        while (true) {
-            try {
-                if (!((line = reader.readLine()) != null)) break;
-            } catch (IOException e) {
-                ErrorPopup.errorPopup(e.getMessage());
-            }
-            t.setText(t.getText() + line);
-            System.out.println(line);
-        }*/
-        Text t = (Text) tab.getContent();
-
-        BufferedReader inputBufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()), 1);
-        BufferedReader errorBufferedReader = new BufferedReader(new InputStreamReader(process.getErrorStream()), 1);
+        Text t = (Text) ((ScrollPane) tab.getContent()).getContent();
         try(InputStreamReader isr = new InputStreamReader(process.getInputStream())) {
             int c;
             while((c = isr.read()) >= 0) {
                 System.out.print((char) c);
                 System.out.flush();
                 char finalC = (char) c;
-                Platform.runLater(()-> t.setText(t.getText() + String.valueOf(finalC)));
+                //add richtextfx instead
+                Platform.runLater(()-> t.setText(t.getText() + finalC));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
