@@ -17,7 +17,7 @@ public class Main extends Application {
     private static final int SIZE_Y = 650;
     private static final boolean RESIZABLE = false;
     private final String cssFileLocation = getClass().getResource("main.css").toExternalForm();
-    private final URL MAIN_FXML_LOCATION = getClass().getResource("microservice-main.fxml");
+    public static final URL MAIN_FXML_LOCATION = Main.class.getResource("microservice-main.fxml");
     private static final String DARK_MODE = new PrimerDark().getUserAgentStylesheet();
     private static final String LIGHT_MODE = new PrimerLight().getUserAgentStylesheet();
     private static boolean isDark = false;

@@ -1,9 +1,18 @@
 package org.ashot.microservice_starter.execution;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import org.ashot.microservice_starter.Controller;
+import org.ashot.microservice_starter.ControllerRegistry;
+import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.Utils;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
@@ -39,7 +48,9 @@ public class CommandExecution {
                 new ProcessBuilder("cmd.exe", "/c", "start", name, "wsl.exe", "-e", "bash", "-c", command + " exec bash").directory(new File(seqOption ? "/" : path)).start();
             } catch (IOException i) {
                 //TODO consider inputStreamReader in popup for sequential execution.
-                new ProcessBuilder("konsole", Utils.getTerminalArgument(), "bash", "-c", command + " exec bash").directory(new File(seqOption ? "/" : path)).start();
+
+                Process process = new ProcessBuilder("bash", "-c", command).directory(new File(seqOption ? "/" : path)).start();
+                runInNewTab(process, name);
             }
         }else if (getSystemOS().contains("windows")){
             try {
@@ -80,6 +91,17 @@ public class CommandExecution {
             }
         }
         return currentCmdText;
+    }
+    private static void runInNewTab(Process process, String name){
+        Controller controller = ControllerRegistry.get("main", Controller.class);
+        TabPane tabs = controller.getTabs();
+        Tab tab = new Tab(name.replace("\"", ""));
+        tabs.getTabs().add(tab);
+        Text outputNode = new Text();
+        tab.setContent(outputNode);
+        tab.setClosable(true);
+        CommandOutputThread thread = new CommandOutputThread(tab, process);
+        new Thread(thread).start();
     }
 
 }

@@ -37,6 +37,8 @@ public class Controller implements Initializable {
     @FXML
     private FlowPane container;
     @FXML
+    private TabPane tabs;
+    @FXML
     private Button osInfo;
     @FXML
     private Button newEntryBtn;
@@ -58,6 +60,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
         loadBtn.setGraphic(Icons.getOpenIcon(18));
         openRecent.setGraphic(Icons.getOpenRecentIcon(18));
@@ -199,5 +202,9 @@ public class Controller implements Initializable {
     }
     public void darkMode(ActionEvent e){
         Main.setThemeMode(true);
+    }
+
+    public TabPane getTabs(){
+        return tabs;
     }
 }
