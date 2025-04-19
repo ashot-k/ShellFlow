@@ -1,23 +1,23 @@
 package org.ashot.microservice_starter.execution;
 
+import com.pty4j.PtyProcess;
+import com.pty4j.PtyProcessBuilder;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.ControllerRegistry;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.Utils;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,16 +46,20 @@ public class CommandExecution {
         //TODO adjust for different os
         if (getSystemOS().contains("linux")) {
             try {
-                new ProcessBuilder("cmd.exe", "/c", "start", name, "wsl.exe", "-e", "bash", "-c", command + " exec bash").directory(new File(seqOption ? "/" : path)).start();
-            } catch (IOException i) {
-                //TODO consider inputStreamReader in popup for sequential execution.
-
-                Process process = new ProcessBuilder("bash", "-c", command).directory(new File(seqOption ? "/" : path)).start();
+                PtyProcessBuilder pb  = new PtyProcessBuilder()
+                        .setCommand(new String[]{"bash", "-c", command})
+                        .setDirectory(new File(seqOption ? "/" : path).getAbsolutePath());
+                PtyProcess process = pb.start();
                 runInNewTab(process, name);
+            } catch (IOException i) {
+                ErrorPopup.errorPopup(i.getMessage());
             }
         }else if (getSystemOS().contains("windows")){
             try {
-                Process process = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command ).start();
+                PtyProcessBuilder pb  = new PtyProcessBuilder()
+                        .setCommand(new String[]{"wsl.exe", "-e", "bash", "-c", command})
+                        .setDirectory(new File(seqOption ? "/" : path).getAbsolutePath());
+                PtyProcess process = pb.start();
                 runInNewTab(process, name);
             } catch (IOException i) {
                 logger.error(i.getMessage());
@@ -76,7 +80,7 @@ public class CommandExecution {
             String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND);
             String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH);
             if (!seqOption) {
-                currentCmdText = currentCmdText.isEmpty() ? command : currentCmdText + "\n" + command;
+                currentCmdText = currentCmdText.isEmpty() ? command : currentCmdText + "\n" + command + " at " + path;
                 long timeInMS = calculateDelay(idx, delayPerCmd);
                 CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
                 new Thread(t).start();
@@ -97,11 +101,25 @@ public class CommandExecution {
     private static void runInNewTab(Process process, String name){
         Controller controller = ControllerRegistry.get("main", Controller.class);
         TabPane tabs = controller.getTabs();
+
+        CodeArea codeArea = new CodeArea();
+        codeArea.setWrapText(true);
+        codeArea.setPrefWidth(Main.SIZE_X);
+        codeArea.getStyleClass().add("command-output-container");
+        codeArea.setEditable(false);
+        VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(codeArea);
+        scrollPane.setPrefWidth(Main.SIZE_X);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
         Tab tab = new Tab(name.replace("\"", ""));
-        tabs.getTabs().add(tab);
-        ScrollPane scrollPane = new ScrollPane(new Text());
         tab.setContent(scrollPane);
         tab.setClosable(true);
+        tab.setOnClosed((_)-> process.destroy());
+
+        Platform.runLater(() -> {
+            tabs.getTabs().add(tab);
+            tabs.getSelectionModel().select(tab);
+        });
         CommandOutputThread thread = new CommandOutputThread(tab, process);
         new Thread(thread).start();
     }

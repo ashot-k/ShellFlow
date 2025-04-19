@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>microservice_starter</artifactId>
-    <version>0.4.5</version>
+    <version>0.4.6</version>
     <name>microservice_starter</name>
 
     <properties>
@@ -38,6 +38,16 @@
             <groupId>io.github.mkpaz</groupId>
             <artifactId>atlantafx-base</artifactId>
             <version>${atlantafx.themes.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.pty4j</groupId>
+            <artifactId>pty4j</artifactId>
+            <version>0.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.11.5</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>

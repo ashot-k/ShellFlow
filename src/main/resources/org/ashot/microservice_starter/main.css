@@ -2,10 +2,17 @@
    -fx-font-family: "Noto Sans";
    -fx-padding: 10px;
 }
+.light-mode-text .text{
+     -fx-font-size: 18px !important;
+}
 
+.dark-mode-text .text{
+     -fx-font-size: 18px !important;
+}
 #container .entry{
     -fx-spacing: 10px;
     -fx-alignment: center;
+    -fx-padding: 10px 10px 10px 10px;
 }
 
 .name-field, .path-field, .command-field{
@@ -13,8 +20,7 @@
 }
 
 .ordering-container{
-    -fx-spacing: 2px
-     -fx-pref-width: 250px;
+    -fx-spacing: 2px;
 }
 
 .ordering-container *{
@@ -28,12 +34,46 @@
 }
 
 .output-message{
-    -fx-padding: 20px 20px 20px 20px;
-    -fx-spacing: 30px;
+    -fx-padding: 10px 10px 10px 10px;
     -fx-alignment: center;
+    -fx-background-color: #2D2A2E;
+}
+.output-message *{
+    -fx-background-color: #2D2A2E;
 }
 
 .close-btn{
     -fx-background-color: transparent;
     -fx-padding: 0 0 0 0;
 }
+.command-output-container{
+    -fx-padding: 0 10px 0 10px;
+    -fx-background-color: #2D2A2E;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+
+/* Reset */
+.ansi-reset {
+  -fx-fill: inherit;
+  -fx-background-color: transparent;
+  -fx-font-weight: normal;
+  -fx-font-style: normal;
+  -fx-underline: false;
+  -fx-strikethrough: false;
+}
+
+/* Text styles */
+.ansi-bold { -fx-font-weight: bold; }
+.ansi-dim  { -fx-opacity: 1; }
+.ansi-italic { -fx-font-style: italic; }
+.ansi-underline { -fx-underline: true; }
+.ansi-strikethrough { -fx-strikethrough: true; }
+.ansi-fg-bright-black   { -fx-fill: #A9A9A9 !important; }  /* Light Gray */
+.ansi-fg-bright-red     { -fx-fill: #FF0000 !important; }  /* Bright Red */
+.ansi-fg-bright-green   { -fx-fill: #32FF32 !important; }  /* Neon Green */
+.ansi-fg-bright-yellow  { -fx-fill: #FFFF66 !important; }  /* Bright Yellow */
+.ansi-fg-bright-blue    { -fx-fill: #66B2FF !important; }  /* Sky Blue */
+.ansi-fg-bright-magenta { -fx-fill: #FF66FF !important; }  /* Hot Pink */
+.ansi-fg-bright-cyan    { -fx-fill: #66FFFF !important; }  /* Electric Cyan */
+.ansi-fg-bright-white   { -fx-fill: #ffffff !important; }  /* Pure White */

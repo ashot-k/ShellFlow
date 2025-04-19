@@ -109,6 +109,7 @@ public class Controller implements Initializable {
             openRecent.getItems().add(m);
         }
     }
+
     private List<String> disabledRecentFoldersToRemove(){
         List<String> list = new ArrayList<>();
         for(MenuItem m : openRecent.getItems()){

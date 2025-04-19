@@ -13,10 +13,10 @@ import java.net.URL;
 
 public class Main extends Application {
 
-    private static final int SIZE_X = 1200;
-    private static final int SIZE_Y = 650;
-    private static final boolean RESIZABLE = false;
-    private final String cssFileLocation = getClass().getResource("main.css").toExternalForm();
+    public static final int SIZE_X = 1200;
+    public static final int SIZE_Y = 750;
+    private static final boolean RESIZABLE = true;
+    public static final String CSS_FILE_LOCATION = Main.class.getResource("main.css").toExternalForm();
     public static final URL MAIN_FXML_LOCATION = Main.class.getResource("microservice-main.fxml");
     private static final String DARK_MODE = new PrimerDark().getUserAgentStylesheet();
     private static final String LIGHT_MODE = new PrimerLight().getUserAgentStylesheet();
@@ -31,21 +31,22 @@ public class Main extends Application {
         setThemeMode(true);
         Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
         Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
-        scene.getStylesheets().add(cssFileLocation);
+        scene.getStylesheets().add(CSS_FILE_LOCATION);
         stage.setTitle("Microservice Starter");
         stage.setScene(scene);
         stage.setResizable(RESIZABLE);
         stage.show();
     }
+
     public static void setThemeMode(boolean darkMode){
         if(darkMode) {
-            isDark = true;
             Application.setUserAgentStylesheet(DARK_MODE);
         }else {
-            isDark = false;
             Application.setUserAgentStylesheet(LIGHT_MODE);
         }
+        isDark = darkMode;
     }
+
     public static boolean getDarkModeSetting(){
         return isDark;
     }
