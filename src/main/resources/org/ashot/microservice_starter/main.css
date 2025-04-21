@@ -48,7 +48,7 @@
 }
 .command-output-container{
     -fx-padding: 0 10px 0 10px;
-    -fx-background-color: #2D2A2E;
+    -fx-background-color: transparent;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -69,7 +69,7 @@
 .ansi-italic { -fx-font-style: italic; }
 .ansi-underline { -fx-underline: true; }
 .ansi-strikethrough { -fx-strikethrough: true; }
-.ansi-fg-bright-black   { -fx-fill: #A9A9A9 !important; }  /* Light Gray */
+.ansi-fg-bright-black   { -fx-fill: #000000 !important; }  /* Light Gray */
 .ansi-fg-bright-red     { -fx-fill: #FF0000 !important; }  /* Bright Red */
 .ansi-fg-bright-green   { -fx-fill: #32FF32 !important; }  /* Neon Green */
 .ansi-fg-bright-yellow  { -fx-fill: #FFFF66 !important; }  /* Bright Yellow */

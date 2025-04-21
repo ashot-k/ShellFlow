@@ -5,7 +5,6 @@ module org.ashot.microservice_starter {
     requires org.slf4j;
     requires org.controlsfx.controls;
     requires org.fxmisc.richtext;
-    requires pty4j;
     requires org.fxmisc.flowless;
 
 

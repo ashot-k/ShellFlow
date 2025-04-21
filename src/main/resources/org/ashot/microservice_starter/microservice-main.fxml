@@ -80,7 +80,7 @@
                     <Button fx:id="executeAllBtn" disable="true" mnemonicParsing="false" onAction="#executeAll" prefHeight="30.0" prefWidth="160.0" text="Run All" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <VBox alignment="CENTER" prefHeight="80.0" prefWidth="251.0" style="-fx-spacing: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Slider fx:id="delayPerCmd" majorTickUnit="2.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                        <Slider fx:id="delayPerCmd" majorTickUnit="2.0" min="1" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
                            <font>
                               <Font size="14.0" />

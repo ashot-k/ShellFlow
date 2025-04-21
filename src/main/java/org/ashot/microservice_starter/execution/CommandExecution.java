@@ -1,22 +1,18 @@
 package org.ashot.microservice_starter.execution;
 
-import com.pty4j.PtyProcess;
-import com.pty4j.PtyProcessBuilder;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.ControllerRegistry;
-import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
+import org.ashot.microservice_starter.node.TabOutput;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,30 +39,29 @@ public class CommandExecution {
         }
         name = formatName(name);
         logger.info("Name: {} Path: {} Command: {}", name, path, command);
-        //TODO adjust for different os
+        ProcessBuilder pb = null;
         if (getSystemOS().contains("linux")) {
-            try {
-                PtyProcessBuilder pb  = new PtyProcessBuilder()
-                        .setCommand(new String[]{"bash", "-c", command})
-                        .setDirectory(new File(seqOption ? "/" : path).getAbsolutePath());
-                PtyProcess process = pb.start();
-                runInNewTab(process, name);
-            } catch (IOException i) {
-                ErrorPopup.errorPopup(i.getMessage());
-            }
+            pb = new ProcessBuilder().command("bash", "-c", command).directory(new File(seqOption ? "/" : path));
         }else if (getSystemOS().contains("windows")){
-            try {
-                PtyProcessBuilder pb  = new PtyProcessBuilder()
-                        .setCommand(new String[]{"wsl.exe", "-e", "bash", "-c", command})
-                        .setDirectory(new File(seqOption ? "/" : path).getAbsolutePath());
-                PtyProcess process = pb.start();
-                runInNewTab(process, name);
-            } catch (IOException i) {
-                logger.error(i.getMessage());
-            }
+            pb = new ProcessBuilder().command("wsl.exe", "-e", "bash", "-c", command).directory(new File(seqOption ? "/" : path));
         }
+        Process process = null;
+        try {
+            process = pb.start();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        runInNewTab(process, name);
     }
-
+    /*  try {
+              PtyProcessBuilder pb  = new PtyProcessBuilder()
+                      .setCommand(new String[]{"wsl.exe", "-e", "bash", "-c", command})
+                      .setDirectory(new File(seqOption ? "/" : path).getAbsolutePath());
+              PtyProcess process = pb.start();
+              runInNewTab(process, name);
+          } catch (IOException i) {
+              logger.error(i.getMessage());
+          }*/
     public static String executeAll(Pane container, boolean seqOption, String seqName, int delayPerCmd) {
         String currentCmdText = "";
         ObservableList<Node> entryChildren = container.getChildren();
@@ -101,27 +96,15 @@ public class CommandExecution {
     private static void runInNewTab(Process process, String name){
         Controller controller = ControllerRegistry.get("main", Controller.class);
         TabPane tabs = controller.getTabs();
-
-        CodeArea codeArea = new CodeArea();
-        codeArea.setWrapText(true);
-        codeArea.setPrefWidth(Main.SIZE_X);
-        codeArea.getStyleClass().add("command-output-container");
-        codeArea.setEditable(false);
-        VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(codeArea);
-        scrollPane.setPrefWidth(Main.SIZE_X);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        Tab tab = new Tab(name.replace("\"", ""));
-        tab.setContent(scrollPane);
-        tab.setClosable(true);
-        tab.setOnClosed((_)-> process.destroy());
+        TabOutput tabOutput = new TabOutput(new Tab(), new CodeArea(), process, name);
 
         Platform.runLater(() -> {
-            tabs.getTabs().add(tab);
-            tabs.getSelectionModel().select(tab);
+            tabs.getTabs().add(tabOutput.getTab());
+            tabs.getSelectionModel().select(tabOutput.getTab());
         });
-        CommandOutputThread thread = new CommandOutputThread(tab, process);
-        new Thread(thread).start();
+        CommandOutputThread thread = new CommandOutputThread(tabOutput);
+        Thread t = new Thread(thread);
+        t.start();
     }
 
 }

@@ -2,62 +2,133 @@ package org.ashot.microservice_starter.execution;
 
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
-import org.ashot.microservice_starter.AnsiColorParser;
 import org.ashot.microservice_starter.Main;
-import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.ashot.microservice_starter.node.TabOutput;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class CommandOutputThread implements Runnable{
+public class CommandOutputThread implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(CommandOutputThread.class);
+    private static final int MAX_LINES = 2500;
+    private final TabOutput tabOutput;
     private final Tab tab;
+    private final CodeArea codeArea;
     private final Process process;
-    public CommandOutputThread(Tab tab, Process process){
-        this.tab = tab;
-        this.process = process;
-    }
-    public void run() {
-        VirtualizedScrollPane v =  ((VirtualizedScrollPane) tab.getContent());
-        CodeArea codeArea = (CodeArea) v.getContent();
 
+
+    private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
+
+    public CommandOutputThread(TabOutput tabOutput) {
+        this.tabOutput = tabOutput;
+        this.tab = tabOutput.getTab();
+        this.process = tabOutput.getProcess();
+        this.codeArea = tabOutput.getCodeArea();
+    }
+
+    public void run() {
+        setupScheduledOutputPolling();
+        setupOutputReading();
+    }
+      /*  while (true) {
+            now = System.currentTimeMillis();
+            if(now - start > 1) {
+                try {
+                    if ((line = reader.readLine()) == null) break;
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+                String finalLine = line;
+                Platform.runLater(() -> {
+                    if (!finalLine.isBlank()) {
+                        int lines = ((List<?>) codeArea.getParagraphs()).size();
+                        if (lines > 1500) {
+                            int endLine = codeArea.getAbsolutePosition(1, 0);
+                            codeArea.deleteText(0, endLine);
+                        }
+                        appendColoredLine(finalLine, codeArea);
+                        if (!usedScrolling) {
+                            codeArea.moveTo(codeArea.getLength());
+                            codeArea.requestFollowCaret();
+                        }
+                    }
+                });
+                start = now;
+            }
+        }
+    }*/
+
+    private void setupScheduledOutputPolling(){
+        try (ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor()) {
+            executor.scheduleAtFixedRate(() -> {
+                if (!pendingLines.isEmpty()) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    List<String> batch;
+                    synchronized (pendingLines) {
+                        batch = new ArrayList<>(pendingLines);
+                        pendingLines.clear();
+                    }
+                    Platform.runLater(() -> {
+                        for (String newLine : batch) {
+                            stringBuilder.append(newLine).append("\n");
+                        }
+                        appendColoredLine(stringBuilder.toString(), codeArea);
+                        if (!tabOutput.usedScrolling()) {
+                            codeArea.moveTo(codeArea.getLength());
+                            codeArea.requestFollowCaret();
+                        }
+                        int lines = ((List<?>) codeArea.getParagraphs()).size();
+                        if (lines > MAX_LINES) {
+                            int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
+                            codeArea.deleteText(0, end);
+                        }
+                    });
+                }
+            }, 0, 100, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void setupOutputReading(){
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
+        String line = "";
         while (true) {
             try {
                 if ((line = reader.readLine()) == null) break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            String finalLine = line;
-            Platform.runLater(() -> {
-                System.out.println(finalLine); // Still logs to console
-                if(!finalLine.isBlank()){
-                    appendColoredLine(finalLine, codeArea);
+                if (!line.isBlank()) {
+                    pendingLines.add(line);
                 }
-            });
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
         }
     }
 
-
     private void appendColoredLine(String line, CodeArea codeArea) {
-        String plainText = line.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip for display
         int start = codeArea.getLength();
-        if(Main.getDarkModeSetting()) {
-            codeArea.getStyleClass().add("dark-mode-text");
-        }
-        else {
-            codeArea.getStyleClass().add("light-mode-text");
-        }
-        codeArea.appendText(plainText + "\n");
-        try {
+        line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip for display
+        codeArea.appendText(line);
+        StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
+        String defaultFg = Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+        spans.add(List.of(defaultFg), codeArea.getLength());
+        codeArea.setStyleSpans(start, spans.create());
+    }
+        /*try {
+        int start = codeArea.getLength();
             StyleSpans<Collection<String>> styles = AnsiColorParser.parse(line);
             codeArea.setStyleSpans(start, styles);
         }catch (IllegalStateException e){
             System.out.println(e.getMessage());
-        }
-    }
+        }*/
 }
