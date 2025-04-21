@@ -13,6 +13,7 @@ import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
+import org.ashot.microservice_starter.node.setup.PresetSetupTab;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -70,14 +71,15 @@ public class Controller implements Initializable {
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
         executeAllBtn.setContentDisplay(ContentDisplay.RIGHT);
         executeAllBtn.setGraphicTextGap(12);
-        container.getChildren().addListener((ListChangeListener<Node>) c -> {
-            executeAllBtn.setDisable(container.getChildren().isEmpty());
-        });
-        sequentialOption.selectedProperty().addListener((_, _, newValue) -> {
-            sequentialName.setVisible(newValue);
-        });
+        container.getChildren().addListener((ListChangeListener<Node>) c ->
+            executeAllBtn.setDisable(container.getChildren().isEmpty())
+        );
+        sequentialOption.selectedProperty().addListener((_, _, newValue) ->
+            sequentialName.setVisible(newValue)
+        );
         openRecent.setOnShowing(e -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
+        tabs.getTabs().add(PresetSetupTab.setupPresetTab());
         newEntry(null);
     }
 

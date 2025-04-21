@@ -35,14 +35,16 @@ public class Utils {
         return jsonObject;
     }
 
-    public static void writeDataToFile(File fileToSave, JSONObject data) {
+    public static boolean writeDataToFile(File fileToSave, JSONObject data) {
         try {
             FileWriter f = new FileWriter(fileToSave);
             data.write(f, 1, 1);
             f.close();
+            return true;
         } catch (IOException ex) {
             ErrorPopup.errorPopup(ex.getMessage());
         }
+        return false;
     }
 
     private static JSONObject addEntryToJSONObject(JSONObject object, Node node) {
@@ -147,6 +149,7 @@ public class Utils {
         }
         return jsonObject;
     }
+
     public static JSONObject saveRecentDir(String path){
         if(path == null) return null;
         JSONObject jsonObject = null;
