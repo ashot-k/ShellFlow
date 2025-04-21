@@ -27,6 +27,7 @@ public class CommandOutputThread implements Runnable {
     private final Tab tab;
     private final CodeArea codeArea;
     private final Process process;
+    private long startTime;
 
 
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
@@ -36,6 +37,7 @@ public class CommandOutputThread implements Runnable {
         this.tab = tabOutput.getTab();
         this.process = tabOutput.getProcess();
         this.codeArea = tabOutput.getCodeArea();
+        this.startTime = System.currentTimeMillis();
     }
 
     public void run() {
@@ -70,37 +72,36 @@ public class CommandOutputThread implements Runnable {
         }
     }*/
 
-    private void setupScheduledOutputPolling(){
-        try (ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor()) {
-            executor.scheduleAtFixedRate(() -> {
-                if (!pendingLines.isEmpty()) {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    List<String> batch;
-                    synchronized (pendingLines) {
-                        batch = new ArrayList<>(pendingLines);
-                        pendingLines.clear();
-                    }
-                    Platform.runLater(() -> {
-                        for (String newLine : batch) {
-                            stringBuilder.append(newLine).append("\n");
-                        }
-                        appendColoredLine(stringBuilder.toString(), codeArea);
-                        if (!tabOutput.usedScrolling()) {
-                            codeArea.moveTo(codeArea.getLength());
-                            codeArea.requestFollowCaret();
-                        }
-                        int lines = ((List<?>) codeArea.getParagraphs()).size();
-                        if (lines > MAX_LINES) {
-                            int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
-                            codeArea.deleteText(0, end);
-                        }
-                    });
+    private void setupScheduledOutputPolling() {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(() -> {
+            if (!pendingLines.isEmpty()) {
+                StringBuilder stringBuilder = new StringBuilder();
+                List<String> batch;
+                synchronized (pendingLines) {
+                    batch = new ArrayList<>(pendingLines);
+                    pendingLines.clear();
                 }
-            }, 0, 100, TimeUnit.MILLISECONDS);
-        }
+                Platform.runLater(() -> {
+                    for (String newLine : batch) {
+                        stringBuilder.append(newLine).append("\n");
+                    }
+                    appendColoredLine(stringBuilder.toString(), codeArea);
+                    int lines = ((List<?>) codeArea.getParagraphs()).size();
+                    if (lines > MAX_LINES) {
+                        int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
+                        codeArea.deleteText(0, end);
+                    }
+                    if (!tabOutput.usedScrolling()) {
+                        codeArea.moveTo(codeArea.getLength());
+                        codeArea.requestFollowCaret();
+                    }
+                });
+            }
+        }, 0, 10, TimeUnit.MILLISECONDS);
     }
 
-    private void setupOutputReading(){
+    private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = "";
         while (true) {
@@ -113,6 +114,7 @@ public class CommandOutputThread implements Runnable {
                 logger.error(e.getMessage());
             }
         }
+        pendingLines.add("\nCommand(s) finished in: " + ((System.currentTimeMillis() - startTime)/ 1000l)  + "s");
     }
 
     private void appendColoredLine(String line, CodeArea codeArea) {

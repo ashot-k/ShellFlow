@@ -47,6 +47,7 @@
     -fx-padding: 0 0 0 0;
 }
 .command-output-container{
+    -fx-font-family: "Noto Sans" !important;
     -fx-padding: 0 10px 0 10px;
     -fx-background-color: transparent;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);

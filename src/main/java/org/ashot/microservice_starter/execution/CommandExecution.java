@@ -43,15 +43,18 @@ public class CommandExecution {
         if (getSystemOS().contains("linux")) {
             pb = new ProcessBuilder().command("bash", "-c", command).directory(new File(seqOption ? "/" : path));
         }else if (getSystemOS().contains("windows")){
-            pb = new ProcessBuilder().command("wsl.exe", "-e", "bash", "-c", command).directory(new File(seqOption ? "/" : path));
+            pb = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
         }
         Process process = null;
         try {
             process = pb.start();
+            runInNewTab(process, name);
+            logger.info(String.valueOf(process.exitValue()));
+            logger.info(String.valueOf(process == null));
+            logger.info(String.valueOf(process.getInputStream() == null));
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         }
-        runInNewTab(process, name);
     }
     /*  try {
               PtyProcessBuilder pb  = new PtyProcessBuilder()
@@ -103,8 +106,7 @@ public class CommandExecution {
             tabs.getSelectionModel().select(tabOutput.getTab());
         });
         CommandOutputThread thread = new CommandOutputThread(tabOutput);
-        Thread t = new Thread(thread);
-        t.start();
+        new Thread(thread).start();
     }
 
 }
