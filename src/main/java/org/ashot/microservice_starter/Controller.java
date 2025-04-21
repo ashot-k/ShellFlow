@@ -196,7 +196,7 @@ public class Controller implements Initializable {
         currentCmd.setVisible(false);
     }
     public void printCurrentCmd(ActionEvent e){
-        OutputPopup.outputPopup(currentCmdText, "Commands Executed");
+        OutputPopup.outputPopup(currentCmdText, "Commands Executed", sequentialOption.isSelected());
     }
     public void lightMode(ActionEvent e){
         Main.setThemeMode(false);

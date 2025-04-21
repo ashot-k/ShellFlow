@@ -27,8 +27,7 @@ public class CommandOutputThread implements Runnable {
     private final Tab tab;
     private final CodeArea codeArea;
     private final Process process;
-    private long startTime;
-
+    private final long startTime;
 
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
 
@@ -44,33 +43,6 @@ public class CommandOutputThread implements Runnable {
         setupScheduledOutputPolling();
         setupOutputReading();
     }
-      /*  while (true) {
-            now = System.currentTimeMillis();
-            if(now - start > 1) {
-                try {
-                    if ((line = reader.readLine()) == null) break;
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                }
-                String finalLine = line;
-                Platform.runLater(() -> {
-                    if (!finalLine.isBlank()) {
-                        int lines = ((List<?>) codeArea.getParagraphs()).size();
-                        if (lines > 1500) {
-                            int endLine = codeArea.getAbsolutePosition(1, 0);
-                            codeArea.deleteText(0, endLine);
-                        }
-                        appendColoredLine(finalLine, codeArea);
-                        if (!usedScrolling) {
-                            codeArea.moveTo(codeArea.getLength());
-                            codeArea.requestFollowCaret();
-                        }
-                    }
-                });
-                start = now;
-            }
-        }
-    }*/
 
     private void setupScheduledOutputPolling() {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -98,7 +70,7 @@ public class CommandOutputThread implements Runnable {
                     }
                 });
             }
-        }, 0, 10, TimeUnit.MILLISECONDS);
+        }, 0, 5, TimeUnit.MILLISECONDS);
     }
 
     private void setupOutputReading() {

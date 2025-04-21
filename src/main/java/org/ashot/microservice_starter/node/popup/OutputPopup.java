@@ -1,10 +1,14 @@
 package org.ashot.microservice_starter.node.popup;
 
 import atlantafx.base.theme.PrimerDark;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -17,17 +21,22 @@ public class OutputPopup {
     private static final boolean RESIZABLE = true;
     private static final int TEXT_SIZE = 24;
 
-    public static TextArea outputPopup(String msg, String title) {
+    public static TextArea outputPopup(String msg, String title, boolean sequential) {
         Stage outputStage = new Stage();
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
 
         Scene scene = new Scene(scrollPane, SIZE_X, SIZE_Y, Color.BLACK);
         scene.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
         scene.getStylesheets().add(Main.CSS_FILE_LOCATION);
 
         TextArea textArea = new TextArea();
-        textArea.setText(formatText(msg));
+        if(!sequential) {
+            textArea.setText(formatText(msg));
+        }else {
+            textArea.setText(msg);
+        }
         textArea.setWrapText(true);
         textArea.setFont(Font.font(TEXT_SIZE));
         textArea.setEditable(false);
@@ -36,7 +45,6 @@ public class OutputPopup {
         outputContainer.getChildren().add(textArea);
         outputContainer.getStyleClass().add("output-message");
         scrollPane.setContent(outputContainer);
-
         outputStage.setScene(scene);
         outputStage.setTitle(title);
         outputStage.setResizable(RESIZABLE);
@@ -44,12 +52,13 @@ public class OutputPopup {
         outputPopupStage = outputStage;
         return textArea;
     }
+
     private static String formatText(String msg){
         String[] strings = msg.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < strings.length; i++) {
             String s = strings[i];
-            stringBuilder.append(i + 1).append(".").append(" ").append(s).append("\n");
+            stringBuilder.append(i + 1).append(".").append(" ").append(s).append("\n\n");
         }
         return stringBuilder.toString();
     }

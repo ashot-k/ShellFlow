@@ -48,10 +48,8 @@ public class CommandExecution {
         Process process = null;
         try {
             process = pb.start();
+            Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
             runInNewTab(process, name);
-            logger.info(String.valueOf(process.exitValue()));
-            logger.info(String.valueOf(process == null));
-            logger.info(String.valueOf(process.getInputStream() == null));
         }catch (Exception e){
             logger.error(e.getMessage());
         }

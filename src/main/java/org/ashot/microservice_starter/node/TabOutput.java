@@ -30,16 +30,15 @@ public class TabOutput {
         codeArea.setEditable(false);
         VirtualizedScrollPane<CodeArea> v = ((VirtualizedScrollPane<CodeArea>) tab.getContent());
         codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
-            usedScrolling = true;
-/*
-            if(v.getTotalHeightEstimate() - v.getEstimatedScrollY() <= 1000){
-                logger.info("scrolled to the end");
-//                usedScrolling = false;
+            if(e.getDeltaY() < 0) {
+                if (v.getTotalHeightEstimate() - v.getEstimatedScrollY() <= 1000) {
+                    logger.info("Scrolled to the end");
+                    usedScrolling = false;
+                }
             }
-            else {
+            else{
                 usedScrolling = true;
             }
-*/
         });
     }
 

@@ -1,6 +1,5 @@
 .root{
    -fx-font-family: "Noto Sans";
-   -fx-padding: 10px;
 }
 .light-mode-text .text{
      -fx-font-size: 18px !important;
@@ -35,7 +34,7 @@
 
 .output-message{
     -fx-padding: 10px 10px 10px 10px;
-    -fx-alignment: center;
+    -fx-alignment: top;
     -fx-background-color: #2D2A2E;
 }
 .output-message *{
