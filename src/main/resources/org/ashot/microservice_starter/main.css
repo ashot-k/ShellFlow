@@ -36,10 +36,10 @@
 .output-message{
     -fx-padding: 10px 10px 10px 10px;
     -fx-alignment: top;
-    -fx-background-color: #2D2A2E;
+    -fx-background-color:  #1b181b;
 }
 .output-message *{
-    -fx-background-color: #2D2A2E;
+    -fx-background-color:  transparent;
 }
 
 .close-btn{
@@ -49,8 +49,8 @@
 .command-output-container{
     -fx-font-family: "Noto Sans" !important;
     -fx-font-weight: 700;
-    -fx-padding: 0 10px 0 10px;
-    -fx-background-color: transparent;
+    -fx-padding: 0 15px 0 15px;
+    -fx-background-color:  #1b181b;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 

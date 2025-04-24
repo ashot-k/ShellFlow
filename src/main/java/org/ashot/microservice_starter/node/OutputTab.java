@@ -3,7 +3,6 @@ package org.ashot.microservice_starter.node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Main;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -15,9 +14,11 @@ public class OutputTab extends Tab{
     private final VirtualizedScrollPane<CodeArea> scrollPane;
     private final CodeArea codeArea;
     private final Process process;
+    private final OutputTabOptions outputTabOptions;
     private boolean usedScrolling = false;
 
     public OutputTab(CodeArea codeArea, Process process, String name){
+        this.outputTabOptions = new OutputTabOptions(this);
         this.codeArea = codeArea;
         this.process = process;
         this.scrollPane = new VirtualizedScrollPane<>(codeArea);
@@ -25,14 +26,12 @@ public class OutputTab extends Tab{
     }
 
     public void setupOutputTab(String name){
-        this.codeArea.setPrefWidth(Main.SIZE_X);
         this.codeArea.getStyleClass().add("command-output-container");
         this.codeArea.getStyleClass().add(Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text");
         this.codeArea.setEditable(false);
-        VirtualizedScrollPane<CodeArea> v = scrollPane;
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
             if(e.getDeltaY() < 0) {
-                if (v.getTotalHeightEstimate() - v.getEstimatedScrollY() <= 1000) {
+                if (scrollPane.getTotalHeightEstimate() - scrollPane.getEstimatedScrollY() <= 1000) {
                     this.usedScrolling = false;
                 }
             }
@@ -40,7 +39,6 @@ public class OutputTab extends Tab{
                 this.usedScrolling = true;
             }
         });
-        this.scrollPane.setPrefWidth(Main.SIZE_X);
         this.scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.setText(name.replace("\"", ""));
@@ -60,5 +58,8 @@ public class OutputTab extends Tab{
     }
     public VirtualizedScrollPane<CodeArea> getScrollPane() {
         return scrollPane;
+    }
+    public OutputTabOptions getOutputTabOptions() {
+        return outputTabOptions;
     }
 }

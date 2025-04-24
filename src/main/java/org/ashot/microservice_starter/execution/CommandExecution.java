@@ -102,6 +102,7 @@ public class CommandExecution {
         Platform.runLater(() -> {
             tabs.getTabs().add(outputTab);
             tabs.getSelectionModel().select(outputTab);
+            outputTab.getScrollPane().prefWidthProperty().bind(tabs.widthProperty());
         });
         CommandOutputThread thread = new CommandOutputThread(outputTab);
         new Thread(thread).start();

@@ -1,7 +1,6 @@
 package org.ashot.microservice_starter.execution;
 
 import javafx.application.Platform;
-import javafx.scene.control.Tab;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.node.OutputTab;
 import org.fxmisc.richtext.CodeArea;
