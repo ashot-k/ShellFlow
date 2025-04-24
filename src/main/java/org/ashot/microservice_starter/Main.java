@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.ashot.microservice_starter.registry.ProcessRegistry;
 
 import java.net.URL;
 
@@ -36,6 +37,11 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(RESIZABLE);
         stage.show();
+
+        stage.setOnCloseRequest((_)-> {
+            ProcessRegistry.killAllProcesses();
+            stage.close();
+        });
     }
 
     public static void setThemeMode(boolean darkMode){

@@ -1,10 +1,10 @@
-package org.ashot.microservice_starter;
+package org.ashot.microservice_starter.registry;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ControllerRegistry {
-    private static Map<String, Object> controllers = new HashMap<>();
+    private static final Map<String, Object> controllers = new HashMap<>();
 
     public static void register(String key, Object controller) {
         controllers.put(key, controller);

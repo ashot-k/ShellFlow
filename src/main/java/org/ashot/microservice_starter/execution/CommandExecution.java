@@ -7,11 +7,12 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
-import org.ashot.microservice_starter.ControllerRegistry;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
 import org.ashot.microservice_starter.node.OutputTab;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
+import org.ashot.microservice_starter.registry.ControllerRegistry;
+import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,21 +48,14 @@ public class CommandExecution {
         Process process = null;
         try {
             process = pb.start();
+            ProcessRegistry.register(String.valueOf(process.pid()), process);
             Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
             runInNewTab(process, name);
         }catch (Exception e){
             logger.error(e.getMessage());
         }
     }
-    /*  try {
-              PtyProcessBuilder pb  = new PtyProcessBuilder()
-                      .setCommand(new String[]{"wsl.exe", "-e", "bash", "-c", command})
-                      .setDirectory(new File(seqOption ? "/" : path).getAbsolutePath());
-              PtyProcess process = pb.start();
-              runInNewTab(process, name);
-          } catch (IOException i) {
-              logger.error(i.getMessage());
-          }*/
+
     public static String executeAll(Pane container, boolean seqOption, String seqName, int delayPerCmd) {
         String currentCmdText = "";
         ObservableList<Node> entryChildren = container.getChildren();

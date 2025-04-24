@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class PresetSetupTab {
+public class PresetSetupTab extends Tab{
     private static final Logger logger = LoggerFactory.getLogger(PresetSetupTab.class);
-    private PresetSetupTab(){}
+    public PresetSetupTab(){
+        setupPresetTab();
+    }
 
     private static final String TAB_NAME = "Preset Setup";
     private static final String COMMANDS = "commands";
@@ -30,11 +32,10 @@ public class PresetSetupTab {
     public static Map<String, String> commandsMap= new HashMap<>();
     public static Map<String, String> pathsMap= new HashMap<>();
 
-    public static Tab setupPresetTab(){
-        Tab tab = new Tab();
-        tab.setId("presetSetupTab");
-        tab.setText(TAB_NAME);
-        tab.setClosable(false);
+    public void setupPresetTab(){
+        this.setId("presetSetupTab");
+        this.setText(TAB_NAME);
+        this.setClosable(false);
 
         ScrollPane scrollPane = setupScrollPane();
         scrollPane.setFitToWidth(true);
@@ -57,9 +58,7 @@ public class PresetSetupTab {
                 saveAll
         );
         scrollPane.setContent(vBox);
-        tab.setContent(scrollPane);
-
-        return tab;
+        this.setContent(scrollPane);
     }
 
     private static boolean setupFromFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable){
