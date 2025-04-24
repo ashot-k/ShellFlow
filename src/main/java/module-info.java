@@ -14,4 +14,6 @@ module org.ashot.microservice_starter {
     opens org.ashot.microservice_starter to javafx.fxml;
     opens org.ashot.microservice_starter.node.setup to javafx.base;
     opens org.ashot.microservice_starter.node.popup to javafx.fxml;
+    exports org.ashot.microservice_starter.registry;
+    opens org.ashot.microservice_starter.registry to javafx.fxml;
 }

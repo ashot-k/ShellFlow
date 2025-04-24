@@ -17,6 +17,7 @@ import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.OutputTab;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.ashot.microservice_starter.node.setup.PresetSetupTab;
+import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -68,20 +69,13 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
-        loadBtn.setGraphic(Icons.getOpenIcon(18));
-        openRecent.setGraphic(Icons.getOpenRecentIcon(18));
-        saveBtn.setGraphic(Icons.getSaveIcon(18));
-        newEntryBtn.setGraphic(Icons.getAddButtonIcon(24));
-        newEntryBtn.setContentDisplay(ContentDisplay.RIGHT);
-        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
-        executeAllBtn.setContentDisplay(ContentDisplay.RIGHT);
-        executeAllBtn.setGraphicTextGap(12);
+        setupIcons();
         container.getChildren().addListener((ListChangeListener<Node>) c -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         tabs.prefWidthProperty().bind(((VBox)tabs.getParent().getParent()).widthProperty());
-        tabs.getTabs().add(PresetSetupTab.setupPresetTab());
+        tabs.getTabs().add(new PresetSetupTab());
         List<Node> setupOptions = setupSettings.getChildren().stream().toList();
         tabs.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
             setupSettings.getChildren().clear();
@@ -93,6 +87,14 @@ public class Controller implements Initializable {
             }
         });
         newEntry(null);
+    }
+
+    private void setupIcons(){
+        loadBtn.setGraphic(Icons.getOpenIcon(18));
+        openRecent.setGraphic(Icons.getOpenRecentIcon(18));
+        saveBtn.setGraphic(Icons.getSaveIcon(18));
+        newEntryBtn.setGraphic(Icons.getAddButtonIcon(24));
+        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
     }
 
     private void loadRecentFolders(){
@@ -163,20 +165,24 @@ public class Controller implements Initializable {
         if(loadedFile != null) {
             loadFromFile(loadedFile);
             Utils.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
-            Utils.saveRecentDir(loadedFile.getAbsolutePath());
             refreshRecentlyOpenedFolders();
         }
     }
 
     private File saveToFile(File fileToSave) {
+        log.debug("Saving file: {}", fileToSave.getAbsolutePath());
         JSONObject jsonObject = Utils.createSaveJSONObject(container, (int) delayPerCmd.getValue(), sequentialOption.isSelected(), sequentialName.getText());
         log.debug("Saving: {}", jsonObject.toString(1));
         Utils.writeDataToFile(fileToSave, jsonObject);
+        log.debug("Saved: {}", fileToSave.getAbsolutePath());
+        Utils.saveRecentDir(fileToSave.getAbsolutePath());
         return fileToSave;
     }
 
     private File loadFromFile(File fileToLoad) {
+        log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
         JSONObject jsonData = Utils.createJSONObject(fileToLoad);
+        log.debug("Loading: {}", jsonData.toString(1));
         JSONArray jsonArray = jsonData.getJSONArray("entries");
         container.getChildren().clear();
         for (Object j : jsonArray) {
@@ -193,7 +199,8 @@ public class Controller implements Initializable {
         sequentialName.setVisible(sequentialOption.isSelected());
         executeAllBtn.setDisable(container.getChildren().isEmpty());
         setCurrentCmdText("", currentCmd, false);
-        log.debug("Loaded: {}", jsonData.toString(1));
+        Utils.saveRecentDir(fileToLoad.getAbsolutePath());
+        log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
         return fileToLoad;
     }
 
@@ -220,7 +227,4 @@ public class Controller implements Initializable {
         return tabs;
     }
 
-    public GridPane getSetupSettings() {
-        return setupSettings;
-    }
 }

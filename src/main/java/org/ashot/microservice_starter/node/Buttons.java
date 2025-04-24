@@ -29,10 +29,10 @@ public class Buttons {
     public static Button orderingButton(boolean direction){
         Button btn = new Button();
         if(direction){
-            btn.setOnAction(actionEvent -> performOrdering(true, (HBox) btn.getParent().getParent()));
+            btn.setOnAction(_ -> performOrdering(true, (HBox) btn.getParent().getParent()));
             btn.setGraphic(Icons.getChevronUpIcon(SIZE));
         }else{
-            btn.setOnAction(actionEvent -> performOrdering(false, (HBox) btn.getParent().getParent()));
+            btn.setOnAction(_ -> performOrdering(false, (HBox) btn.getParent().getParent()));
             btn.setGraphic(Icons.getChevronDownIcon(SIZE));
         }
         return btn;
@@ -69,6 +69,7 @@ public class Buttons {
         });
         return executeBtn;
     }
+
     private static void execute(String command, String path, String name) throws IOException {
         CommandExecution.execute(command, path.isEmpty() ? "/" : path, name, false);
     }

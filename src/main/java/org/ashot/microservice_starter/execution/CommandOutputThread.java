@@ -1,10 +1,8 @@
 package org.ashot.microservice_starter.execution;
 
 import javafx.application.Platform;
-import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.node.OutputTab;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -26,6 +23,7 @@ public class CommandOutputThread implements Runnable {
     private final CodeArea codeArea;
     private final Process process;
     private final long startTime;
+    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
 
@@ -43,8 +41,7 @@ public class CommandOutputThread implements Runnable {
     }
 
     private void setupScheduledOutputPolling() {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(() -> {
+        executorService.scheduleAtFixedRate(() -> {
             if (!pendingLines.isEmpty()) {
                 StringBuilder stringBuilder = new StringBuilder();
                 List<String> batch;
@@ -56,7 +53,7 @@ public class CommandOutputThread implements Runnable {
                     for (String newLine : batch) {
                         stringBuilder.append(newLine).append("\n");
                     }
-                    appendColoredLine(stringBuilder.toString(), codeArea);
+                    outputTab.appendColoredLine(stringBuilder.toString());
                     int lines = ((List<?>) codeArea.getParagraphs()).size();
                     if (lines > MAX_LINES) {
                         int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
@@ -73,48 +70,27 @@ public class CommandOutputThread implements Runnable {
 
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = "";
-        while (true) {
-            try {
-                if ((line = reader.readLine()) == null) break;
-                if (!line.isBlank()) {
-                    pendingLines.add(line);
-                }
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        }
-        pendingLines.add("\nCommand(s) finished in: " + ((System.currentTimeMillis() - startTime)/ 1000l)  + "s");
-    }
-    private void setupOutputErrReading() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        String line = "";
-        while (true) {
-            try {
-                if ((line = reader.readLine()) == null) break;
-                if (!line.isBlank()) {
-                    pendingLines.add(line);
-                }
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        }
+        readLineFromStream(reader);
+        pendingLines.add("\nCommand(s) finished in: " + ((System.currentTimeMillis() - startTime) / 1000L) + "s");
     }
 
-    private void appendColoredLine(String line, CodeArea codeArea) {
-        int start = codeArea.getLength();
-        line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip for display
-        codeArea.appendText(line);
-        StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
-        String defaultFg = Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
-        spans.add(List.of(defaultFg), codeArea.getLength());
-        codeArea.setStyleSpans(start, spans.create());
+    private void setupOutputErrReading() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        readLineFromStream(reader);
     }
-        /*try {
-        int start = codeArea.getLength();
-            StyleSpans<Collection<String>> styles = AnsiColorParser.parse(line);
-            codeArea.setStyleSpans(start, styles);
-        }catch (IllegalStateException e){
-            System.out.println(e.getMessage());
-        }*/
+
+    private void readLineFromStream(BufferedReader reader) {
+        String line = "";
+        try {
+            while ((line = reader.readLine()) != null) {
+                if (!line.isBlank()) {
+                    pendingLines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+
+    }
+
 }

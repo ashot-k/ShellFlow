@@ -29,7 +29,7 @@
         </ScrollPane>
       <AnchorPane layoutY="415.0" prefHeight="182.0" prefWidth="1000.0">
          <children>
-            <Text fx:id="osInfo" layoutX="27.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523">
+            <Text fx:id="osInfo" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523">
                <font>
                   <Font size="12.0" />
                </font>

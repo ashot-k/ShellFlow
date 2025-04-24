@@ -89,7 +89,7 @@ public class Utils {
 
     public static File chooseFile(boolean saveMode, String initialDir) {
         FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", (".json"));
+        FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", "json");
         fileChooser.setSelectedExtensionFilter(extensions);
         fileChooser.setInitialDirectory(new File(initialDir));
         if (saveMode) {

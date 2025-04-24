@@ -1,13 +1,20 @@
 package org.ashot.microservice_starter.node;
 
+import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import org.ashot.microservice_starter.Main;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 public class OutputTab extends Tab{
     private static final Logger logger = LoggerFactory.getLogger(OutputTab.class);
@@ -45,6 +52,43 @@ public class OutputTab extends Tab{
         this.setContent(scrollPane);
         this.setClosable(true);
         this.setOnClosed(_-> this.process.destroy());
+        this.setupUserInput();
+    }
+
+    private void setupUserInput(){
+        this.setOnSelectionChanged((_)->{
+            if(this.isSelected()){
+                this.codeArea.setOnKeyPressed((event)->{
+                    try {
+                        if(event.isControlDown() && event.getCode() == KeyCode.C){
+                            this.process.destroy();
+                        }
+                        else if(event.getCode() == KeyCode.ENTER){
+                            process.getOutputStream().write('\n');
+                        }
+                        else {
+                            process.getOutputStream().write(event.getCode().getChar().getBytes());
+                        }
+                        process.getOutputStream().flush();
+                        Platform.runLater(()-> appendColoredLine(event.getCode().getChar()));
+                    } catch (IOException e) {
+                        logger.error(e.getMessage());
+                    }
+                });
+            }
+
+        });
+
+    }
+
+    public void appendColoredLine(String line) {
+        int start = codeArea.getLength();
+        line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip for display
+        this.codeArea.appendText(line);
+        StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
+        String defaultFg = Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+        spans.add(List.of(defaultFg), this.codeArea.getLength());
+        this.codeArea.setStyleSpans(start, spans.create());
     }
 
     public CodeArea getCodeArea() {
