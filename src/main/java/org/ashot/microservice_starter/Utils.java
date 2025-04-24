@@ -207,9 +207,9 @@ public class Utils {
     public static void setupOSInfo(Button osInfo){
         String os = System.getProperty("os.name");
         if(os.toLowerCase().contains("linux")){
-            osInfo.setGraphic(Icons.getLinuxIcon(64));
+            osInfo.setGraphic(Icons.getLinuxIcon(48));
         }else if (os.toLowerCase().contains("windows")){
-            osInfo.setGraphic(Icons.getWindowsIcon(64));
+            osInfo.setGraphic(Icons.getWindowsIcon(48));
         }
         osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
     }

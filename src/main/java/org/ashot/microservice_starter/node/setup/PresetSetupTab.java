@@ -32,6 +32,7 @@ public class PresetSetupTab {
 
     public static Tab setupPresetTab(){
         Tab tab = new Tab();
+        tab.setId("presetSetupTab");
         tab.setText(TAB_NAME);
         tab.setClosable(false);
 

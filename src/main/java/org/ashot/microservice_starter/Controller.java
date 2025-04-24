@@ -7,11 +7,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
+import org.ashot.microservice_starter.node.OutputTab;
+import org.ashot.microservice_starter.node.TabOutputOptions;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.ashot.microservice_starter.node.setup.PresetSetupTab;
 import org.json.JSONArray;
@@ -37,6 +40,8 @@ public class Controller implements Initializable {
     private MenuItem saveBtn;
     @FXML
     private FlowPane container;
+    @FXML
+    private GridPane setupSettings;
     @FXML
     private TabPane tabs;
     @FXML
@@ -71,15 +76,22 @@ public class Controller implements Initializable {
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
         executeAllBtn.setContentDisplay(ContentDisplay.RIGHT);
         executeAllBtn.setGraphicTextGap(12);
-        container.getChildren().addListener((ListChangeListener<Node>) c ->
-            executeAllBtn.setDisable(container.getChildren().isEmpty())
-        );
-        sequentialOption.selectedProperty().addListener((_, _, newValue) ->
-            sequentialName.setVisible(newValue)
-        );
-        openRecent.setOnShowing(e -> refreshRecentlyOpenedFolders());
+        container.getChildren().addListener((ListChangeListener<Node>) c -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
+        sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
+        openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         tabs.getTabs().add(PresetSetupTab.setupPresetTab());
+        List<Node> setupOptions = setupSettings.getChildren().stream().toList();
+        tabs.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
+            setupSettings.getChildren().clear();
+            if(newValue.getId() != null && (newValue.getId().equals("setupTab") || newValue.getId().equals("presetSetupTab"))){
+                setupSettings.getChildren().setAll(setupOptions);
+            }else{
+                if(newValue instanceof  OutputTab){
+                    setupSettings.getChildren().setAll(new TabOutputOptions((OutputTab) newValue).getOptions());
+                }
+            }
+        });
         newEntry(null);
     }
 
@@ -131,9 +143,9 @@ public class Controller implements Initializable {
     }
 
     public void executeAll() {
-        resetCurrentCmdText();
+        setCurrentCmdText("", currentCmd, false);
         String commands = CommandExecution.executeAll(container, sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
-        setCurrentCmdText(commands, currentCmd);
+        setCurrentCmdText(commands, currentCmd, true);
     }
 
     public void save(ActionEvent e) {
@@ -180,7 +192,7 @@ public class Controller implements Initializable {
         sequentialName.setText(jsonData.getString("sequentialName"));
         sequentialName.setVisible(sequentialOption.isSelected());
         executeAllBtn.setDisable(container.getChildren().isEmpty());
-        resetCurrentCmdText();
+        setCurrentCmdText("", currentCmd, false);
         log.debug("Loaded: {}", jsonData.toString(1));
         return fileToLoad;
     }
@@ -189,14 +201,11 @@ public class Controller implements Initializable {
         return Utils.chooseFile(save, save ? lastSaved : lastLoaded);
     }
 
-    private void setCurrentCmdText(String text, Button currentCmd){
+    private void setCurrentCmdText(String text, Button currentCmd, boolean visible){
         currentCmdText = text;
-        currentCmd.setVisible(true);
+        currentCmd.setVisible(visible);
     }
-    private void resetCurrentCmdText(){
-        currentCmdText = "";
-        currentCmd.setVisible(false);
-    }
+
     public void printCurrentCmd(ActionEvent e){
         OutputPopup.outputPopup(currentCmdText, "Commands Executed", sequentialOption.isSelected());
     }
@@ -209,5 +218,9 @@ public class Controller implements Initializable {
 
     public TabPane getTabs(){
         return tabs;
+    }
+
+    public GridPane getSetupSettings() {
+        return setupSettings;
     }
 }

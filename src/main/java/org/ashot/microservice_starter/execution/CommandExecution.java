@@ -3,7 +3,6 @@ package org.ashot.microservice_starter.execution;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -11,7 +10,7 @@ import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.ControllerRegistry;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
-import org.ashot.microservice_starter.node.TabOutput;
+import org.ashot.microservice_starter.node.OutputTab;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
@@ -96,14 +95,15 @@ public class CommandExecution {
     }
     private static void runInNewTab(Process process, String name){
         Controller controller = ControllerRegistry.get("main", Controller.class);
+
         TabPane tabs = controller.getTabs();
-        TabOutput tabOutput = new TabOutput(new Tab(), new CodeArea(), process, name);
+        OutputTab outputTab = new OutputTab(new CodeArea(), process, name);
 
         Platform.runLater(() -> {
-            tabs.getTabs().add(tabOutput.getTab());
-            tabs.getSelectionModel().select(tabOutput.getTab());
+            tabs.getTabs().add(outputTab);
+            tabs.getSelectionModel().select(outputTab);
         });
-        CommandOutputThread thread = new CommandOutputThread(tabOutput);
+        CommandOutputThread thread = new CommandOutputThread(outputTab);
         new Thread(thread).start();
     }
 

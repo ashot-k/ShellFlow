@@ -3,7 +3,7 @@ package org.ashot.microservice_starter.execution;
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.node.TabOutput;
+import org.ashot.microservice_starter.node.OutputTab;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
@@ -23,25 +23,24 @@ import java.util.concurrent.TimeUnit;
 public class CommandOutputThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputThread.class);
     private static final int MAX_LINES = 2500;
-    private final TabOutput tabOutput;
-    private final Tab tab;
+    private final OutputTab outputTab;
     private final CodeArea codeArea;
     private final Process process;
     private final long startTime;
 
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
 
-    public CommandOutputThread(TabOutput tabOutput) {
-        this.tabOutput = tabOutput;
-        this.tab = tabOutput.getTab();
-        this.process = tabOutput.getProcess();
-        this.codeArea = tabOutput.getCodeArea();
+    public CommandOutputThread(OutputTab outputTab) {
+        this.outputTab = outputTab;
+        this.process = outputTab.getProcess();
+        this.codeArea = outputTab.getCodeArea();
         this.startTime = System.currentTimeMillis();
     }
 
     public void run() {
         setupScheduledOutputPolling();
-        setupOutputReading();
+        new Thread(this::setupOutputReading).start();
+        new Thread(this::setupOutputErrReading).start();
     }
 
     private void setupScheduledOutputPolling() {
@@ -64,7 +63,7 @@ public class CommandOutputThread implements Runnable {
                         int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
                         codeArea.deleteText(0, end);
                     }
-                    if (!tabOutput.usedScrolling()) {
+                    if (!outputTab.usedScrolling()) {
                         codeArea.moveTo(codeArea.getLength());
                         codeArea.requestFollowCaret();
                     }
@@ -87,6 +86,20 @@ public class CommandOutputThread implements Runnable {
             }
         }
         pendingLines.add("\nCommand(s) finished in: " + ((System.currentTimeMillis() - startTime)/ 1000l)  + "s");
+    }
+    private void setupOutputErrReading() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        String line = "";
+        while (true) {
+            try {
+                if ((line = reader.readLine()) == null) break;
+                if (!line.isBlank()) {
+                    pendingLines.add(line);
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
     }
 
     private void appendColoredLine(String line, CodeArea codeArea) {
