@@ -9,22 +9,23 @@ import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
-import org.ashot.microservice_starter.node.OutputTab;
+import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
+import org.ashot.microservice_starter.thread.CommandExecutionThread;
+import org.ashot.microservice_starter.thread.CommandOutputThread;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ashot.microservice_starter.Utils.calculateDelay;
-import static org.ashot.microservice_starter.Utils.getSystemOS;
-import static org.ashot.microservice_starter.execution.CommandFormatUtils.*;
+import static org.ashot.microservice_starter.utils.Utils.calculateDelay;
+import static org.ashot.microservice_starter.utils.Utils.getSystemOS;
+import static org.ashot.microservice_starter.utils.CommandFormatUtils.*;
 
 
 public class CommandExecution {
@@ -41,7 +42,7 @@ public class CommandExecution {
         logger.info("Name: {} Path: {} Command: {}", name, path, command);
         ProcessBuilder pb = null;
         if (getSystemOS().contains("linux")) {
-            pb = new ProcessBuilder().command("bash", "-c", command).directory(new File(seqOption ? "/" : path));
+            pb = new ProcessBuilder().command("bash", "-c", command);
         }else if (getSystemOS().contains("windows")){
             pb = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
         }
@@ -96,7 +97,6 @@ public class CommandExecution {
         Platform.runLater(() -> {
             tabs.getTabs().add(outputTab);
             tabs.getSelectionModel().select(outputTab);
-            outputTab.getScrollPane().prefWidthProperty().bind(tabs.widthProperty());
         });
         CommandOutputThread thread = new CommandOutputThread(outputTab);
         new Thread(thread).start();

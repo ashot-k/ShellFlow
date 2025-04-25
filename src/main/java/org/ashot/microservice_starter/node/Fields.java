@@ -5,8 +5,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 
-import static org.ashot.microservice_starter.data.constant.TextFieldType.typeToShort;
-
 
 public class Fields {
 
@@ -22,7 +20,7 @@ public class Fields {
             throw new NullPointerException("TextFieldType can't be null");
         }
         TextField field = new TextField();
-        field.setId(typeToShort(type));
+        field.setId(type.getValue());
         field.setText(text);
         return field;
     }
@@ -31,7 +29,7 @@ public class Fields {
         if (v.getChildren().isEmpty() || type == null) {
             return null;
         }
-        Node n = v.lookup("#" + typeToShort(type));
+        Node n = v.lookup("#" + type.getValue());
         if (!(n instanceof TextField field)) {
             return null;
         }

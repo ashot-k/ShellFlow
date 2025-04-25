@@ -14,10 +14,12 @@ import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
-import org.ashot.microservice_starter.node.OutputTab;
+import org.ashot.microservice_starter.node.RecentFolders;
+import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
-import org.ashot.microservice_starter.node.setup.PresetSetupTab;
+import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
+import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -29,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static org.ashot.microservice_starter.data.constant.TextFieldType.typeToShort;
 
 public class Controller implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
@@ -107,11 +108,11 @@ public class Controller implements Initializable {
     private void refreshRecentlyOpenedFolders(){
         List<String> toRemove = disabledRecentFoldersToRemove();
         openRecent.getItems().clear();
-        JSONArray recentFolders = Utils.getRecentFiles();
+        JSONArray recentFolders = RecentFolders.getRecentFiles();
         for (Object s : recentFolders.toList()){
             String recentFolder = s.toString();
             if(toRemove.contains(recentFolder)){
-                Utils.removeRecentFile(recentFolder);
+                RecentFolders.removeRecentFile(recentFolder);
             }
             MenuItem m = new MenuItem();
             m.setText(recentFolder);
@@ -119,6 +120,7 @@ public class Controller implements Initializable {
                 File file = new File(recentFolder);
                 if(file.exists()){
                     loadFromFile(file);
+                    this.tabs.getSelectionModel().selectFirst();
                 }
             });
             m.setDisable(!new File(recentFolder).exists());
@@ -155,7 +157,7 @@ public class Controller implements Initializable {
         File savedFile = chooseFile(true);
         if(savedFile != null) {
             saveToFile(savedFile);
-            Utils.saveDirReference(DirType.LAST_SAVED, savedFile.getParent());
+            RecentFolders.saveDirReference(DirType.LAST_SAVED, savedFile.getParent());
         }
     }
 
@@ -164,7 +166,7 @@ public class Controller implements Initializable {
         File loadedFile = chooseFile(false);
         if(loadedFile != null) {
             loadFromFile(loadedFile);
-            Utils.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
+            RecentFolders.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
             refreshRecentlyOpenedFolders();
         }
     }
@@ -175,7 +177,7 @@ public class Controller implements Initializable {
         log.debug("Saving: {}", jsonObject.toString(1));
         Utils.writeDataToFile(fileToSave, jsonObject);
         log.debug("Saved: {}", fileToSave.getAbsolutePath());
-        Utils.saveRecentDir(fileToSave.getAbsolutePath());
+        RecentFolders.saveRecentDir(fileToSave.getAbsolutePath());
         return fileToSave;
     }
 
@@ -187,19 +189,17 @@ public class Controller implements Initializable {
         container.getChildren().clear();
         for (Object j : jsonArray) {
             if (j instanceof JSONObject jsonObject) {
-                String name = jsonObject.get(typeToShort(TextFieldType.NAME)).toString();
-                String path = jsonObject.get(typeToShort(TextFieldType.PATH)).toString();
-                String cmd = jsonObject.get(typeToShort(TextFieldType.COMMAND)).toString();
+                String name = jsonObject.get(TextFieldType.NAME.getValue()).toString();
+                String path = jsonObject.get(TextFieldType.PATH.getValue()).toString();
+                String cmd = jsonObject.get(TextFieldType.COMMAND.getValue()).toString();
                 newEntry(name, path, cmd);
             }
         }
         delayPerCmd.setValue(jsonData.getDouble("delay"));
         sequentialOption.setSelected(jsonData.getBoolean("sequential"));
         sequentialName.setText(jsonData.getString("sequentialName"));
-        sequentialName.setVisible(sequentialOption.isSelected());
-        executeAllBtn.setDisable(container.getChildren().isEmpty());
         setCurrentCmdText("", currentCmd, false);
-        Utils.saveRecentDir(fileToLoad.getAbsolutePath());
+        RecentFolders.saveRecentDir(fileToLoad.getAbsolutePath());
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
         return fileToLoad;
     }

@@ -23,7 +23,7 @@ class ButtonsTest {
         v.getChildren().add(h);
         Button b = Buttons.deleteEntryButton(v, h);
         Assertions.assertAll(
-                () -> assertEquals(ButtonType.typeToShort(ButtonType.DELETE), b.getId()),
+                () -> assertEquals(ButtonType.DELETE.getValue(), b.getId()),
                 () -> assertDoesNotThrow(b::fire),
                 () -> assertEquals(0, v.getChildren().size())
         );

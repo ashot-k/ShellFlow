@@ -1,11 +1,12 @@
 package org.ashot.microservice_starter.data.constant;
 
-public enum TextFieldType {
-    COMMAND("cmd"), PATH("path"), NAME("name");
+
+public enum PresetType {
+    COMMAND("Command"), PATH("Path");
 
     private final String value;
 
-    TextFieldType(String value){
+    PresetType(String value){
         this.value = value;
     }
 

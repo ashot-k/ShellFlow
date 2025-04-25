@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node;
+package org.ashot.microservice_starter.node.tabs;
 
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
@@ -34,6 +34,7 @@ public class OutputTab extends Tab{
 
     public void setupOutputTab(String name){
         this.codeArea.getStyleClass().add("command-output-container");
+        this.codeArea.getStyleClass().add(Main.getDarkModeSetting() ? "dark-mode" : "light-mode");
         this.codeArea.getStyleClass().add(Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text");
         this.codeArea.setEditable(false);
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
@@ -62,23 +63,24 @@ public class OutputTab extends Tab{
                     try {
                         if(event.isControlDown() && event.getCode() == KeyCode.C){
                             this.process.destroy();
+                            process.getOutputStream().flush();
+                            Platform.runLater(()-> appendColoredLine("CTRL + C"));
+                            return;
                         }
                         else if(event.getCode() == KeyCode.ENTER){
                             process.getOutputStream().write('\n');
                         }
                         else {
-                            process.getOutputStream().write(event.getCode().getChar().getBytes());
+                            process.getOutputStream().write((event.getText()).getBytes());
                         }
                         process.getOutputStream().flush();
-                        Platform.runLater(()-> appendColoredLine(event.getCode().getChar()));
+                        Platform.runLater(()-> appendColoredLine(event.getText()));
                     } catch (IOException e) {
                         logger.error(e.getMessage());
                     }
                 });
             }
-
         });
-
     }
 
     public void appendColoredLine(String line) {

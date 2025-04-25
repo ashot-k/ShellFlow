@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter;
+package org.ashot.microservice_starter.utils;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.constant.DirType;
+import org.ashot.microservice_starter.data.constant.Folders;
 import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -50,9 +51,9 @@ public class Utils {
     private static JSONObject addEntryToJSONObject(JSONObject object, Node node) {
         if (node instanceof TextField field) {
             String id = node.getId();
-            String nameType = TextFieldType.typeToShort(TextFieldType.NAME);
-            String cmdType = TextFieldType.typeToShort(TextFieldType.COMMAND);
-            String pathType = TextFieldType.typeToShort(TextFieldType.PATH);
+            String nameType = TextFieldType.NAME.getValue();
+            String cmdType = TextFieldType.COMMAND.getValue();
+            String pathType = TextFieldType.PATH.getValue();
             if (nameType != null && id.contains(nameType)) {
                 object.put(nameType, field.getText());
             } else if (cmdType != null && id.contains(cmdType)) {
@@ -117,7 +118,7 @@ public class Utils {
     public static JSONObject setupFolders(){
         try {
             JSONObject jsonObject = null;
-            File file = new File("dirs.json");
+            File file = new File(Folders.RECENTS_DIR.getValue());
             if(file.exists()){
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);
@@ -134,74 +135,6 @@ public class Utils {
             ErrorPopup.errorPopup(e.getMessage());
         }
         return null;
-    }
-
-    public static JSONObject saveDirReference(DirType dirType, String path){
-        if(path == null) return null;
-        JSONObject jsonObject = null;
-        try {
-            File file = new File("dirs.json");
-            jsonObject = new JSONObject(Files.readString(file.toPath()));
-            jsonObject.put(dirType.name(), path);
-            writeDataToFile(file, jsonObject);
-        }catch (IOException e){
-            ErrorPopup.errorPopup(e.getMessage());
-        }
-        return jsonObject;
-    }
-
-    public static JSONObject saveRecentDir(String path){
-        if(path == null) return null;
-        JSONObject jsonObject = null;
-        try {
-            File file = new File("dirs.json");
-            jsonObject = new JSONObject(Files.readString(file.toPath()));
-            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
-            List<Object> list = recents.toList();
-            list.removeIf((element)-> element.toString().equals(path));
-            list.addFirst(path);
-            recents.clear();
-            recents.putAll(list);
-            jsonObject.put(DirType.RECENT.name(), recents);
-            writeDataToFile(file, jsonObject);
-        }catch (IOException e){
-            ErrorPopup.errorPopup(e.getMessage());
-        }
-        return jsonObject;
-    }
-    public static JSONArray getRecentFiles(){
-        JSONObject jsonObject = null;
-        File file = new File("dirs.json");
-        String jsonContent = null;
-        try {
-            jsonContent = Files.readString(file.toPath());
-            jsonObject = new JSONObject(jsonContent);
-            return (JSONArray) jsonObject.get(DirType.RECENT.name());
-        } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
-        }
-        return null;
-    }
-    public static boolean removeRecentFile(String path){
-        JSONObject jsonObject = null;
-        File file = new File("dirs.json");
-        String jsonContent = null;
-        try {
-            jsonContent = Files.readString(file.toPath());
-            jsonObject = new JSONObject(jsonContent);
-            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
-            List<Object> list = recents.toList();
-            list.removeIf((element)-> element.toString().equals(path));
-            recents.clear();
-            recents.putAll(list);
-            jsonObject.put(DirType.RECENT.name(), recents);
-            writeDataToFile(file, jsonObject);
-            return true;
-        } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
-        }
-        return false;
-
     }
 
     public static void setupOSInfo(Button osInfo){

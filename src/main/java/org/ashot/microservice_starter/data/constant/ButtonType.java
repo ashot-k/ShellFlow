@@ -1,16 +1,15 @@
 package org.ashot.microservice_starter.data.constant;
 
 public enum ButtonType {
-    EXECUTION, DELETE;
+    EXECUTION("execution"), DELETE("delete");
 
-    public static String typeToShort(ButtonType type) {
-        if(type.equals(EXECUTION)){
-            return "execution";
-        }
-        else if(type.equals(DELETE)){
-            return "delete";
-        }
-        return null;
+    private final String value;
+
+    ButtonType(String value){
+        this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
 }

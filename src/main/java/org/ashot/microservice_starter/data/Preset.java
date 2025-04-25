@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.setup;
+package org.ashot.microservice_starter.data;
 
 public class Preset {
     private String name;

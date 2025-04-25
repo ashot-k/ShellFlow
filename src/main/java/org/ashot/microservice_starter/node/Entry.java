@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
-import org.ashot.microservice_starter.node.setup.PresetSetupTab;
+import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 
 import java.util.List;
 import java.util.Map;

@@ -1,14 +1,16 @@
 .root{
-   -fx-font-family: "Cascadia Mono";
+   -fx-font-family: "Noto sans";
    -fx-font-weight: 500;
 }
+
 .light-mode-text .text{
-     -fx-font-size: 18px !important;
+    -fx-font-size: 18px !important;
 }
 
 .dark-mode-text .text{
-     -fx-font-size: 18px !important;
+    -fx-font-size: 18px !important;
 }
+
 #container .entry{
     -fx-spacing: 10px;
     -fx-alignment: center;
@@ -38,6 +40,7 @@
     -fx-alignment: top;
     -fx-background-color:  #1b181b;
 }
+
 .output-message *{
     -fx-background-color:  transparent;
 }
@@ -48,10 +51,20 @@
 }
 .command-output-container{
     -fx-font-family: "Noto Sans" !important;
-    -fx-font-weight: 700;
-    -fx-padding: 0 15px 0 15px;
-    -fx-background-color:  #1b181b;
+    -fx-font-weight: 500;
+    -fx-padding: 5px 20px 0 20px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.light-mode{
+    -fx-background-color: #e0e0e0;
+}
+
+.dark-mode{
+/*
+    -fx-background-color:  #1b181b;
+*/
+    -fx-background-color: transparent;
 }
 
 

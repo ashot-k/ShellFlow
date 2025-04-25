@@ -19,7 +19,7 @@ public class Buttons {
 
     public static Button deleteEntryButton(Pane container, HBox row) {
         Button btn = new Button("", Icons.getCloseButtonIcon(CLOSE_BUTTON_SIZE));
-        btn.setId(ButtonType.typeToShort(ButtonType.DELETE));
+        btn.setId(ButtonType.DELETE.getValue());
         btn.setOnAction(_ -> container.getChildren().remove(row));
         btn.getStyleClass().add("close-btn");
         return btn;
@@ -56,7 +56,7 @@ public class Buttons {
     public static Button executeBtn(TextField nameField, TextField commandField, TextField pathField) {
         Button executeBtn = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeBtn.setBackground(Background.EMPTY);
-        executeBtn.setId(ButtonType.typeToShort(ButtonType.EXECUTION));
+        executeBtn.setId(ButtonType.EXECUTION.getValue());
         executeBtn.setOnAction(_ -> {
             try {
                 String nameSelected = nameField.getText();

@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.execution;
+package org.ashot.microservice_starter.utils;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class CommandFormatUtils {
 
     public static void handleSequentialCommandChain(StringBuilder seqCommands, String command, String path, int idx, int total, int delayPerCmd) {
         if (path != null && !path.isEmpty()) {
-            seqCommands.append("cd ").append(path).append(" && ");
+            seqCommands.append("cd ").append(path.length() > 0 ? path : "./").append(" && ");
         }
         if(idx != 0 && delayPerCmd > 0){
             seqCommands

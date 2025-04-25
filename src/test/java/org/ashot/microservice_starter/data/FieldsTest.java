@@ -24,7 +24,7 @@ class FieldsTest {
         TextFieldType type = TextFieldType.COMMAND;
         String text = "test";
         TextField field = Fields.createField(type, text);
-        assertEquals(TextFieldType.typeToShort(type), field.getId(), "Field ID is not correct");
+        assertEquals(type.getValue(), field.getId(), "Field ID is not correct");
         assertEquals(text, field.getText(), "Field text is not correct");
     }
 
@@ -49,7 +49,7 @@ class FieldsTest {
     }
     @Test
     void getTextFieldContentFromContainerReturnsProperText() {
-        logger.info("getTextFieldContentFromContainerReturnsNullForContainerWithoutTextField");
+        logger.info("getTextFieldContentFromContainerReturnsProperText");
         Pane v = new Pane();
         TextField f = Fields.createField(TextFieldType.NAME, "test");
         v.getChildren().add(f);

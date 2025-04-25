@@ -1,7 +1,8 @@
-package org.ashot.microservice_starter.node;
+package org.ashot.microservice_starter.node.tabs;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
 
 import java.util.List;
 
@@ -16,7 +17,10 @@ public class OutputTabOptions {
 
     private void setupOptions() {
         this.wrapTextOption = new CheckBox("Wrap Text");
-        this.wrapTextOption.setOnAction(_ -> currentOutputTab.getCodeArea().setWrapText(wrapTextOption.isSelected()));
+        this.wrapTextOption.setOnAction(_ -> {
+            currentOutputTab.getCodeArea().setWrapText(wrapTextOption.isSelected());
+            currentOutputTab.getScrollPane().setHbarPolicy(wrapTextOption.isSelected() ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        });
     }
 
     public List<Node> getOptions() {

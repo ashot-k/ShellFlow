@@ -1,8 +1,10 @@
-package org.ashot.microservice_starter.execution;
+package org.ashot.microservice_starter.thread;
 
 import javafx.application.Platform;
-import org.ashot.microservice_starter.node.OutputTab;
+import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -25,6 +28,7 @@ public class CommandOutputThread implements Runnable {
     private final long startTime;
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
+    private boolean darkTheme = Main.getDarkModeSetting();
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
 
     public CommandOutputThread(OutputTab outputTab) {
@@ -42,6 +46,7 @@ public class CommandOutputThread implements Runnable {
 
     private void setupScheduledOutputPolling() {
         executorService.scheduleAtFixedRate(() -> {
+            checkThemeChange();
             if (!pendingLines.isEmpty()) {
                 StringBuilder stringBuilder = new StringBuilder();
                 List<String> batch;
@@ -63,11 +68,26 @@ public class CommandOutputThread implements Runnable {
                         codeArea.moveTo(codeArea.getLength());
                         codeArea.requestFollowCaret();
                     }
+
                 });
             }
         }, 0, 5, TimeUnit.MILLISECONDS);
     }
 
+    private void checkThemeChange(){
+        if(darkTheme != Main.getDarkModeSetting()){
+            Platform.runLater(()-> {
+                darkTheme = Main.getDarkModeSetting();
+                this.codeArea.getStyleClass().removeAll("light-mode", "dark-mode");
+                this.codeArea.getStyleClass().add(darkTheme ? "dark-mode" : "light-mode");
+                int start = 0;
+                StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
+                String defaultFg = darkTheme ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+                spans.add(List.of(defaultFg), this.codeArea.getLength());
+                this.codeArea.setStyleSpans(start, spans.create());
+            });
+        }
+    }
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         readLineFromStream(reader);

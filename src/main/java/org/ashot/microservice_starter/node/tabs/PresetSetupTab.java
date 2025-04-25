@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.setup;
+package org.ashot.microservice_starter.node.tabs;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -7,7 +7,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.Utils;
+import org.ashot.microservice_starter.data.constant.PresetType;
+import org.ashot.microservice_starter.data.Preset;
+import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -144,7 +146,7 @@ public class PresetSetupTab extends Tab{
             preset.setName(event.getNewValue());
         });
 
-        TableColumn<Preset, String> valueCol = new TableColumn<>(presetType.typeToHeader(presetType));
+        TableColumn<Preset, String> valueCol = new TableColumn<>(presetType.getValue());
         valueCol.setCellValueFactory(new PropertyValueFactory<>("value"));
         valueCol.setCellFactory(TextFieldTableCell.forTableColumn());
         valueCol.setOnEditCommit(event -> {

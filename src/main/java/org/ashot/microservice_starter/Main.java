@@ -3,6 +3,7 @@ package org.ashot.microservice_starter;
 import atlantafx.base.theme.PrimerDark;
 import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -37,10 +38,11 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(RESIZABLE);
         stage.show();
-
         stage.setOnCloseRequest((_)-> {
             ProcessRegistry.killAllProcesses();
             stage.close();
+            Platform.exit();
+            System.exit(0);
         });
     }
 
