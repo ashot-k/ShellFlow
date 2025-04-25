@@ -7,8 +7,8 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.data.constant.PresetType;
 import org.ashot.microservice_starter.data.Preset;
+import org.ashot.microservice_starter.data.constant.PresetType;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,8 +31,8 @@ public class PresetSetupTab extends Tab{
     private static final String COMMANDS = "commands";
     private static final String PATHS = "paths";
     private static final String SAVE_LOCATION = "presets.json";
-    public static Map<String, String> commandsMap= new HashMap<>();
-    public static Map<String, String> pathsMap= new HashMap<>();
+    public static final Map<String, String> commandsMap= new HashMap<>();
+    public static final Map<String, String> pathsMap= new HashMap<>();
 
     public void setupPresetTab(){
         this.setId("presetSetupTab");

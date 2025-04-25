@@ -10,13 +10,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.RecentFolders;
-import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.popup.OutputPopup;
+import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.utils.Utils;
@@ -171,17 +171,16 @@ public class Controller implements Initializable {
         }
     }
 
-    private File saveToFile(File fileToSave) {
+    private void saveToFile(File fileToSave) {
         log.debug("Saving file: {}", fileToSave.getAbsolutePath());
         JSONObject jsonObject = Utils.createSaveJSONObject(container, (int) delayPerCmd.getValue(), sequentialOption.isSelected(), sequentialName.getText());
         log.debug("Saving: {}", jsonObject.toString(1));
         Utils.writeDataToFile(fileToSave, jsonObject);
         log.debug("Saved: {}", fileToSave.getAbsolutePath());
         RecentFolders.saveRecentDir(fileToSave.getAbsolutePath());
-        return fileToSave;
     }
 
-    private File loadFromFile(File fileToLoad) {
+    private void loadFromFile(File fileToLoad) {
         log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
         JSONObject jsonData = Utils.createJSONObject(fileToLoad);
         log.debug("Loading: {}", jsonData.toString(1));
@@ -201,7 +200,6 @@ public class Controller implements Initializable {
         setCurrentCmdText("", currentCmd, false);
         RecentFolders.saveRecentDir(fileToLoad.getAbsolutePath());
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
-        return fileToLoad;
     }
 
     private File chooseFile(boolean save){

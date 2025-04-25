@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data.constant;
+package org.ashot.microservice_starter.data.icon;
 
 import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -6,8 +6,8 @@ import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import static org.ashot.microservice_starter.data.constant.IconUtils.setHover;
-import static org.ashot.microservice_starter.data.constant.IconUtils.setHoverToBrighter;
+import static org.ashot.microservice_starter.data.icon.IconUtils.setHover;
+import static org.ashot.microservice_starter.data.icon.IconUtils.setHoverToBrighter;
 
 public class Icons {
      private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");

@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data.constant;
+package org.ashot.microservice_starter.data.icon;
 
 import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.Glyph;

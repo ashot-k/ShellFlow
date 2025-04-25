@@ -8,8 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.Folders;
-import org.ashot.microservice_starter.data.constant.Icons;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 public class Utils {
 
@@ -48,7 +47,7 @@ public class Utils {
         return false;
     }
 
-    private static JSONObject addEntryToJSONObject(JSONObject object, Node node) {
+    private static void addEntryToJSONObject(JSONObject object, Node node) {
         if (node instanceof TextField field) {
             String id = node.getId();
             String nameType = TextFieldType.NAME.getValue();
@@ -62,7 +61,6 @@ public class Utils {
                 object.put(pathType, field.getText());
             }
         }
-        return object;
     }
 
     public static JSONArray createJSONArray(Pane container) {

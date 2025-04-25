@@ -38,7 +38,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(RESIZABLE);
         stage.show();
-        stage.setOnCloseRequest((_)-> {
+        stage.setOnCloseRequest(_-> {
             ProcessRegistry.killAllProcesses();
             stage.close();
             Platform.exit();

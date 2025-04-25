@@ -35,7 +35,7 @@ public class RecentFolders {
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
             List<Object> list = recents.toList();
-            list.removeIf((element) -> element.toString().equals(path));
+            list.removeIf(element -> element.toString().equals(path));
             list.addFirst(path);
             recents.clear();
             recents.putAll(list);
@@ -69,7 +69,7 @@ public class RecentFolders {
             jsonObject = new JSONObject(jsonContent);
             JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
             List<Object> list = recents.toList();
-            list.removeIf((element) -> element.toString().equals(path));
+            list.removeIf(element -> element.toString().equals(path));
             recents.clear();
             recents.putAll(list);
             jsonObject.put(DirType.RECENT.name(), recents);

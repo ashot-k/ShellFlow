@@ -6,7 +6,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.data.constant.ButtonType;
-import org.ashot.microservice_starter.data.constant.Icons;
+import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 

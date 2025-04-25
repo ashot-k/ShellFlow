@@ -57,9 +57,9 @@ public class OutputTab extends Tab{
     }
 
     private void setupUserInput(){
-        this.setOnSelectionChanged((_)->{
+        this.setOnSelectionChanged(_->{
             if(this.isSelected()){
-                this.codeArea.setOnKeyPressed((event)->{
+                this.codeArea.setOnKeyPressed(event->{
                     try {
                         if(event.isControlDown() && event.getCode() == KeyCode.C){
                             this.process.destroy();

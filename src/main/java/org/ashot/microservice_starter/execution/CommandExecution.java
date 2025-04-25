@@ -9,8 +9,8 @@ import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.Fields;
-import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
+import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.thread.CommandExecutionThread;
@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ashot.microservice_starter.utils.CommandFormatUtils.*;
 import static org.ashot.microservice_starter.utils.Utils.calculateDelay;
 import static org.ashot.microservice_starter.utils.Utils.getSystemOS;
-import static org.ashot.microservice_starter.utils.CommandFormatUtils.*;
 
 
 public class CommandExecution {
