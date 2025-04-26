@@ -13,10 +13,10 @@ public class Fields {
     }
 
     private static TextField setupTextField(TextFieldType type, String text) {
-        if(text == null){
+        if (text == null) {
             text = "";
         }
-        if(type == null){
+        if (type == null) {
             throw new NullPointerException("TextFieldType can't be null");
         }
         TextField field = new TextField();

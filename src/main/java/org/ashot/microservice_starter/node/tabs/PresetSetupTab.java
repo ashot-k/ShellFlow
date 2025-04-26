@@ -21,9 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class PresetSetupTab extends Tab{
+public class PresetSetupTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(PresetSetupTab.class);
-    public PresetSetupTab(){
+
+    public PresetSetupTab() {
         setupPresetTab();
     }
 
@@ -31,10 +32,10 @@ public class PresetSetupTab extends Tab{
     private static final String COMMANDS = "commands";
     private static final String PATHS = "paths";
     private static final String SAVE_LOCATION = "presets.json";
-    public static final Map<String, String> commandsMap= new HashMap<>();
-    public static final Map<String, String> pathsMap= new HashMap<>();
+    public static final Map<String, String> commandsMap = new HashMap<>();
+    public static final Map<String, String> pathsMap = new HashMap<>();
 
-    public void setupPresetTab(){
+    public void setupPresetTab() {
         this.setId("presetSetupTab");
         this.setText(TAB_NAME);
         this.setClosable(false);
@@ -46,7 +47,7 @@ public class PresetSetupTab extends Tab{
         vBox.setPadding(new Insets(5, 10, 5, 10));
         vBox.setFillWidth(true);
         vBox.setSpacing(10);
-        TableView<Preset> commandsTable= createTable(PresetType.COMMAND);
+        TableView<Preset> commandsTable = createTable(PresetType.COMMAND);
         TableView<Preset> pathsTable = createTable(PresetType.PATH);
 
         setupFromFile(commandsTable, pathsTable);
@@ -63,23 +64,23 @@ public class PresetSetupTab extends Tab{
         this.setContent(scrollPane);
     }
 
-    private static boolean setupFromFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable){
+    private static boolean setupFromFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
         File file = new File(SAVE_LOCATION);
         return file.exists() ? loadExisting(file, commandsTable, pathsTable) : createNewPresetsFile(file);
     }
 
-    private static boolean saveToFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable){
+    private static boolean saveToFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
         File file = new File(SAVE_LOCATION);
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
-        for (Preset p : commandsTable.getItems()){
+        for (Preset p : commandsTable.getItems()) {
             JSONObject row = new JSONObject();
             row.put("name", p.getName());
             row.put("value", p.getValue());
             commands.put(row);
         }
         JSONArray paths = new JSONArray();
-        for (Preset p : pathsTable.getItems()){
+        for (Preset p : pathsTable.getItems()) {
             JSONObject row = new JSONObject();
             row.put("name", p.getName());
             row.put("value", p.getValue());
@@ -92,7 +93,7 @@ public class PresetSetupTab extends Tab{
         return Utils.writeDataToFile(file, jsonObject);
     }
 
-    private static boolean loadExisting(File file, TableView<Preset> commandsTable, TableView<Preset> pathsTable){
+    private static boolean loadExisting(File file, TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
         JSONObject jsonObject = Utils.createJSONObject(file);
         JSONArray commands = jsonObject.getJSONArray(COMMANDS);
         JSONArray paths = jsonObject.getJSONArray(PATHS);
@@ -113,13 +114,13 @@ public class PresetSetupTab extends Tab{
         return true;
     }
 
-    private static void loadRow(TableView<Preset> table, Preset preset){
+    private static void loadRow(TableView<Preset> table, Preset preset) {
         table.getItems().add(preset);
     }
 
-    private static boolean createNewPresetsFile(File file){
+    private static boolean createNewPresetsFile(File file) {
         try {
-            if(!file.createNewFile()){
+            if (!file.createNewFile()) {
                 return false;
             }
             JSONObject jsonObject = new JSONObject();
@@ -134,9 +135,9 @@ public class PresetSetupTab extends Tab{
         return false;
     }
 
-    private static TableView<Preset> createTable(PresetType presetType){
+    private static TableView<Preset> createTable(PresetType presetType) {
         TableView<Preset> tableView = new TableView<>();
-        
+
         TableColumn<Preset, String> nameCol = new TableColumn<>("Name");
 
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -152,9 +153,9 @@ public class PresetSetupTab extends Tab{
         valueCol.setOnEditCommit(event -> {
             Preset preset = event.getRowValue();
             preset.setValue(event.getNewValue());
-            if(PresetType.COMMAND.equals(presetType)){
+            if (PresetType.COMMAND.equals(presetType)) {
                 commandsMap.put(preset.getName(), preset.getValue());
-            }else{
+            } else {
                 pathsMap.put(preset.getName(), preset.getValue());
             }
         });
@@ -166,28 +167,28 @@ public class PresetSetupTab extends Tab{
         return tableView;
     }
 
-    private static ScrollPane setupScrollPane(){
+    private static ScrollPane setupScrollPane() {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setPrefWidth(Main.SIZE_X);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         return scrollPane;
     }
 
-    private static Label setupCategoryTitle(String name){
+    private static Label setupCategoryTitle(String name) {
         Label title = new Label(name);
         title.setFont(Font.font(24));
         return title;
     }
 
-    private static Button addRowButton(TableView<Preset> tableView){
+    private static Button addRowButton(TableView<Preset> tableView) {
         Button addRowButton = new Button("Add");
-        addRowButton.setOnAction(_-> tableView.getItems().add(new Preset()));
+        addRowButton.setOnAction(_ -> tableView.getItems().add(new Preset()));
         return addRowButton;
     }
 
     private static Button saveButton(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
         Button saveButton = new Button("Save");
-        saveButton.setOnAction(_-> saveToFile(commandsTable, pathsTable));
+        saveButton.setOnAction(_ -> saveToFile(commandsTable, pathsTable));
         return saveButton;
     }
 

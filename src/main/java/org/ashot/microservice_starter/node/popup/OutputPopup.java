@@ -28,9 +28,9 @@ public class OutputPopup {
         scene.getStylesheets().add(Main.CSS_FILE_LOCATION);
 
         TextArea textArea = new TextArea();
-        if(!sequential) {
+        if (!sequential) {
             textArea.setText(formatText(msg));
-        }else {
+        } else {
             textArea.setText(msg);
         }
         textArea.setWrapText(true);
@@ -49,7 +49,7 @@ public class OutputPopup {
         return textArea;
     }
 
-    private static String formatText(String msg){
+    private static String formatText(String msg) {
         String[] strings = msg.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < strings.length; i++) {

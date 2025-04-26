@@ -43,7 +43,7 @@ public class CommandExecution {
         ProcessBuilder pb = null;
         if (getSystemOS().contains("linux")) {
             pb = new ProcessBuilder().command("bash", "-c", command);
-        }else if (getSystemOS().contains("windows")){
+        } else if (getSystemOS().contains("windows")) {
             pb = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
         }
         Process process = null;
@@ -52,7 +52,7 @@ public class CommandExecution {
             ProcessRegistry.register(String.valueOf(process.pid()), process);
             Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
             runInNewTab(process, name);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
@@ -78,7 +78,7 @@ public class CommandExecution {
                 handleSequentialCommandChain(seqCommands, command, path, idx, entryChildren.size(), delayPerCmd);
             }
         }
-        if(seqOption) {
+        if (seqOption) {
             try {
                 currentCmdText = seqCommands.toString();
                 CommandExecution.execute(seqCommands.toString(), null, seqName, true);
@@ -88,7 +88,8 @@ public class CommandExecution {
         }
         return currentCmdText;
     }
-    private static void runInNewTab(Process process, String name){
+
+    private static void runInNewTab(Process process, String name) {
         Controller controller = ControllerRegistry.get("main", Controller.class);
 
         TabPane tabs = controller.getTabs();

@@ -6,7 +6,7 @@ public enum PresetType {
 
     private final String value;
 
-    PresetType(String value){
+    PresetType(String value) {
         this.value = value;
     }
 

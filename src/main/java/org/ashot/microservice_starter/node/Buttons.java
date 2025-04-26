@@ -26,27 +26,26 @@ public class Buttons {
     }
 
     //direction false -> down true -> up
-    public static Button orderingButton(boolean direction){
+    public static Button orderingButton(boolean direction) {
         Button btn = new Button();
-        if(direction){
+        if (direction) {
             btn.setOnAction(_ -> performOrdering(true, (HBox) btn.getParent().getParent()));
             btn.setGraphic(Icons.getChevronUpIcon(SIZE));
-        }else{
+        } else {
             btn.setOnAction(_ -> performOrdering(false, (HBox) btn.getParent().getParent()));
             btn.setGraphic(Icons.getChevronDownIcon(SIZE));
         }
         return btn;
     }
 
-    private static void performOrdering(boolean direction, HBox row){
+    private static void performOrdering(boolean direction, HBox row) {
         Pane parent = (Pane) row.getParent();
         int idxOfCurrent = parent.getChildren().indexOf(row);
-        if(direction){
+        if (direction) {
             if (idxOfCurrent == 0) return;
             parent.getChildren().remove(row);
             parent.getChildren().add(idxOfCurrent - 1, row);
-        }
-        else{
+        } else {
             if (idxOfCurrent == parent.getChildren().size() - 1) return;
             parent.getChildren().remove(row);
             parent.getChildren().add(idxOfCurrent + 1, row);

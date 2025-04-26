@@ -5,52 +5,64 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+            prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ashot.microservice_starter.Controller">
     <children>
-      <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="1000.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-               <items>
-                  <MenuItem fx:id="saveBtn" mnemonicParsing="false" onAction="#save" text="Save" />
-                  <MenuItem fx:id="loadBtn" mnemonicParsing="false" onAction="#load" text="Load" />
-               </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem fx:id="newEntryButton" mnemonicParsing="false" onAction="#newEntry" text="Add new Entry" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+        <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="1000.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="saveBtn" mnemonicParsing="false" onAction="#save" text="Save"/>
+                        <MenuItem fx:id="loadBtn" mnemonicParsing="false" onAction="#load" text="Load"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem fx:id="newEntryButton" mnemonicParsing="false" onAction="#newEntry"
+                                  text="Add new Entry"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
         <ScrollPane fitToHeight="true" fitToWidth="true" layoutY="41.0" prefHeight="375.0" prefWidth="1000.0">
             <content>
-                <VBox fx:id="container" prefHeight="284.0" prefWidth="998.0" />
+                <VBox fx:id="container" prefHeight="284.0" prefWidth="998.0"/>
             </content>
         </ScrollPane>
-      <AnchorPane layoutY="415.0" prefHeight="182.0" prefWidth="1000.0">
-         <children>
-            <Text fx:id="osInfo" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523">
-               <font>
-                  <Font size="12.0" />
-               </font>
-            </Text>
-              <Button fx:id="executeAllBtn" disable="true" layoutX="911.0" layoutY="23.0" mnemonicParsing="false" onAction="#executeAll" prefHeight="26.0" prefWidth="75.0" text="Run All" />
-            <Button fx:id="currentCmd" layoutX="375.0" layoutY="126.0" mnemonicParsing="false" onAction="#printCurrentCmd" prefHeight="26.0" prefWidth="250.0" text="Show commands executed" visible="false" />
-            <TextField fx:id="sequentialName" layoutX="802.0" layoutY="69.0" prefHeight="27.0" prefWidth="160.0" promptText="Window name" visible="false" />
-            <Text layoutX="399.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
-               <font>
-                  <Font size="11.0" />
-               </font>
-            </Text>
-            <Slider fx:id="delayPerCmd" layoutX="400.0" layoutY="49.0" majorTickUnit="4.0" max="20.0" minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
-              <Button fx:id="newEntryBtn2" layoutX="27.0" layoutY="23.0" mnemonicParsing="false" onAction="#newEntry" prefHeight="26.0" prefWidth="58.0" text="Add" />
-            <CheckBox fx:id="sequentialOption" layoutX="802.0" layoutY="27.0" mnemonicParsing="false" text="Sequential">
-               <tooltip>
-                  <Tooltip text="Run commands in sequence in a single terminal instance" />
-               </tooltip>
-            </CheckBox>
-            <Separator layoutY="-1.0" prefHeight="3.0" prefWidth="1000.0" />
-         </children>
-      </AnchorPane>
+        <AnchorPane layoutY="415.0" prefHeight="182.0" prefWidth="1000.0">
+            <children>
+                <Text fx:id="osInfo" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="298.13000106811523">
+                    <font>
+                        <Font size="12.0"/>
+                    </font>
+                </Text>
+                <Button fx:id="executeAllBtn" disable="true" layoutX="911.0" layoutY="23.0" mnemonicParsing="false"
+                        onAction="#executeAll" prefHeight="26.0" prefWidth="75.0" text="Run All"/>
+                <Button fx:id="currentCmd" layoutX="375.0" layoutY="126.0" mnemonicParsing="false"
+                        onAction="#printCurrentCmd" prefHeight="26.0" prefWidth="250.0" text="Show commands executed"
+                        visible="false"/>
+                <TextField fx:id="sequentialName" layoutX="802.0" layoutY="69.0" prefHeight="27.0" prefWidth="160.0"
+                           promptText="Window name" visible="false"/>
+                <Text layoutX="399.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                      text="Delay between commands (in seconds)">
+                    <font>
+                        <Font size="11.0"/>
+                    </font>
+                </Text>
+                <Slider fx:id="delayPerCmd" layoutX="400.0" layoutY="49.0" majorTickUnit="4.0" max="20.0"
+                        minorTickCount="1" prefHeight="40.0" prefWidth="200.0" showTickLabels="true"
+                        showTickMarks="true" snapToTicks="true"/>
+                <Button fx:id="newEntryBtn2" layoutX="27.0" layoutY="23.0" mnemonicParsing="false" onAction="#newEntry"
+                        prefHeight="26.0" prefWidth="58.0" text="Add"/>
+                <CheckBox fx:id="sequentialOption" layoutX="802.0" layoutY="27.0" mnemonicParsing="false"
+                          text="Sequential">
+                    <tooltip>
+                        <Tooltip text="Run commands in sequence in a single terminal instance"/>
+                    </tooltip>
+                </CheckBox>
+                <Separator layoutY="-1.0" prefHeight="3.0" prefWidth="1000.0"/>
+            </children>
+        </AnchorPane>
     </children>
 </AnchorPane>

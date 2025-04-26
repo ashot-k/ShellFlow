@@ -5,7 +5,7 @@ public enum Folders {
 
     private final String value;
 
-    Folders(String value){
+    Folders(String value) {
         this.value = value;
     }
 

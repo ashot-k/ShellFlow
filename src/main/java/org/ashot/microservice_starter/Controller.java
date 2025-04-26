@@ -75,22 +75,21 @@ public class Controller implements Initializable {
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
-        tabs.prefWidthProperty().bind(((VBox)tabs.getParent().getParent()).widthProperty());
+        tabs.prefWidthProperty().bind(((VBox) tabs.getParent().getParent()).widthProperty());
         tabs.getTabs().add(new PresetSetupTab());
         List<Node> setupOptions = setupSettings.getChildren().stream().toList();
         tabs.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
             setupSettings.getChildren().clear();
-            if(newValue instanceof OutputTab outputTab){
+            if (newValue instanceof OutputTab outputTab) {
                 setupSettings.getChildren().setAll(outputTab.getOutputTabOptions().getOptions());
-            }
-            else if(newValue.getId() != null && (newValue.getId().equals("setupTab") || newValue.getId().equals("presetSetupTab"))){
+            } else if (newValue.getId() != null && (newValue.getId().equals("setupTab") || newValue.getId().equals("presetSetupTab"))) {
                 setupSettings.getChildren().setAll(setupOptions);
             }
         });
         newEntry(null);
     }
 
-    private void setupIcons(){
+    private void setupIcons() {
         loadBtn.setGraphic(Icons.getOpenIcon(18));
         openRecent.setGraphic(Icons.getOpenRecentIcon(18));
         saveBtn.setGraphic(Icons.getSaveIcon(18));
@@ -98,27 +97,27 @@ public class Controller implements Initializable {
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
     }
 
-    private void loadRecentFolders(){
+    private void loadRecentFolders() {
         JSONObject dirs = Utils.setupFolders();
         lastSaved = (String) dirs.get(DirType.LAST_SAVED.name());
         lastLoaded = (String) dirs.get(DirType.LAST_LOADED.name());
         refreshRecentlyOpenedFolders();
     }
 
-    private void refreshRecentlyOpenedFolders(){
+    private void refreshRecentlyOpenedFolders() {
         List<String> toRemove = disabledRecentFoldersToRemove();
         openRecent.getItems().clear();
         JSONArray recentFolders = RecentFolders.getRecentFiles();
-        for (Object s : recentFolders.toList()){
+        for (Object s : recentFolders.toList()) {
             String recentFolder = s.toString();
-            if(toRemove.contains(recentFolder)){
+            if (toRemove.contains(recentFolder)) {
                 RecentFolders.removeRecentFile(recentFolder);
             }
             MenuItem m = new MenuItem();
             m.setText(recentFolder);
-            m.setOnAction(_ ->{
+            m.setOnAction(_ -> {
                 File file = new File(recentFolder);
-                if(file.exists()){
+                if (file.exists()) {
                     loadFromFile(file);
                     this.tabs.getSelectionModel().selectFirst();
                 }
@@ -128,10 +127,10 @@ public class Controller implements Initializable {
         }
     }
 
-    private List<String> disabledRecentFoldersToRemove(){
+    private List<String> disabledRecentFoldersToRemove() {
         List<String> list = new ArrayList<>();
-        for(MenuItem m : openRecent.getItems()){
-            if(m.isDisable()){
+        for (MenuItem m : openRecent.getItems()) {
+            if (m.isDisable()) {
                 list.add(m.getText());
             }
         }
@@ -155,7 +154,7 @@ public class Controller implements Initializable {
     public void save(ActionEvent e) {
         loadRecentFolders();
         File savedFile = chooseFile(true);
-        if(savedFile != null) {
+        if (savedFile != null) {
             saveToFile(savedFile);
             RecentFolders.saveDirReference(DirType.LAST_SAVED, savedFile.getParent());
         }
@@ -164,7 +163,7 @@ public class Controller implements Initializable {
     public void load(ActionEvent e) {
         loadRecentFolders();
         File loadedFile = chooseFile(false);
-        if(loadedFile != null) {
+        if (loadedFile != null) {
             loadFromFile(loadedFile);
             RecentFolders.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
             refreshRecentlyOpenedFolders();
@@ -202,26 +201,28 @@ public class Controller implements Initializable {
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
     }
 
-    private File chooseFile(boolean save){
+    private File chooseFile(boolean save) {
         return Utils.chooseFile(save, save ? lastSaved : lastLoaded);
     }
 
-    private void setCurrentCmdText(String text, Button currentCmd, boolean visible){
+    private void setCurrentCmdText(String text, Button currentCmd, boolean visible) {
         currentCmdText = text;
         currentCmd.setVisible(visible);
     }
 
-    public void printCurrentCmd(ActionEvent e){
+    public void printCurrentCmd(ActionEvent e) {
         OutputPopup.outputPopup(currentCmdText, "Commands Executed", sequentialOption.isSelected());
     }
-    public void lightMode(ActionEvent e){
+
+    public void lightMode(ActionEvent e) {
         Main.setThemeMode(false);
     }
-    public void darkMode(ActionEvent e){
+
+    public void darkMode(ActionEvent e) {
         Main.setThemeMode(true);
     }
 
-    public TabPane getTabs(){
+    public TabPane getTabs() {
         return tabs;
     }
 

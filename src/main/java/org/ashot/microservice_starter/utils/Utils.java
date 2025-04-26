@@ -25,8 +25,8 @@ public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName){
-        JSONArray entries= Utils.createJSONArray(container);
+    public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName) {
+        JSONArray entries = Utils.createJSONArray(container);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("entries", entries);
         jsonObject.put("delay", delayPerCmd);
@@ -109,19 +109,18 @@ public class Utils {
         return System.getenv("TERM").equalsIgnoreCase("gnome-terminal") ? "--" : "-e";
     }
 
-    public static String getSystemOS(){
+    public static String getSystemOS() {
         return System.getProperty("os.name").toLowerCase();
     }
 
-    public static JSONObject setupFolders(){
+    public static JSONObject setupFolders() {
         try {
             JSONObject jsonObject = null;
             File file = new File(Folders.RECENTS_DIR.getValue());
-            if(file.exists()){
+            if (file.exists()) {
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);
-            }
-            else if (file.createNewFile()){
+            } else if (file.createNewFile()) {
                 jsonObject = new JSONObject();
                 jsonObject.put(DirType.LAST_LOADED.name(), ".");
                 jsonObject.put(DirType.LAST_SAVED.name(), ".");
@@ -135,11 +134,11 @@ public class Utils {
         return null;
     }
 
-    public static void setupOSInfo(Button osInfo){
+    public static void setupOSInfo(Button osInfo) {
         String os = System.getProperty("os.name");
-        if(os.toLowerCase().contains("linux")){
+        if (os.toLowerCase().contains("linux")) {
             osInfo.setGraphic(Icons.getLinuxIcon(48));
-        }else if (os.toLowerCase().contains("windows")){
+        } else if (os.toLowerCase().contains("windows")) {
             osInfo.setGraphic(Icons.getWindowsIcon(48));
         }
         osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));

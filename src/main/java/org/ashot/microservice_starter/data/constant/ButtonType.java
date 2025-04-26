@@ -5,7 +5,7 @@ public enum ButtonType {
 
     private final String value;
 
-    ButtonType(String value){
+    ButtonType(String value) {
         this.value = value;
     }
 

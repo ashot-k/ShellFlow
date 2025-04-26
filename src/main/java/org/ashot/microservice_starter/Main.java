@@ -38,7 +38,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setResizable(RESIZABLE);
         stage.show();
-        stage.setOnCloseRequest(_-> {
+        stage.setOnCloseRequest(_ -> {
             ProcessRegistry.killAllProcesses();
             stage.close();
             Platform.exit();
@@ -46,16 +46,16 @@ public class Main extends Application {
         });
     }
 
-    public static void setThemeMode(boolean darkMode){
-        if(darkMode) {
+    public static void setThemeMode(boolean darkMode) {
+        if (darkMode) {
             Application.setUserAgentStylesheet(DARK_MODE);
-        }else {
+        } else {
             Application.setUserAgentStylesheet(LIGHT_MODE);
         }
         isDark = darkMode;
     }
 
-    public static boolean getDarkModeSetting(){
+    public static boolean getDarkModeSetting() {
         return isDark;
     }
 }

@@ -14,7 +14,7 @@ public class ProcessRegistry {
         return type.cast(processes.get(key));
     }
 
-    public static void killAllProcesses(){
+    public static void killAllProcesses() {
         processes.values().forEach(Process::destroy);
     }
 }

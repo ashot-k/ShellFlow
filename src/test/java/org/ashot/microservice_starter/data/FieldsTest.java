@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(ApplicationExtension.class)
 class FieldsTest {
-    private static Logger logger = LoggerFactory.getLogger(FieldsTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(FieldsTest.class);
 
     @Test
     void createFieldReturnsProperField() {
@@ -33,12 +33,14 @@ class FieldsTest {
         logger.info("createFieldReturnsProperFieldThrowsExceptionForNullType");
         assertThrows(NullPointerException.class, () -> Fields.createField(null, null));
     }
+
     @Test
     void createFieldSetsEmptyTextForNullText() {
         logger.info("createFieldSetsEmptyTextForNullText");
         TextField field = Fields.createField(TextFieldType.PATH, null);
         assertEquals("", field.getText(), "Field text was not set to empty for null text argument");
     }
+
     @Test
     void getTextFieldContentFromContainerReturnsNullForContainerWithoutTextField() {
         logger.info("getTextFieldContentFromContainerReturnsNullForContainerWithoutTextField");
@@ -47,6 +49,7 @@ class FieldsTest {
         v.getChildren().add(f);
         assertNull(Fields.getTextFieldContentFromContainer(v, TextFieldType.COMMAND), "Text field is not null");
     }
+
     @Test
     void getTextFieldContentFromContainerReturnsProperText() {
         logger.info("getTextFieldContentFromContainerReturnsProperText");

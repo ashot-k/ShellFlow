@@ -4,29 +4,31 @@ import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.Glyph;
 
 public class IconUtils {
-    public static void setHover(Glyph icon, Color off, Color hoveredColor){
+    public static void setHover(Glyph icon, Color off, Color hoveredColor) {
         icon.hoverProperty().addListener((_, _, newValue) -> {
-            if(newValue){
+            if (newValue) {
                 icon.color(hoveredColor);
-            }else {
+            } else {
                 icon.color(off);
             }
         });
     }
-    public static void setHoverToBrighter(Glyph icon, Color off){
+
+    public static void setHoverToBrighter(Glyph icon, Color off) {
         icon.hoverProperty().addListener((_, _, newValue) -> {
-            if(newValue){
+            if (newValue) {
                 icon.color(off.brighter());
-            }else {
+            } else {
                 icon.color(off);
             }
         });
     }
-    public static void setHoverToDarker(Glyph icon, Color off){
+
+    public static void setHoverToDarker(Glyph icon, Color off) {
         icon.hoverProperty().addListener((_, _, newValue) -> {
-            if(newValue){
+            if (newValue) {
                 icon.color(off.darker());
-            }else {
+            } else {
                 icon.color(off);
             }
         });

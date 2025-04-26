@@ -5,7 +5,7 @@ public enum TextFieldType {
 
     private final String value;
 
-    TextFieldType(String value){
+    TextFieldType(String value) {
         this.value = value;
     }
 

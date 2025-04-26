@@ -59,7 +59,7 @@ public class CommandOutputThread implements Runnable {
                         stringBuilder.append(newLine).append("\n");
                     }
                     outputTab.appendColoredLine(stringBuilder.toString());
-                    int lines = ((List<?>) codeArea.getParagraphs()).size();
+                    int lines = codeArea.getParagraphs().size();
                     if (lines > MAX_LINES) {
                         int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
                         codeArea.deleteText(0, end);
@@ -68,15 +68,14 @@ public class CommandOutputThread implements Runnable {
                         codeArea.moveTo(codeArea.getLength());
                         codeArea.requestFollowCaret();
                     }
-
                 });
             }
         }, 0, 5, TimeUnit.MILLISECONDS);
     }
 
-    private void checkThemeChange(){
-        if(darkTheme != Main.getDarkModeSetting()){
-            Platform.runLater(()-> {
+    private void checkThemeChange() {
+        if (darkTheme != Main.getDarkModeSetting()) {
+            Platform.runLater(() -> {
                 darkTheme = Main.getDarkModeSetting();
                 this.codeArea.getStyleClass().removeAll("light-mode", "dark-mode");
                 this.codeArea.getStyleClass().add(darkTheme ? "dark-mode" : "light-mode");
@@ -88,6 +87,7 @@ public class CommandOutputThread implements Runnable {
             });
         }
     }
+
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         readLineFromStream(reader);
@@ -110,7 +110,6 @@ public class CommandOutputThread implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-
     }
 
 }

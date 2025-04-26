@@ -4,9 +4,10 @@ public class Preset {
     private String name;
     private String value;
 
-    public Preset(){}
+    public Preset() {
+    }
 
-    public Preset(String name, String value){
+    public Preset(String name, String value) {
         this.name = name;
         this.value = value;
     }
