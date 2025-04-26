@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 
@@ -54,8 +55,8 @@ public class Entry {
         row.getChildren().addAll(deleteEntryBtn, nameField, pathField, commandField, execute);
         row.getStyleClass().add("entry");
 
-        Button moveUpBtn = Buttons.orderingButton(true);
-        Button moveDownBtn = Buttons.orderingButton(false);
+        Button moveUpBtn = Buttons.orderingButton(Direction.UP);
+        Button moveDownBtn = Buttons.orderingButton(Direction.DOWN);
         VBox orderingContainer = new VBox();
         orderingContainer.getChildren().addAll(moveUpBtn, moveDownBtn);
         orderingContainer.getStyleClass().add("ordering-container");
@@ -65,16 +66,15 @@ public class Entry {
 
     private void setupAutoComplete(String input, ContextMenu menu, TextField field, Map<String, String> searchMap) {
         menu.getItems().clear();
-        for (String p : searchMap.keySet()) {
-            if (p.toLowerCase().trim().contains(input.toLowerCase().trim())) {
+        for (String preset : searchMap.keySet()) {
+            if (preset.toLowerCase().trim().contains(input.toLowerCase().trim())) {
                 List<MenuItem> existing = menu.getItems().filtered(item -> {
                     String existingKey = searchMap.keySet().stream().filter(key -> key.equals(item.getText())).findFirst().get();
-                    return p.equals(existingKey);
+                    return preset.equals(existingKey);
                 });
                 if (existing.isEmpty()) {
-                    MenuItem menuItem = new MenuItem();
-                    menuItem.setText(p);
-                    menuItem.setOnAction(_ -> field.setText(searchMap.get(p)));
+                    MenuItem menuItem = new MenuItem(preset);
+                    menuItem.setOnAction(_ -> field.setText(searchMap.get(preset)));
                     menu.getItems().add(menuItem);
                 }
             }

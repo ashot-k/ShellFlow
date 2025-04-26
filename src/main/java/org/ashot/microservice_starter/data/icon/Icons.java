@@ -99,4 +99,12 @@ public class Icons {
         setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
         return icon;
     }
+
+    public static Glyph getClearEntriesIcon(int size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TRASH_ALT);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
 }

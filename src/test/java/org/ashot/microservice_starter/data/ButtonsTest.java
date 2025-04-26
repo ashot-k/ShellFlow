@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.ButtonType;
+import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.node.Buttons;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class ButtonsTest {
         HBox orderingButtonsContainer = new HBox();
         row.getChildren().add(orderingButtonsContainer);
 
-        Button b = Buttons.orderingButton(true);
+        Button b = Buttons.orderingButton(Direction.UP);
         orderingButtonsContainer.getChildren().add(b);
         v.getChildren().add(row);
         Assertions.assertAll(
@@ -49,7 +50,7 @@ class ButtonsTest {
         VBox v = new VBox();
         HBox row = new HBox();
         HBox orderingButtonsContainer = new HBox();
-        Button b = Buttons.orderingButton(false);
+        Button b = Buttons.orderingButton(Direction.DOWN);
         orderingButtonsContainer.getChildren().add(b);
         orderingButtonsContainer.setId("ordering-container-0");
         HBox row2 = new HBox();
@@ -72,7 +73,7 @@ class ButtonsTest {
         orderingButtonsContainer.setId("ordering-container-0");
         HBox row2 = new HBox();
         HBox orderingButtonsContainer2 = new HBox();
-        Button b2 = Buttons.orderingButton(true);
+        Button b2 = Buttons.orderingButton(Direction.UP);
         orderingButtonsContainer2.getChildren().add(b2);
         orderingButtonsContainer2.setId("ordering-container-1");
 

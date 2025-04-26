@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.exception.ErrorMessages;
 import org.ashot.microservice_starter.node.Fields;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
@@ -50,7 +51,6 @@ public class CommandExecution {
         try {
             process = pb.start();
             ProcessRegistry.register(String.valueOf(process.pid()), process);
-            Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
             runInNewTab(process, name);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -69,6 +69,7 @@ public class CommandExecution {
             String name = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.NAME);
             String command = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.COMMAND);
             String path = Fields.getTextFieldContentFromContainer((Pane) node, TextFieldType.PATH);
+            validateField(command);
             if (!seqOption) {
                 currentCmdText = currentCmdText.isEmpty() ? command : currentCmdText + "\n" + command + " at " + path;
                 long timeInMS = calculateDelay(idx, delayPerCmd);
@@ -94,6 +95,7 @@ public class CommandExecution {
 
         TabPane tabs = controller.getTabs();
         OutputTab outputTab = new OutputTab(new CodeArea(), process, name);
+        outputTab.getOutputTabOptions().toggleWrapText(controller.getTextWrapOption());
 
         Platform.runLater(() -> {
             tabs.getTabs().add(outputTab);
@@ -101,6 +103,13 @@ public class CommandExecution {
         });
         CommandOutputThread thread = new CommandOutputThread(outputTab);
         new Thread(thread).start();
+    }
+
+    public static void validateField(String fieldValue) {
+        if (fieldValue == null || fieldValue.isBlank()) {
+            ErrorPopup.errorPopup(ErrorMessages.INVALID_FIELDS);
+            throw new IllegalArgumentException(fieldValue);
+        }
     }
 
 }

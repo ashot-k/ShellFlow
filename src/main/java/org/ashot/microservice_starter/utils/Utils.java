@@ -102,6 +102,7 @@ public class Utils {
     }
 
     public static int calculateDelay(int multiplier, int delayPerCmd) {
+        if (delayPerCmd == 0) delayPerCmd = 1;
         return multiplier * delayPerCmd * 1000;
     }
 
@@ -137,9 +138,9 @@ public class Utils {
     public static void setupOSInfo(Button osInfo) {
         String os = System.getProperty("os.name");
         if (os.toLowerCase().contains("linux")) {
-            osInfo.setGraphic(Icons.getLinuxIcon(48));
+            osInfo.setGraphic(Icons.getLinuxIcon(24));
         } else if (os.toLowerCase().contains("windows")) {
-            osInfo.setGraphic(Icons.getWindowsIcon(48));
+            osInfo.setGraphic(Icons.getWindowsIcon(24));
         }
         osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
     }

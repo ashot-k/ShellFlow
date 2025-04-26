@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
@@ -56,72 +56,143 @@
                 </TabPane>
             </children>
         </VBox>
-        <Separator prefWidth="200.0" VBox.vgrow="ALWAYS"/>
-        <HBox alignment="TOP_CENTER" fillHeight="false">
+        <Separator VBox.vgrow="ALWAYS"/>
+        <HBox alignment="CENTER" fillHeight="false">
             <children>
-                <GridPane id="options" fx:id="setupSettings" alignment="CENTER" prefWidth="1200.0">
+                <GridPane id="options" fx:id="setupSettings" alignment="CENTER" styleClass="grid-pane"
+                          HBox.hgrow="ALWAYS">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0"
-                                           prefWidth="100.0"/>
-                        <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0"
-                                           prefWidth="100.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="300.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints/>
-                        <RowConstraints maxHeight="38.0" minHeight="10.0" prefHeight="31.0" valignment="TOP"/>
-                        <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="79.0" valignment="CENTER"
-                                        vgrow="ALWAYS"/>
+                        <RowConstraints valignment="CENTER"/>
+                        <RowConstraints valignment="CENTER"/>
+                        <RowConstraints valignment="CENTER"/>
                     </rowConstraints>
                     <children>
-                        <Button fx:id="newEntryBtn" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#newEntry"
-                                prefHeight="30.0" prefWidth="100.0" text="Add" GridPane.halignment="RIGHT"
-                                GridPane.rowIndex="1"/>
-                        <VBox alignment="BOTTOM_LEFT" style="-fx-spacing: 8px;" GridPane.columnIndex="2"
-                              GridPane.halignment="LEFT" GridPane.rowIndex="2">
+                        <VBox spacing="5.0" style="-fx-spacing: 5;" GridPane.columnIndex="2" GridPane.rowIndex="2">
                             <children>
                                 <CheckBox fx:id="sequentialOption" mnemonicParsing="false" text="Sequential">
                                     <tooltip>
                                         <Tooltip text="Run commands in sequence in a single terminal instance"/>
                                     </tooltip>
                                 </CheckBox>
-                                <TextField fx:id="sequentialName" prefHeight="27.0" prefWidth="160.0"
-                                           promptText="Window name" visible="false"/>
+                                <TextField fx:id="sequentialName" promptText="Tab name" visible="false"/>
                             </children>
+                            <GridPane.margin>
+                                <Insets/>
+                            </GridPane.margin>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            </padding>
                         </VBox>
-                        <Button fx:id="currentCmd" mnemonicParsing="false" onAction="#printCurrentCmd" prefHeight="26.0"
-                                prefWidth="250.0" text="Show commands executed" visible="false" GridPane.columnIndex="1"
-                                GridPane.rowIndex="2" GridPane.valignment="BOTTOM"/>
-                        <Button fx:id="executeAllBtn" contentDisplay="RIGHT" disable="true" graphicTextGap="12.0"
-                                mnemonicParsing="false" onAction="#executeAll" prefHeight="30.0" prefWidth="160.0"
-                                text="Run All" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="251.0" style="-fx-spacing: 5;"
-                              GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <VBox alignment="CENTER" spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                             <children>
-                                <Slider fx:id="delayPerCmd" majorTickUnit="2.0" max="20.0" min="1" minorTickCount="1"
-                                        prefHeight="40.0" prefWidth="200.0" showTickLabels="true" showTickMarks="true"
-                                        snapToTicks="true"/>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Delay between commands (in seconds)">
+                                <Slider fx:id="delayPerCmd" majorTickUnit="10.0" max="20.0" minorTickCount="4"
+                                        showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
+                                <Text strokeType="OUTSIDE" text="Delay between commands (in seconds)">
                                     <font>
-                                        <Font size="14.0"/>
+                                        <Font size="11.0"/>
                                     </font>
                                 </Text>
                             </children>
                             <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0"/>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
+                            <GridPane.margin>
+                                <Insets/>
+                            </GridPane.margin>
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
                         </VBox>
-                        <Button fx:id="osInfo" alignment="BOTTOM_LEFT" contentDisplay="TOP" mnemonicParsing="false"
+                        <Button fx:id="osInfo" alignment="BOTTOM_LEFT" mnemonicParsing="false"
                                 style="-fx-background-color: transparent;" GridPane.halignment="LEFT"
                                 GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
-                            <font>
-                                <Font size="12.0"/>
-                            </font>
                         </Button>
+                        <Label text="Entry Actions">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            </padding>
+                        </Label>
+                        <Label text="Execution Options" GridPane.columnIndex="2">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            </padding>
+                        </Label>
+                        <Label text="Execution Actions" GridPane.columnIndex="4">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            </padding>
+                        </Label>
+                        <HBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                            <children>
+                                <Button fx:id="stopAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true"
+                                        graphicTextGap="10.0" mnemonicParsing="false" onAction="#stopAll"
+                                        text="Close All">
+                                    <tooltip>
+                                        <Tooltip text="Close all tabs and their processes"/>
+                                    </tooltip>
+                                </Button>
+                                <Button fx:id="executeAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true"
+                                        graphicTextGap="10.0" mnemonicParsing="false" onAction="#executeAll"
+                                        prefHeight="26.0" prefWidth="125.0" text="Run All">
+                                    <tooltip>
+                                        <Tooltip text="Run all Entries"/>
+                                    </tooltip>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <VBox alignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                            <children>
+                                <HBox alignment="CENTER">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                    </padding>
+                                    <children>
+                                        <Button fx:id="currentCmd" mnemonicParsing="false" onAction="#printCurrentCmd"
+                                                prefWidth="250.0" text="Show executed commands" visible="false"/>
+                                    </children>
+                                </HBox>
+                                <Label text="Output tabs options">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                    </padding>
+                                </Label>
+                                <HBox spacing="10.0">
+                                    <children>
+                                        <CheckBox fx:id="textWrapToggle" mnemonicParsing="false"
+                                                  onAction="#toggleTextWrap" text="Text wrap"/>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                    </padding>
+                                </HBox>
+                            </children>
+                        </VBox>
+                        <HBox alignment="CENTER" spacing="10.0" GridPane.rowIndex="1">
+                            <children>
+                                <Button fx:id="clearEntriesBtn" alignment="CENTER" contentDisplay="RIGHT"
+                                        graphicTextGap="6.0" mnemonicParsing="false" onAction="#clearAllEntries"
+                                        text="Clear All"/>
+                                <Button fx:id="newEntryBtn" contentDisplay="RIGHT" graphicTextGap="6.0"
+                                        mnemonicParsing="false" onAction="#newEntry" text="Add"/>
+                            </children>
+                        </HBox>
+                        <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Separator orientation="VERTICAL" GridPane.columnIndex="1"/>
+                        <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Separator orientation="VERTICAL" GridPane.columnIndex="3"/>
+                        <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                        <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
                     </children>
-                    <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="5.0"/>
-                    </padding>
+                    <opaqueInsets>
+                        <Insets/>
+                    </opaqueInsets>
                 </GridPane>
             </children>
         </HBox>

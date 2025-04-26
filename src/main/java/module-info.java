@@ -6,7 +6,7 @@ module org.ashot.microservice_starter {
     requires org.controlsfx.controls;
     requires org.fxmisc.richtext;
     requires org.fxmisc.flowless;
-    requires java.desktop;
+    requires reactfx;
 
 
     exports org.ashot.microservice_starter;

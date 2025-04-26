@@ -7,6 +7,7 @@ public class ProcessRegistry {
     private static final Map<String, Process> processes = new HashMap<>();
 
     public static void register(String key, Process process) {
+        Runtime.getRuntime().addShutdownHook(new Thread(process::destroy));
         processes.put(key, process);
     }
 

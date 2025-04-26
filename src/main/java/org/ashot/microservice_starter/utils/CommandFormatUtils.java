@@ -31,7 +31,7 @@ public class CommandFormatUtils {
         if (path != null && !path.isEmpty()) {
             seqCommands.append("cd ").append(path.length() > 0 ? path : "./").append(" && ");
         }
-        if (idx != 0 && delayPerCmd > 0) {
+        if (idx != 0 && delayPerCmd >= 0) {
             seqCommands
                     .append("sleep ").append(delayPerCmd).append("s").append(" && ");
         }

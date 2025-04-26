@@ -1,5 +1,6 @@
 package org.ashot.microservice_starter;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
+import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,7 +61,13 @@ public class Controller implements Initializable {
     @FXML
     private Button executeAllBtn;
     @FXML
+    private Button stopAllBtn;
+    @FXML
+    private Button clearEntriesBtn;
+    @FXML
     private Button currentCmd;
+    @FXML
+    private CheckBox textWrapToggle;
 
     private String currentCmdText = "";
 
@@ -71,30 +79,26 @@ public class Controller implements Initializable {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
         setupIcons();
-        container.getChildren().addListener((ListChangeListener<Node>) c -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
+        container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
+        tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> stopAllBtn.setDisable(tabs.getTabs().size() <= 2));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         tabs.prefWidthProperty().bind(((VBox) tabs.getParent().getParent()).widthProperty());
         tabs.getTabs().add(new PresetSetupTab());
-        List<Node> setupOptions = setupSettings.getChildren().stream().toList();
-        tabs.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
-            setupSettings.getChildren().clear();
-            if (newValue instanceof OutputTab outputTab) {
-                setupSettings.getChildren().setAll(outputTab.getOutputTabOptions().getOptions());
-            } else if (newValue.getId() != null && (newValue.getId().equals("setupTab") || newValue.getId().equals("presetSetupTab"))) {
-                setupSettings.getChildren().setAll(setupOptions);
-            }
-        });
         newEntry(null);
     }
 
     private void setupIcons() {
-        loadBtn.setGraphic(Icons.getOpenIcon(18));
-        openRecent.setGraphic(Icons.getOpenRecentIcon(18));
-        saveBtn.setGraphic(Icons.getSaveIcon(18));
-        newEntryBtn.setGraphic(Icons.getAddButtonIcon(24));
-        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(24));
+        int MENU_ITEM_ICON_SIZE = 18;
+        loadBtn.setGraphic(Icons.getOpenIcon(MENU_ITEM_ICON_SIZE));
+        openRecent.setGraphic(Icons.getOpenRecentIcon(MENU_ITEM_ICON_SIZE));
+        saveBtn.setGraphic(Icons.getSaveIcon(MENU_ITEM_ICON_SIZE));
+        int BUTTON_ICON_SIZE = 20;
+        newEntryBtn.setGraphic(Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
+        clearEntriesBtn.setGraphic(Icons.getClearEntriesIcon(BUTTON_ICON_SIZE));
+        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(BUTTON_ICON_SIZE));
+        stopAllBtn.setGraphic(Icons.getCloseButtonIcon(BUTTON_ICON_SIZE));
     }
 
     private void loadRecentFolders() {
@@ -151,6 +155,15 @@ public class Controller implements Initializable {
         setCurrentCmdText(commands, currentCmd, true);
     }
 
+    public void stopAll() {
+        ProcessRegistry.killAllProcesses();
+        this.tabs.getTabs().forEach(tab -> {
+            if (tab instanceof OutputTab outputTab) {
+                Platform.runLater(() -> tabs.getTabs().remove(outputTab));
+            }
+        });
+    }
+
     public void save(ActionEvent e) {
         loadRecentFolders();
         File savedFile = chooseFile(true);
@@ -177,6 +190,21 @@ public class Controller implements Initializable {
         Utils.writeDataToFile(fileToSave, jsonObject);
         log.debug("Saved: {}", fileToSave.getAbsolutePath());
         RecentFolders.saveRecentDir(fileToSave.getAbsolutePath());
+    }
+
+    public void toggleTextWrap(ActionEvent e) {
+        for (Tab t : tabs.getTabs()) {
+            if (t instanceof OutputTab outputTab) {
+                outputTab.getOutputTabOptions().toggleWrapText(textWrapToggle.isSelected());
+            }
+        }
+    }
+
+    public void clearAllEntries(ActionEvent e) {
+        Platform.runLater(() -> {
+            container.getChildren().clear();
+            newEntry(null);
+        });
     }
 
     private void loadFromFile(File fileToLoad) {
@@ -224,6 +252,10 @@ public class Controller implements Initializable {
 
     public TabPane getTabs() {
         return tabs;
+    }
+
+    public boolean getTextWrapOption() {
+        return textWrapToggle.isSelected();
     }
 
 }

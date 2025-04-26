@@ -1,9 +1,9 @@
 package org.ashot.microservice_starter.node.popup;
 
+import atlantafx.base.theme.Styles;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.ashot.microservice_starter.Main;
@@ -16,13 +16,13 @@ public class ErrorPopup {
         VBox errorContainer = new VBox();
         Text text = new Text();
         text.setText(msg);
-        text.setWrappingWidth(380);
+        text.setWrappingWidth(500);
         Button close = new Button("Close");
         close.setOnAction(_ -> errorStage.close());
         errorContainer.getChildren().add(text);
         errorContainer.getChildren().add(close);
         errorContainer.getStyleClass().add("error-message");
-        Scene scene = new Scene(errorContainer, 400, 150, Color.BLACK);
+        Scene scene = new Scene(errorContainer);
         scene.getStylesheets().addAll(Main.getUserAgentStylesheet(), Main.class.getResource("main.css").toExternalForm());
         errorStage.setScene(scene);
         errorStage.setTitle("Error");
