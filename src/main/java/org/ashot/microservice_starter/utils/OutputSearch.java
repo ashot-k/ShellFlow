@@ -16,33 +16,51 @@ public class OutputSearch {
         this.codeArea = codeArea;
     }
 
-    private void resetFind(){
-        resetFindIndexes();
+    private void resetFind(boolean next){
+        if(next) {
+            resetFindIndexToStart();
+        }else{
+            resetFindIndexToEnd(currentInput);
+        }
         resetFindResults();
         resetCaret();
     }
 
-    public void resetFindIndexes(){
+    public void resetFindIndexToStart(){
         currentOccurrencePos = 0;
         currentOccurrence = 1;
+    }
+    public void resetFindIndexToEnd(String input){
+        currentOccurrencePos = codeArea.getText().lastIndexOf(input);
+        currentOccurrence = TextFindUtils.calculateOccurrences(input, codeArea);
     }
 
     private void resetFindResults(){
         results.setText("0/0");
     }
 
-    public void performSearch(String input){
+    public void performForwardSearch(String input){
         findNextOccurrence(input);
+    }
+
+    public void performBackwardSearch(String input){
+        findPreviousOccurrence(input);
     }
 
     private void findNextOccurrence(String input){
         if(findText(input)) {
             moveToText(input);
             currentInput = input;
-            currentOccurrence++;
-            currentOccurrencePos += input.length();
         }else{
-            resetFind();
+            resetFind(true);
+        }
+    }
+    private void findPreviousOccurrence(String input){
+        if(findPreviousText(input)){
+            moveToText(input);
+            currentInput = input;
+        }else{
+            resetFind(false);
         }
     }
 
@@ -51,16 +69,38 @@ public class OutputSearch {
             return false;
         };
         if(currentOccurrencePos >= this.codeArea.getText().lastIndexOf(input)){
-            resetFindIndexes();
+            resetFindIndexToStart();
         }
-        currentOccurrencePos = this.codeArea.getText().indexOf(input, currentOccurrencePos);
+        if(currentOccurrence == 1){
+            currentOccurrencePos = this.codeArea.getText().indexOf(input , currentOccurrencePos);
+        }
+        else {
+            currentOccurrencePos = this.codeArea.getText().indexOf(input, currentOccurrencePos + input.length());
+        }
         if(currentOccurrencePos == -1){
             return false;
         }
         results.setText(currentOccurrence + "/" + TextFindUtils.calculateOccurrences(input, codeArea));
+        currentOccurrence++;
         return true;
     }
-    //todo add reverse
+
+    private boolean findPreviousText(String input){
+        if(input.isBlank()){
+            return false;
+        }
+        if(currentOccurrencePos <= this.codeArea.getText().indexOf(input)){
+            resetFindIndexToEnd(input);
+        }else {
+            currentOccurrencePos = this.codeArea.getText().substring(0, currentOccurrencePos).lastIndexOf(input);
+        }
+        if(currentOccurrencePos == -1){
+            return false;
+        }
+        results.setText(currentOccurrence + "/" + TextFindUtils.calculateOccurrences(input, codeArea));
+        currentOccurrence--;
+        return true;
+    }
 
     private void resetCaret(){
         codeArea.deselect();

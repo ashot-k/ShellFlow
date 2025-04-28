@@ -136,13 +136,15 @@ public class OutputTab extends Tab {
         TextField searchField = new TextField();
         OutputSearch search = new OutputSearch(findResults, codeArea);
         searchField.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.ENTER){
-                search.performSearch(search.getCurrentInput());
+            if(event.isShiftDown() && event.getCode() == KeyCode.ENTER){
+                search.performBackwardSearch(search.getCurrentInput());
+            } else if(event.getCode() == KeyCode.ENTER){
+                search.performForwardSearch(search.getCurrentInput());
             }
         });
         searchField.textProperty().addListener((_, _, input) -> {
-            search.resetFindIndexes();
-            search.performSearch(input);
+            search.resetFindIndexToStart();
+            search.performForwardSearch(input);
         });
         int FIND_CONTAINER_WIDTH = 250;
         searchField.setPrefWidth(FIND_CONTAINER_WIDTH);
