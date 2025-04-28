@@ -13,7 +13,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.icon.Icons;
-import org.ashot.microservice_starter.utils.TextFindUtils;
+import org.ashot.microservice_starter.utils.OutputSearch;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -129,49 +129,20 @@ public class OutputTab extends Tab {
         Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputSearchOptions));
     }
 
-    private int currentOccurrence = 1;
-    private int currentOccurrencePos = 0;
-    private String currentInput = "";
-
-    private void resetFindIndexes(){
-        currentOccurrencePos = 0;
-        currentOccurrence = 1;
-    }
-
-    private void findNextOccurrence(String input){
-        if(input.isBlank()) {
-            resetFindIndexes();
-            findResults.setText("0/0");
-            return;
-        };
-        currentInput = input;
-        if(currentOccurrencePos >= this.codeArea.getText().lastIndexOf(input)){
-            resetFindIndexes();
-        }
-        currentOccurrencePos = this.codeArea.getText().indexOf(input, currentOccurrencePos);
-        if(currentOccurrencePos == -1){
-            resetFindIndexes();
-            return;
-        }
-        codeArea.selectRange(currentOccurrencePos, currentOccurrencePos + input.length());
-        codeArea.requestFollowCaret();
-        findResults.setText(currentOccurrence + "/" + TextFindUtils.calculateOccurrences(input, codeArea));
-        currentOccurrencePos += input.length();
-        currentOccurrence++;
-    }
-
 
     private final Label findResults = new Label();
 
     private VBox setupSearchOptions(){
         TextField searchField = new TextField();
+        OutputSearch search = new OutputSearch(findResults, codeArea);
         searchField.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.ENTER){
-                findNextOccurrence(currentInput);
+                search.performSearch(search.getCurrentInput());
             }
         });
         searchField.textProperty().addListener((_, _, input) -> {
-            findNextOccurrence(input);
+            search.resetFindIndexes();
+            search.performSearch(input);
         });
         int FIND_CONTAINER_WIDTH = 250;
         searchField.setPrefWidth(FIND_CONTAINER_WIDTH);

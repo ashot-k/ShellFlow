@@ -15,8 +15,8 @@ import java.net.URL;
 
 public class Main extends Application {
 
-    public static final int SIZE_X = 1200;
-    public static final int SIZE_Y = 750;
+    public static final int SIZE_X = 1400;
+    public static final int SIZE_Y = 800;
     private static final boolean RESIZABLE = true;
     public static final String CSS_FILE_LOCATION = Main.class.getResource("main.css").toExternalForm();
     public static final URL MAIN_FXML_LOCATION = Main.class.getResource("microservice-main.fxml");
