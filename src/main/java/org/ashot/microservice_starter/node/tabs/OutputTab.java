@@ -1,11 +1,19 @@
 package org.ashot.microservice_starter.node.tabs;
 
 import javafx.application.Platform;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.data.icon.Icons;
+import org.ashot.microservice_starter.utils.TextFindUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -22,20 +30,25 @@ public class OutputTab extends Tab {
     private final CodeArea codeArea;
     private final Process process;
     private final OutputTabOptions outputTabOptions;
+    private final VBox outputSearchOptions;
     private boolean usedScrolling = false;
+    private boolean searchVisible = false;
 
     public OutputTab(CodeArea codeArea, Process process, String name) {
         this.outputTabOptions = new OutputTabOptions(this);
         this.codeArea = codeArea;
         this.process = process;
         this.scrollPane = new VirtualizedScrollPane<>(codeArea);
+        this.outputSearchOptions = setupSearchOptions();
         setupOutputTab(name);
     }
 
     public void setupOutputTab(String name) {
-        this.codeArea.getStyleClass().add("command-output-container");
-        this.codeArea.getStyleClass().add(Main.getDarkModeSetting() ? "dark-mode" : "light-mode");
-        this.codeArea.getStyleClass().add(Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text");
+        this.codeArea.getStyleClass().addAll(
+                "command-output-container",
+                Main.getDarkModeSetting() ? "dark-mode" : "light-mode",
+                Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text"
+        );
         this.codeArea.setEditable(false);
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
             if (e.getDeltaY() < 0) {
@@ -49,7 +62,9 @@ public class OutputTab extends Tab {
         this.scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.setText(name.replace("\"", ""));
-        this.setContent(scrollPane);
+        this.setContent(new VBox(scrollPane));
+        VBox.setVgrow(codeArea, Priority.ALWAYS);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
         this.setClosable(true);
         this.setOnClosed(_ -> this.process.destroy());
         this.setupUserInput();
@@ -58,26 +73,124 @@ public class OutputTab extends Tab {
     private void setupUserInput() {
         this.setOnSelectionChanged(_ -> {
             if (this.isSelected()) {
-                this.codeArea.setOnKeyPressed(event -> {
-                    try {
-                        if (event.isControlDown() && event.getCode() == KeyCode.C) {
-                            this.process.destroy();
-                            process.getOutputStream().flush();
-                            Platform.runLater(() -> appendColoredLine("CTRL + C"));
-                            return;
-                        } else if (event.getCode() == KeyCode.ENTER) {
-                            process.getOutputStream().write('\n');
-                        } else {
-                            process.getOutputStream().write((event.getText()).getBytes());
-                        }
-                        process.getOutputStream().flush();
-                        Platform.runLater(() -> appendColoredLine(event.getText()));
-                    } catch (IOException e) {
-                        logger.error(e.getMessage());
-                    }
-                });
+                if(searchVisible){
+                    showSearch();
+                }
+                this.codeArea.setOnKeyPressed(this::handleUserInput);
+            }
+            else {
+                if(searchVisible) {
+                    closeSearch();
+                    searchVisible = true;
+                }else{
+                    closeSearch();
+                }
+            };
+        });
+    }
+
+    private void handleUserInput(KeyEvent event){
+        try {
+            if (event.isControlDown() && event.getCode() == KeyCode.C) {
+                this.process.destroy();
+                process.getOutputStream().flush();
+                Platform.runLater(() -> appendColoredLine("CTRL + C"));
+                return;
+            }else if(event.isControlDown() && event.getCode() == KeyCode.F){
+                if(!this.searchVisible){
+                    showSearch();
+                }else{
+                    closeSearch();
+                }
+                return;
+            } else if (event.getCode() == KeyCode.ENTER) {
+                process.getOutputStream().write('\n');
+            } else {
+                process.getOutputStream().write((event.getText()).getBytes());
+            }
+            process.getOutputStream().flush();
+            Platform.runLater(() -> appendColoredLine(event.getText()));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private VBox getSearchOuterContainer(){
+        return (VBox) this.getTabPane().getParent().getParent();
+    }
+
+    private void showSearch(){
+        this.searchVisible = true;
+        Platform.runLater(() -> getSearchOuterContainer().getChildren().add(2, this.outputSearchOptions));
+    }
+
+    private void closeSearch(){
+        this.searchVisible = false;
+        Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputSearchOptions));
+    }
+
+    private int currentOccurrence = 1;
+    private int currentOccurrencePos = 0;
+    private String currentInput = "";
+
+    private void resetFindIndexes(){
+        currentOccurrencePos = 0;
+        currentOccurrence = 1;
+    }
+
+    private void findNextOccurrence(String input){
+        if(input.isBlank()) {
+            resetFindIndexes();
+            findResults.setText("0/0");
+            return;
+        };
+        currentInput = input;
+        if(currentOccurrencePos >= this.codeArea.getText().lastIndexOf(input)){
+            resetFindIndexes();
+        }
+        currentOccurrencePos = this.codeArea.getText().indexOf(input, currentOccurrencePos);
+        if(currentOccurrencePos == -1){
+            resetFindIndexes();
+            return;
+        }
+        codeArea.selectRange(currentOccurrencePos, currentOccurrencePos + input.length());
+        codeArea.requestFollowCaret();
+        findResults.setText(currentOccurrence + "/" + TextFindUtils.calculateOccurrences(input, codeArea));
+        currentOccurrencePos += input.length();
+        currentOccurrence++;
+    }
+
+
+    private final Label findResults = new Label();
+
+    private VBox setupSearchOptions(){
+        TextField searchField = new TextField();
+        searchField.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                findNextOccurrence(currentInput);
             }
         });
+        searchField.textProperty().addListener((_, _, input) -> {
+            findNextOccurrence(input);
+        });
+        int FIND_CONTAINER_WIDTH = 250;
+        searchField.setPrefWidth(FIND_CONTAINER_WIDTH);
+        Button closeBtn = new Button("", Icons.getCloseButtonIcon(24));
+        closeBtn.setOnAction(_ -> this.closeSearch());
+        closeBtn.getStyleClass().add("close-btn");
+        Label label = new Label("Find");
+        BorderPane headerContainer = new BorderPane();
+        headerContainer.setLeft(label);
+        headerContainer.setPrefWidth(FIND_CONTAINER_WIDTH);
+        headerContainer.setRight(closeBtn);
+
+        findResults.setLabelFor(searchField);
+        findResults.setPadding(new Insets(0,5,0,5));
+
+        VBox innerContainer = new VBox(headerContainer, searchField, findResults);
+        innerContainer.setPadding(new Insets(0,10,10,10));
+        innerContainer.setFillWidth(false);
+        return new VBox(new Separator(Orientation.HORIZONTAL), new HBox(innerContainer));
     }
 
     public void appendColoredLine(String line) {

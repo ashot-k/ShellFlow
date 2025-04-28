@@ -87,6 +87,8 @@ public class Controller implements Initializable {
         tabs.prefWidthProperty().bind(((VBox) tabs.getParent().getParent()).widthProperty());
         tabs.getTabs().add(new PresetSetupTab());
         newEntry(null);
+        //todo add checks for null etc
+        loadFromFile(new File(RecentFolders.getRecentFiles().getString(0)));
     }
 
     private void setupIcons() {

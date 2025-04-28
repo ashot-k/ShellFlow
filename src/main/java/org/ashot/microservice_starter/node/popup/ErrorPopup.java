@@ -1,6 +1,5 @@
 package org.ashot.microservice_starter.node.popup;
 
-import atlantafx.base.theme.Styles;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
