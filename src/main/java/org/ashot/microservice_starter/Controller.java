@@ -37,6 +37,8 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     @FXML
+    private VBox sceneContainer;
+    @FXML
     private MenuItem loadBtn;
     @FXML
     private Menu openRecent;
@@ -44,8 +46,6 @@ public class Controller implements Initializable {
     private MenuItem saveBtn;
     @FXML
     private FlowPane container;
-    @FXML
-    private GridPane setupSettings;
     @FXML
     private TabPane tabs;
     @FXML
@@ -80,17 +80,27 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
-        setupIcons();
+
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
-        tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
+        tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS));
+        tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
+        tabs.getTabs().add(new PresetSetupTab());
+
+        setupIcons();
+        newEntry(null);
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
-        tabs.prefWidthProperty().bind(((VBox) tabs.getParent().getParent()).widthProperty());
-        tabs.getTabs().add(new PresetSetupTab());
-        newEntry(null);
-        //todo add checks for null etc
-        loadFromFile(new File(RecentFolders.getRecentFiles().getString(0)));
+        loadMostRecentFile();
+    }
+
+    private void loadMostRecentFile(){
+        if(RecentFolders.getRecentFiles() != null) {
+            String mostRecentFile = RecentFolders.getRecentFiles().getString(0);
+            if(mostRecentFile != null){
+                loadFromFile(new File(RecentFolders.getRecentFiles().getString(0)));
+            }
+        }
     }
 
     private void setupIcons() {

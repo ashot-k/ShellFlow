@@ -1,15 +1,21 @@
 package org.ashot.microservice_starter.utils;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import org.fxmisc.richtext.CodeArea;
 
-public class OutputSearch {
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+public class OutputSearch {
+    private boolean active;
     private int currentOccurrence = 1;
     private int currentOccurrencePos = 0;
     private String currentInput = "";
     private final CodeArea codeArea;
     private final Label results;
+    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     public OutputSearch(Label results, CodeArea codeArea){
         this.results = results;
@@ -30,7 +36,8 @@ public class OutputSearch {
         currentOccurrencePos = 0;
         currentOccurrence = 1;
     }
-    public void resetFindIndexToEnd(String input){
+
+    private void resetFindIndexToEnd(String input){
         currentOccurrencePos = codeArea.getText().lastIndexOf(input);
         currentOccurrence = TextFindUtils.calculateOccurrences(input, codeArea);
     }
@@ -51,16 +58,21 @@ public class OutputSearch {
         if(findText(input)) {
             moveToText(input);
             currentInput = input;
+            stayOnOccurrence(true);
         }else{
             resetFind(true);
+            stayOnOccurrence(false);
         }
     }
+
     private void findPreviousOccurrence(String input){
         if(findPreviousText(input)){
             moveToText(input);
             currentInput = input;
+            stayOnOccurrence(true);
         }else{
             resetFind(false);
+            stayOnOccurrence(false);
         }
     }
 
@@ -71,12 +83,13 @@ public class OutputSearch {
         if(currentOccurrencePos >= this.codeArea.getText().lastIndexOf(input)){
             resetFindIndexToStart();
         }
+
         if(currentOccurrence == 1){
             currentOccurrencePos = this.codeArea.getText().indexOf(input , currentOccurrencePos);
-        }
-        else {
+        } else {
             currentOccurrencePos = this.codeArea.getText().indexOf(input, currentOccurrencePos + input.length());
         }
+
         if(currentOccurrencePos == -1){
             return false;
         }
@@ -89,11 +102,13 @@ public class OutputSearch {
         if(input.isBlank()){
             return false;
         }
+
         if(currentOccurrencePos <= this.codeArea.getText().indexOf(input)){
             resetFindIndexToEnd(input);
         }else {
             currentOccurrencePos = this.codeArea.getText().substring(0, currentOccurrencePos).lastIndexOf(input);
         }
+
         if(currentOccurrencePos == -1){
             return false;
         }
@@ -107,12 +122,39 @@ public class OutputSearch {
     }
 
     private void moveToText(String input){
-        codeArea.selectRange(currentOccurrencePos, currentOccurrencePos + input.length());
-        codeArea.requestFollowCaret();
+        Platform.runLater(()->{
+            codeArea.selectRange(currentOccurrencePos, currentOccurrencePos + input.length());
+            codeArea.requestFollowCaret();
+        });
+    }
+
+    private void stayOnOccurrence(boolean stay){
+        if(stay){
+            if(!executorService.isTerminated()){
+                executorService.shutdownNow();
+            }
+            executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.scheduleAtFixedRate(()-> {
+                Platform.runLater(()-> codeArea.selectRange(currentOccurrencePos, currentOccurrencePos + currentInput.length()));
+                if(!isActive()){
+                   executorService.shutdownNow();
+                }
+            }, 0, 100, TimeUnit.MILLISECONDS);
+        }
+        else{
+            executorService.shutdown();
+        }
     }
 
     public String getCurrentInput(){
         return currentInput;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

@@ -11,8 +11,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.icon.Icons;
+import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.utils.OutputSearch;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -30,6 +32,8 @@ public class OutputTab extends Tab {
     private final CodeArea codeArea;
     private final Process process;
     private final OutputTabOptions outputTabOptions;
+    private OutputSearch search;
+    private TextField searchField;
     private final VBox outputSearchOptions;
     private boolean usedScrolling = false;
     private boolean searchVisible = false;
@@ -44,11 +48,7 @@ public class OutputTab extends Tab {
     }
 
     public void setupOutputTab(String name) {
-        this.codeArea.getStyleClass().addAll(
-                "command-output-container",
-                Main.getDarkModeSetting() ? "dark-mode" : "light-mode",
-                Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text"
-        );
+        this.codeArea.getStyleClass().addAll("command-output-container", Main.getDarkModeSetting() ? "dark-mode" : "light-mode", Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text");
         this.codeArea.setEditable(false);
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
             if (e.getDeltaY() < 0) {
@@ -72,36 +72,43 @@ public class OutputTab extends Tab {
 
     private void setupUserInput() {
         this.setOnSelectionChanged(_ -> {
-            if (this.isSelected()) {
-                if(searchVisible){
-                    showSearch();
-                }
-                this.codeArea.setOnKeyPressed(this::handleUserInput);
-            }
-            else {
-                if(searchVisible) {
+            if (isSelected() && searchVisible) {
+                showSearch();
+            } else {
+                if (searchVisible) {
                     closeSearch();
                     searchVisible = true;
-                }else{
+                } else {
                     closeSearch();
                 }
-            };
+            }
+            this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
+            this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
         });
     }
 
-    private void handleUserInput(KeyEvent event){
+    private void handleSearchTogglingInput(KeyEvent event){
+        if (event.isControlDown() && event.getCode() == KeyCode.F && isSelected()) {
+            toggleSearch();
+        }
+    }
+
+    public void toggleSearch(){
+        if (!this.searchVisible) {
+            showSearch();
+        } else {
+            closeSearch();
+        }
+    }
+
+    private void handleCodeAreaUserInput(KeyEvent event) {
         try {
             if (event.isControlDown() && event.getCode() == KeyCode.C) {
                 this.process.destroy();
                 process.getOutputStream().flush();
                 Platform.runLater(() -> appendColoredLine("CTRL + C"));
                 return;
-            }else if(event.isControlDown() && event.getCode() == KeyCode.F){
-                if(!this.searchVisible){
-                    showSearch();
-                }else{
-                    closeSearch();
-                }
+            } else if (event.isControlDown() && event.getCode() == KeyCode.F) {
                 return;
             } else if (event.getCode() == KeyCode.ENTER) {
                 process.getOutputStream().write('\n');
@@ -115,53 +122,63 @@ public class OutputTab extends Tab {
         }
     }
 
-    private VBox getSearchOuterContainer(){
-        return (VBox) this.getTabPane().getParent().getParent();
+    private void handleSearchFieldUserInput(KeyEvent event){
+        if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
+            usedScrolling = true;
+            search.performBackwardSearch(search.getCurrentInput());
+        } else if (event.getCode() == KeyCode.ENTER) {
+            usedScrolling = true;
+            search.performForwardSearch(search.getCurrentInput());
+        }
     }
 
-    private void showSearch(){
+    private VBox getSearchOuterContainer() {
+        return (VBox) ControllerRegistry.get("main", Controller.class).getTabs().getParent().getParent();
+    }
+
+    private void showSearch() {
         this.searchVisible = true;
-        Platform.runLater(() -> getSearchOuterContainer().getChildren().add(2, this.outputSearchOptions));
+        search.setActive(true);
+        Platform.runLater(() -> {
+            getSearchOuterContainer().getChildren().add(2, this.outputSearchOptions);
+            this.searchField.requestFocus();
+        });
     }
 
-    private void closeSearch(){
+    private void closeSearch() {
         this.searchVisible = false;
+        search.setActive(false);
         Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputSearchOptions));
     }
 
 
-    private final Label findResults = new Label();
-
-    private VBox setupSearchOptions(){
-        TextField searchField = new TextField();
-        OutputSearch search = new OutputSearch(findResults, codeArea);
-        searchField.setOnKeyPressed(event -> {
-            if(event.isShiftDown() && event.getCode() == KeyCode.ENTER){
-                search.performBackwardSearch(search.getCurrentInput());
-            } else if(event.getCode() == KeyCode.ENTER){
-                search.performForwardSearch(search.getCurrentInput());
-            }
-        });
+    private VBox setupSearchOptions() {
+        int FIND_CONTAINER_WIDTH = 250;
+        Label findResults = new Label();
+        search = new OutputSearch(findResults, codeArea);
+        searchField = new TextField();
+        searchField.setOnKeyPressed(this::handleSearchFieldUserInput);
         searchField.textProperty().addListener((_, _, input) -> {
+            usedScrolling = true;
             search.resetFindIndexToStart();
             search.performForwardSearch(input);
         });
-        int FIND_CONTAINER_WIDTH = 250;
         searchField.setPrefWidth(FIND_CONTAINER_WIDTH);
         Button closeBtn = new Button("", Icons.getCloseButtonIcon(24));
         closeBtn.setOnAction(_ -> this.closeSearch());
-        closeBtn.getStyleClass().add("close-btn");
+        closeBtn.getStyleClass().add("no-outline-btn");
         Label label = new Label("Find");
         BorderPane headerContainer = new BorderPane();
         headerContainer.setLeft(label);
         headerContainer.setPrefWidth(FIND_CONTAINER_WIDTH);
         headerContainer.setRight(closeBtn);
+        headerContainer.setPadding(new Insets(0, 5, 0, 5));
 
         findResults.setLabelFor(searchField);
-        findResults.setPadding(new Insets(0,5,0,5));
+        findResults.setPadding(new Insets(0, 5, 0, 5));
 
         VBox innerContainer = new VBox(headerContainer, searchField, findResults);
-        innerContainer.setPadding(new Insets(0,10,10,10));
+        innerContainer.setPadding(new Insets(0, 10, 10, 10));
         innerContainer.setFillWidth(false);
         return new VBox(new Separator(Orientation.HORIZONTAL), new HBox(innerContainer));
     }

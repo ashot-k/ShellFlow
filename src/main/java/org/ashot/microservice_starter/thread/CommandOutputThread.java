@@ -105,7 +105,7 @@ public class CommandOutputThread implements Runnable {
             while ((line = reader.readLine()) != null) {
                 if (!line.isBlank()) {
                     if(pendingLines.size() > 50){
-                        Thread.sleep(20);
+                        Thread.sleep(10);
                     }
                     pendingLines.add(line);
                 }
