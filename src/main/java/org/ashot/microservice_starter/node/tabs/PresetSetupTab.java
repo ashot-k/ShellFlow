@@ -32,13 +32,13 @@ public class PresetSetupTab extends Tab {
         setupPresetTab();
     }
 
+    private static final int SPACING = 10;
     private static final String TAB_NAME = "Preset Setup";
     private static final String COMMANDS = "commands";
     private static final String PATHS = "paths";
     public static final Map<String, String> commandsMap = new HashMap<>();
-    public static final Map<String, String> pathsMap = new HashMap<>();
-    private static final int SPACING = 10;
     private static final TableView<Preset> commandsTable = new TableView<>();
+    public static final Map<String, String> pathsMap = new HashMap<>();
     private static final TableView<Preset> pathsTable = new TableView<>();
 
 
@@ -64,7 +64,6 @@ public class PresetSetupTab extends Tab {
         Button removePathRow = removeEntry(pathsTable, PresetType.PATH);
         HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
 
-
         Button saveAll = saveButton();
         saveAll.setPrefWidth(150);
 
@@ -85,46 +84,51 @@ public class PresetSetupTab extends Tab {
         scrollPane.setContent(outerContainer);
         this.setContent(scrollPane);
 
-        commandsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) -> {
-            removeCommandRow.setDisable(newSelection == null);
-        });
-        pathsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) -> {
-            removePathRow.setDisable(newSelection == null);
-        });
-
-
+        commandsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) ->
+            removeCommandRow.setDisable(newSelection == null)
+        );
+        pathsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) ->
+            removePathRow.setDisable(newSelection == null)
+        );
     }
 
-    private static boolean setupFromFile() {
+    private static void setupFromFile() {
         File file = new File(SettingsFileNames.PRESETS.getValue());
-        return file.exists() ? loadExisting(file) : createNewPresetsFile(file);
+        if (file.exists()) {
+            loadExisting(file);
+        } else {
+            createNewPresetsFile(file);
+        }
     }
 
-    private static boolean saveToFile() {
+    private static void saveToFile() {
         File file = new File(SettingsFileNames.PRESETS.getValue());
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
         for (Preset p : commandsTable.getItems()) {
-            JSONObject row = new JSONObject();
-            row.put("name", p.getName());
-            row.put("value", p.getValue());
+            JSONObject row = createJSONRow(p);
             commands.put(row);
         }
         JSONArray paths = new JSONArray();
         for (Preset p : pathsTable.getItems()) {
-            JSONObject row = new JSONObject();
-            row.put("name", p.getName());
-            row.put("value", p.getValue());
+            JSONObject row = createJSONRow(p);
             paths.put(row);
         }
 
         jsonObject.put(COMMANDS, commands);
         jsonObject.put(PATHS, paths);
 
-        return Utils.writeDataToFile(file, jsonObject);
+        Utils.writeDataToFile(file, jsonObject);
     }
 
-    private static boolean loadExisting(File file) {
+    private static JSONObject createJSONRow(Preset p){
+        JSONObject row = new JSONObject();
+        row.put("name", p.getName());
+        row.put("value", p.getValue());
+        return row;
+    }
+
+    private static void loadExisting(File file) {
         JSONObject jsonObject = Utils.createJSONObject(file);
         JSONArray commands = jsonObject.getJSONArray(COMMANDS);
         JSONArray paths = jsonObject.getJSONArray(PATHS);
@@ -142,31 +146,29 @@ public class PresetSetupTab extends Tab {
             pathsMap.put(name, value);
             loadRow(pathsTable, new Preset(name, value));
         }
-        return true;
     }
 
     private static void loadRow(TableView<Preset> table, Preset preset) {
         table.getItems().add(preset);
     }
 
-    private static boolean createNewPresetsFile(File file) {
+    private static void createNewPresetsFile(File file) {
         try {
             if (!file.createNewFile()) {
-                return false;
+                return;
             }
             JSONObject jsonObject = new JSONObject();
             JSONArray commands = new JSONArray();
             JSONArray paths = new JSONArray();
             jsonObject.put(COMMANDS, commands);
             jsonObject.put(PATHS, paths);
-            return Utils.writeDataToFile(file, jsonObject);
+            Utils.writeDataToFile(file, jsonObject);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-        return false;
     }
 
-    private static TableView<Preset> createTable(TableView<Preset> tableView, PresetType presetType) {
+    private static void createTable(TableView<Preset> tableView, PresetType presetType) {
         TableColumn<Preset, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -192,7 +194,6 @@ public class PresetSetupTab extends Tab {
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setEditable(true);
         tableView.setPrefHeight(300);
-        return tableView;
     }
 
     private static ScrollPane setupScrollPane() {
