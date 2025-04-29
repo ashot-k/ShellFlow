@@ -5,12 +5,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.DirectoryChooser;
 import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -18,12 +20,13 @@ public class Buttons {
     public static final int SIZE = 18;
     public static final int EXECUTE_BUTTON_SIZE = 42;
     public static final int CLOSE_BUTTON_SIZE = 32;
+    public static final int PATH_BROWSE_BUTTON_SIZE = 16;
 
     public static Button deleteEntryButton(Pane container, HBox row) {
         Button btn = new Button("", Icons.getCloseButtonIcon(CLOSE_BUTTON_SIZE));
         btn.setId(ButtonType.DELETE.getValue());
         btn.setOnAction(_ -> container.getChildren().remove(row));
-        btn.getStyleClass().add("close-btn");
+        btn.getStyleClass().add("no-outline-btn");
         return btn;
     }
 
@@ -68,6 +71,18 @@ public class Buttons {
             }
         });
         return executeBtn;
+    }
+
+    public static Button browsePathBtn(TextField pathField){
+        Button pathBrowserBtn = new Button("", Icons.getBrowseIcon(PATH_BROWSE_BUTTON_SIZE));
+        pathBrowserBtn.setOnAction((_)->{
+            DirectoryChooser chooser = new DirectoryChooser();
+            File f = chooser.showDialog(pathBrowserBtn.getScene().getWindow());
+            if(f != null) {
+                pathField.setText(f.getAbsolutePath());
+            }
+        });
+        return pathBrowserBtn;
     }
 
     private static void execute(String command, String path, String name) throws IOException {

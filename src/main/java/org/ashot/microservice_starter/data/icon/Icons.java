@@ -107,4 +107,12 @@ public class Icons {
         setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
         return icon;
     }
+
+    public static Glyph getBrowseIcon(int size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.SEARCH);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
 }

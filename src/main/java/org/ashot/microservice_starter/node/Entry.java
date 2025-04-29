@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.node;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -40,6 +41,9 @@ public class Entry {
         commandField.textProperty().addListener((_, _, newValue) ->
                 setupAutoComplete(newValue, commandFieldContextMenu, commandField, PresetSetupTab.commandsMap)
         );
+        HBox pathFieldContainer = new HBox();
+        pathFieldContainer.setAlignment(Pos.CENTER);
+        pathFieldContainer.setFillHeight(false);
         TextField pathField = Fields.createField(TextFieldType.PATH, path);
         pathField.getStyleClass().add("path-field");
         pathField.setPromptText("Path");
@@ -49,10 +53,12 @@ public class Entry {
         pathField.textProperty().addListener((_, _, newValue) ->
                 setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsMap)
         );
+        Button pathBrowserBtn = Buttons.browsePathBtn(pathField);
+        pathFieldContainer.getChildren().addAll(pathField, pathBrowserBtn);
 
         Button execute = Buttons.executeBtn(nameField, commandField, pathField);
         Button deleteEntryBtn = Buttons.deleteEntryButton(container, row);
-        row.getChildren().addAll(deleteEntryBtn, nameField, pathField, commandField, execute);
+        row.getChildren().addAll(deleteEntryBtn, nameField, pathFieldContainer, commandField, execute);
         row.getStyleClass().add("entry");
 
         Button moveUpBtn = Buttons.orderingButton(Direction.UP);
