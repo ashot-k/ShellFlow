@@ -55,7 +55,7 @@ public class PresetSetupTab extends Tab {
         createTable(commandsTable, PresetType.COMMAND);
         createTable(pathsTable, PresetType.PATH);
 
-        setupFromFile(commandsTable, pathsTable);
+        setupFromFile();
 
         Button addCommandRow = addRowButton(commandsTable);
         Button removeCommandRow = removeEntry(commandsTable, PresetType.COMMAND);
@@ -65,7 +65,7 @@ public class PresetSetupTab extends Tab {
         HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
 
 
-        Button saveAll = saveButton(commandsTable, pathsTable);
+        Button saveAll = saveButton();
         saveAll.setPrefWidth(150);
 
         VBox commandsTableContainer = new VBox(SPACING, setupCategoryTitle("Commands"), commandsTable, commandButtons);
@@ -95,12 +95,12 @@ public class PresetSetupTab extends Tab {
 
     }
 
-    private static boolean setupFromFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
+    private static boolean setupFromFile() {
         File file = new File(SettingsFileNames.PRESETS.getValue());
-        return file.exists() ? loadExisting(file, commandsTable, pathsTable) : createNewPresetsFile(file);
+        return file.exists() ? loadExisting(file) : createNewPresetsFile(file);
     }
 
-    private static boolean saveToFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
+    private static boolean saveToFile() {
         File file = new File(SettingsFileNames.PRESETS.getValue());
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
@@ -124,7 +124,7 @@ public class PresetSetupTab extends Tab {
         return Utils.writeDataToFile(file, jsonObject);
     }
 
-    private static boolean loadExisting(File file, TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
+    private static boolean loadExisting(File file) {
         JSONObject jsonObject = Utils.createJSONObject(file);
         JSONArray commands = jsonObject.getJSONArray(COMMANDS);
         JSONArray paths = jsonObject.getJSONArray(PATHS);
@@ -229,9 +229,9 @@ public class PresetSetupTab extends Tab {
         return removeRowButton;
     }
 
-    private static Button saveButton(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
+    private static Button saveButton() {
         Button saveButton = new Button("Save");
-        saveButton.setOnAction(_ -> saveToFile(commandsTable, pathsTable));
+        saveButton.setOnAction(_ -> saveToFile());
         return saveButton;
     }
 
