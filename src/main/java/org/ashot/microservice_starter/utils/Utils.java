@@ -20,11 +20,22 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
+
+    public static void initializeSaveFolder(){
+        if(!new File(SettingsFileNames.PRESETS.PREFIX()).exists()){
+            try {
+                Files.createDirectory(Path.of(SettingsFileNames.PRESETS.PREFIX()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName) {
         JSONArray entries = Utils.createJSONArray(container);

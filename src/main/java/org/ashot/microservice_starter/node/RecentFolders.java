@@ -1,5 +1,7 @@
 package org.ashot.microservice_starter.node;
 
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -10,9 +12,20 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecentFolders {
+
+    public static List<String> getInvalidRecentFolders(Menu openRecent) {
+        List<String> list = new ArrayList<>();
+        for (MenuItem m : openRecent.getItems()) {
+            if (m.isDisable()) {
+                list.add(m.getText());
+            }
+        }
+        return list;
+    }
 
     public static void saveDirReference(DirType dirType, String path) {
         if (path == null) return;

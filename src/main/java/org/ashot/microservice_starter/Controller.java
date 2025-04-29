@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -77,31 +76,54 @@ public class Controller implements Initializable {
     private String lastSaved;
     private String lastLoaded;
 
-    private final int SETUP_TABS = 3;
+    private final int SETUP_TABS = 2;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
-        if(!new File(SettingsFileNames.PRESETS.PREFIX()).exists()){
-            try {
-                Files.createDirectory(Path.of(SettingsFileNames.PRESETS.PREFIX()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        Utils.initializeSaveFolder();
 
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
         tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS));
-        tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
         tabs.getTabs().add(new PresetSetupTab());
+        tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
 
         setupIcons();
         newEntry(null);
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         loadMostRecentFile();
+    }
+
+    private void loadRecentFolders() {
+        JSONObject dirs = Utils.setupFolders();
+        lastSaved = (String) dirs.get(DirType.LAST_SAVED.name());
+        lastLoaded = (String) dirs.get(DirType.LAST_LOADED.name());
+        refreshRecentlyOpenedFolders();
+    }
+
+    private void refreshRecentlyOpenedFolders() {
+        List<String> toRemove = RecentFolders.getInvalidRecentFolders(openRecent);
+        openRecent.getItems().clear();
+        JSONArray recentFolders = RecentFolders.getRecentFiles();
+        for (Object s : recentFolders.toList()) {
+            String recentFolder = s.toString();
+            if (toRemove.contains(recentFolder)) {
+                RecentFolders.removeRecentFile(recentFolder);
+            }
+            MenuItem m = new MenuItem(recentFolder);
+            m.setOnAction(_ -> {
+                File file = new File(recentFolder);
+                if (file.exists()) {
+                    loadFromFile(file);
+                    this.tabs.getSelectionModel().selectFirst();
+                }
+            });
+            m.setDisable(!new File(recentFolder).exists());
+            openRecent.getItems().add(m);
+        }
     }
 
     private void loadMostRecentFile(){
@@ -123,46 +145,6 @@ public class Controller implements Initializable {
         clearEntriesBtn.setGraphic(Icons.getClearEntriesIcon(BUTTON_ICON_SIZE));
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(BUTTON_ICON_SIZE));
         stopAllBtn.setGraphic(Icons.getCloseButtonIcon(BUTTON_ICON_SIZE));
-    }
-
-    private void loadRecentFolders() {
-        JSONObject dirs = Utils.setupFolders();
-        lastSaved = (String) dirs.get(DirType.LAST_SAVED.name());
-        lastLoaded = (String) dirs.get(DirType.LAST_LOADED.name());
-        refreshRecentlyOpenedFolders();
-    }
-
-    private void refreshRecentlyOpenedFolders() {
-        List<String> toRemove = disabledRecentFoldersToRemove();
-        openRecent.getItems().clear();
-        JSONArray recentFolders = RecentFolders.getRecentFiles();
-        for (Object s : recentFolders.toList()) {
-            String recentFolder = s.toString();
-            if (toRemove.contains(recentFolder)) {
-                RecentFolders.removeRecentFile(recentFolder);
-            }
-            MenuItem m = new MenuItem();
-            m.setText(recentFolder);
-            m.setOnAction(_ -> {
-                File file = new File(recentFolder);
-                if (file.exists()) {
-                    loadFromFile(file);
-                    this.tabs.getSelectionModel().selectFirst();
-                }
-            });
-            m.setDisable(!new File(recentFolder).exists());
-            openRecent.getItems().add(m);
-        }
-    }
-
-    private List<String> disabledRecentFoldersToRemove() {
-        List<String> list = new ArrayList<>();
-        for (MenuItem m : openRecent.getItems()) {
-            if (m.isDisable()) {
-                list.add(m.getText());
-            }
-        }
-        return list;
     }
 
     public void newEntry(ActionEvent e) {
@@ -244,7 +226,7 @@ public class Controller implements Initializable {
                     String path = entry.opt(TextAreaType.PATH.getValue()).toString();
                     String cmd = entry.opt(TextAreaType.COMMAND.getValue()).toString();
                     newEntry(name, path, cmd);
-                }else{
+                } else{
                     newEntry(null);
                 }
             }
