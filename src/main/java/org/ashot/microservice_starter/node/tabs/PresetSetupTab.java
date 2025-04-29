@@ -65,7 +65,7 @@ public class PresetSetupTab extends Tab {
         HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
 
 
-        Button saveAll = saveButton(commandsTable, pathsTable);
+        Button saveAll = saveButton();
         saveAll.setPrefWidth(150);
 
         VBox commandsTableContainer = new VBox(SPACING, setupCategoryTitle("Commands"), commandsTable, commandButtons);
@@ -229,7 +229,7 @@ public class PresetSetupTab extends Tab {
         return removeRowButton;
     }
 
-    private static Button saveButton(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
+    private static Button saveButton() {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(_ -> saveToFile(commandsTable, pathsTable));
         return saveButton;
