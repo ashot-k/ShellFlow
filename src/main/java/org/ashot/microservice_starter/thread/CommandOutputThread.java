@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandOutputThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputThread.class);
-    private static final int MAX_LINES = 2500;
+    private static final int MAX_LINES = 9000;
     private final OutputTab outputTab;
     private final CodeArea codeArea;
     private final Process process;
@@ -104,10 +104,13 @@ public class CommandOutputThread implements Runnable {
         try {
             while ((line = reader.readLine()) != null) {
                 if (!line.isBlank()) {
+                    if(pendingLines.size() > 50){
+                        Thread.sleep(20);
+                    }
                     pendingLines.add(line);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             logger.error(e.getMessage());
         }
     }

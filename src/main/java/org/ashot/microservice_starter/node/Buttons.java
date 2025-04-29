@@ -11,6 +11,7 @@ import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
+import org.ashot.microservice_starter.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,8 +79,15 @@ public class Buttons {
         pathBrowserBtn.setOnAction((_)->{
             DirectoryChooser chooser = new DirectoryChooser();
             File f = chooser.showDialog(pathBrowserBtn.getScene().getWindow());
-            if(f != null) {
-                pathField.setText(f.getAbsolutePath());
+
+            if(f != null){
+                //todo temporary workaround
+                String path = f.getAbsolutePath();
+                if(Utils.getSystemOS().contains("windows")) {
+                    path = path.replace("\\", "/");
+                    path = path.replace("C:", "/mnt/c");
+                }
+                pathField.setText(path);
             }
         });
         return pathBrowserBtn;
