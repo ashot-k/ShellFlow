@@ -1,14 +1,18 @@
 package org.ashot.microservice_starter.node.tabs;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.Preset;
 import org.ashot.microservice_starter.data.constant.PresetType;
+import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,9 +35,12 @@ public class PresetSetupTab extends Tab {
     private static final String TAB_NAME = "Preset Setup";
     private static final String COMMANDS = "commands";
     private static final String PATHS = "paths";
-    private static final String SAVE_LOCATION = "presets.json";
     public static final Map<String, String> commandsMap = new HashMap<>();
     public static final Map<String, String> pathsMap = new HashMap<>();
+    private static final int SPACING = 10;
+    private static final TableView<Preset> commandsTable = new TableView<>();
+    private static final TableView<Preset> pathsTable = new TableView<>();
+
 
     public void setupPresetTab() {
         this.setId("presetSetupTab");
@@ -43,34 +50,58 @@ public class PresetSetupTab extends Tab {
         ScrollPane scrollPane = setupScrollPane();
         scrollPane.setFitToWidth(true);
 
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(5, 10, 5, 10));
-        vBox.setFillWidth(true);
-        vBox.setSpacing(10);
-        TableView<Preset> commandsTable = createTable(PresetType.COMMAND);
-        TableView<Preset> pathsTable = createTable(PresetType.PATH);
+        HBox hbox = new HBox();
+        hbox.setSpacing(SPACING);
+        createTable(commandsTable, PresetType.COMMAND);
+        createTable(pathsTable, PresetType.PATH);
 
         setupFromFile(commandsTable, pathsTable);
 
         Button addCommandRow = addRowButton(commandsTable);
+        Button removeCommandRow = removeEntry(commandsTable, PresetType.COMMAND);
+        HBox commandButtons = new HBox(SPACING, addCommandRow, removeCommandRow);
         Button addPathRow = addRowButton(pathsTable);
+        Button removePathRow = removeEntry(pathsTable, PresetType.PATH);
+        HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
+
+
         Button saveAll = saveButton(commandsTable, pathsTable);
-        vBox.getChildren().addAll(
-                setupCategoryTitle("Commands"), commandsTable, addCommandRow,
-                setupCategoryTitle("Paths"), pathsTable, addPathRow,
-                saveAll
-        );
-        scrollPane.setContent(vBox);
+        saveAll.setPrefWidth(150);
+
+        VBox commandsTableContainer = new VBox(SPACING, setupCategoryTitle("Commands"), commandsTable, commandButtons);
+        commandsTableContainer.setFillWidth(true);
+        commandsTableContainer.setAlignment(Pos.CENTER);
+        HBox.setHgrow(commandsTableContainer, Priority.ALWAYS);
+
+        VBox pathsTableContainer = new VBox(SPACING, setupCategoryTitle("Paths"), pathsTable, pathButtons);
+        pathsTableContainer.setFillWidth(true);
+        pathsTableContainer.setAlignment(Pos.CENTER);
+        HBox.setHgrow(pathsTableContainer, Priority.ALWAYS);
+        hbox.getChildren().addAll(commandsTableContainer, pathsTableContainer);
+
+        VBox outerContainer = new VBox(SPACING, hbox, saveAll);
+        outerContainer.setPadding(new Insets(10));
+        outerContainer.setAlignment(Pos.CENTER);
+        scrollPane.setContent(outerContainer);
         this.setContent(scrollPane);
+
+        commandsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) -> {
+            removeCommandRow.setDisable(newSelection == null);
+        });
+        pathsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) -> {
+            removePathRow.setDisable(newSelection == null);
+        });
+
+
     }
 
     private static boolean setupFromFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
-        File file = new File(SAVE_LOCATION);
+        File file = new File(SettingsFileNames.PRESETS.getValue());
         return file.exists() ? loadExisting(file, commandsTable, pathsTable) : createNewPresetsFile(file);
     }
 
     private static boolean saveToFile(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {
-        File file = new File(SAVE_LOCATION);
+        File file = new File(SettingsFileNames.PRESETS.getValue());
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
         for (Preset p : commandsTable.getItems()) {
@@ -135,11 +166,8 @@ public class PresetSetupTab extends Tab {
         return false;
     }
 
-    private static TableView<Preset> createTable(PresetType presetType) {
-        TableView<Preset> tableView = new TableView<>();
-
+    private static TableView<Preset> createTable(TableView<Preset> tableView, PresetType presetType) {
         TableColumn<Preset, String> nameCol = new TableColumn<>("Name");
-
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         nameCol.setOnEditCommit(event -> {
@@ -161,9 +189,9 @@ public class PresetSetupTab extends Tab {
         });
 
         tableView.getColumns().addAll(nameCol, valueCol);
-        tableView.autosize();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setEditable(true);
+        tableView.setPrefHeight(300);
         return tableView;
     }
 
@@ -176,7 +204,7 @@ public class PresetSetupTab extends Tab {
 
     private static Label setupCategoryTitle(String name) {
         Label title = new Label(name);
-        title.setFont(Font.font(24));
+        title.setFont(Font.font(18));
         return title;
     }
 
@@ -184,6 +212,21 @@ public class PresetSetupTab extends Tab {
         Button addRowButton = new Button("Add");
         addRowButton.setOnAction(_ -> tableView.getItems().add(new Preset()));
         return addRowButton;
+    }
+
+    private static Button removeEntry(TableView<Preset> tableView, PresetType presetType){
+        Button removeRowButton = new Button("Remove");
+        removeRowButton.setDisable(true);
+        removeRowButton.setOnAction(_ -> {
+            Preset preset = tableView.getSelectionModel().getSelectedItem();
+            tableView.getItems().remove(preset);
+            if (PresetType.COMMAND.equals(presetType)) {
+                commandsMap.remove(preset.getName());
+            } else {
+                pathsMap.remove(preset.getName());
+            }
+        });
+        return removeRowButton;
     }
 
     private static Button saveButton(TableView<Preset> commandsTable, TableView<Preset> pathsTable) {

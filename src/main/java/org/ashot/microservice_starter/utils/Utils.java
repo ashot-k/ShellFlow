@@ -2,13 +2,13 @@ package org.ashot.microservice_starter.utils;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.Folders;
-import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.data.constant.SettingsFileNames;
+import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONArray;
@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Set;
 
 public class Utils {
 
@@ -48,11 +49,11 @@ public class Utils {
     }
 
     private static void addEntryToJSONObject(JSONObject object, Node node) {
-        if (node instanceof TextField field) {
+        if (node instanceof TextArea field) {
             String id = node.getId();
-            String nameType = TextFieldType.NAME.getValue();
-            String cmdType = TextFieldType.COMMAND.getValue();
-            String pathType = TextFieldType.PATH.getValue();
+            String nameType = TextAreaType.NAME.getValue();
+            String cmdType = TextAreaType.COMMAND.getValue();
+            String pathType = TextAreaType.PATH.getValue();
             if (nameType != null && id.contains(nameType)) {
                 object.put(nameType, field.getText());
             } else if (cmdType != null && id.contains(cmdType)) {
@@ -63,12 +64,17 @@ public class Utils {
         }
     }
 
+    public static boolean checkEntryFieldsFromJSON(JSONObject entry){
+        return entry.has(TextAreaType.NAME.getValue()) && entry.has(TextAreaType.PATH.getValue()) && entry.has(TextAreaType.COMMAND.getValue());
+    }
+
     public static JSONArray createJSONArray(Pane container) {
         JSONArray jsonArray = new JSONArray();
         for (Node current : container.getChildren()) {
-            if (!(current instanceof HBox currentRow)) continue;
+            if (!(current instanceof HBox )) continue;
+            Set<Node> fields = current.lookupAll("TextArea");
             JSONObject object = new JSONObject();
-            for (Node n : currentRow.getChildren()) {
+            for (Node n : fields) {
                 addEntryToJSONObject(object, n);
             }
             jsonArray.put(object);
@@ -117,7 +123,7 @@ public class Utils {
     public static JSONObject setupFolders() {
         try {
             JSONObject jsonObject = null;
-            File file = new File(Folders.RECENTS_DIR.getValue());
+            File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
             if (file.exists()) {
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);

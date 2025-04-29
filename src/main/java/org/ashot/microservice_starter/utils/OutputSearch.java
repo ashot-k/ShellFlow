@@ -139,7 +139,7 @@ public class OutputSearch {
                 if(!isActive()){
                    executorService.shutdownNow();
                 }
-            }, 0, 100, TimeUnit.MILLISECONDS);
+            }, 0, 2, TimeUnit.MILLISECONDS);
         }
         else{
             executorService.shutdown();

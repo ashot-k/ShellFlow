@@ -108,7 +108,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getBrowseIcon(int size) {
+    public static Glyph getBrowseIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SEARCH);
         icon.size(size);
         icon.color(Color.DARKSLATEBLUE);

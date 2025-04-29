@@ -8,10 +8,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.data.constant.SettingsFileNames;
+import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
@@ -28,7 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -80,6 +83,13 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
+        if(!new File(SettingsFileNames.PRESETS.PREFIX()).exists()){
+            try {
+                Files.createDirectory(Path.of(SettingsFileNames.PRESETS.PREFIX()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
@@ -95,7 +105,7 @@ public class Controller implements Initializable {
     }
 
     private void loadMostRecentFile(){
-        if(RecentFolders.getRecentFiles() != null) {
+        if(RecentFolders.getRecentFiles() != null && !RecentFolders.getRecentFiles().isEmpty()) {
             String mostRecentFile = RecentFolders.getRecentFiles().getString(0);
             if(mostRecentFile != null){
                 loadFromFile(new File(RecentFolders.getRecentFiles().getString(0)));
@@ -228,11 +238,15 @@ public class Controller implements Initializable {
         JSONArray jsonArray = jsonData.getJSONArray("entries");
         container.getChildren().clear();
         for (Object j : jsonArray) {
-            if (j instanceof JSONObject jsonObject) {
-                String name = jsonObject.get(TextFieldType.NAME.getValue()).toString();
-                String path = jsonObject.get(TextFieldType.PATH.getValue()).toString();
-                String cmd = jsonObject.get(TextFieldType.COMMAND.getValue()).toString();
-                newEntry(name, path, cmd);
+            if (j instanceof JSONObject entry) {
+                if(Utils.checkEntryFieldsFromJSON(entry)) {
+                    String name = entry.opt(TextAreaType.NAME.getValue()).toString();
+                    String path = entry.opt(TextAreaType.PATH.getValue()).toString();
+                    String cmd = entry.opt(TextAreaType.COMMAND.getValue()).toString();
+                    newEntry(name, path, cmd);
+                }else{
+                    newEntry(null);
+                }
             }
         }
         delayPerCmd.setValue(jsonData.getDouble("delay"));

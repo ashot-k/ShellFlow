@@ -1,9 +1,9 @@
 package org.ashot.microservice_starter.data;
 
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import org.ashot.microservice_starter.data.constant.TextFieldType;
+import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.node.Fields;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,9 +21,9 @@ class FieldsTest {
     @Test
     void createFieldReturnsProperField() {
         logger.info("createFieldReturnsProperField");
-        TextFieldType type = TextFieldType.COMMAND;
+        TextAreaType type = TextAreaType.COMMAND;
         String text = "test";
-        TextField field = Fields.createField(type, text);
+        TextArea field = Fields.createField(type, text);
         assertEquals(type.getValue(), field.getId(), "Field ID is not correct");
         assertEquals(text, field.getText(), "Field text is not correct");
     }
@@ -37,7 +37,7 @@ class FieldsTest {
     @Test
     void createFieldSetsEmptyTextForNullText() {
         logger.info("createFieldSetsEmptyTextForNullText");
-        TextField field = Fields.createField(TextFieldType.PATH, null);
+        TextArea field = Fields.createField(TextAreaType.PATH, null);
         assertEquals("", field.getText(), "Field text was not set to empty for null text argument");
     }
 
@@ -47,15 +47,15 @@ class FieldsTest {
         Pane v = new Pane();
         Text f = new Text();
         v.getChildren().add(f);
-        assertNull(Fields.getTextFieldContentFromContainer(v, TextFieldType.COMMAND), "Text field is not null");
+        assertNull(Fields.getTextFieldContentFromContainer(v, TextAreaType.COMMAND), "Text field is not null");
     }
 
     @Test
     void getTextFieldContentFromContainerReturnsProperText() {
         logger.info("getTextFieldContentFromContainerReturnsProperText");
         Pane v = new Pane();
-        TextField f = Fields.createField(TextFieldType.NAME, "test");
+        TextArea f = Fields.createField(TextAreaType.NAME, "test");
         v.getChildren().add(f);
-        assertEquals("test", Fields.getTextFieldContentFromContainer(v, TextFieldType.NAME), "Text content returned is not correct");
+        assertEquals("test", Fields.getTextFieldContentFromContainer(v, TextAreaType.NAME), "Text content returned is not correct");
     }
 }

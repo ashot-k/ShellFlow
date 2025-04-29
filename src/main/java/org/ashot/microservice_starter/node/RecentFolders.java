@@ -1,7 +1,7 @@
 package org.ashot.microservice_starter.node;
 
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.Folders;
+import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
@@ -18,7 +18,7 @@ public class RecentFolders {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(Folders.RECENTS_DIR.getValue());
+            File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             jsonObject.put(dirType.name(), path);
             Utils.writeDataToFile(file, jsonObject);
@@ -31,7 +31,7 @@ public class RecentFolders {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(Folders.RECENTS_DIR.getValue());
+            File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
             List<Object> list = recents.toList();
@@ -48,7 +48,7 @@ public class RecentFolders {
 
     public static JSONArray getRecentFiles() {
         JSONObject jsonObject = null;
-        File file = new File(Folders.RECENTS_DIR.getValue());
+        File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
         String jsonContent = null;
         try {
             jsonContent = Files.readString(file.toPath());
@@ -62,7 +62,7 @@ public class RecentFolders {
 
     public static void removeRecentFile(String path) {
         JSONObject jsonObject = null;
-        File file = new File(Folders.RECENTS_DIR.getValue());
+        File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
         String jsonContent = null;
         try {
             jsonContent = Files.readString(file.toPath());

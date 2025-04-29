@@ -1,11 +1,11 @@
 package org.ashot.microservice_starter.data.constant;
 
-public enum Folders {
-    RECENTS_DIR("dirs.json");
+public enum TextAreaType {
+    COMMAND("cmd"), PATH("path"), NAME("name");
 
     private final String value;
 
-    Folders(String value) {
+    TextAreaType(String value) {
         this.value = value;
     }
 
