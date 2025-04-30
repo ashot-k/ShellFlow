@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
@@ -28,10 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 

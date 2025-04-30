@@ -15,6 +15,7 @@ import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
+import org.ashot.microservice_starter.thread.CommandOutputThread;
 import org.ashot.microservice_starter.utils.OutputSearch;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -37,6 +38,7 @@ public class OutputTab extends Tab {
     private final VBox outputSearchOptions;
     private boolean usedScrolling = false;
     private boolean searchVisible = false;
+    private CommandOutputThread commandOutputThread;
 
     public OutputTab(CodeArea codeArea, Process process, String name) {
         this.outputTabOptions = new OutputTabOptions(this);
@@ -95,8 +97,10 @@ public class OutputTab extends Tab {
 
     public void toggleSearch(){
         if (!this.searchVisible) {
+            commandOutputThread.pause();
             showSearch();
         } else {
+            commandOutputThread.unpause();
             closeSearch();
         }
     }
@@ -165,7 +169,7 @@ public class OutputTab extends Tab {
         });
         searchField.setPrefWidth(FIND_CONTAINER_WIDTH);
         Button closeBtn = new Button("", Icons.getCloseButtonIcon(24));
-        closeBtn.setOnAction(_ -> this.closeSearch());
+        closeBtn.setOnAction(_ -> toggleSearch());
         closeBtn.getStyleClass().add("no-outline-btn");
         Label label = new Label("Find");
         BorderPane headerContainer = new BorderPane();
@@ -211,5 +215,13 @@ public class OutputTab extends Tab {
 
     public OutputTabOptions getOutputTabOptions() {
         return outputTabOptions;
+    }
+
+    public CommandOutputThread getCommandOutputThread() {
+        return commandOutputThread;
+    }
+
+    public void setCommandOutputThread(CommandOutputThread commandOutputThread) {
+        this.commandOutputThread = commandOutputThread;
     }
 }

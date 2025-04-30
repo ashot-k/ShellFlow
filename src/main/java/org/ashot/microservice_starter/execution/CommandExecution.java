@@ -102,6 +102,7 @@ public class CommandExecution {
             tabs.getSelectionModel().select(outputTab);
         });
         CommandOutputThread thread = new CommandOutputThread(outputTab);
+        outputTab.setCommandOutputThread(thread);
         new Thread(thread).start();
     }
 

@@ -7,7 +7,6 @@ import javafx.util.Duration;
 import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.utils.Animator;
 
-import java.util.List;
 import java.util.Set;
 
 

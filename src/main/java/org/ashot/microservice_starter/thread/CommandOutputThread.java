@@ -26,10 +26,16 @@ public class CommandOutputThread implements Runnable {
     private final CodeArea codeArea;
     private final Process process;
     private final long startTime;
-    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
+    private final ScheduledExecutorService writeToOutputExecutor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService pauseCheckExecutor = Executors.newSingleThreadScheduledExecutor();
     private boolean darkTheme = Main.getDarkModeSetting();
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
+    private volatile boolean paused = false;
+
+    private final Object pauseLock = new Object();
+
+    private Thread readOutputThread;
+    private Thread readErrorThread;
 
     public CommandOutputThread(OutputTab outputTab) {
         this.outputTab = outputTab;
@@ -40,12 +46,27 @@ public class CommandOutputThread implements Runnable {
 
     public void run() {
         setupScheduledOutputPolling();
-        new Thread(this::setupOutputReading).start();
-        new Thread(this::setupOutputErrReading).start();
+        this.readOutputThread = new Thread(this::setupOutputReading);
+        this.readOutputThread.start();
+        this.readErrorThread = new Thread(this::setupOutputErrReading);
+        this.readErrorThread.start();
+        pauseChecking();
+    }
+
+    private void pauseChecking(){
+        pauseCheckExecutor.scheduleAtFixedRate(()-> {
+            synchronized (pauseLock) {
+                if (paused) {
+
+                } else {
+                    pauseLock.notifyAll();
+                }
+            }
+        },0 ,25, TimeUnit.MILLISECONDS);
     }
 
     private void setupScheduledOutputPolling() {
-        executorService.scheduleAtFixedRate(() -> {
+        writeToOutputExecutor.scheduleAtFixedRate(() -> {
             checkThemeChange();
             if (!pendingLines.isEmpty()) {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -103,6 +124,16 @@ public class CommandOutputThread implements Runnable {
         String line = "";
         try {
             while ((line = reader.readLine()) != null) {
+                synchronized (pauseLock){
+                    while (paused){
+                        try {
+                            pauseLock.wait();
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
+                    }
+                }
                 if (!line.isBlank()) {
                     if(pendingLines.size() > 50){
                         Thread.sleep(10);
@@ -115,4 +146,15 @@ public class CommandOutputThread implements Runnable {
         }
     }
 
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void unpause(){
+        paused = false;
+    }
 }
