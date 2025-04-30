@@ -26,7 +26,6 @@ public class Entry {
     public HBox buildEntry(Pane container, String name, String path, String command) {
         HBox row = new HBox();
         row.setAlignment(Pos.TOP_CENTER);
-        row.setOnScroll(e -> entryScrollEvent(e.getDeltaY(), row));
 
         TextArea nameField = Fields.createField(TextAreaType.NAME, name);
         nameField.getStyleClass().add("name-field");
@@ -87,15 +86,6 @@ public class Entry {
         }
         Bounds boundsInScreen = field.localToScreen(field.getBoundsInLocal());
         menu.show(field, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
-    }
-
-    private void entryScrollEvent(double deltaY, HBox entry){
-        if(deltaY > 0){
-            Buttons.performOrdering(Direction.UP, entry);
-        }
-        else{
-            Buttons.performOrdering(Direction.DOWN, entry);
-        }
     }
 
 }

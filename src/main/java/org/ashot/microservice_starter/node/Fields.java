@@ -7,6 +7,9 @@ import javafx.util.Duration;
 import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.utils.Animator;
 
+import java.util.List;
+import java.util.Set;
+
 
 public class Fields {
     private final static int TEXT_AREA_HEIGHT = 40;
@@ -38,6 +41,19 @@ public class Fields {
             }
         });
         return field;
+    }
+
+    public static boolean checkFieldsFocused(Pane v){
+        if (v.getChildren().isEmpty()) {
+            return false;
+        }
+        Set<Node> nodeList = v.lookupAll("TextArea");
+        for (Node n : nodeList) {
+            if (n instanceof TextArea && n.isFocused()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String getTextFieldContentFromContainer(Pane v, TextAreaType type) {
