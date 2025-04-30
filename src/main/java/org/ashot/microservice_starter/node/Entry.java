@@ -3,9 +3,9 @@ package org.ashot.microservice_starter.node;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.TextAlignment;
 import org.ashot.microservice_starter.data.constant.TextAreaType;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 import org.ashot.microservice_starter.utils.ToolTips;
@@ -61,9 +61,15 @@ public class Entry {
         Button deleteEntryBtn = Buttons.deleteEntryButton(container, row);
         Button execute = Buttons.executeBtn(nameField, commandField, pathField);
 
+        CheckBox wslToggle = new CheckBox();
+        Label wslLabel = new Label("WSL");
+        wslLabel.setLabelFor(wslToggle);
+        VBox wslSetting = new VBox( wslLabel, wslToggle);
+        wslSetting.setFillWidth(true);
+
         VBox orderingContainer = Buttons.createOrderingContainer();
 
-        row.getChildren().addAll(deleteEntryBtn, nameField, pathFieldContainer, commandField, execute, orderingContainer);
+        row.getChildren().addAll(deleteEntryBtn, nameField, pathFieldContainer, commandField, wslSetting, execute, orderingContainer);
         row.getStyleClass().add("entry");
         return row;
     }

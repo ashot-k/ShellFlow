@@ -32,7 +32,7 @@ public class Utils {
             try {
                 Files.createDirectory(Path.of(SettingsFileNames.PRESETS.PREFIX()));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
         }
     }
