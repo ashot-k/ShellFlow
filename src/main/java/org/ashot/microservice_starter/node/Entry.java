@@ -4,9 +4,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.TextAlignment;
-import org.ashot.microservice_starter.data.constant.TextAreaType;
+import org.ashot.microservice_starter.data.CheckBoxField;
+import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 import org.ashot.microservice_starter.utils.ToolTips;
 
@@ -19,20 +18,20 @@ public class Entry {
     private static final double PREF_COMMAND_FIELD_WIDTH = 350;
 
     public HBox buildEmptyEntry(Pane v) {
-        return buildEntry(v, "", "", "");
+        return buildEntry(v, "", "", "", false);
     }
 
-    public HBox buildEntry(Pane container, String name, String path, String command) {
+    public HBox buildEntry(Pane container, String name, String path, String command, boolean wsl) {
         HBox row = new HBox();
         row.setAlignment(Pos.TOP_CENTER);
 
-        TextArea nameField = Fields.createField(TextAreaType.NAME, name);
+        TextArea nameField = Fields.createField(FieldType.NAME, name);
         nameField.getStyleClass().add("name-field");
         nameField.setPromptText("Name");
         nameField.setPrefWidth(PREF_NAME_FIELD_WIDTH);
         nameField.setTooltip(new Tooltip(ToolTips.nameField()));
 
-        TextArea commandField = Fields.createField(TextAreaType.COMMAND, command);
+        TextArea commandField = Fields.createField(FieldType.COMMAND, command);
         commandField.getStyleClass().add("command-field");
         commandField.setPromptText("Command");
         commandField.setPrefWidth(PREF_COMMAND_FIELD_WIDTH);
@@ -44,7 +43,7 @@ public class Entry {
         );
 
         HBox pathFieldContainer = new HBox();
-        TextArea pathField = Fields.createField(TextAreaType.PATH, path);
+        TextArea pathField = Fields.createField(FieldType.PATH, path);
         pathField.getStyleClass().add("path-field");
         pathField.setPromptText("Path");
         pathField.setPrefWidth(PREF_PATH_FIELD_WIDTH);
@@ -55,18 +54,14 @@ public class Entry {
                 setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsMap)
         );
 
-        Button pathBrowserBtn = Buttons.browsePathBtn(pathField);
+        CheckBoxField wslSetting = Fields.createCheckBox(FieldType.WSL, "WSL");
+        wslSetting.getCheckBox().setSelected(wsl);
+
+        Button pathBrowserBtn = Buttons.browsePathBtn(pathField, wslSetting.getCheckBox());
         pathFieldContainer.getChildren().addAll(pathField, pathBrowserBtn);
 
         Button deleteEntryBtn = Buttons.deleteEntryButton(container, row);
-        Button execute = Buttons.executeBtn(nameField, commandField, pathField);
-
-        CheckBox wslToggle = new CheckBox();
-        Label wslLabel = new Label("WSL");
-        wslLabel.setLabelFor(wslToggle);
-        VBox wslSetting = new VBox( wslLabel, wslToggle);
-        wslSetting.setFillWidth(true);
-
+        Button execute = Buttons.executeBtn(nameField, commandField, pathField, wslSetting);
         VBox orderingContainer = Buttons.createOrderingContainer();
 
         row.getChildren().addAll(deleteEntryBtn, nameField, pathFieldContainer, commandField, wslSetting, execute, orderingContainer);

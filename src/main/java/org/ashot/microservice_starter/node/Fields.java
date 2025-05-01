@@ -1,10 +1,14 @@
 package org.ashot.microservice_starter.node;
 
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import org.ashot.microservice_starter.data.constant.TextAreaType;
+import org.ashot.microservice_starter.data.CheckBoxField;
+import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.utils.Animator;
 
 import java.util.Set;
@@ -13,11 +17,22 @@ import java.util.Set;
 public class Fields {
     private final static int TEXT_AREA_HEIGHT = 40;
 
-    public static TextArea createField(TextAreaType type, String text) {
+    public static TextArea createField(FieldType type, String text) {
         return setupTextField(type, text);
     }
+    public static CheckBoxField createCheckBox(FieldType type, String text){
+        return setupCheckBoxField(type, text);
+    }
 
-    private static TextArea setupTextField(TextAreaType type, String text) {
+    private static CheckBoxField setupCheckBoxField(FieldType type, String text){
+        CheckBox checkBox = new CheckBox();
+        checkBox.setId(type.getValue());
+        Label label = new Label(text);
+        label.setLabelFor(checkBox);
+        return new CheckBoxField(checkBox, label);
+    }
+
+    private static TextArea setupTextField(FieldType type, String text) {
         if (text == null) {
             text = "";
         }
@@ -55,7 +70,7 @@ public class Fields {
         return false;
     }
 
-    public static String getTextFieldContentFromContainer(Pane v, TextAreaType type) {
+    public static String getTextFieldContentFromContainer(Pane v, FieldType type) {
         if (v.getChildren().isEmpty() || type == null) {
             return null;
         }
@@ -64,5 +79,15 @@ public class Fields {
             return null;
         }
         return field.getText();
+    }
+    public static boolean getCheckBoxSelectedFromContainer(Pane v, FieldType type){
+        if (v.getChildren().isEmpty() || type == null) {
+            return false;
+        }
+        Node n = v.lookup("#" + type.getValue());
+        if (!(n instanceof CheckBoxField field)) {
+            return false;
+        }
+        return field.getCheckBox().isSelected();
     }
 }

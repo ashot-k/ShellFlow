@@ -7,7 +7,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
-import org.ashot.microservice_starter.data.constant.TextAreaType;
+import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.exception.ErrorMessages;
 import org.ashot.microservice_starter.node.Fields;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -33,19 +33,16 @@ public class CommandExecution {
 
     private static final Logger logger = LoggerFactory.getLogger(CommandExecution.class);
 
-    public static void execute(String command, String path, String name, boolean seqOption) throws IOException {
-        if (!seqOption) {
-            List<String> unformattedCommands = new ArrayList<>(List.of(command.split(";")));
-            command = formatCommands(unformattedCommands);
-            command = "cd " + path + " && " + command;
-        }
+    public static void execute(List<String> command, String path, String name, boolean wsl) throws IOException {
         name = formatName(name);
-        logger.info("Name: {} Path: {} Command: {}", name, path, command);
+        String commandSingleStr = String.join(" ", command);
+        logger.info("Name: {} Path: {} Command: {}", name, path, commandSingleStr);
         ProcessBuilder pb = null;
         if (getSystemOS().contains("linux")) {
-            pb = new ProcessBuilder().command("bash", "-c", command);
+            pb = new ProcessBuilder().command("bash", "-c", commandSingleStr);
         } else if (getSystemOS().contains("windows")) {
-            pb = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
+            //todo add wsl toggle check
+            pb = new ProcessBuilder("wsl.exe", "-e", "bash", "-c", commandSingleStr);
         }
         Process process = null;
         try {
@@ -60,20 +57,21 @@ public class CommandExecution {
     public static String executeAll(Pane container, boolean seqOption, String seqName, int delayPerCmd) {
         String currentCmdText = "";
         ObservableList<Node> entryChildren = container.getChildren();
-        StringBuilder seqCommands = new StringBuilder();
+        List<String> seqCommands = new ArrayList<>();
         for (int idx = 0; idx < entryChildren.size(); idx++) {
             Node node = entryChildren.get(idx);
             if (!(node instanceof HBox)) {
                 continue;
             }
-            String name = Fields.getTextFieldContentFromContainer((Pane) node, TextAreaType.NAME);
-            String command = Fields.getTextFieldContentFromContainer((Pane) node, TextAreaType.COMMAND);
-            String path = Fields.getTextFieldContentFromContainer((Pane) node, TextAreaType.PATH);
+            String name = Fields.getTextFieldContentFromContainer((Pane) node, FieldType.NAME);
+            String command = Fields.getTextFieldContentFromContainer((Pane) node, FieldType.COMMAND);
+            String path = Fields.getTextFieldContentFromContainer((Pane) node, FieldType.PATH);
+            boolean wsl = Fields.getCheckBoxSelectedFromContainer((Pane) node, FieldType.WSL);
             validateField(command);
             if (!seqOption) {
                 currentCmdText = currentCmdText.isEmpty() ? command : currentCmdText + "\n" + command + " at " + path;
                 long timeInMS = calculateDelay(idx, delayPerCmd);
-                CommandExecutionThread t = new CommandExecutionThread(command, path, name, timeInMS);
+                CommandExecutionThread t = new CommandExecutionThread(command, path, name, wsl, timeInMS);
                 new Thread(t).start();
             } else {
                 handleSequentialCommandChain(seqCommands, command, path, idx, entryChildren.size(), delayPerCmd);
@@ -82,7 +80,7 @@ public class CommandExecution {
         if (seqOption) {
             try {
                 currentCmdText = seqCommands.toString();
-                CommandExecution.execute(seqCommands.toString(), null, seqName, true);
+                CommandExecution.execute(seqCommands, null, seqName, true);
             } catch (IOException e) {
                 ErrorPopup.errorPopup(e.getMessage());
             }

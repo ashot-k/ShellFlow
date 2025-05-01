@@ -1,11 +1,11 @@
 package org.ashot.microservice_starter.data.constant;
 
-public enum TextAreaType {
-    COMMAND("cmd"), PATH("path"), NAME("name");
+public enum FieldType {
+    COMMAND("cmd"), PATH("path"), NAME("name"), WSL("wsl");
 
     private final String value;
 
-    TextAreaType(String value) {
+    FieldType(String value) {
         this.value = value;
     }
 

@@ -10,7 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.TextAreaType;
+import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
@@ -147,8 +147,8 @@ public class Controller implements Initializable {
         container.getChildren().add(new Entry().buildEmptyEntry(container));
     }
 
-    private void newEntry(String name, String path, String cmd) {
-        container.getChildren().add(new Entry().buildEntry(container, name, path, cmd));
+    private void newEntry(String name, String path, String cmd, boolean wsl) {
+        container.getChildren().add(new Entry().buildEntry(container, name, path, cmd, wsl));
     }
 
     public void executeAll() {
@@ -218,10 +218,11 @@ public class Controller implements Initializable {
         for (Object j : jsonArray) {
             if (j instanceof JSONObject entry) {
                 if(Utils.checkEntryFieldsFromJSON(entry)) {
-                    String name = entry.opt(TextAreaType.NAME.getValue()).toString();
-                    String path = entry.opt(TextAreaType.PATH.getValue()).toString();
-                    String cmd = entry.opt(TextAreaType.COMMAND.getValue()).toString();
-                    newEntry(name, path, cmd);
+                    String name = Utils.replaceNullWithDefault(entry.opt(FieldType.NAME.getValue()), FieldType.NAME);
+                    String path = Utils.replaceNullWithDefault(entry.opt(FieldType.PATH.getValue()), FieldType.PATH);
+                    String cmd = Utils.replaceNullWithDefault(entry.opt(FieldType.COMMAND.getValue()), FieldType.COMMAND);
+                    String wsl = Utils.replaceNullWithDefault(entry.opt(FieldType.WSL.getValue()), FieldType.WSL);
+                    newEntry(name, path, cmd, Boolean.parseBoolean(wsl));
                 } else{
                     newEntry(null);
                 }

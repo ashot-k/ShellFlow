@@ -2,13 +2,14 @@ package org.ashot.microservice_starter.utils;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
-import org.ashot.microservice_starter.data.constant.TextAreaType;
+import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Utils {
@@ -60,11 +62,12 @@ public class Utils {
     }
 
     private static void addEntryToJSONObject(JSONObject object, Node node) {
+        String id = node.getId();
+        String nameType = FieldType.NAME.getValue();
+        String cmdType = FieldType.COMMAND.getValue();
+        String pathType = FieldType.PATH.getValue();
+        String wslType = FieldType.WSL.getValue();
         if (node instanceof TextArea field) {
-            String id = node.getId();
-            String nameType = TextAreaType.NAME.getValue();
-            String cmdType = TextAreaType.COMMAND.getValue();
-            String pathType = TextAreaType.PATH.getValue();
             if (nameType != null && id.contains(nameType)) {
                 object.put(nameType, field.getText());
             } else if (cmdType != null && id.contains(cmdType)) {
@@ -72,11 +75,26 @@ public class Utils {
             } else if (pathType != null && id.contains(pathType)) {
                 object.put(pathType, field.getText());
             }
+        }else if(node instanceof CheckBox checkBox){
+            if (wslType != null && id.contains(wslType)){
+                object.put(wslType, checkBox.isSelected());
+            }
         }
     }
 
     public static boolean checkEntryFieldsFromJSON(JSONObject entry){
-        return entry.has(TextAreaType.NAME.getValue()) && entry.has(TextAreaType.PATH.getValue()) && entry.has(TextAreaType.COMMAND.getValue());
+        return entry.has(FieldType.NAME.getValue()) && entry.has(FieldType.PATH.getValue()) && entry.has(FieldType.COMMAND.getValue());
+    }
+    public static String replaceNullWithDefault(Object jsonValue, FieldType type){
+        if(jsonValue == null){
+            if(type.equals(FieldType.WSL)){
+                return "false";
+            }
+            else{
+                return "";
+            }
+        }
+        return jsonValue.toString();
     }
 
     public static JSONArray createJSONArray(Pane container) {
@@ -84,8 +102,12 @@ public class Utils {
         for (Node current : container.getChildren()) {
             if (!(current instanceof HBox )) continue;
             Set<Node> fields = current.lookupAll("TextArea");
+            Set<Node> checkBoxes = current.lookupAll("CheckBox");
+            Set<Node> nodes = new HashSet<>();
+            nodes.addAll(fields);
+            nodes.addAll(checkBoxes);
             JSONObject object = new JSONObject();
-            for (Node n : fields) {
+            for (Node n : nodes) {
                 addEntryToJSONObject(object, n);
             }
             jsonArray.put(object);

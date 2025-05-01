@@ -3,7 +3,7 @@ package org.ashot.microservice_starter;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import org.ashot.microservice_starter.data.constant.TextAreaType;
+import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.node.Fields;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
@@ -56,9 +56,9 @@ class UtilsTest {
     @Test
     void testCreateJSONArray() {
         Pane container = new Pane();
-        TextArea field = Fields.createField(TextAreaType.NAME, "test_name");
-        TextArea field2 = Fields.createField(TextAreaType.PATH, "test_path");
-        TextArea field3 = Fields.createField(TextAreaType.COMMAND, "test_command");
+        TextArea field = Fields.createField(FieldType.NAME, "test_name");
+        TextArea field2 = Fields.createField(FieldType.PATH, "test_path");
+        TextArea field3 = Fields.createField(FieldType.COMMAND, "test_command");
         HBox hBox = new HBox(field, field2, field3);
         container.getChildren().add(hBox);
         JSONArray object = Utils.createJSONArray(container);

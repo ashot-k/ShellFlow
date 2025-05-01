@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.node;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Background;
@@ -8,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import org.ashot.microservice_starter.data.CheckBoxField;
 import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
@@ -18,6 +20,9 @@ import org.ashot.microservice_starter.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Buttons {
@@ -65,7 +70,7 @@ public class Buttons {
         }
     }
 
-    public static Button executeBtn(TextArea nameField, TextArea commandField, TextArea pathField) {
+    public static Button executeBtn(TextArea nameField, TextArea commandField, TextArea pathField, CheckBoxField wslContainer) {
         Button executeBtn = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeBtn.setBackground(Background.EMPTY);
         executeBtn.setId(ButtonType.EXECUTION.getValue());
@@ -76,7 +81,8 @@ public class Buttons {
                 String nameSelected = nameField.getText();
                 String commandSelected = commandField.getText();
                 String pathSelected = pathField.getText();
-                execute(commandSelected, pathSelected, nameSelected);
+                boolean wslSelected = wslContainer.getCheckBox().isSelected();
+                execute(commandSelected, pathSelected, nameSelected, wslSelected);
             } catch (IOException e) {
                 ErrorPopup.errorPopup(e.getMessage());
             }
@@ -84,15 +90,14 @@ public class Buttons {
         return executeBtn;
     }
 
-    public static Button browsePathBtn(TextArea pathField){
+    public static Button browsePathBtn(TextArea pathField, CheckBox wslOption){
         Button pathBrowserBtn = new Button("", Icons.getBrowseIcon(PATH_BROWSE_BUTTON_SIZE));
         pathBrowserBtn.setOnAction((_)->{
             DirectoryChooser chooser = new DirectoryChooser();
             File f = chooser.showDialog(pathBrowserBtn.getScene().getWindow());
             if(f != null){
-                //todo temporary workaround
                 String path = f.getAbsolutePath();
-                if(Utils.getSystemOS().contains("windows")) {
+                if(Utils.getSystemOS().contains("windows") && wslOption.isSelected()) {
                     path = path.replace("\\", "/");
                     path = path.replace("C:", "/mnt/c");
                 }
@@ -103,7 +108,7 @@ public class Buttons {
         return pathBrowserBtn;
     }
 
-    private static void execute(String command, String path, String name) throws IOException {
-        CommandExecution.execute(command, path.isEmpty() ? "/" : path, name, false);
+    private static void execute(String command, String path, String name, boolean wsl) throws IOException {
+        CommandExecution.execute(new ArrayList<>(Arrays.asList(command)), path.isEmpty() ? "/" : path, name, wsl);
     }
 }
