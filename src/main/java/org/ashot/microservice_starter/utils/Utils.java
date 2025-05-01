@@ -152,6 +152,12 @@ public class Utils {
     public static String getSystemOS() {
         return System.getProperty("os.name").toLowerCase();
     }
+    public static boolean checkIfWindows(){
+        return System.getProperty("os.name").toLowerCase().contains("windows");
+    }
+    public static boolean checkIfLinux(){
+        return System.getProperty("os.name").toLowerCase().contains("linux");
+    }
 
     public static JSONObject setupFolders() {
         try {

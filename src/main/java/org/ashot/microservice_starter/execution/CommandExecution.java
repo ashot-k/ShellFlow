@@ -26,10 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.ashot.microservice_starter.utils.CommandFormatUtils.formatName;
-import static org.ashot.microservice_starter.utils.CommandFormatUtils.handleSequentialCommandChain;
-import static org.ashot.microservice_starter.utils.Utils.calculateDelay;
-import static org.ashot.microservice_starter.utils.Utils.getSystemOS;
+import static org.ashot.microservice_starter.utils.CommandFormatUtils.*;
+import static org.ashot.microservice_starter.utils.Utils.*;
 
 
 public class CommandExecution {
@@ -53,7 +51,7 @@ public class CommandExecution {
         new Thread(() -> {
             String tabName = formatName(name);
             ProcessBuilder pb;
-            Process p;
+            Process p = null;
             OutputTab tab = null;
             for (int i = 0; i < commands.size(); i++) {
                 List<String> singleCommandSequence = commands.get(i);
@@ -65,12 +63,27 @@ public class CommandExecution {
                     p = pb.start();
                     if (tab != null) {
                         tab.setProcess(p);
+                        tab.getTooltip().setText(tab.getTooltip().getText() + "\n" + getCommandPrint(singleCommandSequence));
                         runCommandThreadInTab(tab);
                     } else {
-                        tab = runInNewTab(p, tabName, singleCommandSequence.toString());
+                        tab = runInNewTab(p, tabName, getCommandPrint(singleCommandSequence));
                     }
                     //todo check exit code and cancel rest if previous fails
                     p.waitFor();
+                    int exitValue = p.exitValue();
+                    if(exitValue != 0 && exitValue != 143){
+                        Platform.runLater(()->{
+                            ErrorPopup.errorPopup(
+                                       "Failure for command:\n" + getCommandPrint(singleCommandSequence) + "\n" +
+                                            "On tab: " + tabName + "\n" +
+                                            "With exit value: " + exitValue
+                            );
+                        });
+                        throw new IllegalStateException();
+                    }
+                    if(exitValue == 143){
+                        break;
+                    }
                 } catch (IOException | InterruptedException e) {
                     logger.error(e.getMessage());
                 }
@@ -78,15 +91,11 @@ public class CommandExecution {
         }).start();
     }
 
-    private static void handleWSL(List<String> singleCommandSequence){
-            singleCommandSequence.addFirst("-e");
-            singleCommandSequence.addFirst("wsl.exe");
-    }
 
     public static ProcessBuilder buildProcess(String command, String initialDir){
-        if (getSystemOS().contains("linux")) {
+        if (checkIfLinux()) {
             return new ProcessBuilder().command("bash", "-c", command).directory(new File(initialDir != null && !initialDir.isBlank() ? initialDir : "/"));
-        } else if (getSystemOS().contains("windows")) {
+        } else if (checkIfWindows()) {
             //todo add wsl toggle check
             return new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
         }

@@ -35,7 +35,7 @@
         </MenuBar>
       <VBox VBox.vgrow="ALWAYS">
          <children>
-                <TabPane fx:id="tabs" VBox.vgrow="ALWAYS">
+                <TabPane fx:id="tabs" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
                     <tabs>
                         <Tab fx:id="setupTab" closable="false" text="Setup">
                             <content>
