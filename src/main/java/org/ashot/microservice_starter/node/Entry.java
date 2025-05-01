@@ -3,7 +3,9 @@ package org.ashot.microservice_starter.node;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.CheckBoxField;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
@@ -12,26 +14,31 @@ import org.ashot.microservice_starter.utils.ToolTips;
 import java.util.List;
 import java.util.Map;
 
-public class Entry {
-    private static final double PREF_NAME_FIELD_WIDTH = 200;
-    private static final double PREF_PATH_FIELD_WIDTH = 350;
-    private static final double PREF_COMMAND_FIELD_WIDTH = 350;
+public class Entry extends HBox{
+    private static final double PREF_NAME_FIELD_WIDTH = 300;
+    private static final double PREF_PATH_FIELD_WIDTH = 300;
+    private static final double PREF_COMMAND_FIELD_WIDTH = 300;
 
-    public HBox buildEmptyEntry(Pane v) {
+    private TextArea nameField;
+    private TextArea pathField;
+    private TextArea commandField;
+    private CheckBoxField wslToggle;
+    private Button execute;
+    private Button deleteEntry;
+
+    public Entry buildEmptyEntry(Pane v) {
         return buildEntry(v, "", "", "", false);
     }
 
-    public HBox buildEntry(Pane container, String name, String path, String command, boolean wsl) {
-        HBox row = new HBox();
-        row.setAlignment(Pos.TOP_CENTER);
+    public Entry buildEntry(Pane container, String name, String path, String command, boolean wsl) {
 
-        TextArea nameField = Fields.createField(FieldType.NAME, name);
+        nameField = Fields.createField(FieldType.NAME, name);
         nameField.getStyleClass().add("name-field");
         nameField.setPromptText("Name");
         nameField.setPrefWidth(PREF_NAME_FIELD_WIDTH);
         nameField.setTooltip(new Tooltip(ToolTips.nameField()));
 
-        TextArea commandField = Fields.createField(FieldType.COMMAND, command);
+        commandField = Fields.createField(FieldType.COMMAND, command);
         commandField.getStyleClass().add("command-field");
         commandField.setPromptText("Command");
         commandField.setPrefWidth(PREF_COMMAND_FIELD_WIDTH);
@@ -43,7 +50,7 @@ public class Entry {
         );
 
         HBox pathFieldContainer = new HBox();
-        TextArea pathField = Fields.createField(FieldType.PATH, path);
+        pathField = Fields.createField(FieldType.PATH, path);
         pathField.getStyleClass().add("path-field");
         pathField.setPromptText("Path");
         pathField.setPrefWidth(PREF_PATH_FIELD_WIDTH);
@@ -54,19 +61,20 @@ public class Entry {
                 setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsMap)
         );
 
-        CheckBoxField wslSetting = Fields.createCheckBox(FieldType.WSL, "WSL");
-        wslSetting.getCheckBox().setSelected(wsl);
+        wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL");
+        wslToggle.getCheckBox().setSelected(wsl);
 
-        Button pathBrowserBtn = Buttons.browsePathBtn(pathField, wslSetting.getCheckBox());
-        pathFieldContainer.getChildren().addAll(pathField, pathBrowserBtn);
+        Button pathBrowser = Buttons.browsePathBtn(pathField, wslToggle.getCheckBox());
+        pathFieldContainer.getChildren().addAll(pathField, pathBrowser);
 
-        Button deleteEntryBtn = Buttons.deleteEntryButton(container, row);
-        Button execute = Buttons.executeBtn(nameField, commandField, pathField, wslSetting);
+        deleteEntry = Buttons.deleteEntryButton(container, this);
+        execute = Buttons.executeBtn(nameField, commandField, pathField, wslToggle);
         VBox orderingContainer = Buttons.createOrderingContainer();
 
-        row.getChildren().addAll(deleteEntryBtn, nameField, pathFieldContainer, commandField, wslSetting, execute, orderingContainer);
-        row.getStyleClass().add("entry");
-        return row;
+        this.setAlignment(Pos.TOP_CENTER);
+        this.getChildren().addAll(deleteEntry, nameField, pathFieldContainer, commandField, wslToggle, execute, orderingContainer);
+        this.getStyleClass().add("entry");
+        return this;
     }
 
     private void setupAutoComplete(String input, ContextMenu menu, TextArea field, Map<String, String> searchMap) {
@@ -88,4 +96,27 @@ public class Entry {
         menu.show(field, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
     }
 
+    public TextArea getNameField() {
+        return nameField;
+    }
+
+    public TextArea getPathField() {
+        return pathField;
+    }
+
+    public TextArea getCommandField() {
+        return commandField;
+    }
+
+    public CheckBoxField getWslToggle() {
+        return wslToggle;
+    }
+
+    public Button getDeleteEntry() {
+        return deleteEntry;
+    }
+
+    public Button getExecute() {
+        return execute;
+    }
 }

@@ -72,7 +72,7 @@ public class Controller implements Initializable {
     private String lastSaved;
     private String lastLoaded;
 
-    private final int SETUP_TABS = 2;
+    public static final int SETUP_TABS = 2;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -197,7 +197,7 @@ public class Controller implements Initializable {
     public void toggleTextWrap(ActionEvent e) {
         for (Tab t : tabs.getTabs()) {
             if (t instanceof OutputTab outputTab) {
-                outputTab.getOutputTabOptions().toggleWrapText(textWrapToggle.isSelected());
+                outputTab.toggleWrapText(textWrapToggle.isSelected());
             }
         }
     }
@@ -242,7 +242,8 @@ public class Controller implements Initializable {
 
     private void setCurrentCmdText(String text, Button currentCmd, boolean visible) {
         currentCmdText = text;
-        currentCmd.setVisible(visible);
+        //todo check
+        currentCmd.setVisible(false);
     }
 
     public void printCurrentCmd(ActionEvent e) {

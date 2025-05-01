@@ -12,6 +12,7 @@
     -fx-spacing: 15px;
     -fx-padding: 15px 10px 15px 10px;
 }
+
 .entry *{
     -fx-alignment: top-center;
 }

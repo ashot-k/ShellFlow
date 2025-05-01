@@ -21,15 +21,15 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandOutputThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputThread.class);
+    private boolean darkTheme = Main.getDarkModeSetting();
+    private final long startTime;
     private static final int MAX_LINES = 9000;
     private final OutputTab outputTab;
     private final CodeArea codeArea;
     private final Process process;
-    private final long startTime;
+    private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
     private final ScheduledExecutorService writeToOutputExecutor = Executors.newSingleThreadScheduledExecutor();
     private final ScheduledExecutorService pauseCheckExecutor = Executors.newSingleThreadScheduledExecutor();
-    private boolean darkTheme = Main.getDarkModeSetting();
-    private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
     private volatile boolean paused = false;
 
     private final Object pauseLock = new Object();
@@ -42,6 +42,14 @@ public class CommandOutputThread implements Runnable {
         this.process = outputTab.getProcess();
         this.codeArea = outputTab.getCodeArea();
         this.startTime = System.currentTimeMillis();
+        this.outputTab.getOutputSearchOptions().getSearchField().focusedProperty().addListener((_, _, focused) -> {
+            if(focused){
+                pause();
+            }
+            else if(this.outputTab.getTabPane().getScene().getWindow().isFocused()){
+                unpause();
+            }
+        });
     }
 
     public void run() {
@@ -85,7 +93,7 @@ public class CommandOutputThread implements Runnable {
                         int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
                         codeArea.deleteText(0, end);
                     }
-                    if (!outputTab.usedScrolling()) {
+                    if (!outputTab.getOutputSearchOptions().UsedScrolling()) {
                         codeArea.moveTo(codeArea.getLength());
                         codeArea.requestFollowCaret();
                     }
@@ -112,7 +120,10 @@ public class CommandOutputThread implements Runnable {
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         readLineFromStream(reader);
-        pendingLines.add("\nCommand(s) finished in: " + ((System.currentTimeMillis() - startTime) / 1000L) + "s");
+        pendingLines.add(
+                "\n-------\n" +
+                "Command(s) finished in: " + ((System.currentTimeMillis() - startTime) / 1000L) + "s" +
+                "\n-------\n");
     }
 
     private void setupOutputErrReading() {

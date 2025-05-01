@@ -21,8 +21,7 @@ import org.ashot.microservice_starter.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 
 public class Buttons {
@@ -109,6 +108,6 @@ public class Buttons {
     }
 
     private static void execute(String command, String path, String name, boolean wsl) throws IOException {
-        CommandExecution.execute(new ArrayList<>(Arrays.asList(command)), path.isEmpty() ? "/" : path, name, wsl);
+        CommandExecution.execute(new ArrayList<>(Collections.singletonList(command)), path.isEmpty() ? "/" : path, name, wsl);
     }
 }

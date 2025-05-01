@@ -1,22 +1,17 @@
 package org.ashot.microservice_starter.node.tabs;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.thread.CommandOutputThread;
-import org.ashot.microservice_starter.utils.OutputSearch;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -31,21 +26,16 @@ public class OutputTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(OutputTab.class);
     private final VirtualizedScrollPane<CodeArea> scrollPane;
     private final CodeArea codeArea;
-    private final Process process;
     private final OutputTabOptions outputTabOptions;
-    private OutputSearch search;
-    private TextField searchField;
-    private final VBox outputSearchOptions;
-    private boolean usedScrolling = false;
-    private boolean searchVisible = false;
     private CommandOutputThread commandOutputThread;
+    private Process process;
+    private boolean searchVisible = false;
 
     public OutputTab(CodeArea codeArea, Process process, String name) {
-        this.outputTabOptions = new OutputTabOptions(this);
         this.codeArea = codeArea;
         this.process = process;
         this.scrollPane = new VirtualizedScrollPane<>(codeArea);
-        this.outputSearchOptions = setupSearchOptions();
+        this.outputTabOptions = new OutputTabOptions(this, codeArea);
         setupOutputTab(name);
     }
 
@@ -55,10 +45,10 @@ public class OutputTab extends Tab {
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
             if (e.getDeltaY() < 0) {
                 if (scrollPane.getTotalHeightEstimate() - scrollPane.getEstimatedScrollY() <= 1000) {
-                    this.usedScrolling = false;
+                    this.outputTabOptions.setUsedScrolling(false);
                 }
             } else {
-                this.usedScrolling = true;
+                this.outputTabOptions.setUsedScrolling(true);
             }
         });
         this.scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -75,13 +65,13 @@ public class OutputTab extends Tab {
     private void setupUserInput() {
         this.setOnSelectionChanged(_ -> {
             if (isSelected() && searchVisible) {
-                showSearch();
+                showOptions();
             } else {
                 if (searchVisible) {
-                    closeSearch();
+                    closeOptions();
                     searchVisible = true;
                 } else {
-                    closeSearch();
+                    closeOptions();
                 }
             }
             this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
@@ -91,17 +81,15 @@ public class OutputTab extends Tab {
 
     private void handleSearchTogglingInput(KeyEvent event){
         if (event.isControlDown() && event.getCode() == KeyCode.F && isSelected()) {
-            toggleSearch();
+            toggleOptions();
         }
     }
 
-    public void toggleSearch(){
+    public void toggleOptions(){
         if (!this.searchVisible) {
-            commandOutputThread.pause();
-            showSearch();
+            showOptions();
         } else {
-            commandOutputThread.unpause();
-            closeSearch();
+            closeOptions();
         }
     }
 
@@ -126,66 +114,25 @@ public class OutputTab extends Tab {
         }
     }
 
-    private void handleSearchFieldUserInput(KeyEvent event){
-        if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
-            usedScrolling = true;
-            search.performBackwardSearch(search.getCurrentInput());
-        } else if (event.getCode() == KeyCode.ENTER) {
-            usedScrolling = true;
-            search.performForwardSearch(search.getCurrentInput());
-        }
-    }
-
     private VBox getSearchOuterContainer() {
         return (VBox) ControllerRegistry.get("main", Controller.class).getTabs().getParent().getParent();
     }
 
-    private void showSearch() {
+    private void showOptions() {
         this.searchVisible = true;
-        search.setActive(true);
+        this.outputTabOptions.getSearch().setActive(true);
         Platform.runLater(() -> {
-            getSearchOuterContainer().getChildren().add(2, this.outputSearchOptions);
-            this.searchField.requestFocus();
+            getSearchOuterContainer().getChildren().add(Controller.SETUP_TABS, this.outputTabOptions);
+            this.outputTabOptions.getSearchField().requestFocus();
         });
     }
 
-    private void closeSearch() {
+    private void closeOptions() {
         this.searchVisible = false;
-        search.setActive(false);
-        Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputSearchOptions));
+        this.outputTabOptions.getSearch().setActive(false);
+        Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputTabOptions));
     }
 
-
-    private VBox setupSearchOptions() {
-        int FIND_CONTAINER_WIDTH = 250;
-        Label findResults = new Label();
-        search = new OutputSearch(findResults, codeArea);
-        searchField = new TextField();
-        searchField.setOnKeyPressed(this::handleSearchFieldUserInput);
-        searchField.textProperty().addListener((_, _, input) -> {
-            usedScrolling = true;
-            search.resetFindIndexToStart();
-            search.performForwardSearch(input);
-        });
-        searchField.setPrefWidth(FIND_CONTAINER_WIDTH);
-        Button closeBtn = new Button("", Icons.getCloseButtonIcon(24));
-        closeBtn.setOnAction(_ -> toggleSearch());
-        closeBtn.getStyleClass().add("no-outline-btn");
-        Label label = new Label("Find");
-        BorderPane headerContainer = new BorderPane();
-        headerContainer.setLeft(label);
-        headerContainer.setPrefWidth(FIND_CONTAINER_WIDTH);
-        headerContainer.setRight(closeBtn);
-        headerContainer.setPadding(new Insets(0, 5, 0, 5));
-
-        findResults.setLabelFor(searchField);
-        findResults.setPadding(new Insets(0, 5, 0, 5));
-
-        VBox innerContainer = new VBox(headerContainer, searchField, findResults);
-        innerContainer.setPadding(new Insets(0, 10, 10, 10));
-        innerContainer.setFillWidth(false);
-        return new VBox(new Separator(Orientation.HORIZONTAL), new HBox(innerContainer));
-    }
 
     public void appendColoredLine(String line) {
         int start = codeArea.getLength();
@@ -197,12 +144,13 @@ public class OutputTab extends Tab {
         this.codeArea.setStyleSpans(start, spans.create());
     }
 
-    public CodeArea getCodeArea() {
-        return codeArea;
+    public void toggleWrapText(boolean option) {
+        this.getCodeArea().setWrapText(option);
+        this.getScrollPane().setHbarPolicy(option ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
     }
 
-    public boolean usedScrolling() {
-        return usedScrolling;
+    public CodeArea getCodeArea() {
+        return codeArea;
     }
 
     public Process getProcess() {
@@ -213,15 +161,19 @@ public class OutputTab extends Tab {
         return scrollPane;
     }
 
-    public OutputTabOptions getOutputTabOptions() {
-        return outputTabOptions;
-    }
-
     public CommandOutputThread getCommandOutputThread() {
         return commandOutputThread;
     }
 
+    public OutputTabOptions getOutputSearchOptions() {
+        return outputTabOptions;
+    }
+
     public void setCommandOutputThread(CommandOutputThread commandOutputThread) {
         this.commandOutputThread = commandOutputThread;
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
     }
 }

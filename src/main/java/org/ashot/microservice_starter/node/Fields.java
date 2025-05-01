@@ -5,13 +5,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.ashot.microservice_starter.data.CheckBoxField;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.utils.Animator;
-
-import java.util.Set;
 
 
 public class Fields {
@@ -57,19 +54,6 @@ public class Fields {
         return field;
     }
 
-    public static boolean checkFieldsFocused(Pane v){
-        if (v.getChildren().isEmpty()) {
-            return false;
-        }
-        Set<Node> nodeList = v.lookupAll("TextArea");
-        for (Node n : nodeList) {
-            if (n instanceof TextArea && n.isFocused()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static String getTextFieldContentFromContainer(Pane v, FieldType type) {
         if (v.getChildren().isEmpty() || type == null) {
             return null;
@@ -80,6 +64,7 @@ public class Fields {
         }
         return field.getText();
     }
+
     public static boolean getCheckBoxSelectedFromContainer(Pane v, FieldType type){
         if (v.getChildren().isEmpty() || type == null) {
             return false;

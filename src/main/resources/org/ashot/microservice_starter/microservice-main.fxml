@@ -41,7 +41,7 @@
                             <content>
                                 <HBox alignment="TOP_CENTER">
                                     <children>
-                                        <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" HBox.hgrow="ALWAYS">
+                                        <ScrollPane fx:id="scrollPane" fitToWidth="true" HBox.hgrow="ALWAYS">
                                             <content>
                                                 <FlowPane fx:id="container" alignment="TOP_CENTER" />
                                             </content>
