@@ -15,6 +15,21 @@ public class CommandFormatUtils {
         return name;
     }
 
+
+    public static String formatCommands(List<String> list) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            String command = list.get(i);
+            s.append(command);
+            if (i < list.size() - 1) {
+                s.append(" && ");
+            } else if (i != list.size() - 1){
+                s.append(";");
+            }
+        }
+        return s.toString();
+    }
+
     public static void handleWSL(List<String> singleCommandSequence){
         singleCommandSequence.addFirst("-e");
         singleCommandSequence.addFirst("wsl.exe");
@@ -27,8 +42,7 @@ public class CommandFormatUtils {
             currentCommand.addAll(List.of("wsl.exe", "-e", "bash", "-c"));
         }
         else if(Utils.getSystemOS().contains("windows")){
-            //todo adjust for windows
-            currentCommand.addAll(null);
+            currentCommand.addAll(List.of("cmd.exe", "/c"));
         }
         else if (Utils.getSystemOS().contains("linux")){
             currentCommand.addAll(List.of("bash", "-c"));

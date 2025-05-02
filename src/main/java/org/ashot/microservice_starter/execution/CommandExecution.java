@@ -22,9 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.ashot.microservice_starter.utils.CommandFormatUtils.*;
 import static org.ashot.microservice_starter.utils.Utils.*;
@@ -37,9 +35,12 @@ public class CommandExecution {
     public static void execute(List<String> command, String path, String name, boolean wsl) throws IOException {
         name = formatName(name);
         String commandSingleStr = String.join(" ", command);
+        List<String> unformattedCommands = new ArrayList<>(List.of(commandSingleStr.split(";")));
+        commandSingleStr = formatCommands(unformattedCommands);
+        commandSingleStr = "cd " + path + " && " + commandSingleStr;
         logger.info("\nBuilt process:\nName: {}, Path: {}, Command: {}", name, path, commandSingleStr);
         try {
-            Process process = buildProcess(commandSingleStr, path).start();
+            Process process = buildProcess(commandSingleStr, path, wsl).start();
             ProcessRegistry.register(String.valueOf(process.pid()), process);
             runInNewTab(process, name, commandSingleStr);
         } catch (Exception e) {
@@ -47,7 +48,7 @@ public class CommandExecution {
         }
     }
 
-    public static void executeSequential(List<List<String>> commands, String name, Set<Integer> wslOptions){
+    public static void executeSequential(List<List<String>> commands, String name){
         new Thread(() -> {
             String tabName = formatName(name);
             ProcessBuilder pb;
@@ -55,15 +56,15 @@ public class CommandExecution {
             OutputTab tab = null;
             for (int i = 0; i < commands.size(); i++) {
                 List<String> singleCommandSequence = commands.get(i);
-                if(wslOptions.contains(i)) {
-                    handleWSL(singleCommandSequence);
-                }
                 pb = buildSequentialProcesses(singleCommandSequence);
                 try {
                     p = pb.start();
                     if (tab != null) {
                         tab.setProcess(p);
-                        tab.getTooltip().setText(tab.getTooltip().getText() + "\n" + getCommandPrint(singleCommandSequence));
+                        OutputTab finalTab = tab;
+                        Platform.runLater(()->{
+                            finalTab.getTooltip().setText(finalTab.getTooltip().getText() + "\n" + getCommandPrint(singleCommandSequence));
+                        });
                         runCommandThreadInTab(tab);
                     } else {
                         tab = runInNewTab(p, tabName, getCommandPrint(singleCommandSequence));
@@ -92,12 +93,16 @@ public class CommandExecution {
     }
 
 
-    public static ProcessBuilder buildProcess(String command, String initialDir){
+    public static ProcessBuilder buildProcess(String command, String initialDir, boolean wsl){
+        String dir = initialDir != null && !initialDir.isBlank() ? initialDir : "/";
         if (checkIfLinux()) {
-            return new ProcessBuilder().command("bash", "-c", command).directory(new File(initialDir != null && !initialDir.isBlank() ? initialDir : "/"));
+            return new ProcessBuilder().command("bash", "-c", command).directory(new File(dir));
         } else if (checkIfWindows()) {
-            //todo add wsl toggle check
-            return new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
+            if(wsl){
+                return new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
+            } else{
+                return new ProcessBuilder("cmd.exe", "/c", command).directory(new File(dir));
+            }
         }
         return null;
     }
@@ -110,7 +115,6 @@ public class CommandExecution {
         String currentCmdText = "";
         ObservableList<Node> entryChildren = container.getChildren();
         List<List<String>> seqCommands = new ArrayList<>();
-        Set<Integer> wslOptions = new HashSet<>();
         for (int idx = 0; idx < entryChildren.size(); idx++) {
             Node node = entryChildren.get(idx);
             if (!(node instanceof Entry entry)) {
@@ -120,9 +124,6 @@ public class CommandExecution {
             String command = entry.getCommandField().getText();
             String path = entry.getPathField().getText();
             boolean wsl = entry.getWslToggle().getCheckBox().isSelected();
-            if(wsl) {
-                wslOptions.add(idx);
-            }
             validateField(command);
             if (seqOption) {
                 handleSequentialCommandChain(seqCommands, command, path, idx, delayPerCmd, wsl);
@@ -135,7 +136,7 @@ public class CommandExecution {
         }
         if (seqOption) {
             currentCmdText = seqCommands.toString();
-            CommandExecution.executeSequential(seqCommands, seqName, wslOptions);
+            CommandExecution.executeSequential(seqCommands, seqName);
         }
         return currentCmdText;
     }
