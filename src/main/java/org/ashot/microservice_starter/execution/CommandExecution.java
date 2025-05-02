@@ -72,7 +72,7 @@ public class CommandExecution {
                     //todo check exit code and cancel rest if previous fails
                     p.waitFor();
                     int exitValue = p.exitValue();
-                    if(exitValue != 0 && exitValue != 143){
+                    if(exitValue != 0 && exitValue != 1 && exitValue != 143){
                         Platform.runLater(()->{
                             ErrorPopup.errorPopup(
                                        "Failure for command:\n" + getCommandPrint(singleCommandSequence) + "\n" +
