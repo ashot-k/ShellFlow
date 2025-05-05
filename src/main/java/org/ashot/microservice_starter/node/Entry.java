@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Entry extends HBox{
-    private static final double PREF_NAME_FIELD_WIDTH = 300;
-    private static final double PREF_PATH_FIELD_WIDTH = 300;
-    private static final double PREF_COMMAND_FIELD_WIDTH = 300;
+    private static final double PREF_NAME_FIELD_WIDTH = 200;
+    private static final double PREF_PATH_FIELD_WIDTH = 400;
+    private static final double PREF_COMMAND_FIELD_WIDTH = 400;
 
     private TextArea nameField;
     private TextArea pathField;
@@ -32,40 +32,33 @@ public class Entry extends HBox{
 
     public Entry buildEntry(Pane container, String name, String path, String command, boolean wsl) {
 
-        nameField = Fields.createField(FieldType.NAME, name);
-        nameField.getStyleClass().add("name-field");
-        nameField.setPromptText("Name");
-        nameField.setPrefWidth(PREF_NAME_FIELD_WIDTH);
-        nameField.setTooltip(new Tooltip(ToolTips.nameField()));
-
-        commandField = Fields.createField(FieldType.COMMAND, command);
-        commandField.getStyleClass().add("command-field");
-        commandField.setPromptText("Command");
-        commandField.setPrefWidth(PREF_COMMAND_FIELD_WIDTH);
-        commandField.setTooltip(new Tooltip(ToolTips.commandField()));
+        nameField = Fields.createField(
+                FieldType.NAME, name, "Name",
+                ToolTips.nameField(), PREF_NAME_FIELD_WIDTH, "name-field"
+        );
+        commandField = Fields.createField(
+                FieldType.COMMAND, command,  "Command",
+                ToolTips.commandField(), PREF_COMMAND_FIELD_WIDTH, "command-field"
+        );
         ContextMenu commandFieldContextMenu = new ContextMenu();
         commandField.setContextMenu(commandFieldContextMenu);
         commandField.textProperty().addListener((_, _, input) ->
                 setupAutoComplete(input, commandFieldContextMenu, commandField, PresetSetupTab.commandsMap)
         );
 
-        HBox pathFieldContainer = new HBox();
-        pathField = Fields.createField(FieldType.PATH, path);
-        pathField.getStyleClass().add("path-field");
-        pathField.setPromptText("Path");
-        pathField.setPrefWidth(PREF_PATH_FIELD_WIDTH);
-        pathField.setTooltip(new Tooltip(ToolTips.pathField()));
+        pathField = Fields.createField(
+                FieldType.PATH, path, "Path",
+                ToolTips.pathField(), PREF_PATH_FIELD_WIDTH, "path-field"
+        );
         ContextMenu pathFieldContextMenu = new ContextMenu();
         pathField.setContextMenu(pathFieldContextMenu);
         pathField.textProperty().addListener((_, _, newValue) ->
                 setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsMap)
         );
 
-        wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL");
-        wslToggle.getCheckBox().setSelected(wsl);
-
+        wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", wsl);
         Button pathBrowser = Buttons.browsePathBtn(pathField, wslToggle.getCheckBox());
-        pathFieldContainer.getChildren().addAll(pathField, pathBrowser);
+        HBox pathFieldContainer = new HBox(5, pathField, pathBrowser);
 
         deleteEntry = Buttons.deleteEntryButton(container, this);
         execute = Buttons.executeBtn(nameField, commandField, pathField, wslToggle);

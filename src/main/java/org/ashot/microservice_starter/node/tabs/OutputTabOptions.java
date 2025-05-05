@@ -26,8 +26,8 @@ public class OutputTabOptions extends VBox {
     private static final Logger log = LoggerFactory.getLogger(OutputTabOptions.class);
     private final OutputTab outputTab;
     private OutputSearch search;
-    private TextField searchField = new TextField();
-    private TextField inputField = new TextField();
+    private final TextField searchField = new TextField();
+    private final TextField inputField = new TextField();
     private boolean usedScrolling;
     private final CodeArea codeArea;
 

@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -91,6 +90,9 @@ public class Controller implements Initializable {
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         loadMostRecentFile();
+        //todo fix
+        textWrapToggle.setDisable(true);
+        textWrapToggle.setTooltip(new Tooltip("Currently not working properly"));
     }
 
     private void loadRecentFolders() {
@@ -101,34 +103,11 @@ public class Controller implements Initializable {
     }
 
     private void refreshRecentlyOpenedFolders() {
-        List<String> toRemove = RecentFolders.getInvalidRecentFolders(openRecent);
-        openRecent.getItems().clear();
-        JSONArray recentFolders = RecentFolders.getRecentFiles();
-        for (Object s : recentFolders.toList()) {
-            String recentFolder = s.toString();
-            if (toRemove.contains(recentFolder)) {
-                RecentFolders.removeRecentFile(recentFolder);
-            }
-            MenuItem m = new MenuItem(recentFolder);
-            m.setOnAction(_ -> {
-                File file = new File(recentFolder);
-                if (file.exists()) {
-                    loadFromFile(file);
-                    this.tabs.getSelectionModel().selectFirst();
-                }
-            });
-            m.setDisable(!new File(recentFolder).exists());
-            openRecent.getItems().add(m);
-        }
+        RecentFolders.refreshCurrentlyOpenedFolders(openRecent, this.tabs, this::loadFromFile);
     }
 
     private void loadMostRecentFile(){
-        if(RecentFolders.getRecentFiles() != null && !RecentFolders.getRecentFiles().isEmpty()) {
-            String mostRecentFile = RecentFolders.getRecentFiles().getString(0);
-            if(mostRecentFile != null){
-                loadFromFile(new File(RecentFolders.getRecentFiles().getString(0)));
-            }
-        }
+        RecentFolders.loadMostRecentFile(this::loadFromFile);
     }
 
     private void setupIcons() {
@@ -181,7 +160,6 @@ public class Controller implements Initializable {
         if (loadedFile != null) {
             loadFromFile(loadedFile);
             RecentFolders.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
-            refreshRecentlyOpenedFolders();
         }
     }
 
@@ -212,16 +190,19 @@ public class Controller implements Initializable {
     private void loadFromFile(File fileToLoad) {
         log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
         JSONObject jsonData = Utils.createJSONObject(fileToLoad);
+        if(jsonData == null || jsonData.isEmpty()){
+            return;
+        }
         log.debug("Loading: {}", jsonData.toString(1));
         JSONArray jsonArray = jsonData.getJSONArray("entries");
         container.getChildren().clear();
         for (Object j : jsonArray) {
             if (j instanceof JSONObject entry) {
                 if(Utils.checkEntryFieldsFromJSON(entry)) {
-                    String name = Utils.replaceNullWithDefault(entry.opt(FieldType.NAME.getValue()), FieldType.NAME);
-                    String path = Utils.replaceNullWithDefault(entry.opt(FieldType.PATH.getValue()), FieldType.PATH);
-                    String cmd = Utils.replaceNullWithDefault(entry.opt(FieldType.COMMAND.getValue()), FieldType.COMMAND);
-                    String wsl = Utils.replaceNullWithDefault(entry.opt(FieldType.WSL.getValue()), FieldType.WSL);
+                    String name = Utils.getOrDefault(entry.opt(FieldType.NAME.getValue()), FieldType.NAME);
+                    String path = Utils.getOrDefault(entry.opt(FieldType.PATH.getValue()), FieldType.PATH);
+                    String cmd = Utils.getOrDefault(entry.opt(FieldType.COMMAND.getValue()), FieldType.COMMAND);
+                    String wsl = Utils.getOrDefault(entry.opt(FieldType.WSL.getValue()), FieldType.WSL);
                     newEntry(name, path, cmd, Boolean.parseBoolean(wsl));
                 } else{
                     newEntry(null);

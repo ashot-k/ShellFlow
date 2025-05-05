@@ -35,6 +35,7 @@ public class CommandExecution {
     public static void execute(List<String> command, String path, String name, boolean wsl) throws IOException {
         name = formatName(name);
         String commandSingleStr = String.join(" ", command);
+        validateField(commandSingleStr);
         List<String> unformattedCommands = new ArrayList<>(List.of(commandSingleStr.split(";")));
         commandSingleStr = formatCommands(unformattedCommands);
         commandSingleStr = "cd " + path + " && " + commandSingleStr;
@@ -51,27 +52,27 @@ public class CommandExecution {
     public static void executeSequential(List<List<String>> commands, String name){
         new Thread(() -> {
             String tabName = formatName(name);
-            ProcessBuilder pb;
-            Process p = null;
+            ProcessBuilder processBuilder;
+            Process process = null;
             OutputTab tab = null;
             for (int i = 0; i < commands.size(); i++) {
                 List<String> singleCommandSequence = commands.get(i);
-                pb = buildSequentialProcesses(singleCommandSequence);
+                processBuilder = buildSequentialProcesses(singleCommandSequence);
                 try {
-                    p = pb.start();
+                    process = processBuilder.start();
                     if (tab != null) {
-                        tab.setProcess(p);
+                        tab.setProcess(process);
                         OutputTab finalTab = tab;
                         Platform.runLater(()->{
                             finalTab.getTooltip().setText(finalTab.getTooltip().getText() + "\n" + getCommandPrint(singleCommandSequence));
                         });
                         runCommandThreadInTab(tab);
                     } else {
-                        tab = runInNewTab(p, tabName, getCommandPrint(singleCommandSequence));
+                        tab = runInNewTab(process, tabName, getCommandPrint(singleCommandSequence));
                     }
                     //todo check exit code and cancel rest if previous fails
-                    p.waitFor();
-                    int exitValue = p.exitValue();
+                    process.waitFor();
+                    int exitValue = process.exitValue();
                     if(exitValue != 0 && exitValue != 1 && exitValue != 143){
                         Platform.runLater(()->{
                             ErrorPopup.errorPopup(

@@ -85,7 +85,7 @@ public class Utils {
     public static boolean checkEntryFieldsFromJSON(JSONObject entry){
         return entry.has(FieldType.NAME.getValue()) && entry.has(FieldType.PATH.getValue()) && entry.has(FieldType.COMMAND.getValue());
     }
-    public static String replaceNullWithDefault(Object jsonValue, FieldType type){
+    public static String getOrDefault(Object jsonValue, FieldType type){
         if(jsonValue == null){
             if(type.equals(FieldType.WSL)){
                 return "false";

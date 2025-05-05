@@ -2,6 +2,7 @@ package org.ashot.microservice_starter.node;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TabPane;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -16,6 +17,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecentFolders {
+    public interface LoadFromFile{
+        void run(File file);
+    }
+
+    public static void refreshCurrentlyOpenedFolders(Menu openRecent, TabPane tabs, LoadFromFile onMenuItemClick){
+        List<String> toRemove = RecentFolders.getInvalidRecentFolders(openRecent);
+        openRecent.getItems().clear();
+        JSONArray recentFolders = RecentFolders.getRecentFiles();
+        for (Object s : recentFolders.toList()) {
+            String recentFolder = s.toString();
+            if (toRemove.contains(recentFolder)) {
+                RecentFolders.removeRecentFile(recentFolder);
+            }
+            MenuItem m = new MenuItem(recentFolder);
+            m.setOnAction(_ -> {
+                File file = new File(recentFolder);
+                if (file.exists()) {
+                    onMenuItemClick.run(file);
+                    tabs.getSelectionModel().selectFirst();
+                }
+            });
+            m.setDisable(!new File(recentFolder).exists());
+            openRecent.getItems().add(m);
+        }
+    }
+
+    public static void loadMostRecentFile(LoadFromFile loadFromFile){
+        if(RecentFolders.getRecentFiles() != null && !RecentFolders.getRecentFiles().isEmpty()) {
+            String mostRecentFile = RecentFolders.getRecentFiles().getString(0);
+            if(mostRecentFile != null && !mostRecentFile.isBlank()){
+                loadFromFile.run(new File(RecentFolders.getRecentFiles().getString(0)));
+            }
+        }
+    }
 
     public static List<String> getInvalidRecentFolders(Menu openRecent) {
         List<String> list = new ArrayList<>();
