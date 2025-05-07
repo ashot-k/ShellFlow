@@ -2,6 +2,7 @@ package org.ashot.microservice_starter.thread;
 
 import javafx.application.Platform;
 import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.data.constant.OutputMessages;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -30,15 +31,14 @@ public class CommandOutputThread implements Runnable {
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
     private final ScheduledExecutorService writeToOutputExecutor = Executors.newSingleThreadScheduledExecutor();
     private final ScheduledExecutorService pauseCheckExecutor = Executors.newSingleThreadScheduledExecutor();
+    private final String currentCommand;
     private volatile boolean paused = false;
 
     private final Object pauseLock = new Object();
 
-    private Thread readOutputThread;
-    private Thread readErrorThread;
-
-    public CommandOutputThread(OutputTab outputTab) {
+    public CommandOutputThread(OutputTab outputTab, String command) {
         this.outputTab = outputTab;
+        this.currentCommand = command;
         this.process = outputTab.getProcess();
         this.codeArea = outputTab.getCodeArea();
         this.startTime = System.currentTimeMillis();
@@ -54,10 +54,10 @@ public class CommandOutputThread implements Runnable {
 
     public void run() {
         setupScheduledOutputPolling();
-        this.readOutputThread = new Thread(this::setupOutputReading);
-        this.readOutputThread.start();
-        this.readErrorThread = new Thread(this::setupOutputErrReading);
-        this.readErrorThread.start();
+        Thread readOutputThread = new Thread(this::setupOutputReading);
+        readOutputThread.start();
+        Thread readErrorThread = new Thread(this::setupOutputErrReading);
+        readErrorThread.start();
         pauseChecking();
     }
 
@@ -119,11 +119,9 @@ public class CommandOutputThread implements Runnable {
 
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        pendingLines.add(OutputMessages.currentlyRunningCommand(currentCommand));
         readLineFromStream(reader);
-        pendingLines.add(
-                "\n-------\n" +
-                "Command(s) finished in: " + ((System.currentTimeMillis() - startTime) / 1000L) + "s" +
-                "\n-------\n");
+        pendingLines.add(OutputMessages.commandFinishedMessage(startTime));
     }
 
     private void setupOutputErrReading() {
@@ -146,7 +144,7 @@ public class CommandOutputThread implements Runnable {
                     }
                 }
                 if (!line.isBlank()) {
-                    if(pendingLines.size() > 50){
+                    if(pendingLines.size() > 100){
                         Thread.sleep(10);
                     }
                     pendingLines.add(line);

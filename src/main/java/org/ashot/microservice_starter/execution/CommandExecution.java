@@ -66,14 +66,13 @@ public class CommandExecution {
                         Platform.runLater(()->{
                             finalTab.getTooltip().setText(finalTab.getTooltip().getText() + "\n" + getCommandPrint(singleCommandSequence));
                         });
-                        runCommandThreadInTab(tab);
+                        runCommandThreadInTab(tab, getCommandPrint(singleCommandSequence));
                     } else {
                         tab = runInNewTab(process, tabName, getCommandPrint(singleCommandSequence));
                     }
-                    //todo check exit code and cancel rest if previous fails
                     process.waitFor();
                     int exitValue = process.exitValue();
-                    if(exitValue != 0 && exitValue != 1 && exitValue != 143){
+                    if(exitValue != 0){
                         Platform.runLater(()->{
                             ErrorPopup.errorPopup(
                                        "Failure for command:\n" + getCommandPrint(singleCommandSequence) + "\n" +
@@ -82,9 +81,6 @@ public class CommandExecution {
                             );
                         });
                         throw new IllegalStateException();
-                    }
-                    if(exitValue == 143){
-                        break;
                     }
                 } catch (IOException | InterruptedException e) {
                     logger.error(e.getMessage());
@@ -154,12 +150,12 @@ public class CommandExecution {
             tabs.getTabs().add(outputTab);
             tabs.getSelectionModel().select(outputTab);
         });
-        runCommandThreadInTab(outputTab);
+        runCommandThreadInTab(outputTab, commandExecuted);
         return outputTab;
     }
 
-    private static void runCommandThreadInTab(OutputTab outputTab){
-        CommandOutputThread thread = new CommandOutputThread(outputTab);
+    private static void runCommandThreadInTab(OutputTab outputTab, String command){
+        CommandOutputThread thread = new CommandOutputThread(outputTab, command);
         outputTab.setCommandOutputThread(thread);
         new Thread(thread).start();
     }

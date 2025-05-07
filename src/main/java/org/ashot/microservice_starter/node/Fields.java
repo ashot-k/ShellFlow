@@ -1,7 +1,10 @@
 package org.ashot.microservice_starter.node;
 
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.ashot.microservice_starter.data.CheckBoxField;

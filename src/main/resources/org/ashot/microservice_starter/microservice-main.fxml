@@ -71,7 +71,7 @@
                         <RowConstraints valignment="CENTER" />
                     </rowConstraints>
                     <children>
-                        <VBox spacing="5.0" style="-fx-spacing: 5;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <VBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-spacing: 5;" GridPane.columnIndex="2" GridPane.rowIndex="2">
                             <children>
                                 <CheckBox fx:id="sequentialOption" mnemonicParsing="false" text="Sequential">
                                     <tooltip>
