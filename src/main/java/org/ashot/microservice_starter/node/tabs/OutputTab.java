@@ -3,9 +3,7 @@ package org.ashot.microservice_starter.node.tabs;
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
@@ -95,20 +93,24 @@ public class OutputTab extends Tab {
 
     private void handleCodeAreaUserInput(KeyEvent event) {
         try {
-            if (event.isControlDown() && event.getCode() == KeyCode.C) {
-                this.process.destroy();
-                process.getOutputStream().flush();
-                Platform.runLater(() -> appendColoredLine("CTRL + C"));
-                return;
-            } else if (event.isControlDown() && event.getCode() == KeyCode.F) {
-                return;
-            } else if (event.getCode() == KeyCode.ENTER) {
+            if(event.isControlDown()) {
+                if (event.getCode() == KeyCode.C && event.isShiftDown()) {
+                    Clipboard clipboard = Clipboard.getSystemClipboard();
+                    ClipboardContent clipboardContent = new ClipboardContent();
+                    clipboardContent.putString(codeArea.getSelectedText());
+                    clipboard.setContent(clipboardContent);
+                } else if (event.getCode() == KeyCode.C) {
+                    this.process.destroy();
+                    Platform.runLater(() -> appendColoredLine("^C"));
+                }
+            }
+            else if (event.getCode() == KeyCode.ENTER) {
                 process.getOutputStream().write('\n');
             } else {
                 process.getOutputStream().write((event.getText()).getBytes());
+                Platform.runLater(() -> appendColoredLine(event.getText()));
             }
             process.getOutputStream().flush();
-            Platform.runLater(() -> appendColoredLine(event.getText()));
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
