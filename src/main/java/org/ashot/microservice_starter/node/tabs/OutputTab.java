@@ -74,6 +74,11 @@ public class OutputTab extends Tab {
             }
             this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
             this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
+            this.codeArea.setOnMouseClicked((event -> {
+                if(event.isSecondaryButtonDown()){
+                    addSelectionToClipBoard();
+                }
+            }));
         });
     }
 
@@ -90,15 +95,18 @@ public class OutputTab extends Tab {
             closeOptions();
         }
     }
+    private void addSelectionToClipBoard(){
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent clipboardContent = new ClipboardContent();
+        clipboardContent.putString(codeArea.getSelectedText());
+        clipboard.setContent(clipboardContent);
+    }
 
     private void handleCodeAreaUserInput(KeyEvent event) {
         try {
             if(event.isControlDown()) {
                 if (event.getCode() == KeyCode.C && event.isShiftDown()) {
-                    Clipboard clipboard = Clipboard.getSystemClipboard();
-                    ClipboardContent clipboardContent = new ClipboardContent();
-                    clipboardContent.putString(codeArea.getSelectedText());
-                    clipboard.setContent(clipboardContent);
+                    addSelectionToClipBoard();
                 } else if (event.getCode() == KeyCode.C) {
                     this.process.destroy();
                     Platform.runLater(() -> appendColoredLine("^C"));
