@@ -75,7 +75,7 @@ public class OutputTab extends Tab {
             this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
             this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
             this.codeArea.setOnMouseClicked((event -> {
-                if(event.isSecondaryButtonDown()){
+                if(event.getButton().equals(MouseButton.SECONDARY)){
                     addSelectionToClipBoard();
                 }
             }));
