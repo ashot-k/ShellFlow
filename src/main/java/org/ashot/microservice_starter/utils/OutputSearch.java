@@ -50,18 +50,18 @@ public class OutputSearch {
     }
 
     private void findNextOccurrence(String input){
+        currentInput = input;
         if(findText(input)) {
             moveToText(input);
-            currentInput = input;
         }else{
             resetFind(true);
         }
     }
 
     private void findPreviousOccurrence(String input){
+        currentInput = input;
         if(findPreviousText(input)){
             moveToText(input);
-            currentInput = input;
         }else{
             resetFind(false);
         }

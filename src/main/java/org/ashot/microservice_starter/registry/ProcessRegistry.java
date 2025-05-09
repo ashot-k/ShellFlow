@@ -17,5 +17,6 @@ public class ProcessRegistry {
 
     public static void killAllProcesses() {
         processes.values().forEach(Process::destroy);
+        processes.clear();
     }
 }

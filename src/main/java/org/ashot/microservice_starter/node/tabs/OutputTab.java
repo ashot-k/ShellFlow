@@ -10,6 +10,7 @@ import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.thread.CommandOutputThread;
+import org.ashot.microservice_starter.utils.Utils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -56,7 +57,7 @@ public class OutputTab extends Tab {
         VBox.setVgrow(codeArea, Priority.ALWAYS);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         this.setClosable(true);
-        this.setOnClosed(_ -> this.process.destroy());
+        this.setOnClosed(_ -> Utils.killProcess(process));
         this.setupUserInput();
     }
 
@@ -108,7 +109,7 @@ public class OutputTab extends Tab {
                 if (event.getCode() == KeyCode.C && event.isShiftDown()) {
                     addSelectionToClipBoard();
                 } else if (event.getCode() == KeyCode.C) {
-                    this.process.destroy();
+                    Utils.killProcess(process);
                     Platform.runLater(() -> appendColoredLine("^C"));
                 }
             }

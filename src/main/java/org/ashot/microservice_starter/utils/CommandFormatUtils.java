@@ -52,7 +52,7 @@ public class CommandFormatUtils {
             stringBuilder.append(path.length() > 0 ? path : "./");
             stringBuilder.append(" && ");
         }
-        if (idx != 0 && delayPerCmd >= 0) {
+        if (idx != 0 && delayPerCmd > 0) {
             stringBuilder.append("sleep ");
             stringBuilder.append(delayPerCmd).append("s");
             stringBuilder.append(" && ");

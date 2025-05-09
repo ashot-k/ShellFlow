@@ -46,7 +46,7 @@ public class Entry extends HBox{
         ContextMenu commandFieldContextMenu = new ContextMenu();
         commandField.setContextMenu(commandFieldContextMenu);
         commandField.textProperty().addListener((_, _, input) ->
-                setupAutoComplete(input, commandFieldContextMenu, commandField, PresetSetupTab.commandsMap)
+                setupAutoComplete(input, commandFieldContextMenu, commandField, PresetSetupTab.commandsTable.getItems())
         );
 
         pathField = Fields.createField(
@@ -56,7 +56,7 @@ public class Entry extends HBox{
         ContextMenu pathFieldContextMenu = new ContextMenu();
         pathField.setContextMenu(pathFieldContextMenu);
         pathField.textProperty().addListener((_, _, newValue) ->
-                setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsMap)
+                setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsTable.getItems())
         );
 
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", wsl);
@@ -73,17 +73,17 @@ public class Entry extends HBox{
         return this;
     }
 
-    private void setupAutoComplete(String input, ContextMenu menu, TextArea field, Map<String, String> searchMap) {
+    private void setupAutoComplete(String input, ContextMenu menu, TextArea field, List<String> searchList) {
         menu.getItems().clear();
-        for (String preset : searchMap.keySet()) {
-            if (preset.toLowerCase().trim().contains(input.toLowerCase().trim())) {
+        for (String preset : searchList) {
+            if (preset.toLowerCase().trim().contains(input.toLowerCase().trim()) && !preset.isEmpty()) {
                 List<MenuItem> existing = menu.getItems().filtered(item -> {
-                    String existingKey = searchMap.keySet().stream().filter(key -> key.equals(item.getText())).findFirst().orElseGet(()-> null);
-                    return preset.equals(existingKey);
+                    String existingValue = searchList.stream().filter(value -> value.equals(item.getText())).findFirst().orElseGet(()-> null);
+                    return preset.equals(existingValue);
                 });
                 if (existing.isEmpty()) {
-                    MenuItem menuItem = new MenuItem(preset + " (" + searchMap.get(preset) + ")");
-                    menuItem.setOnAction(_ -> field.setText(searchMap.get(preset)));
+                    MenuItem menuItem = new MenuItem(preset);
+                    menuItem.setOnAction(_ -> field.setText(preset));
                     menu.getItems().add(menuItem);
                 }
             }
