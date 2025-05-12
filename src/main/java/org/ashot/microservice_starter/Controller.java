@@ -17,6 +17,7 @@ import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.RecentFolders;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
+import org.ashot.microservice_starter.node.tabs.ProfilerTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.utils.FileUtils;
@@ -62,8 +63,6 @@ public class Controller implements Initializable {
     @FXML
     private Button clearEntriesBtn;
     @FXML
-    private Button currentCmd;
-    @FXML
     private CheckBox textWrapToggle;
     @FXML
     private Button clearOutput;
@@ -71,21 +70,25 @@ public class Controller implements Initializable {
     private String lastSaved;
     private String lastLoaded;
 
-    public static final int SETUP_TABS = 2;
+    public static final int SETUP_TABS = 3;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
         FileUtils.initializeSaveFolder();
+        ProfilerTab profilerTab = new ProfilerTab();
 
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
-        tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS));
+        tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> {
+            profilerTab.refreshProcesses(tabs);
+            stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS);
+        });
         tabs.getSelectionModel().selectedItemProperty().addListener((_, _, _) ->
                 clearOutput.setDisable(Utils.getSelectedOutputTab(tabs) == null)
         );
-        tabs.getTabs().add(new PresetSetupTab());
+        tabs.getTabs().addAll(new PresetSetupTab(), profilerTab);
         tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
 
         setupIcons();
@@ -242,7 +245,7 @@ public class Controller implements Initializable {
         Main.setThemeMode(true);
     }
 
-    public TabPane getTabs() {
+    public TabPane getTabPane() {
         return tabs;
     }
 

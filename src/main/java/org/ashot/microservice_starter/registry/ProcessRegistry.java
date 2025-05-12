@@ -15,6 +15,10 @@ public class ProcessRegistry {
         return type.cast(processes.get(key));
     }
 
+    public static Map<String, Process> getProcesses(){
+        return processes;
+    }
+
     public static void killAllProcesses() {
         processes.values().forEach(Process::destroy);
         processes.clear();

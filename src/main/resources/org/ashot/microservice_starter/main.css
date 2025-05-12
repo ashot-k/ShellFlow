@@ -101,6 +101,9 @@
     -fx-fill: #000000 !important;
 }
 
+.ansi-fg-bright-gray{
+    -fx-fill: gray !important;
+}
 /* Light Gray */
 .ansi-fg-bright-red {
     -fx-fill: #FF0000 !important;

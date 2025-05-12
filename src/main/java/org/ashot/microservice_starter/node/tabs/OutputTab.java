@@ -3,6 +3,7 @@ package org.ashot.microservice_starter.node.tabs;
 import javafx.application.Platform;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -28,6 +29,7 @@ public class OutputTab extends Tab {
     private final OutputTabOptions outputTabOptions;
     private CommandOutputTask commandOutputTask;
     private Process process;
+    private String command;
     private boolean searchVisible = false;
 
     public OutputTab(CodeArea codeArea, Process process, String name) {
@@ -126,7 +128,7 @@ public class OutputTab extends Tab {
     }
 
     private VBox getSearchOuterContainer() {
-        return (VBox) ControllerRegistry.get("main", Controller.class).getTabs().getParent().getParent();
+        return (VBox) ControllerRegistry.get("main", Controller.class).getTabPane().getParent().getParent();
     }
 
     private void showOptions() {
@@ -186,5 +188,17 @@ public class OutputTab extends Tab {
 
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    public static List<OutputTab> getOutputTabsFromTabPane(TabPane tabPane){
+        return tabPane.getTabs().stream().filter(e -> e instanceof OutputTab).map(o -> (OutputTab) o).toList();
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public String getCommand() {
+        return command;
     }
 }

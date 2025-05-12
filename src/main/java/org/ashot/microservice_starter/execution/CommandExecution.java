@@ -40,6 +40,7 @@ public class CommandExecution {
         EntryValidation.validatePath(path);
         List<String> unformattedCommands = new ArrayList<>(List.of(commandSingleStr.split(";")));
         commandSingleStr = formatCommands(unformattedCommands);
+        path = path != null && !path.isBlank() ? path: "/";
         commandSingleStr = "cd " + path + " && " + commandSingleStr;
         logger.info("\nBuilt process:\nName: {}, Path: {}, Command: {}", name, path, commandSingleStr);
         try {
@@ -95,14 +96,13 @@ public class CommandExecution {
 
 
     public static ProcessBuilder buildProcess(String command, String initialDir, boolean wsl){
-        String dir = initialDir != null && !initialDir.isBlank() ? initialDir : "/";
         if (checkIfLinux()) {
-            return new ProcessBuilder().command("bash", "-c", command).directory(new File(dir));
+            return new ProcessBuilder().command("bash", "-c", command).directory(new File(initialDir));
         } else if (checkIfWindows()) {
             if(wsl){
                 return new ProcessBuilder("wsl.exe", "-e", "bash", "-c", command);
             } else{
-                return new ProcessBuilder("cmd.exe", "/c", command).directory(new File(dir));
+                return new ProcessBuilder("cmd.exe", "/c", command).directory(new File(initialDir));
             }
         }
         return null;
@@ -146,8 +146,9 @@ public class CommandExecution {
     private static OutputTab runInNewTab(Process process, String name, String commandExecuted) {
         Controller controller = ControllerRegistry.get("main", Controller.class);
 
-        TabPane tabs = controller.getTabs();
+        TabPane tabs = controller.getTabPane();
         OutputTab outputTab = new OutputTab(new CodeArea(), process, name);
+        outputTab.setCommand(commandExecuted);
         outputTab.setTooltip(new Tooltip(commandExecuted));
         outputTab.toggleWrapText(controller.getTextWrapOption());
 
@@ -160,6 +161,7 @@ public class CommandExecution {
     }
 
     private static void runCommandThreadInTab(OutputTab outputTab, String command){
+        outputTab.setCommand(command);
         CommandOutputTask thread = new CommandOutputTask(outputTab, command);
         outputTab.setCommandOutputThread(thread);
         new Thread(thread).start();

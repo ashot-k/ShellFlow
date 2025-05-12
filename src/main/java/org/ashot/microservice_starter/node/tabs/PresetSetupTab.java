@@ -101,11 +101,13 @@ public class PresetSetupTab extends Tab {
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
         for (String p : commandsTable.getItems()) {
+            if(p.isBlank()) continue;
             JSONObject row = createJSONRow(p);
             commands.put(row);
         }
         JSONArray paths = new JSONArray();
         for (String p : pathsTable.getItems()) {
+            if(p.isBlank()) continue;
             JSONObject row = createJSONRow(p);
             paths.put(row);
         }
