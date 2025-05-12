@@ -100,7 +100,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getClearEntriesIcon(int size) {
+    public static Glyph getClearIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TRASH_ALT);
         icon.size(size);
         icon.color(Color.DARKSLATEBLUE);

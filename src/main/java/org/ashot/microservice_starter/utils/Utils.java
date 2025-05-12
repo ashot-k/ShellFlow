@@ -3,6 +3,7 @@ package org.ashot.microservice_starter.utils;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -12,6 +13,7 @@ import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
+import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,6 +41,13 @@ public class Utils {
                 log.error(e.getMessage());
             }
         }
+    }
+
+    public static OutputTab getSelectedOutputTab(TabPane tabs){
+        if(tabs.selectionModelProperty().getValue().getSelectedItem() instanceof OutputTab outputTab){
+            return outputTab;
+        }
+        return null;
     }
 
     public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName) {

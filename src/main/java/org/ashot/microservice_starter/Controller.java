@@ -65,6 +65,8 @@ public class Controller implements Initializable {
     private Button currentCmd;
     @FXML
     private CheckBox textWrapToggle;
+    @FXML
+    private Button clearOutput;
 
     private String currentCmdText = "";
 
@@ -82,6 +84,9 @@ public class Controller implements Initializable {
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
         tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS));
+        tabs.getSelectionModel().selectedItemProperty().addListener((_, _, _) ->
+                clearOutput.setDisable(Utils.getSelectedOutputTab(tabs) == null)
+        );
         tabs.getTabs().add(new PresetSetupTab());
         tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
 
@@ -117,7 +122,8 @@ public class Controller implements Initializable {
         saveBtn.setGraphic(Icons.getSaveIcon(MENU_ITEM_ICON_SIZE));
         int BUTTON_ICON_SIZE = 20;
         newEntryBtn.setGraphic(Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
-        clearEntriesBtn.setGraphic(Icons.getClearEntriesIcon(BUTTON_ICON_SIZE));
+        clearEntriesBtn.setGraphic(Icons.getClearIcon(BUTTON_ICON_SIZE));
+        clearOutput.setGraphic(Icons.getClearIcon(BUTTON_ICON_SIZE));
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(BUTTON_ICON_SIZE));
         stopAllBtn.setGraphic(Icons.getCloseButtonIcon(BUTTON_ICON_SIZE));
     }
@@ -177,6 +183,14 @@ public class Controller implements Initializable {
             if (t instanceof OutputTab outputTab) {
                 outputTab.toggleWrapText(textWrapToggle.isSelected());
             }
+        }
+    }
+
+    public void clearOutput(ActionEvent e){
+        OutputTab tab = Utils.getSelectedOutputTab(tabs);
+        if(tab != null){
+            tab.getCodeArea().clear();
+            tab.getOutputSearchOptions().setUsedScrolling(false);
         }
     }
 
