@@ -9,13 +9,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import org.ashot.microservice_starter.data.CheckBoxField;
 import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
-import org.ashot.microservice_starter.utils.ToolTips;
+import org.ashot.microservice_starter.utils.ToolTipText;
 import org.ashot.microservice_starter.utils.Utils;
 
 import java.io.File;
@@ -51,7 +50,7 @@ public class Buttons {
         btn.getStyleClass().add("no-outline-btn");
         btn.setOnAction(_ -> performOrdering(direction, (HBox) btn.getParent().getParent()));
         btn.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(SIZE) : Icons.getChevronDownIcon(SIZE));
-        btn.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTips.moveEntryUp() : ToolTips.moveEntryDown()));
+        btn.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipText.moveEntryUp() : ToolTipText.moveEntryDown()));
         return btn;
     }
 
@@ -74,7 +73,7 @@ public class Buttons {
         executeBtn.setBackground(Background.EMPTY);
         executeBtn.setId(ButtonType.EXECUTION.getValue());
         executeBtn.getStyleClass().add("no-outline-btn");
-        executeBtn.setTooltip(new Tooltip(ToolTips.execute()));
+        executeBtn.setTooltip(new Tooltip(ToolTipText.execute()));
         executeBtn.setOnAction(_ -> {
             try {
                 String nameSelected = nameField.getText();
@@ -103,7 +102,7 @@ public class Buttons {
                 pathField.setText(path);
             }
         });
-        pathBrowserBtn.setTooltip(new Tooltip(ToolTips.pathBrowse()));
+        pathBrowserBtn.setTooltip(new Tooltip(ToolTipText.pathBrowse()));
         return pathBrowserBtn;
     }
 

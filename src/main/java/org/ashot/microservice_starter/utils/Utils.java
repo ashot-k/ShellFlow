@@ -7,7 +7,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
@@ -20,10 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -32,16 +29,6 @@ import java.util.Set;
 public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
-
-    public static void initializeSaveFolder(){
-        if(!new File(SettingsFileNames.PRESETS.PREFIX()).exists()){
-            try {
-                Files.createDirectory(Path.of(SettingsFileNames.PRESETS.PREFIX()));
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
-        }
-    }
 
     public static OutputTab getSelectedOutputTab(TabPane tabs){
         if(tabs.selectionModelProperty().getValue().getSelectedItem() instanceof OutputTab outputTab){
@@ -58,18 +45,6 @@ public class Utils {
         jsonObject.put("sequential", seqOption);
         jsonObject.put("sequentialName", seqName);
         return jsonObject;
-    }
-
-    public static boolean writeDataToFile(File fileToSave, JSONObject data) {
-        try {
-            FileWriter f = new FileWriter(fileToSave);
-            data.write(f, 1, 1);
-            f.close();
-            return true;
-        } catch (IOException ex) {
-            ErrorPopup.errorPopup(ex.getMessage());
-        }
-        return false;
     }
 
     private static void addEntryToJSONObject(JSONObject object, Node node) {
@@ -136,21 +111,6 @@ public class Utils {
         return null;
     }
 
-    public static File chooseFile(boolean saveMode, String initialDir) {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", "json");
-        fileChooser.setSelectedExtensionFilter(extensions);
-        fileChooser.setInitialDirectory(new File(initialDir));
-        if (saveMode) {
-            fileChooser.setInitialFileName("entries.json");
-            fileChooser.setTitle("Choose file destination");
-            return fileChooser.showSaveDialog(null);
-        } else {
-            fileChooser.setTitle("Choose file");
-            return fileChooser.showOpenDialog(null);
-        }
-    }
-
     public static int calculateDelay(int multiplier, int delayPerCmd) {
         if (delayPerCmd == 0) delayPerCmd = 1;
         return multiplier * delayPerCmd * 1000;
@@ -196,7 +156,7 @@ public class Utils {
                 jsonObject.put(DirType.LAST_LOADED.name(), ".");
                 jsonObject.put(DirType.LAST_SAVED.name(), ".");
                 jsonObject.put(DirType.RECENT.name(), new JSONArray());
-                writeDataToFile(file, jsonObject);
+                FileUtils.writeJSONDataToFile(file, jsonObject);
             }
             return jsonObject;
         } catch (IOException e) {

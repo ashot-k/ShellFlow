@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
-import org.ashot.microservice_starter.thread.CommandOutputThread;
+import org.ashot.microservice_starter.task.CommandOutputTask;
 import org.ashot.microservice_starter.utils.Utils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -26,7 +26,7 @@ public class OutputTab extends Tab {
     private final VirtualizedScrollPane<CodeArea> scrollPane;
     private final CodeArea codeArea;
     private final OutputTabOptions outputTabOptions;
-    private CommandOutputThread commandOutputThread;
+    private CommandOutputTask commandOutputTask;
     private Process process;
     private boolean searchVisible = false;
 
@@ -172,16 +172,16 @@ public class OutputTab extends Tab {
         return scrollPane;
     }
 
-    public CommandOutputThread getCommandOutputThread() {
-        return commandOutputThread;
+    public CommandOutputTask getCommandOutputThread() {
+        return commandOutputTask;
     }
 
     public OutputTabOptions getOutputSearchOptions() {
         return outputTabOptions;
     }
 
-    public void setCommandOutputThread(CommandOutputThread commandOutputThread) {
-        this.commandOutputThread = commandOutputThread;
+    public void setCommandOutputThread(CommandOutputTask commandOutputTask) {
+        this.commandOutputTask = commandOutputTask;
     }
 
     public void setProcess(Process process) {

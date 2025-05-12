@@ -1,8 +1,8 @@
-package org.ashot.microservice_starter.thread;
+package org.ashot.microservice_starter.task;
 
 import javafx.application.Platform;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.data.constant.OutputMessages;
+import org.ashot.microservice_starter.data.messages.OutputMessages;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CommandOutputThread implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(CommandOutputThread.class);
+public class CommandOutputTask implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(CommandOutputTask.class);
     private boolean darkTheme = Main.getDarkModeSetting();
     private final long startTime;
     private static final int MAX_LINES = 9000;
@@ -36,7 +36,7 @@ public class CommandOutputThread implements Runnable {
 
     private final Object pauseLock = new Object();
 
-    public CommandOutputThread(OutputTab outputTab, String command) {
+    public CommandOutputTask(OutputTab outputTab, String command) {
         this.outputTab = outputTab;
         this.currentCommand = command;
         this.process = outputTab.getProcess();

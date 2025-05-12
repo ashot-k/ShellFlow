@@ -15,11 +15,11 @@ import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.RecentFolders;
-import org.ashot.microservice_starter.node.popup.OutputPopup;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
+import org.ashot.microservice_starter.utils.FileUtils;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,8 +68,6 @@ public class Controller implements Initializable {
     @FXML
     private Button clearOutput;
 
-    private String currentCmdText = "";
-
     private String lastSaved;
     private String lastLoaded;
 
@@ -79,7 +77,7 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
         Utils.setupOSInfo(osInfo);
-        Utils.initializeSaveFolder();
+        FileUtils.initializeSaveFolder();
 
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
@@ -137,9 +135,7 @@ public class Controller implements Initializable {
     }
 
     public void executeAll() {
-        setCurrentCmdText("", currentCmd, false);
-        String commands = CommandExecution.executeAll(container, sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
-        setCurrentCmdText(commands, currentCmd, true);
+       CommandExecution.executeAll(container, sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
     }
 
     public void stopAll() {
@@ -149,12 +145,16 @@ public class Controller implements Initializable {
                 Platform.runLater(() -> tabs.getTabs().remove(outputTab));
             }
         });
+        Platform.runLater(() -> tabs.getSelectionModel().selectFirst());
     }
 
     public void save(ActionEvent e) {
         loadRecentFolders();
         File savedFile = chooseFile(true);
         if (savedFile != null) {
+            if(!savedFile.getAbsolutePath().endsWith(".json")){
+                savedFile = new File(savedFile.getAbsolutePath() + ".json");
+            }
             saveToFile(savedFile);
             RecentFolders.saveDirReference(DirType.LAST_SAVED, savedFile.getParent());
         }
@@ -173,7 +173,7 @@ public class Controller implements Initializable {
         log.debug("Saving file: {}", fileToSave.getAbsolutePath());
         JSONObject jsonObject = Utils.createSaveJSONObject(container, (int) delayPerCmd.getValue(), sequentialOption.isSelected(), sequentialName.getText());
         log.debug("Saving: {}", jsonObject.toString(1));
-        Utils.writeDataToFile(fileToSave, jsonObject);
+        FileUtils.writeJSONDataToFile(fileToSave, jsonObject);
         log.debug("Saved: {}", fileToSave.getAbsolutePath());
         RecentFolders.saveRecentDir(fileToSave.getAbsolutePath());
     }
@@ -226,23 +226,12 @@ public class Controller implements Initializable {
         delayPerCmd.setValue(jsonData.getDouble("delay"));
         sequentialOption.setSelected(jsonData.getBoolean("sequential"));
         sequentialName.setText(jsonData.getString("sequentialName"));
-        setCurrentCmdText("", currentCmd, false);
         RecentFolders.saveRecentDir(fileToLoad.getAbsolutePath());
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
     }
 
     private File chooseFile(boolean save) {
-        return Utils.chooseFile(save, save ? lastSaved : lastLoaded);
-    }
-
-    private void setCurrentCmdText(String text, Button currentCmd, boolean visible) {
-        currentCmdText = text;
-        //todo check
-        currentCmd.setVisible(false);
-    }
-
-    public void printCurrentCmd(ActionEvent e) {
-        OutputPopup.outputPopup(currentCmdText, "Commands Executed", sequentialOption.isSelected());
+        return FileUtils.chooseFile(save, save ? lastSaved : lastLoaded);
     }
 
     public void lightMode(ActionEvent e) {

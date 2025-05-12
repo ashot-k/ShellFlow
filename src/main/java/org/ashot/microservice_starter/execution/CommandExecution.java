@@ -7,14 +7,15 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
-import org.ashot.microservice_starter.exception.ErrorMessages;
+import org.ashot.microservice_starter.data.messages.OutputMessages;
 import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.node.tabs.OutputTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
-import org.ashot.microservice_starter.thread.CommandExecutionThread;
-import org.ashot.microservice_starter.thread.CommandOutputThread;
+import org.ashot.microservice_starter.task.CommandExecutionTask;
+import org.ashot.microservice_starter.task.CommandOutputTask;
+import org.ashot.microservice_starter.validation.EntryValidation;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,8 @@ public class CommandExecution {
     public static void execute(List<String> command, String path, String name, boolean wsl) throws IOException {
         name = formatName(name);
         String commandSingleStr = String.join(" ", command);
-        validateField(commandSingleStr);
+        EntryValidation.validateField(commandSingleStr);
+        EntryValidation.validatePath(path);
         List<String> unformattedCommands = new ArrayList<>(List.of(commandSingleStr.split(";")));
         commandSingleStr = formatCommands(unformattedCommands);
         commandSingleStr = "cd " + path + " && " + commandSingleStr;
@@ -46,6 +48,7 @@ public class CommandExecution {
             runInNewTab(process, name, commandSingleStr);
         } catch (Exception e) {
             logger.error(e.getMessage());
+            ErrorPopup.errorPopup(e.getMessage());
         }
     }
 
@@ -55,15 +58,14 @@ public class CommandExecution {
             ProcessBuilder processBuilder;
             Process process = null;
             OutputTab tab = null;
-            for (int i = 0; i < commands.size(); i++) {
-                List<String> singleCommandSequence = commands.get(i);
+            for (List<String> singleCommandSequence : commands) {
                 processBuilder = buildSequentialProcesses(singleCommandSequence);
                 try {
                     process = processBuilder.start();
                     if (tab != null) {
                         tab.setProcess(process);
                         OutputTab finalTab = tab;
-                        Platform.runLater(()->{
+                        Platform.runLater(() -> {
                             finalTab.getTooltip().setText(finalTab.getTooltip().getText() + "\n" + getCommandPrint(singleCommandSequence));
                         });
                         runCommandThreadInTab(tab, getCommandPrint(singleCommandSequence));
@@ -71,15 +73,17 @@ public class CommandExecution {
                         tab = runInNewTab(process, tabName, getCommandPrint(singleCommandSequence));
                     }
                     process.waitFor();
-                    int exitValue = process.exitValue();
-                    if(exitValue != 0){
-                        Platform.runLater(()->{
-                            ErrorPopup.errorPopup(
-                                       "Failure for command:\n" + getCommandPrint(singleCommandSequence) + "\n" +
-                                            "On tab: " + tabName + "\n" +
-                                            "With exit value: " + exitValue
-                            );
-                        });
+                    int exitCode = process.exitValue();
+                    if (exitCode != 0) {
+                        OutputTab finalTab = tab;
+                        Platform.runLater(() ->
+                                finalTab.appendColoredLine(
+                                        OutputMessages.errorMessage(
+                                                "Failure for command: " + getCommandPrint(singleCommandSequence) + "\n" +
+                                                        "On tab: " + tabName + "\n" +
+                                                        "With exit code: " + exitCode)
+                                )
+                        );
                         throw new IllegalStateException();
                     }
                 } catch (IOException | InterruptedException e) {
@@ -108,10 +112,10 @@ public class CommandExecution {
         return new ProcessBuilder().command(commands);
     }
 
-    public static String executeAll(Pane container, boolean seqOption, String seqName, int delayPerCmd) {
-        String currentCmdText = "";
+    public static void executeAll(Pane container, boolean seqOption, String seqName, int delayPerCmd) {
         ObservableList<Node> entryChildren = container.getChildren();
         List<List<String>> seqCommands = new ArrayList<>();
+        List<CommandExecutionTask> tasks = new ArrayList<>();
         for (int idx = 0; idx < entryChildren.size(); idx++) {
             Node node = entryChildren.get(idx);
             if (!(node instanceof Entry entry)) {
@@ -121,21 +125,22 @@ public class CommandExecution {
             String command = entry.getCommandField().getText();
             String path = entry.getPathField().getText();
             boolean wsl = entry.getWslToggle().getCheckBox().isSelected();
-            validateField(command);
+            EntryValidation.validateField(command);
+            EntryValidation.validatePath(path);
             if (seqOption) {
                 handleSequentialCommandChain(seqCommands, command, path, idx, delayPerCmd, wsl);
             } else {
-                currentCmdText = currentCmdText.isEmpty() ? command : currentCmdText + "\n" + command + " at " + path;
                 long timeInMS = calculateDelay(idx, delayPerCmd);
-                CommandExecutionThread t = new CommandExecutionThread(command, path, name, wsl, timeInMS);
-                new Thread(t).start();
+                tasks.add(new CommandExecutionTask(command, path, name, wsl, timeInMS));
             }
         }
         if (seqOption) {
-            currentCmdText = seqCommands.toString();
             CommandExecution.executeSequential(seqCommands, seqName);
+        } else {
+            for(CommandExecutionTask t : tasks){
+                new Thread(t).start();
+            }
         }
-        return currentCmdText;
     }
 
     private static OutputTab runInNewTab(Process process, String name, String commandExecuted) {
@@ -155,16 +160,9 @@ public class CommandExecution {
     }
 
     private static void runCommandThreadInTab(OutputTab outputTab, String command){
-        CommandOutputThread thread = new CommandOutputThread(outputTab, command);
+        CommandOutputTask thread = new CommandOutputTask(outputTab, command);
         outputTab.setCommandOutputThread(thread);
         new Thread(thread).start();
-    }
-
-    public static void validateField(String fieldValue) {
-        if (fieldValue == null || fieldValue.isBlank()) {
-            ErrorPopup.errorPopup(ErrorMessages.INVALID_FIELDS);
-            throw new IllegalArgumentException(fieldValue);
-        }
     }
 
 }

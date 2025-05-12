@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.PresetType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
+import org.ashot.microservice_starter.utils.FileUtils;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -112,7 +113,7 @@ public class PresetSetupTab extends Tab {
         jsonObject.put(COMMANDS, commands);
         jsonObject.put(PATHS, paths);
 
-        Utils.writeDataToFile(file, jsonObject);
+        FileUtils.writeJSONDataToFile(file, jsonObject);
     }
 
     private static JSONObject createJSONRow(String p){
@@ -151,7 +152,7 @@ public class PresetSetupTab extends Tab {
             JSONArray paths = new JSONArray();
             jsonObject.put(COMMANDS, commands);
             jsonObject.put(PATHS, paths);
-            Utils.writeDataToFile(file, jsonObject);
+            FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

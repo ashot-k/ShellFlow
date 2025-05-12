@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.thread;
+package org.ashot.microservice_starter.task;
 
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandExecutionThread implements Runnable {
+public class CommandExecutionTask implements Runnable {
     String cmd;
     String path;
     String name;
     boolean wsl;
     long delay;
 
-    public CommandExecutionThread(String command, String path, String name, boolean wsl, long delay) {
+    public CommandExecutionTask(String command, String path, String name, boolean wsl, long delay) {
         this.delay = delay;
         this.cmd = command;
         this.path = path;

@@ -15,7 +15,6 @@ public class CommandFormatUtils {
         return name;
     }
 
-
     public static String formatCommands(List<String> list) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
@@ -28,11 +27,6 @@ public class CommandFormatUtils {
             }
         }
         return s.toString();
-    }
-
-    public static void handleWSL(List<String> singleCommandSequence){
-        singleCommandSequence.addFirst("-e");
-        singleCommandSequence.addFirst("wsl.exe");
     }
 
     public static void handleSequentialCommandChain(List<List<String>> seqCommands, String command, String path, int idx, int delayPerCmd, boolean wsl) {

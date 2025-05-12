@@ -7,7 +7,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import org.ashot.microservice_starter.data.CheckBoxField;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.utils.Animator;
 
@@ -83,14 +82,4 @@ public class Fields {
         return field.getText();
     }
 
-    public static boolean getCheckBoxSelectedFromContainer(Pane v, FieldType type){
-        if (v.getChildren().isEmpty() || type == null) {
-            return false;
-        }
-        Node n = v.lookup("#" + type.getValue());
-        if (!(n instanceof CheckBoxField field)) {
-            return false;
-        }
-        return field.getCheckBox().isSelected();
-    }
 }

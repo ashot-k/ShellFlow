@@ -6,7 +6,7 @@ import javafx.scene.control.TabPane;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
-import org.ashot.microservice_starter.utils.Utils;
+import org.ashot.microservice_starter.utils.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -69,7 +69,7 @@ public class RecentFolders {
             File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             jsonObject.put(dirType.name(), path);
-            Utils.writeDataToFile(file, jsonObject);
+            FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
             ErrorPopup.errorPopup(e.getMessage());
         }
@@ -88,7 +88,7 @@ public class RecentFolders {
             recents.clear();
             recents.putAll(list);
             jsonObject.put(DirType.RECENT.name(), recents);
-            Utils.writeDataToFile(file, jsonObject);
+            FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
             ErrorPopup.errorPopup(e.getMessage());
         }
@@ -121,7 +121,7 @@ public class RecentFolders {
             recents.clear();
             recents.putAll(list);
             jsonObject.put(DirType.RECENT.name(), recents);
-            Utils.writeDataToFile(file, jsonObject);
+            FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
             ErrorPopup.errorPopup(e.getMessage());
         }

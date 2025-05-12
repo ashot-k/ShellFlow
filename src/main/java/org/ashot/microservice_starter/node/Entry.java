@@ -9,13 +9,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.ashot.microservice_starter.data.CheckBoxField;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
-import org.ashot.microservice_starter.utils.ToolTips;
+import org.ashot.microservice_starter.utils.ToolTipText;
 
 import java.util.List;
-import java.util.Map;
 
 public class Entry extends HBox{
     private static final double PREF_NAME_FIELD_WIDTH = 200;
@@ -37,11 +35,11 @@ public class Entry extends HBox{
 
         nameField = Fields.createField(
                 FieldType.NAME, name, "Name",
-                ToolTips.nameField(), PREF_NAME_FIELD_WIDTH, "name-field"
+                ToolTipText.nameField(), PREF_NAME_FIELD_WIDTH, "name-field"
         );
         commandField = Fields.createField(
                 FieldType.COMMAND, command,  "Command",
-                ToolTips.commandField(), PREF_COMMAND_FIELD_WIDTH, "command-field"
+                ToolTipText.commandField(), PREF_COMMAND_FIELD_WIDTH, "command-field"
         );
         ContextMenu commandFieldContextMenu = new ContextMenu();
         commandField.setContextMenu(commandFieldContextMenu);
@@ -51,7 +49,7 @@ public class Entry extends HBox{
 
         pathField = Fields.createField(
                 FieldType.PATH, path, "Path",
-                ToolTips.pathField(), PREF_PATH_FIELD_WIDTH, "path-field"
+                ToolTipText.pathField(), PREF_PATH_FIELD_WIDTH, "path-field"
         );
         ContextMenu pathFieldContextMenu = new ContextMenu();
         pathField.setContextMenu(pathFieldContextMenu);

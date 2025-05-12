@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.data.constant;
+package org.ashot.microservice_starter.data.messages;
 
 public class OutputMessages {
     private static final String DASHES = "-----------------------------------------------------------------------------------------------";
@@ -10,5 +10,9 @@ public class OutputMessages {
 
     public static String currentlyRunningCommand(String command){
         return DASHES + NEW_LINE + "Now executing: " + command + NEW_LINE + DASHES;
+    }
+
+    public static String errorMessage(String errorMsg){
+        return DASHES + NEW_LINE + "Error: " + errorMsg + NEW_LINE + DASHES;
     }
 }

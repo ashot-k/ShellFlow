@@ -5,6 +5,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.node.Fields;
+import org.ashot.microservice_starter.utils.FileUtils;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,7 +30,7 @@ class UtilsTest {
         JSONObject object = new JSONObject();
         object.put("test", "testValue");
         Assertions.assertAll(
-                () -> assertDoesNotThrow(() -> Utils.writeDataToFile(fileToSave, object)),
+                () -> assertDoesNotThrow(() -> FileUtils.writeJSONDataToFile(fileToSave, object)),
                 () -> assertTrue(fileToSave.exists()),
                 () -> assertEquals(readDataFromFile(fileToSave).get("test"), object.get("test"))
         );
