@@ -68,8 +68,15 @@ public class ProfilerTab extends Tab {
                 status = ProcessStatus.EXITED;
             }
         }
+        List<String> pids = refreshedProcess.toHandle().descendants().filter(ProcessHandle::isAlive).map(e -> e.pid() + "\n").toList();
+        StringBuilder b = new StringBuilder();
+        for(String s : pids){
+            b.append(s);
+        }
+
         profilerProcessNode.refreshStatus(status, exitCode);
-        profilerProcessNode.refreshID(String.valueOf(refreshedProcess.pid()));
+//        profilerProcessNode.refreshID(String.valueOf(refreshedProcess.pid()));
+        profilerProcessNode.refreshID(b.toString());
         profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommand());
     }
 
