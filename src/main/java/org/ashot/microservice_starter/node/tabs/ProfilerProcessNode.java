@@ -29,6 +29,7 @@ public class ProfilerProcessNode extends HBox{
                 this.command
                 );
         this.setFillHeight(true);
+        command.setWrappingWidth(600);
     }
 
     public Text getProcessStatus() {

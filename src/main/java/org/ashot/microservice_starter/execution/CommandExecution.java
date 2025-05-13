@@ -37,7 +37,9 @@ public class CommandExecution {
         name = formatName(name);
         String commandSingleStr = String.join(" ", command);
         EntryValidation.validateField(commandSingleStr);
-        EntryValidation.validatePath(path);
+        if(!wsl) {
+            EntryValidation.validatePath(path);
+        }
         List<String> unformattedCommands = new ArrayList<>(List.of(commandSingleStr.split(";")));
         commandSingleStr = formatCommands(unformattedCommands);
         path = path != null && !path.isBlank() ? path: "/";
@@ -126,7 +128,9 @@ public class CommandExecution {
             String path = entry.getPathField().getText();
             boolean wsl = entry.getWslToggle().getCheckBox().isSelected();
             EntryValidation.validateField(command);
-            EntryValidation.validatePath(path);
+            if(!wsl) {
+                EntryValidation.validatePath(path);
+            }
             if (seqOption) {
                 handleSequentialCommandChain(seqCommands, command, path, idx, delayPerCmd, wsl);
             } else {

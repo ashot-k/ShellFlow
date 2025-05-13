@@ -77,7 +77,6 @@ public class ProfilerTab extends Tab {
         this.setText("Status");
         this.setClosable(false);
         ScrollPane scrollPane = new ScrollPane(content);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setFitToWidth(true);
         this.setContent(scrollPane);
         content.setFillWidth(true);
