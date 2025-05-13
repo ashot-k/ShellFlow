@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node;
+package org.ashot.microservice_starter.node.entry;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
@@ -10,8 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.FieldType;
-import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
-import org.ashot.microservice_starter.utils.ToolTipText;
+import org.ashot.microservice_starter.data.message.ToolTipMessages;
+import org.ashot.microservice_starter.node.tab.PresetSetupTab;
 
 import java.util.List;
 
@@ -35,11 +35,11 @@ public class Entry extends HBox{
 
         nameField = Fields.createField(
                 FieldType.NAME, name, "Name",
-                ToolTipText.nameField(), PREF_NAME_FIELD_WIDTH, "name-field"
+                ToolTipMessages.nameField(), PREF_NAME_FIELD_WIDTH, "name-field"
         );
         commandField = Fields.createField(
                 FieldType.COMMAND, command,  "Command",
-                ToolTipText.commandField(), PREF_COMMAND_FIELD_WIDTH, "command-field"
+                ToolTipMessages.commandField(), PREF_COMMAND_FIELD_WIDTH, "command-field"
         );
         ContextMenu commandFieldContextMenu = new ContextMenu();
         commandField.setContextMenu(commandFieldContextMenu);
@@ -49,7 +49,7 @@ public class Entry extends HBox{
 
         pathField = Fields.createField(
                 FieldType.PATH, path, "Path",
-                ToolTipText.pathField(), PREF_PATH_FIELD_WIDTH, "path-field"
+                ToolTipMessages.pathField(), PREF_PATH_FIELD_WIDTH, "path-field"
         );
         ContextMenu pathFieldContextMenu = new ContextMenu();
         pathField.setContextMenu(pathFieldContextMenu);
@@ -58,12 +58,12 @@ public class Entry extends HBox{
         );
 
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", wsl);
-        Button pathBrowser = Buttons.browsePathBtn(pathField, wslToggle.getCheckBox());
+        Button pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
         HBox pathFieldContainer = new HBox(5, pathField, pathBrowser);
 
-        deleteEntry = Buttons.deleteEntryButton(container, this);
-        execute = Buttons.executeBtn(nameField, commandField, pathField, wslToggle);
-        VBox orderingContainer = Buttons.createOrderingContainer();
+        deleteEntry = EntryButton.deleteEntryButton(container, this);
+        execute = EntryButton.executeBtn(nameField, commandField, pathField, wslToggle);
+        VBox orderingContainer = EntryButton.createOrderingContainer();
 
         this.setAlignment(Pos.TOP_CENTER);
         this.getChildren().addAll(deleteEntry, nameField, pathFieldContainer, commandField, wslToggle, execute, orderingContainer);

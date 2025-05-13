@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.tabs;
+package org.ashot.microservice_starter.node.tab;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;

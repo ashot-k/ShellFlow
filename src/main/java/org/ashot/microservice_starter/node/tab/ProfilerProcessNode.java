@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.tabs;
+package org.ashot.microservice_starter.node.tab;
 
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;

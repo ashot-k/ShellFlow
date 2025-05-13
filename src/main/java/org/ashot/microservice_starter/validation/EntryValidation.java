@@ -1,7 +1,7 @@
 package org.ashot.microservice_starter.validation;
 
 import javafx.application.Platform;
-import org.ashot.microservice_starter.data.messages.PopupMessages;
+import org.ashot.microservice_starter.data.message.PopupMessages;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 
 import java.io.File;

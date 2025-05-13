@@ -4,7 +4,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.constant.FieldType;
-import org.ashot.microservice_starter.node.Fields;
+import org.ashot.microservice_starter.node.entry.Fields;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;

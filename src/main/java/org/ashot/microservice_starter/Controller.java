@@ -13,11 +13,11 @@ import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
-import org.ashot.microservice_starter.node.Entry;
 import org.ashot.microservice_starter.node.RecentFolders;
-import org.ashot.microservice_starter.node.tabs.OutputTab;
-import org.ashot.microservice_starter.node.tabs.PresetSetupTab;
-import org.ashot.microservice_starter.node.tabs.ProfilerTab;
+import org.ashot.microservice_starter.node.entry.Entry;
+import org.ashot.microservice_starter.node.tab.OutputTab;
+import org.ashot.microservice_starter.node.tab.PresetSetupTab;
+import org.ashot.microservice_starter.node.tab.ProfilerTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.utils.FileUtils;
@@ -62,10 +62,6 @@ public class Controller implements Initializable {
     private Button stopAllBtn;
     @FXML
     private Button clearEntriesBtn;
-    @FXML
-    private CheckBox textWrapToggle;
-    @FXML
-    private Button clearOutput;
 
     private String lastSaved;
     private String lastLoaded;
@@ -85,9 +81,6 @@ public class Controller implements Initializable {
             profilerTab.refreshProcesses(tabs);
             stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS);
         });
-        tabs.getSelectionModel().selectedItemProperty().addListener((_, _, _) ->
-                clearOutput.setDisable(Utils.getSelectedOutputTab(tabs) == null)
-        );
         tabs.getTabs().addAll(new PresetSetupTab(), profilerTab);
         tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
 
@@ -96,9 +89,6 @@ public class Controller implements Initializable {
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         loadMostRecentFile();
-        //todo fix
-        textWrapToggle.setDisable(true);
-        textWrapToggle.setTooltip(new Tooltip("Currently not working properly"));
     }
 
     private void loadRecentFolders() {
@@ -124,7 +114,6 @@ public class Controller implements Initializable {
         int BUTTON_ICON_SIZE = 20;
         newEntryBtn.setGraphic(Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
         clearEntriesBtn.setGraphic(Icons.getClearIcon(BUTTON_ICON_SIZE));
-        clearOutput.setGraphic(Icons.getClearIcon(BUTTON_ICON_SIZE));
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(BUTTON_ICON_SIZE));
         stopAllBtn.setGraphic(Icons.getCloseButtonIcon(BUTTON_ICON_SIZE));
     }
@@ -181,22 +170,6 @@ public class Controller implements Initializable {
         RecentFolders.saveRecentDir(fileToSave.getAbsolutePath());
     }
 
-    public void toggleTextWrap(ActionEvent e) {
-        for (Tab t : tabs.getTabs()) {
-            if (t instanceof OutputTab outputTab) {
-                outputTab.toggleWrapText(textWrapToggle.isSelected());
-            }
-        }
-    }
-
-    public void clearOutput(ActionEvent e){
-        OutputTab tab = Utils.getSelectedOutputTab(tabs);
-        if(tab != null){
-            tab.getCodeArea().clear();
-            tab.getOutputSearchOptions().setUsedScrolling(false);
-        }
-    }
-
     public void clearAllEntries(ActionEvent e) {
         Platform.runLater(() -> {
             container.getChildren().clear();
@@ -248,9 +221,4 @@ public class Controller implements Initializable {
     public TabPane getTabPane() {
         return tabs;
     }
-
-    public boolean getTextWrapOption() {
-        return textWrapToggle.isSelected();
-    }
-
 }

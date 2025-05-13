@@ -18,6 +18,8 @@ module org.ashot.microservice_starter {
     exports org.ashot.microservice_starter.utils;
     opens org.ashot.microservice_starter.utils to javafx.fxml;
     opens org.ashot.microservice_starter.data.constant to javafx.base;
-    opens org.ashot.microservice_starter.node.tabs to javafx.base;
+    opens org.ashot.microservice_starter.node.tab to javafx.base;
     opens org.ashot.microservice_starter.data.icon to javafx.base;
+    exports org.ashot.microservice_starter.data.message;
+    opens org.ashot.microservice_starter.data.message to javafx.fxml;
 }

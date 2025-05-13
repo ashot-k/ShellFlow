@@ -4,7 +4,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.data.constant.FieldType;
-import org.ashot.microservice_starter.node.Fields;
+import org.ashot.microservice_starter.node.entry.Fields;
 import org.ashot.microservice_starter.utils.FileUtils;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;

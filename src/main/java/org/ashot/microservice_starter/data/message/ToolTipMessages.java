@@ -1,6 +1,6 @@
-package org.ashot.microservice_starter.utils;
+package org.ashot.microservice_starter.data.message;
 
-public class ToolTipText {
+public class ToolTipMessages {
     public static String nameField() {
         return "Name of the tab in which the command will be ran in.\nRequires the sequential option to be off.";
     }

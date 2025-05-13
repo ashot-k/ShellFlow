@@ -12,7 +12,7 @@ import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
-import org.ashot.microservice_starter.node.tabs.OutputTab;
+import org.ashot.microservice_starter.node.tab.OutputTab;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;

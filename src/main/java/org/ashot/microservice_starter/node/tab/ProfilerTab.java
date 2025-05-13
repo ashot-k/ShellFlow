@@ -1,10 +1,13 @@
-package org.ashot.microservice_starter.node.tabs;
+package org.ashot.microservice_starter.node.tab;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.constant.ProcessStatus;
@@ -68,15 +71,8 @@ public class ProfilerTab extends Tab {
                 status = ProcessStatus.EXITED;
             }
         }
-        List<String> pids = refreshedProcess.toHandle().descendants().filter(ProcessHandle::isAlive).map(e -> e.pid() + "\n").toList();
-        StringBuilder b = new StringBuilder();
-        for(String s : pids){
-            b.append(s);
-        }
-
         profilerProcessNode.refreshStatus(status, exitCode);
-//        profilerProcessNode.refreshID(String.valueOf(refreshedProcess.pid()));
-        profilerProcessNode.refreshID(b.toString());
+        profilerProcessNode.refreshID(String.valueOf(refreshedProcess.pid()));
         profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommand());
     }
 

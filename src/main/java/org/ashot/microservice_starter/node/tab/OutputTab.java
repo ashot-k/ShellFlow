@@ -1,14 +1,16 @@
-package org.ashot.microservice_starter.node.tabs;
+package org.ashot.microservice_starter.node.tab;
 
 import javafx.application.Platform;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.task.CommandOutputTask;
 import org.ashot.microservice_starter.utils.Utils;
@@ -55,9 +57,27 @@ public class OutputTab extends Tab {
         this.scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.setText(name.replace("\"", ""));
-        this.setContent(new VBox(scrollPane));
+        Button clearButton = new Button("Clear", Icons.getClearIcon(18));
+        clearButton.setGraphicTextGap(20);
+        clearButton.setContentDisplay(ContentDisplay.RIGHT);
+        clearButton.setOnAction(_->{
+            this.getCodeArea().clear();
+            this.getOutputSearchOptions().setUsedScrolling(false);
+        });
+        HBox outputOptionsContainer = new HBox(clearButton);
+        outputOptionsContainer.setPadding(new Insets(0, 10, 0, 10));
+
+        this.setContent(new VBox(scrollPane, new Separator(Orientation.HORIZONTAL), outputOptionsContainer));
         VBox.setVgrow(codeArea, Priority.ALWAYS);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
+        this.getOutputSearchOptions().getSearchField().focusedProperty().addListener((_, _, focused) -> {
+            if(focused){
+                this.commandOutputTask.pause();
+            }
+            else if(this.getTabPane().getScene().getWindow().isFocused()){
+                this.commandOutputTask.unpause();
+            }
+        });
         this.setClosable(true);
         this.setOnClosed(_ -> Utils.killProcess(process));
         this.setupUserInput();
@@ -146,10 +166,9 @@ public class OutputTab extends Tab {
         Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputTabOptions));
     }
 
-
     public void appendColoredLine(String line) {
         int start = codeArea.getLength();
-        line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip for display
+        line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // strip ansi
         this.codeArea.appendText(line);
         StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
         String defaultFg = Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";

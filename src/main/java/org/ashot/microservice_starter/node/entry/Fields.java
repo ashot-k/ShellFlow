@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node;
+package org.ashot.microservice_starter.node.entry;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;

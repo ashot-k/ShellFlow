@@ -2,8 +2,8 @@ package org.ashot.microservice_starter.task;
 
 import javafx.application.Platform;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.data.messages.OutputMessages;
-import org.ashot.microservice_starter.node.tabs.OutputTab;
+import org.ashot.microservice_starter.data.message.OutputMessages;
+import org.ashot.microservice_starter.node.tab.OutputTab;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
@@ -22,34 +22,21 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandOutputTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputTask.class);
+    private static final int MAX_LINES = 9000;
     private boolean darkTheme = Main.getDarkModeSetting();
     private final long startTime;
-    private static final int MAX_LINES = 9000;
     private final OutputTab outputTab;
-    private final CodeArea codeArea;
-    private final Process process;
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
     private final ScheduledExecutorService writeToOutputExecutor = Executors.newSingleThreadScheduledExecutor();
     private final ScheduledExecutorService pauseCheckExecutor = Executors.newSingleThreadScheduledExecutor();
-    private final String currentCommand;
     private volatile boolean paused = false;
 
     private final Object pauseLock = new Object();
 
-    public CommandOutputTask(OutputTab outputTab, String command) {
+    public CommandOutputTask(OutputTab outputTab) {
         this.outputTab = outputTab;
-        this.currentCommand = command;
-        this.process = outputTab.getProcess();
-        this.codeArea = outputTab.getCodeArea();
         this.startTime = System.currentTimeMillis();
-        this.outputTab.getOutputSearchOptions().getSearchField().focusedProperty().addListener((_, _, focused) -> {
-            if(focused){
-                pause();
-            }
-            else if(this.outputTab.getTabPane().getScene().getWindow().isFocused()){
-                unpause();
-            }
-        });
+        outputTab.setCommandOutputThread(this);
     }
 
     public void run() {
@@ -76,6 +63,7 @@ public class CommandOutputTask implements Runnable {
     private void setupScheduledOutputPolling() {
         writeToOutputExecutor.scheduleAtFixedRate(() -> {
             checkThemeChange();
+            CodeArea codeArea = outputTab.getCodeArea();
             if (!pendingLines.isEmpty()) {
                 StringBuilder stringBuilder = new StringBuilder();
                 List<String> batch;
@@ -106,26 +94,27 @@ public class CommandOutputTask implements Runnable {
         if (darkTheme != Main.getDarkModeSetting()) {
             Platform.runLater(() -> {
                 darkTheme = Main.getDarkModeSetting();
-                this.codeArea.getStyleClass().removeAll("light-mode", "dark-mode");
-                this.codeArea.getStyleClass().add(darkTheme ? "dark-mode" : "light-mode");
+                CodeArea codeArea = outputTab.getCodeArea();
+                codeArea.getStyleClass().removeAll("light-mode", "dark-mode");
+                codeArea.getStyleClass().add(darkTheme ? "dark-mode" : "light-mode");
                 int start = 0;
                 StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
                 String defaultFg = darkTheme ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
-                spans.add(List.of(defaultFg), this.codeArea.getLength());
-                this.codeArea.setStyleSpans(start, spans.create());
+                spans.add(List.of(defaultFg), codeArea.getLength());
+                codeArea.setStyleSpans(start, spans.create());
             });
         }
     }
 
     private void setupOutputReading() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        pendingLines.add(OutputMessages.currentlyRunningCommand(currentCommand));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(outputTab.getProcess().getInputStream()));
+        pendingLines.add(OutputMessages.currentlyRunningCommand(outputTab.getCommand()));
         readLineFromStream(reader);
         pendingLines.add(OutputMessages.commandFinishedMessage(startTime));
     }
 
     private void setupOutputErrReading() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(outputTab.getProcess().getErrorStream()));
         readLineFromStream(reader);
     }
 

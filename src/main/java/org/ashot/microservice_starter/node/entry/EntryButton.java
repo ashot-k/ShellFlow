@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node;
+package org.ashot.microservice_starter.node.entry;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -9,21 +9,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import org.ashot.microservice_starter.data.Command;
 import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
+import org.ashot.microservice_starter.data.message.ToolTipMessages;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
-import org.ashot.microservice_starter.utils.ToolTipText;
 import org.ashot.microservice_starter.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 
 
-public class Buttons {
+public class EntryButton {
     public static final int SIZE = 18;
     public static final int EXECUTE_BUTTON_SIZE = 40;
     public static final int CLOSE_BUTTON_SIZE = 40;
@@ -38,8 +37,8 @@ public class Buttons {
     }
 
     public static VBox createOrderingContainer(){
-        Button moveUpBtn = Buttons.orderingButton(Direction.UP);
-        Button moveDownBtn = Buttons.orderingButton(Direction.DOWN);
+        Button moveUpBtn = EntryButton.orderingButton(Direction.UP);
+        Button moveDownBtn = EntryButton.orderingButton(Direction.DOWN);
         VBox orderingContainer = new VBox(moveUpBtn, moveDownBtn);
         orderingContainer.getStyleClass().add("ordering-container");
         return orderingContainer;
@@ -50,7 +49,7 @@ public class Buttons {
         btn.getStyleClass().add("no-outline-btn");
         btn.setOnAction(_ -> performOrdering(direction, (HBox) btn.getParent().getParent()));
         btn.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(SIZE) : Icons.getChevronDownIcon(SIZE));
-        btn.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipText.moveEntryUp() : ToolTipText.moveEntryDown()));
+        btn.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipMessages.moveEntryUp() : ToolTipMessages.moveEntryDown()));
         return btn;
     }
 
@@ -73,7 +72,7 @@ public class Buttons {
         executeBtn.setBackground(Background.EMPTY);
         executeBtn.setId(ButtonType.EXECUTION.getValue());
         executeBtn.getStyleClass().add("no-outline-btn");
-        executeBtn.setTooltip(new Tooltip(ToolTipText.execute()));
+        executeBtn.setTooltip(new Tooltip(ToolTipMessages.execute()));
         executeBtn.setOnAction(_ -> {
             try {
                 String nameSelected = nameField.getText();
@@ -102,11 +101,12 @@ public class Buttons {
                 pathField.setText(path);
             }
         });
-        pathBrowserBtn.setTooltip(new Tooltip(ToolTipText.pathBrowse()));
+        pathBrowserBtn.setTooltip(new Tooltip(ToolTipMessages.pathBrowse()));
         return pathBrowserBtn;
     }
 
     private static void execute(String command, String path, String name, boolean wsl) throws IOException {
-        CommandExecution.execute(new ArrayList<>(Collections.singletonList(command)), path.isEmpty() ? "/" : path, name, wsl);
+        Command c = new Command(name, path, command, wsl);
+        CommandExecution.execute(c);
     }
 }
