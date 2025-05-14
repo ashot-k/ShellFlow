@@ -80,6 +80,8 @@ public class CommandExecution {
                             tooltip.setText(tooltip.getText() + "\n" + (singleCommandInSequence.getArgumentsString()));
                             if (commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
                                 tabCopy.setText(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
+                            } else{
+                                tabCopy.setText(singleCommandInSequence.getName().replace("\"", ""));
                             }
                         });
                         runCommandThreadInTab(tab, singleCommandInSequence.getArgumentsString());
