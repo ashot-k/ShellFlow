@@ -78,7 +78,7 @@ public class Command {
         }
     }
 
-    public String formatName(String name) {
+    private String formatName(String name) {
         if (name.isBlank()) {
             //todo change
             name = "ms-starter-command-" + new Random().nextInt(0, 10000);

@@ -28,4 +28,8 @@ public class ToolTipMessages {
     public static String execute() {
         return "Run entry";
     }
+
+    public static String clearOutput(){
+        return "Clear console";
+    }
 }

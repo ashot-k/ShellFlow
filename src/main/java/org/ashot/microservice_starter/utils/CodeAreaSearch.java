@@ -4,15 +4,14 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import org.fxmisc.richtext.CodeArea;
 
-public class OutputSearch {
-    private boolean active;
+public class CodeAreaSearch {
     private int currentOccurrence = 1;
     private int currentOccurrencePos = 0;
     private String currentInput = "";
     private final CodeArea codeArea;
     private final Label results;
 
-    public OutputSearch(Label results, CodeArea codeArea){
+    public CodeAreaSearch(Label results, CodeArea codeArea){
         this.results = results;
         this.codeArea = codeArea;
     }
@@ -121,13 +120,5 @@ public class OutputSearch {
 
     public String getCurrentInput(){
         return currentInput;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 }

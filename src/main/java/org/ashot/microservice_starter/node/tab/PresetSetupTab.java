@@ -53,10 +53,10 @@ public class PresetSetupTab extends Tab {
         setupFromFile();
 
         Button addCommandRow = addRowButton(commandsTable);
-        Button removeCommandRow = removeEntry(commandsTable, PresetType.COMMAND);
+        Button removeCommandRow = removeEntry(commandsTable);
         HBox commandButtons = new HBox(SPACING, addCommandRow, removeCommandRow);
         Button addPathRow = addRowButton(pathsTable);
-        Button removePathRow = removeEntry(pathsTable, PresetType.PATH);
+        Button removePathRow = removeEntry(pathsTable);
         HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
 
         Button saveAll = saveButton();
@@ -111,10 +111,8 @@ public class PresetSetupTab extends Tab {
             JSONObject row = createJSONRow(p);
             paths.put(row);
         }
-
         jsonObject.put(COMMANDS, commands);
         jsonObject.put(PATHS, paths);
-
         FileUtils.writeJSONDataToFile(file, jsonObject);
     }
 
@@ -193,7 +191,7 @@ public class PresetSetupTab extends Tab {
         return addRowButton;
     }
 
-    private static Button removeEntry(TableView<String> tableView, PresetType presetType){
+    private static Button removeEntry(TableView<String> tableView){
         Button removeRowButton = new Button("Remove");
         removeRowButton.setDisable(true);
         removeRowButton.setOnAction(_ -> {

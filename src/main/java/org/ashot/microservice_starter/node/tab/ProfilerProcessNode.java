@@ -20,7 +20,7 @@ public class ProfilerProcessNode extends HBox{
         this.processID = new Text(processID);
         this.tab = tab;
         this.processStatus = new Text();
-        this.command = new Text(tab.getCommand());
+        this.command = new Text(tab.getCommandDisplayName());
 
         this.getChildren().addAll(
                 this.processName, new Separator(Orientation.VERTICAL),
@@ -53,6 +53,10 @@ public class ProfilerProcessNode extends HBox{
         }
     }
 
+    public void refreshName(String name){
+        this.processName.setText(name);
+    }
+
     public void refreshID(String id){
         this.processID.setText(id);
     }
@@ -72,4 +76,5 @@ public class ProfilerProcessNode extends HBox{
     public Text getCommand() {
         return command;
     }
+
 }

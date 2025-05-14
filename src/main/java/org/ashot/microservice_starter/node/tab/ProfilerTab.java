@@ -73,7 +73,8 @@ public class ProfilerTab extends Tab {
         }
         profilerProcessNode.refreshStatus(status, exitCode);
         profilerProcessNode.refreshID(String.valueOf(refreshedProcess.pid()));
-        profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommand());
+        profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommandDisplayName());
+        profilerProcessNode.refreshName(profilerProcessNode.getTab().getText());
     }
 
     private void setupProfilerTab(){

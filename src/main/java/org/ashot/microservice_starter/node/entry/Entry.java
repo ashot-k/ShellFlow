@@ -76,7 +76,7 @@ public class Entry extends HBox{
         for (String preset : searchList) {
             if (preset.toLowerCase().trim().contains(input.toLowerCase().trim()) && !preset.isEmpty()) {
                 List<MenuItem> existing = menu.getItems().filtered(item -> {
-                    String existingValue = searchList.stream().filter(value -> value.equals(item.getText())).findFirst().orElseGet(()-> null);
+                    String existingValue = searchList.stream().filter(value -> value.equals(item.getText())).findFirst().orElse(null);
                     return preset.equals(existingValue);
                 });
                 if (existing.isEmpty()) {
@@ -88,6 +88,10 @@ public class Entry extends HBox{
         }
         Bounds boundsInScreen = field.localToScreen(field.getBoundsInLocal());
         menu.show(field, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
+    }
+
+    public static List<Entry> getEntriesFromPane(Pane container){
+        return container.getChildren().stream().filter(e -> e instanceof Entry).map(e -> (Entry) e).toList();
     }
 
     public TextArea getNameField() {

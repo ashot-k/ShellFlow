@@ -15,6 +15,7 @@ import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.data.message.ToolTipMessages;
 import org.ashot.microservice_starter.execution.CommandExecution;
+import org.ashot.microservice_starter.node.CustomButton;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.Utils;
 
@@ -22,11 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class EntryButton {
-    public static final int SIZE = 18;
-    public static final int EXECUTE_BUTTON_SIZE = 40;
-    public static final int CLOSE_BUTTON_SIZE = 40;
-    public static final double PATH_BROWSE_BUTTON_SIZE = 22;
+public class EntryButton extends CustomButton {
 
     public static Button deleteEntryButton(Pane container, HBox row) {
         Button btn = new Button("", Icons.getCloseButtonIcon(CLOSE_BUTTON_SIZE));

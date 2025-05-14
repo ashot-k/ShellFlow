@@ -81,7 +81,7 @@ public class CommandOutputTask implements Runnable {
                         int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
                         codeArea.deleteText(0, end);
                     }
-                    if (!outputTab.getOutputSearchOptions().UsedScrolling()) {
+                    if (outputTab.getOutputSearchOptions().autoScroll()) {
                         codeArea.moveTo(codeArea.getLength());
                         codeArea.requestFollowCaret();
                     }
@@ -108,7 +108,7 @@ public class CommandOutputTask implements Runnable {
 
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(outputTab.getProcess().getInputStream()));
-        pendingLines.addFirst(OutputMessages.currentlyRunningCommand(outputTab.getCommand()));
+        pendingLines.addFirst(OutputMessages.currentlyRunningCommand(outputTab.getCommandDisplayName()));
         readLineFromStream(reader);
         pendingLines.add(OutputMessages.commandFinishedMessage(startTime));
     }

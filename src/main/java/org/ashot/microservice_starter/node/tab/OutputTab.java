@@ -1,16 +1,16 @@
 package org.ashot.microservice_starter.node.tab;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.task.CommandOutputTask;
 import org.ashot.microservice_starter.utils.Utils;
@@ -31,50 +31,43 @@ public class OutputTab extends Tab {
     private final OutputTabOptions outputTabOptions;
     private CommandOutputTask commandOutputTask;
     private Process process;
-    private String command;
+    private String commandDisplayName;
     private boolean searchVisible = false;
 
-    public OutputTab(CodeArea codeArea, Process process, String name) {
-        this.codeArea = codeArea;
-        this.process = process;
+    private OutputTab(OutputTabBuilder outputTabBuilder){
+        this.process = outputTabBuilder.process;
+        this.commandDisplayName = outputTabBuilder.commandDisplayName;
+        this.setTooltip(outputTabBuilder.tooltip);
+        this.setText(outputTabBuilder.tabName);
+        this.codeArea = new CodeArea();
         this.scrollPane = new VirtualizedScrollPane<>(codeArea);
         this.outputTabOptions = new OutputTabOptions(this, codeArea);
-        setupOutputTab(name);
+        Platform.runLater(this::setupOutputTab);
     }
 
-    public void setupOutputTab(String name) {
+    public void setupOutputTab() {
         this.codeArea.getStyleClass().addAll("command-output-container", Main.getDarkModeSetting() ? "dark-mode" : "light-mode", Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text");
         this.codeArea.setEditable(false);
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
             if (e.getDeltaY() < 0) {
                 if (scrollPane.getTotalHeightEstimate() - scrollPane.getEstimatedScrollY() <= 1000) {
-                    this.outputTabOptions.setUsedScrolling(false);
+                    this.outputTabOptions.setAutoScroll(true);
                 }
             } else {
-                this.outputTabOptions.setUsedScrolling(true);
+                this.outputTabOptions.setAutoScroll(false);
             }
         });
         this.scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         this.scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        this.setText(name.replace("\"", ""));
-        Button clearButton = new Button("Clear", Icons.getClearIcon(18));
-        clearButton.setGraphicTextGap(20);
-        clearButton.setContentDisplay(ContentDisplay.RIGHT);
-        clearButton.setOnAction(_->{
-            this.getCodeArea().clear();
-            this.getOutputSearchOptions().setUsedScrolling(false);
-        });
-        HBox outputOptionsContainer = new HBox(clearButton);
-        outputOptionsContainer.setPadding(new Insets(0, 10, 0, 10));
 
-        this.setContent(new VBox(scrollPane, new Separator(Orientation.HORIZONTAL), outputOptionsContainer, new Separator(Orientation.HORIZONTAL)));
+        this.setContent(new StackPane(scrollPane, OutputTabButton.clearOutputButton(this)));
         VBox.setVgrow(codeArea, Priority.ALWAYS);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         this.getOutputSearchOptions().getSearchField().focusedProperty().addListener((_, _, focused) -> {
             if(focused){
                 this.commandOutputTask.pause();
             }
-            else if(this.getTabPane().getScene().getWindow().isFocused()){
+            else if(this.getTabPane() != null && this.getTabPane().getScene().getWindow().isFocused()){
                 this.commandOutputTask.unpause();
             }
         });
@@ -88,25 +81,20 @@ public class OutputTab extends Tab {
             if (isSelected() && searchVisible) {
                 showOptions();
             } else {
-                if (searchVisible) {
-                    closeOptions();
-                    searchVisible = true;
-                } else {
-                    closeOptions();
-                }
+                closeOptions();
             }
-            this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
-            this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
-            this.codeArea.setOnMouseClicked((event -> {
-                if(event.getButton().equals(MouseButton.SECONDARY)){
-                    addSelectionToClipBoard();
-                }
-            }));
         });
+        this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
+        this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
+        this.codeArea.setOnMouseClicked((event -> {
+            if(event.getButton().equals(MouseButton.SECONDARY)){
+                addSelectionToClipBoard();
+            }
+        }));
     }
 
     private void handleSearchTogglingInput(KeyEvent event){
-        if (event.isControlDown() && event.getCode() == KeyCode.F && isSelected()) {
+        if (isSelected() && event.isControlDown() && event.getCode() == KeyCode.F) {
             toggleOptions();
         }
     }
@@ -117,6 +105,7 @@ public class OutputTab extends Tab {
         } else {
             closeOptions();
         }
+        this.searchVisible = !this.searchVisible;
     }
     private void addSelectionToClipBoard(){
         Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -148,21 +137,17 @@ public class OutputTab extends Tab {
     }
 
     private VBox getSearchOuterContainer() {
-        return (VBox) ControllerRegistry.get("main", Controller.class).getTabPane().getParent().getParent();
+        return ControllerRegistry.get("main", Controller.class).getSceneContainer();
     }
 
     private void showOptions() {
-        this.searchVisible = true;
-        this.outputTabOptions.getSearch().setActive(true);
         Platform.runLater(() -> {
-            getSearchOuterContainer().getChildren().add(Controller.SETUP_TABS, this.outputTabOptions);
+            getSearchOuterContainer().getChildren().add(2, this.outputTabOptions);
             this.outputTabOptions.getSearchField().requestFocus();
         });
     }
 
     private void closeOptions() {
-        this.searchVisible = false;
-        this.outputTabOptions.getSearch().setActive(false);
         Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputTabOptions));
     }
 
@@ -174,11 +159,6 @@ public class OutputTab extends Tab {
         String defaultFg = Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
         spans.add(List.of(defaultFg), this.codeArea.getLength());
         this.codeArea.setStyleSpans(start, spans.create());
-    }
-
-    public void toggleWrapText(boolean option) {
-        this.getCodeArea().setWrapText(option);
-        this.getScrollPane().setHbarPolicy(option ? ScrollPane.ScrollBarPolicy.NEVER : ScrollPane.ScrollBarPolicy.AS_NEEDED);
     }
 
     public CodeArea getCodeArea() {
@@ -213,11 +193,43 @@ public class OutputTab extends Tab {
         return tabPane.getTabs().stream().filter(e -> e instanceof OutputTab).map(o -> (OutputTab) o).toList();
     }
 
-    public void setCommand(String command) {
-        this.command = command;
+    public void setCommandDisplayName(String commandDisplayName) {
+        this.commandDisplayName = commandDisplayName;
     }
 
-    public String getCommand() {
-        return command;
+    public String getCommandDisplayName() {
+        return commandDisplayName;
+    }
+
+    public static class OutputTabBuilder{
+
+        private final Process process;
+
+        private String tabName;
+        private final Tooltip tooltip = new Tooltip();
+        private String commandDisplayName;
+
+        public OutputTabBuilder(Process process){
+            this.process = process;
+        }
+
+        public OutputTabBuilder setTabName(String tabName){
+            this.tabName = tabName.replace("\"", "");
+            return this;
+        }
+
+        public OutputTabBuilder setCommandDisplayName(String commandDisplayName){
+            this.commandDisplayName = commandDisplayName;
+            return this;
+        }
+
+        public OutputTabBuilder setTooltip(String tooltipText){
+            this.tooltip.setText(tooltipText);
+            return this;
+        }
+
+        public OutputTab build(){
+            return new OutputTab(this);
+        }
     }
 }

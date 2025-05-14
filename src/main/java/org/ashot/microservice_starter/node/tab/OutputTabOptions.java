@@ -2,11 +2,9 @@ package org.ashot.microservice_starter.node.tab;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -14,57 +12,57 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
-import org.ashot.microservice_starter.utils.OutputSearch;
+import org.ashot.microservice_starter.utils.CodeAreaSearch;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class OutputTabOptions extends VBox {
+public class OutputTabOptions extends HBox {
 
     private static final Logger log = LoggerFactory.getLogger(OutputTabOptions.class);
     private final OutputTab outputTab;
-    private OutputSearch search;
+    private CodeAreaSearch search;
     private final TextField searchField = new TextField();
     private final TextField inputField = new TextField();
-    private boolean usedScrolling;
     private final CodeArea codeArea;
+    private boolean autoScroll;
 
-    public OutputTabOptions(OutputTab outputTab, CodeArea codeArea){
+    public OutputTabOptions(OutputTab outputTab, CodeArea codeArea) {
         this.outputTab = outputTab;
-        this.codeArea =codeArea;
+        this.codeArea = codeArea;
         setupOptions();
     }
 
     private void setupOptions() {
-        HBox optionRow = new HBox(
-                new Separator(Orientation.VERTICAL), createFind(),
-                new Separator(Orientation.VERTICAL), createInput(),
-                new Separator(Orientation.VERTICAL)
-                );
+        HBox optionRow = new HBox(15, createFind(), createInput());
         optionRow.setFillHeight(true);
-        this.getChildren().addAll(createHeader(), optionRow);
+        optionRow.setAlignment(Pos.CENTER);
+        optionRow.setPadding(new Insets(0, 15, 0, 15));
+        VBox box = new VBox(createHeader(), optionRow);
+        box.setStyle("-fx-border-style: solid none none solid; -fx-border-width: 1; -fx-border-color: #1f242d;");
+        this.getChildren().addAll(box);
+        this.setAlignment(Pos.CENTER_LEFT);
     }
 
-    private VBox createHeader(){
-        Separator top = new Separator(Orientation.HORIZONTAL);
-        top.setPrefHeight(2); top.setMaxHeight(2); top.setMinHeight(2);
-        Button close = new Button("", Icons.getCloseButtonIcon(24));
+    private VBox createHeader() {
+        Button close = new Button("", Icons.getCloseButtonIcon(20));
         close.setOnAction(_ -> outputTab.toggleOptions());
         close.getStyleClass().add("no-outline-btn");
-        VBox header = new VBox(0, top, close);
+        VBox header = new VBox(0, close);
         header.setAlignment(Pos.TOP_RIGHT);
-        header.setPadding(new Insets(5, 5, 0, 5));
+        header.setPadding(new Insets(2, 4, 0 ,0));
+        header.setFillWidth(true);
         return header;
     }
 
-    private VBox createFind(){
+    private VBox createFind() {
         Label results = new Label();
-        search = new OutputSearch(results, codeArea);
+        search = new CodeAreaSearch(results, codeArea);
         searchField.setOnKeyPressed(this::handleSearchFieldUserInput);
         searchField.textProperty().addListener((_, _, input) -> {
-            usedScrolling = true;
+            autoScroll = false;
             search.resetFindIndexToStart();
             search.performForwardSearch(input);
         });
@@ -74,23 +72,23 @@ public class OutputTabOptions extends VBox {
         return new VBox(new Label("Find"), searchField, resultsContainer);
     }
 
-    private VBox createInput(){
+    private VBox createInput() {
         inputField.setOnKeyPressed(this::handleInputFieldUserInput);
         return new VBox(new Label("Input"), inputField);
     }
 
-    private void handleSearchFieldUserInput(KeyEvent event){
+    private void handleSearchFieldUserInput(KeyEvent event) {
         if (event.isShiftDown() && event.getCode() == KeyCode.ENTER) {
-            usedScrolling = true;
+            autoScroll = false;
             search.performBackwardSearch(search.getCurrentInput());
         } else if (event.getCode() == KeyCode.ENTER) {
-            usedScrolling = true;
+            autoScroll = false;
             search.performForwardSearch(search.getCurrentInput());
         }
     }
 
-    private void handleInputFieldUserInput(KeyEvent event){
-        if(event.getCode() == KeyCode.ENTER){
+    private void handleInputFieldUserInput(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
             try {
                 outputTab.getProcess().getOutputStream().write(inputField.getText().getBytes());
                 outputTab.getProcess().getOutputStream().write("\n".getBytes());
@@ -104,7 +102,7 @@ public class OutputTabOptions extends VBox {
         }
     }
 
-    public OutputSearch getSearch() {
+    public CodeAreaSearch getSearch() {
         return search;
     }
 
@@ -112,11 +110,11 @@ public class OutputTabOptions extends VBox {
         return searchField;
     }
 
-    public boolean UsedScrolling() {
-        return usedScrolling;
+    public boolean autoScroll() {
+        return autoScroll;
     }
 
-    public void setUsedScrolling(boolean usedScrolling) {
-        this.usedScrolling = usedScrolling;
+    public void setAutoScroll(boolean autoScroll) {
+        this.autoScroll = autoScroll;
     }
 }

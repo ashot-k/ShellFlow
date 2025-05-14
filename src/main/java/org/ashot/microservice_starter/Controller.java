@@ -13,6 +13,7 @@ import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
+import org.ashot.microservice_starter.node.CustomButton;
 import org.ashot.microservice_starter.node.RecentFolders;
 import org.ashot.microservice_starter.node.entry.Entry;
 import org.ashot.microservice_starter.node.tab.OutputTab;
@@ -45,7 +46,7 @@ public class Controller implements Initializable {
     @FXML
     private FlowPane container;
     @FXML
-    private TabPane tabs;
+    private TabPane tabPane;
     @FXML
     private Button osInfo;
     @FXML
@@ -77,15 +78,15 @@ public class Controller implements Initializable {
 
         container.getChildren().addListener((ListChangeListener<Node>) _ -> executeAllBtn.setDisable(container.getChildren().isEmpty()));
         sequentialOption.selectedProperty().addListener((_, _, newValue) -> sequentialName.setVisible(newValue));
-        tabs.getTabs().addListener((ListChangeListener<Tab>) _ -> {
-            profilerTab.refreshProcesses(tabs);
-            stopAllBtn.setDisable(tabs.getTabs().size() <= SETUP_TABS);
+        tabPane.getTabs().addListener((ListChangeListener<Tab>) _ -> {
+            profilerTab.refreshProcesses(tabPane);
+            stopAllBtn.setDisable(tabPane.getTabs().size() <= SETUP_TABS);
         });
-        tabs.getTabs().addAll(new PresetSetupTab(), profilerTab);
-        tabs.prefWidthProperty().bind(sceneContainer.widthProperty());
+        tabPane.getTabs().addAll(new PresetSetupTab(), profilerTab);
+        tabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
 
         setupIcons();
-        newEntry(null);
+        addNewEntry(null);
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         loadMostRecentFile();
@@ -99,7 +100,7 @@ public class Controller implements Initializable {
     }
 
     private void refreshRecentlyOpenedFolders() {
-        RecentFolders.refreshCurrentlyOpenedFolders(openRecent, this.tabs, this::loadFromFile);
+        RecentFolders.refreshCurrentlyOpenedFolders(openRecent, this.tabPane, this::loadFromFile);
     }
 
     private void loadMostRecentFile(){
@@ -111,18 +112,17 @@ public class Controller implements Initializable {
         loadBtn.setGraphic(Icons.getOpenIcon(MENU_ITEM_ICON_SIZE));
         openRecent.setGraphic(Icons.getOpenRecentIcon(MENU_ITEM_ICON_SIZE));
         saveBtn.setGraphic(Icons.getSaveIcon(MENU_ITEM_ICON_SIZE));
-        int BUTTON_ICON_SIZE = 20;
-        newEntryBtn.setGraphic(Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
-        clearEntriesBtn.setGraphic(Icons.getClearIcon(BUTTON_ICON_SIZE));
-        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(BUTTON_ICON_SIZE));
-        stopAllBtn.setGraphic(Icons.getCloseButtonIcon(BUTTON_ICON_SIZE));
+        newEntryBtn.setGraphic(Icons.getAddButtonIcon(CustomButton.BUTTON_ICON_SIZE));
+        clearEntriesBtn.setGraphic(Icons.getClearIcon(CustomButton.BUTTON_ICON_SIZE));
+        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(CustomButton.BUTTON_ICON_SIZE));
+        stopAllBtn.setGraphic(Icons.getCloseButtonIcon(CustomButton.BUTTON_ICON_SIZE));
     }
 
-    public void newEntry(ActionEvent e) {
+    public void addNewEntry(ActionEvent e) {
         container.getChildren().add(new Entry().buildEmptyEntry(container));
     }
 
-    private void newEntry(String name, String path, String cmd, boolean wsl) {
+    private void addNewEntry(String name, String path, String cmd, boolean wsl) {
         container.getChildren().add(new Entry().buildEntry(container, name, path, cmd, wsl));
     }
 
@@ -132,12 +132,12 @@ public class Controller implements Initializable {
 
     public void stopAll() {
         ProcessRegistry.killAllProcesses();
-        this.tabs.getTabs().forEach(tab -> {
+        this.tabPane.getTabs().forEach(tab -> {
             if (tab instanceof OutputTab outputTab) {
-                Platform.runLater(() -> tabs.getTabs().remove(outputTab));
+                Platform.runLater(() -> tabPane.getTabs().remove(outputTab));
             }
         });
-        Platform.runLater(() -> tabs.getSelectionModel().selectFirst());
+        Platform.runLater(() -> tabPane.getSelectionModel().selectFirst());
     }
 
     public void save(ActionEvent e) {
@@ -173,7 +173,7 @@ public class Controller implements Initializable {
     public void clearAllEntries(ActionEvent e) {
         Platform.runLater(() -> {
             container.getChildren().clear();
-            newEntry(null);
+            addNewEntry(null);
         });
     }
 
@@ -193,9 +193,9 @@ public class Controller implements Initializable {
                     String path = Utils.getOrDefault(entry.opt(FieldType.PATH.getValue()), FieldType.PATH);
                     String cmd = Utils.getOrDefault(entry.opt(FieldType.COMMAND.getValue()), FieldType.COMMAND);
                     String wsl = Utils.getOrDefault(entry.opt(FieldType.WSL.getValue()), FieldType.WSL);
-                    newEntry(name, path, cmd, Boolean.parseBoolean(wsl));
+                    addNewEntry(name, path, cmd, Boolean.parseBoolean(wsl));
                 } else{
-                    newEntry(null);
+                    addNewEntry(null);
                 }
             }
         }
@@ -219,6 +219,10 @@ public class Controller implements Initializable {
     }
 
     public TabPane getTabPane() {
-        return tabs;
+        return tabPane;
+    }
+
+    public VBox getSceneContainer() {
+        return sceneContainer;
     }
 }
