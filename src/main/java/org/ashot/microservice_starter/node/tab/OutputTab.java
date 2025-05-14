@@ -67,7 +67,7 @@ public class OutputTab extends Tab {
         HBox outputOptionsContainer = new HBox(clearButton);
         outputOptionsContainer.setPadding(new Insets(0, 10, 0, 10));
 
-        this.setContent(new VBox(scrollPane, new Separator(Orientation.HORIZONTAL), outputOptionsContainer));
+        this.setContent(new VBox(scrollPane, new Separator(Orientation.HORIZONTAL), outputOptionsContainer, new Separator(Orientation.HORIZONTAL)));
         VBox.setVgrow(codeArea, Priority.ALWAYS);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
         this.getOutputSearchOptions().getSearchField().focusedProperty().addListener((_, _, focused) -> {

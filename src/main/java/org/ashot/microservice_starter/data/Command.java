@@ -18,7 +18,7 @@ public class Command {
     private String name;
     private String path;
     private boolean wsl;
-    private List<String> argumentList;
+    private List<String> argumentList = new ArrayList<>();
 
     public Command(String name, String path, String argumentList, boolean wsl) {
         constructCommand(name, path, argumentList, wsl);
@@ -26,7 +26,6 @@ public class Command {
 
     private void constructCommand(String name, String path, String arguments, boolean wsl){
         this.name = formatName(name);
-        this.argumentList = new ArrayList<>();
         this.wsl = wsl;
         this.path = path;
         validateArguments(arguments);

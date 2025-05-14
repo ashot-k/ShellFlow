@@ -75,13 +75,16 @@ public class CommandExecution {
                     if (tab != null) {
                         tab.setProcess(process);
                         Tooltip tooltip = tab.getTooltip();
-                        Platform.runLater(() ->
-                            tooltip.setText(tooltip.getText() + "\n" + (singleCommandInSequence.getArgumentsString()))
+                        OutputTab finalTab1 = tab;
+                        Platform.runLater(() -> {
+                            tooltip.setText(tooltip.getText() + "\n" + (singleCommandInSequence.getArgumentsString()));
+                            if (commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
+                                finalTab1.setText(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
+                                finalTab1.setCommand(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
+                            }
+                        }
                         );
                         runCommandThreadInTab(tab, singleCommandInSequence.getArgumentsString());
-                        if(commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
-                            singleCommandInSequence.setName(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
-                        }
                     } else {
                         if(commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
                             singleCommandInSequence.setName(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
