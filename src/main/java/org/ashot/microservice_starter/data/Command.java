@@ -38,19 +38,18 @@ public class Command {
         }
         prefixForOperatingEnvironment(this.argumentList, wsl);
         this.argumentList.add(arguments);
-        log.info("command created with name: {}, path: {}, arguments: {}", name, path, arguments);
+        log.info("Command created with name: {}, path: {}, arguments: {}", name, path, arguments);
     }
 
     private String adjustWslArguments(String arguments){
         return "cd " + path + " && " + arguments;
     }
 
-    private String validateWslPath(){
+    private void validateWslPath(){
         path = path.isBlank() ? "/" : path;
-        return path;
     }
 
-    private String validatePath(){
+    private void validatePath(){
         path = path.isBlank() ? "/" : path;
         path = path.replace("~", System.getProperty("user.home"));
         File f = new File(path);
@@ -59,7 +58,6 @@ public class Command {
             Platform.runLater(() -> ErrorPopup.errorPopup(PopupMessages.invalidPathPopupText(finalPath)));
             throw new IllegalArgumentException(path);
         }
-        return path;
     }
     private void validateArguments(String arguments){
         if(arguments == null || arguments.isBlank()) {
@@ -68,18 +66,17 @@ public class Command {
         }
     }
 
-    private List<String> prefixForOperatingEnvironment(List<String> commands, boolean wsl){
+    private void prefixForOperatingEnvironment(List<String> commands, boolean wsl){
         if(Utils.checkIfLinux()){
             commands.addAll(0, List.of("sh", "-c"));
         } else if (Utils.checkIfWindows()){
             if(wsl){
-                commands.addAll(0, List.of("wsl.exe", "-e", "bash", "-c"));
+                commands.addAll(0, List.of("wsl.exe", "-e", "sh", "-c"));
             }
             else{
                 commands.addAll(0, List.of("cmd.exe", "/c"));
             }
         }
-        return commands;
     }
 
     public String formatName(String name) {
