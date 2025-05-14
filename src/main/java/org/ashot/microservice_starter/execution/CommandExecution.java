@@ -79,6 +79,9 @@ public class CommandExecution {
                             tooltip.setText(tooltip.getText() + "\n" + (singleCommandInSequence.getArgumentsString()))
                         );
                         runCommandThreadInTab(tab, singleCommandInSequence.getArgumentsString());
+                        if(commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
+                            singleCommandInSequence.setName(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
+                        }
                     } else {
                         if(commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
                             singleCommandInSequence.setName(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");

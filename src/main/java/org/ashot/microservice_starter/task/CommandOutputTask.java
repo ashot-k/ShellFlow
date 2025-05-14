@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandOutputTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputTask.class);
-    private static final int MAX_LINES = 9000;
+    private static final int MAX_LINES = 8000;
     private boolean darkTheme = Main.getDarkModeSetting();
     private final long startTime;
     private final OutputTab outputTab;
