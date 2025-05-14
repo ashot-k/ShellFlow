@@ -34,7 +34,6 @@ public class CommandExecution {
     private static final Logger logger = LoggerFactory.getLogger(CommandExecution.class);
 
     public static void execute(Command command){
-        logger.info("\nBuilt process\nName: {}\nPath: {}\nCommand: {}", command.getName(), command.getPath(), command.getArguments());
         try {
             Process process = buildProcess(command).start();
             ProcessRegistry.register(String.valueOf(process.pid()), process);
@@ -46,7 +45,7 @@ public class CommandExecution {
     }
 
     private static ProcessBuilder buildProcess(Command command){
-        return new ProcessBuilder(command.getArguments()).directory(new File(command.getPath()));
+        return new ProcessBuilder(command.getArgumentList()).directory(new File(command.isWsl() ? "/" : command.getPath()));
     }
 
     private static OutputTab runInNewTab(Process process, Command command) {

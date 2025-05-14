@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import org.ashot.microservice_starter.data.message.PopupMessages;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,22 +14,43 @@ import java.util.Random;
 
 
 public class Command {
+    private static final Logger log = LoggerFactory.getLogger(Command.class);
     private String name;
     private String path;
-    private List<String> arguments;
+    private boolean wsl;
+    private List<String> argumentList;
 
-    public Command(String name, String path, String arguments, boolean wsl) {
-        constructCommand(name, path, arguments, wsl);
+    public Command(String name, String path, String argumentList, boolean wsl) {
+        constructCommand(name, path, argumentList, wsl);
     }
 
     private void constructCommand(String name, String path, String arguments, boolean wsl){
         this.name = formatName(name);
-        this.path = validatePath(path);
-        this.arguments = prefixForOperatingEnvironment(new ArrayList<>(), wsl);
-        this.arguments.add(arguments);
+        this.argumentList = new ArrayList<>();
+        this.wsl = wsl;
+        this.path = path;
+        validateArguments(arguments);
+        if (wsl) {
+            validateWslPath();
+            arguments = adjustWslArguments(arguments);
+        }else{
+            validatePath();
+        }
+        prefixForOperatingEnvironment(this.argumentList, wsl);
+        this.argumentList.add(arguments);
+        log.info("command created with name: {}, path: {}, arguments: {}", name, path, arguments);
     }
 
-    private String validatePath(String path){
+    private String adjustWslArguments(String arguments){
+        return "cd " + path + " && " + arguments;
+    }
+
+    private String validateWslPath(){
+        path = path.isBlank() ? "/" : path;
+        return path;
+    }
+
+    private String validatePath(){
         path = path.isBlank() ? "/" : path;
         path = path.replace("~", System.getProperty("user.home"));
         File f = new File(path);
@@ -37,6 +60,12 @@ public class Command {
             throw new IllegalArgumentException(path);
         }
         return path;
+    }
+    private void validateArguments(String arguments){
+        if(arguments == null || arguments.isBlank()) {
+            Platform.runLater(() -> ErrorPopup.errorPopup(PopupMessages.INVALID_FIELDS));
+            throw new IllegalArgumentException(path);
+        }
     }
 
     private List<String> prefixForOperatingEnvironment(List<String> commands, boolean wsl){
@@ -66,7 +95,7 @@ public class Command {
 
     public String getArgumentsString(){
         StringBuilder stringBuilder = new StringBuilder();
-        for(String s : arguments){
+        for(String s : argumentList){
             stringBuilder.append(s).append(" ");
         }
         return stringBuilder.toString();
@@ -88,11 +117,19 @@ public class Command {
         this.path = path;
     }
 
-    public List<String> getArguments() {
-        return arguments;
+    public List<String> getArgumentList() {
+        return argumentList;
     }
 
-    public void setArguments(List<String> arguments) {
-        this.arguments = arguments;
+    public void setArgumentList(List<String> argumentList) {
+        this.argumentList = argumentList;
+    }
+
+    public boolean isWsl() {
+        return wsl;
+    }
+
+    public void setWsl(boolean wsl) {
+        this.wsl = wsl;
     }
 }
