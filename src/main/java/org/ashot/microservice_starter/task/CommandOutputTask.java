@@ -108,7 +108,7 @@ public class CommandOutputTask implements Runnable {
 
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(outputTab.getProcess().getInputStream()));
-        pendingLines.add(OutputMessages.currentlyRunningCommand(outputTab.getCommand()));
+        pendingLines.addFirst(OutputMessages.currentlyRunningCommand(outputTab.getCommand()));
         readLineFromStream(reader);
         pendingLines.add(OutputMessages.commandFinishedMessage(startTime));
     }

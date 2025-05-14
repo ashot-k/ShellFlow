@@ -36,7 +36,7 @@ public class Command {
         }else{
             validatePath();
         }
-        prefixForOperatingEnvironment(this.argumentList, wsl);
+        prefixForOperatingEnvironment();
         this.argumentList.add(arguments);
         log.info("Command created with name: {}, path: {}, arguments: {}", name, path, arguments);
     }
@@ -66,15 +66,15 @@ public class Command {
         }
     }
 
-    private void prefixForOperatingEnvironment(List<String> commands, boolean wsl){
+    private void prefixForOperatingEnvironment(){
         if(Utils.checkIfLinux()){
-            commands.addAll(0, List.of("sh", "-c"));
+            this.argumentList.addAll(0, List.of("sh", "-c"));
         } else if (Utils.checkIfWindows()){
             if(wsl){
-                commands.addAll(0, List.of("wsl.exe", "-e", "sh", "-c"));
+                this.argumentList.addAll(0, List.of("wsl.exe", "-e", "sh", "-c"));
             }
             else{
-                commands.addAll(0, List.of("cmd.exe", "/c"));
+                this.argumentList.addAll(0, List.of("cmd.exe", "/c"));
             }
         }
     }
