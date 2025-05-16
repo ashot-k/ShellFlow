@@ -20,7 +20,7 @@ public class OutputTabButton extends CustomButton {
         });
         clearButton.setOpacity(0.5);
         StackPane.setAlignment(clearButton, Pos.BOTTOM_RIGHT);
-        StackPane.setMargin(clearButton, new Insets(0, 20, 5, 0));
+        StackPane.setMargin(clearButton, new Insets(0, 20, 12, 0));
 
         return clearButton;
     }

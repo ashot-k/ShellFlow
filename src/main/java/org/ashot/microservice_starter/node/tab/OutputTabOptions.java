@@ -27,7 +27,7 @@ public class OutputTabOptions extends HBox {
     private final TextField searchField = new TextField();
     private final TextField inputField = new TextField();
     private final CodeArea codeArea;
-    private boolean autoScroll;
+    private boolean autoScroll = true;
 
     public OutputTabOptions(OutputTab outputTab, CodeArea codeArea) {
         this.outputTab = outputTab;
@@ -41,7 +41,7 @@ public class OutputTabOptions extends HBox {
         optionRow.setAlignment(Pos.CENTER);
         optionRow.setPadding(new Insets(0, 15, 0, 15));
         VBox box = new VBox(createHeader(), optionRow);
-        box.setStyle("-fx-border-style: solid none none solid; -fx-border-width: 1; -fx-border-color: #1f242d;");
+        box.setStyle("-fx-border-style: solid solid none none; -fx-border-width: 1; -fx-border-color: #1f242d;");
         this.getChildren().addAll(box);
         this.setAlignment(Pos.CENTER_LEFT);
     }

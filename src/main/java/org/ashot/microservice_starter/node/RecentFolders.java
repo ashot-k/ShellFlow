@@ -25,7 +25,7 @@ public class RecentFolders {
         List<String> toRemove = RecentFolders.getInvalidRecentFolders(openRecent);
         openRecent.getItems().clear();
         JSONArray recentFolders = RecentFolders.getRecentFiles();
-        for (Object s : recentFolders.toList()) {
+        for (Object s : recentFolders.toList().subList(0, 9)) {
             String recentFolder = s.toString();
             if (toRemove.contains(recentFolder)) {
                 RecentFolders.removeRecentFile(recentFolder);
