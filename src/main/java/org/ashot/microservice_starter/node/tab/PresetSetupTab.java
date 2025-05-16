@@ -1,15 +1,16 @@
 package org.ashot.microservice_starter.node.tab;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.data.Preset;
 import org.ashot.microservice_starter.data.constant.PresetType;
 import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.utils.FileUtils;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class PresetSetupTab extends Tab {
@@ -34,8 +37,11 @@ public class PresetSetupTab extends Tab {
     private static final String TAB_NAME = "Preset Setup";
     private static final String COMMANDS = "commands";
     private static final String PATHS = "paths";
-    public static final TableView<String> commandsTable = new TableView<>();
-    public static final TableView<String> pathsTable = new TableView<>();
+    public static final Map<String, String> commandsMap = new HashMap<>();
+    private static final TableView<Preset> commandsTable = new TableView<>();
+    public static final Map<String, String> pathsMap = new HashMap<>();
+    private static final TableView<Preset> pathsTable = new TableView<>();
+
 
     public void setupPresetTab() {
         this.setId("presetSetupTab");
@@ -53,10 +59,10 @@ public class PresetSetupTab extends Tab {
         setupFromFile();
 
         Button addCommandRow = addRowButton(commandsTable);
-        Button removeCommandRow = removeEntry(commandsTable);
+        Button removeCommandRow = removeEntry(commandsTable, PresetType.COMMAND);
         HBox commandButtons = new HBox(SPACING, addCommandRow, removeCommandRow);
         Button addPathRow = addRowButton(pathsTable);
-        Button removePathRow = removeEntry(pathsTable);
+        Button removePathRow = removeEntry(pathsTable, PresetType.PATH);
         HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
 
         Button saveAll = saveButton();
@@ -80,10 +86,10 @@ public class PresetSetupTab extends Tab {
         this.setContent(scrollPane);
 
         commandsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) ->
-            removeCommandRow.setDisable(newSelection == null)
+                removeCommandRow.setDisable(newSelection == null)
         );
         pathsTable.getSelectionModel().selectedItemProperty().addListener((_, _, newSelection) ->
-            removePathRow.setDisable(newSelection == null)
+                removePathRow.setDisable(newSelection == null)
         );
     }
 
@@ -100,25 +106,26 @@ public class PresetSetupTab extends Tab {
         File file = new File(SettingsFileNames.PRESETS.getValue());
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
-        for (String p : commandsTable.getItems()) {
-            if(p.isBlank()) continue;
+        for (Preset p : commandsTable.getItems()) {
             JSONObject row = createJSONRow(p);
             commands.put(row);
         }
         JSONArray paths = new JSONArray();
-        for (String p : pathsTable.getItems()) {
-            if(p.isBlank()) continue;
+        for (Preset p : pathsTable.getItems()) {
             JSONObject row = createJSONRow(p);
             paths.put(row);
         }
+
         jsonObject.put(COMMANDS, commands);
         jsonObject.put(PATHS, paths);
+
         FileUtils.writeJSONDataToFile(file, jsonObject);
     }
 
-    private static JSONObject createJSONRow(String p){
+    private static JSONObject createJSONRow(Preset p){
         JSONObject row = new JSONObject();
-        row.put("value", p);
+        row.put("name", p.getName());
+        row.put("value", p.getValue());
         return row;
     }
 
@@ -128,17 +135,21 @@ public class PresetSetupTab extends Tab {
         JSONArray paths = jsonObject.getJSONArray(PATHS);
         for (int i = 0; i < commands.toList().size(); i++) {
             JSONObject o = commands.getJSONObject(i);
-            String value = o.optString("value");
-            loadRow(commandsTable, value);
+            String name = o.getString("name");
+            String value = o.getString("value");
+            commandsMap.put(name, value);
+            loadRow(commandsTable, new Preset(name, value));
         }
         for (int i = 0; i < paths.toList().size(); i++) {
             JSONObject o = paths.getJSONObject(i);
-            String value = o.optString("value");
-            loadRow(pathsTable, value);
+            String name = o.getString("name");
+            String value = o.getString("value");
+            pathsMap.put(name, value);
+            loadRow(pathsTable, new Preset(name, value));
         }
     }
 
-    private static void loadRow(TableView<String> table, String preset) {
+    private static void loadRow(TableView<Preset> table, Preset preset) {
         table.getItems().add(preset);
     }
 
@@ -158,15 +169,29 @@ public class PresetSetupTab extends Tab {
         }
     }
 
-    private static void createTable(TableView<String> tableView, PresetType presetType) {
-        TableColumn<String, String> valueCol = new TableColumn<>(presetType.getValue());
-        valueCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()));
+    private static void createTable(TableView<Preset> tableView, PresetType presetType) {
+        TableColumn<Preset, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameCol.setOnEditCommit(event -> {
+            Preset preset = event.getRowValue();
+            preset.setName(event.getNewValue());
+        });
+
+        TableColumn<Preset, String> valueCol = new TableColumn<>(presetType.getValue());
+        valueCol.setCellValueFactory(new PropertyValueFactory<>("value"));
         valueCol.setCellFactory(TextFieldTableCell.forTableColumn());
         valueCol.setOnEditCommit(event -> {
-            int row = event.getTablePosition().getRow();
-            event.getTableView().getItems().set(row, event.getNewValue());
+            Preset preset = event.getRowValue();
+            preset.setValue(event.getNewValue());
+            if (PresetType.COMMAND.equals(presetType)) {
+                commandsMap.put(preset.getName(), preset.getValue());
+            } else {
+                pathsMap.put(preset.getName(), preset.getValue());
+            }
         });
-        tableView.getColumns().add(valueCol);
+
+        tableView.getColumns().addAll(nameCol, valueCol);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setEditable(true);
         tableView.setPrefHeight(300);
@@ -185,18 +210,23 @@ public class PresetSetupTab extends Tab {
         return title;
     }
 
-    private static Button addRowButton(TableView<String> tableView) {
+    private static Button addRowButton(TableView<Preset> tableView) {
         Button addRowButton = new Button("Add");
-        addRowButton.setOnAction(_ -> tableView.getItems().add(""));
+        addRowButton.setOnAction(_ -> tableView.getItems().add(new Preset()));
         return addRowButton;
     }
 
-    private static Button removeEntry(TableView<String> tableView){
+    private static Button removeEntry(TableView<Preset> tableView, PresetType presetType){
         Button removeRowButton = new Button("Remove");
         removeRowButton.setDisable(true);
         removeRowButton.setOnAction(_ -> {
-            String preset = tableView.getSelectionModel().getSelectedItem();
+            Preset preset = tableView.getSelectionModel().getSelectedItem();
             tableView.getItems().remove(preset);
+            if (PresetType.COMMAND.equals(presetType)) {
+                commandsMap.remove(preset.getName());
+            } else {
+                pathsMap.remove(preset.getName());
+            }
         });
         return removeRowButton;
     }

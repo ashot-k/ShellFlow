@@ -14,6 +14,7 @@ import org.ashot.microservice_starter.data.message.ToolTipMessages;
 import org.ashot.microservice_starter.node.tab.PresetSetupTab;
 
 import java.util.List;
+import java.util.Map;
 
 public class Entry extends HBox{
     private static final double PREF_NAME_FIELD_WIDTH = 200;
@@ -44,7 +45,7 @@ public class Entry extends HBox{
         ContextMenu commandFieldContextMenu = new ContextMenu();
         commandField.setContextMenu(commandFieldContextMenu);
         commandField.textProperty().addListener((_, _, input) ->
-                setupAutoComplete(input, commandFieldContextMenu, commandField, PresetSetupTab.commandsTable.getItems())
+                setupAutoComplete(input, commandFieldContextMenu, commandField, PresetSetupTab.commandsMap)
         );
 
         pathField = Fields.createField(
@@ -54,7 +55,7 @@ public class Entry extends HBox{
         ContextMenu pathFieldContextMenu = new ContextMenu();
         pathField.setContextMenu(pathFieldContextMenu);
         pathField.textProperty().addListener((_, _, newValue) ->
-                setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsTable.getItems())
+                setupAutoComplete(newValue, pathFieldContextMenu, pathField, PresetSetupTab.pathsMap)
         );
 
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", wsl);
@@ -71,17 +72,17 @@ public class Entry extends HBox{
         return this;
     }
 
-    private void setupAutoComplete(String input, ContextMenu menu, TextArea field, List<String> searchList) {
+    private void setupAutoComplete(String input, ContextMenu menu, TextArea field, Map<String, String> searchMap) {
         menu.getItems().clear();
-        for (String preset : searchList) {
-            if (preset.toLowerCase().trim().contains(input.toLowerCase().trim()) && !preset.isEmpty()) {
+        for (String preset : searchMap.keySet()) {
+            if (preset.toLowerCase().trim().contains(input.toLowerCase().trim())) {
                 List<MenuItem> existing = menu.getItems().filtered(item -> {
-                    String existingValue = searchList.stream().filter(value -> value.equals(item.getText())).findFirst().orElse(null);
-                    return preset.equals(existingValue);
+                    String existingKey = searchMap.keySet().stream().filter(key -> key.equals(item.getText())).findFirst().orElseGet(()-> null);
+                    return preset.equals(existingKey);
                 });
                 if (existing.isEmpty()) {
-                    MenuItem menuItem = new MenuItem(preset);
-                    menuItem.setOnAction(_ -> field.setText(preset));
+                    MenuItem menuItem = new MenuItem(preset + " (" + searchMap.get(preset) + ")");
+                    menuItem.setOnAction(_ -> field.setText(searchMap.get(preset)));
                     menu.getItems().add(menuItem);
                 }
             }
@@ -89,6 +90,7 @@ public class Entry extends HBox{
         Bounds boundsInScreen = field.localToScreen(field.getBoundsInLocal());
         menu.show(field, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
     }
+
 
     public static List<Entry> getEntriesFromPane(Pane container){
         return container.getChildren().stream().filter(e -> e instanceof Entry).map(e -> (Entry) e).toList();
