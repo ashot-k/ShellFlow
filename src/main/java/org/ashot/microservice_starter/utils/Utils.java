@@ -106,7 +106,7 @@ public class Utils {
             String jsonContent = Files.readString(file.toPath());
             return new JSONObject(jsonContent);
         } catch (IOException e) {
-            new ErrorPopup(e.getMessage());
+            log.error("File could not be found: {}", file);
         }
         return null;
     }
