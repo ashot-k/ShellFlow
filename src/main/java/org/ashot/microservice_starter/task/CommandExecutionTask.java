@@ -19,7 +19,7 @@ public class CommandExecutionTask implements Runnable {
             Thread.sleep(delay);
             CommandExecution.execute(command);
         } catch (InterruptedException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.node.entry;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -60,14 +61,21 @@ public class Entry extends HBox{
 
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", wsl);
         Button pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
-        HBox pathFieldContainer = new HBox(5, pathField, pathBrowser);
 
         deleteEntry = EntryButton.deleteEntryButton(container, this);
+        deleteEntry.setPadding(new Insets(2, 0, 0,0));
         execute = EntryButton.executeBtn(nameField, commandField, pathField, wslToggle);
+        execute.setPadding(new Insets(2, 0, 0,0));
+
+        HBox deleteEntryContainer = new HBox(deleteEntry);
+        HBox nameFieldContainer = new HBox(nameField);
+        HBox pathFieldContainer = new HBox(5, pathField, pathBrowser);
+        HBox commandFieldContainer = new HBox(commandField);
+        HBox executeContainer = new HBox(execute);
         VBox orderingContainer = EntryButton.createOrderingContainer();
 
         this.setAlignment(Pos.TOP_CENTER);
-        this.getChildren().addAll(deleteEntry, nameField, pathFieldContainer, commandField, wslToggle, execute, orderingContainer);
+        this.getChildren().addAll(deleteEntryContainer, nameFieldContainer, pathFieldContainer, commandFieldContainer, wslToggle, executeContainer, orderingContainer);
         this.getStyleClass().add("entry");
         return this;
     }
@@ -77,7 +85,7 @@ public class Entry extends HBox{
         for (String preset : searchMap.keySet()) {
             if (preset.toLowerCase().trim().contains(input.toLowerCase().trim())) {
                 List<MenuItem> existing = menu.getItems().filtered(item -> {
-                    String existingKey = searchMap.keySet().stream().filter(key -> key.equals(item.getText())).findFirst().orElseGet(()-> null);
+                    String existingKey = searchMap.keySet().stream().filter(key -> key.equals(item.getText())).findFirst().orElse(null);
                     return preset.equals(existingKey);
                 });
                 if (existing.isEmpty()) {
@@ -90,7 +98,6 @@ public class Entry extends HBox{
         Bounds boundsInScreen = field.localToScreen(field.getBoundsInLocal());
         menu.show(field, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
     }
-
 
     public static List<Entry> getEntriesFromPane(Pane container){
         return container.getChildren().stream().filter(e -> e instanceof Entry).map(e -> (Entry) e).toList();

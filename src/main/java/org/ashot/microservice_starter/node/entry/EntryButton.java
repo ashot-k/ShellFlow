@@ -1,5 +1,6 @@
 package org.ashot.microservice_starter.node.entry;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
@@ -44,6 +45,7 @@ public class EntryButton extends CustomButton {
     public static Button orderingButton(Direction direction) {
         Button btn = new Button();
         btn.getStyleClass().add("no-outline-btn");
+        btn.setPadding(Insets.EMPTY);
         btn.setOnAction(_ -> performOrdering(direction, (HBox) btn.getParent().getParent()));
         btn.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(SIZE) : Icons.getChevronDownIcon(SIZE));
         btn.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipMessages.moveEntryUp() : ToolTipMessages.moveEntryDown()));
@@ -78,7 +80,7 @@ public class EntryButton extends CustomButton {
                 boolean wslSelected = wslContainer.getCheckBox().isSelected();
                 execute(commandSelected, pathSelected, nameSelected, wslSelected);
             } catch (IOException e) {
-                ErrorPopup.errorPopup(e.getMessage());
+                new ErrorPopup(e.getMessage());
             }
         });
         return executeBtn;

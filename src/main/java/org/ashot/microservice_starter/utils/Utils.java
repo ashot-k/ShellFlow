@@ -7,9 +7,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.FieldType;
-import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.node.tab.OutputTab;
@@ -106,7 +106,7 @@ public class Utils {
             String jsonContent = Files.readString(file.toPath());
             return new JSONObject(jsonContent);
         } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
         return null;
     }
@@ -147,7 +147,7 @@ public class Utils {
     public static JSONObject setupFolders() {
         try {
             JSONObject jsonObject = null;
-            File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
+            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
             if (file.exists()) {
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);
@@ -160,7 +160,7 @@ public class Utils {
             }
             return jsonObject;
         } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
         return null;
     }
@@ -173,5 +173,16 @@ public class Utils {
             osInfo.setGraphic(Icons.getWindowsIcon(24));
         }
         osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
+    }
+
+    public static String getTextColorClass(){
+        return Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+    }
+    public static String getErrorTextColorClass(){
+        return "ansi-fg-bright-red";
+    }
+
+    public static String getHighLightedTextColorClass(){
+        return "ansi-fg-bright-red";
     }
 }

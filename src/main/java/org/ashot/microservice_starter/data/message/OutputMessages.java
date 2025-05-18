@@ -28,7 +28,7 @@ public class OutputMessages {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(DASHES).append(NEW_LINE);
         stringBuilder.append(message);
-        stringBuilder.append(NEW_LINE).append(DASHES);
+        stringBuilder.append(NEW_LINE).append(DASHES).append(NEW_LINE);
         return stringBuilder.toString();
     }
 }

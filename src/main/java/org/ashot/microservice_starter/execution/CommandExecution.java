@@ -2,12 +2,10 @@ package org.ashot.microservice_starter.execution;
 
 import javafx.application.Platform;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.data.Command;
 import org.ashot.microservice_starter.data.CommandSequence;
-import org.ashot.microservice_starter.data.message.OutputMessages;
 import org.ashot.microservice_starter.mapper.EntryToCommandMapper;
 import org.ashot.microservice_starter.node.entry.Entry;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -38,7 +36,7 @@ public class CommandExecution {
             runInNewTab(process, command);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
     }
 
@@ -63,40 +61,37 @@ public class CommandExecution {
         return outputTab;
     }
 
+    private static void updateSequentialTabName(OutputTab tab, CommandSequence commandSequence, Command singleCommandInSequence ){
+        if (commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
+            tab.setText(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
+        } else{
+            tab.setText(singleCommandInSequence.getName().replace("\"", ""));
+        }
+    }
+
     public static void executeSequential(CommandSequence commandSequence){
       new Thread(() -> {
             ProcessBuilder processBuilder;
             Process process;
             OutputTab tab = null;
-            for (Command singleCommandInSequence : commandSequence.getCommandList()) {
-                processBuilder = buildProcess(singleCommandInSequence);
+            for (Command currentCommand : commandSequence.getCommandList()) {
+                processBuilder = buildProcess(currentCommand);
                 try {
                     process = processBuilder.start();
                     if (tab != null) {
                         tab.setProcess(process);
-                        Tooltip tooltip = tab.getTooltip();
-                        OutputTab tabCopy = tab;
-                        Platform.runLater(() -> {
-                            tooltip.setText(tooltip.getText() + "\n" + (singleCommandInSequence.getArgumentsString()));
-                            if (commandSequence.getSequenceName() != null && !commandSequence.getSequenceName().isBlank()) {
-                                tabCopy.setText(commandSequence.getSequenceName() + " (" + singleCommandInSequence.getName() + ")");
-                            } else{
-                                tabCopy.setText(singleCommandInSequence.getName().replace("\"", ""));
-                            }
-                        });
-                        runCommandThreadInTab(tab, singleCommandInSequence.getArgumentsString());
+                        OutputTab finalTab = tab;
+                        Platform.runLater(()-> finalTab.appendTooltipLineText(currentCommand.getArgumentsString()));
+                        runCommandThreadInTab(tab, currentCommand.getArgumentsString());
                     } else {
-                        tab = runInNewTab(process, singleCommandInSequence);
+                        tab = runInNewTab(process, currentCommand);
                     }
+                    OutputTab finalTab = tab;
+                    Platform.runLater(() -> updateSequentialTabName(finalTab, commandSequence, currentCommand));
                     process.waitFor();
                     int exitCode = process.exitValue();
                     if (exitCode != 0) {
-                        OutputTab tabCopy= tab;
-                        Platform.runLater(() ->
-                                tabCopy.appendColoredLine(OutputMessages.failureMessage(singleCommandInSequence.getArgumentsString(), commandSequence.formattedName(), String.valueOf(exitCode)))
-                        );
-                        process.destroyForcibly();
-                        throw new IllegalStateException();
+                        break;
                     }
                     //delay per command happens here
                     Thread.sleep(commandSequence.getDelayPerCommand());

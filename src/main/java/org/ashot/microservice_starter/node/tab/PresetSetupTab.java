@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.Preset;
 import org.ashot.microservice_starter.data.constant.PresetType;
-import org.ashot.microservice_starter.data.constant.SettingsFileNames;
+import org.ashot.microservice_starter.data.constant.SettingsFilePaths;
 import org.ashot.microservice_starter.utils.FileUtils;
 import org.ashot.microservice_starter.utils.Utils;
 import org.json.JSONArray;
@@ -94,7 +94,7 @@ public class PresetSetupTab extends Tab {
     }
 
     private static void setupFromFile() {
-        File file = new File(SettingsFileNames.PRESETS.getValue());
+        File file = new File(Main.getConfig().getPresetConfigLocation());
         if (file.exists()) {
             loadExisting(file);
         } else {
@@ -103,7 +103,7 @@ public class PresetSetupTab extends Tab {
     }
 
     private static void saveToFile() {
-        File file = new File(SettingsFileNames.PRESETS.getValue());
+        File file = new File(SettingsFilePaths.PRESETS.getValue());
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
         for (Preset p : commandsTable.getItems()) {
@@ -135,15 +135,15 @@ public class PresetSetupTab extends Tab {
         JSONArray paths = jsonObject.getJSONArray(PATHS);
         for (int i = 0; i < commands.toList().size(); i++) {
             JSONObject o = commands.getJSONObject(i);
-            String name = o.getString("name");
-            String value = o.getString("value");
+            String name = o.optString("name");
+            String value = o.optString("value");
             commandsMap.put(name, value);
             loadRow(commandsTable, new Preset(name, value));
         }
         for (int i = 0; i < paths.toList().size(); i++) {
             JSONObject o = paths.getJSONObject(i);
-            String name = o.getString("name");
-            String value = o.getString("value");
+            String name = o.optString("name");
+            String value = o.optString("value");
             pathsMap.put(name, value);
             loadRow(pathsTable, new Preset(name, value));
         }

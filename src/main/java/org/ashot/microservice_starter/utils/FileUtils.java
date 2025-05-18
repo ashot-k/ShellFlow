@@ -1,7 +1,7 @@
 package org.ashot.microservice_starter.utils;
 
 import javafx.stage.FileChooser;
-import org.ashot.microservice_starter.data.constant.SettingsFileNames;
+import org.ashot.microservice_starter.data.constant.SettingsFilePaths;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,15 +39,15 @@ public class FileUtils {
             f.close();
             return true;
         } catch (IOException ex) {
-            ErrorPopup.errorPopup(ex.getMessage());
+            new ErrorPopup(ex.getMessage());
         }
         return false;
     }
 
     public static void initializeSaveFolder(){
-        if(!new File(SettingsFileNames.PRESETS.PREFIX()).exists()){
+        if(!new File(SettingsFilePaths.getPrefix()).exists()){
             try {
-                Files.createDirectory(Path.of(SettingsFileNames.PRESETS.PREFIX()));
+                Files.createDirectory(Path.of(SettingsFilePaths.getPrefix()));
             } catch (IOException e) {
                 log.error(e.getMessage());
             }

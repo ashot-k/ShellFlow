@@ -11,6 +11,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.DirType;
 import org.ashot.microservice_starter.data.constant.FieldType;
+import org.ashot.microservice_starter.data.constant.ThemeMode;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.execution.CommandExecution;
 import org.ashot.microservice_starter.node.CustomButton;
@@ -211,11 +212,11 @@ public class Controller implements Initializable {
     }
 
     public void lightMode(ActionEvent e) {
-        Main.setThemeMode(false);
+        Main.setTheme(ThemeMode.LIGHT_MODE);
     }
 
     public void darkMode(ActionEvent e) {
-        Main.setThemeMode(true);
+        Main.setTheme(ThemeMode.DARK_MODE);
     }
 
     public TabPane getTabPane() {

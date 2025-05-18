@@ -1,9 +1,3 @@
-.root {
-    -fx-font-family: "Noto sans";
-    -fx-font-weight: 500;
-    -fx-font-size: 14px;
-}
-
 #container {
     -fx-spacing: 50px;
 }
@@ -13,14 +7,17 @@
     -fx-padding: 15px 10px 15px 10px;
 }
 
-.entry *{
-    -fx-alignment: top-center;
+.notification{
+    -fx-background-color: #f0f0f0;
 }
 
-.name-field,
-.path-field,
-.command-field {
-    /* -fx-pref-width: 250px; */
+.notification-dark{
+    -fx-padding: 5px;
+/*
+    -fx-background-color: #1e1e1e;
+*/
+    -fx-background-color: black;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 3, 3);
 }
 
 .ordering-container {
@@ -32,7 +29,7 @@
 }
 
 .error-message {
-    -fx-padding: 10px;
+    -fx-padding: 15px;
     -fx-spacing: 20px;
     -fx-alignment: center;
 }
@@ -49,11 +46,9 @@
 
 .no-outline-btn {
     -fx-background-color: transparent;
-    -fx-padding: 0 0 0 0;
 }
 
 .command-output-container {
-    -fx-font-family: "Noto Sans" !important;
     -fx-padding: 5px 20px 0 20px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
 }
@@ -105,7 +100,7 @@
     -fx-fill: gray !important;
 }
 /* Light Gray */
-.ansi-fg-bright-red {
+.ansi-fg-bright-red, .error-line {
     -fx-fill: #FF0000 !important;
 }
 
@@ -140,3 +135,12 @@
 }
 
 /* Pure White */
+
+.centered-text{
+   -fx-text-alignment: center;
+}
+
+.centered-highlighted-text{
+   -fx-text-alignment: center;
+   -fx-padding: 10px;
+}

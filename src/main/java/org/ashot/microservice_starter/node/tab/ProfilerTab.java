@@ -36,7 +36,7 @@ public class ProfilerTab extends Tab {
             Platform.runLater(() -> {
                 profilerProcessNodeList.stream().filter(e -> e instanceof ProfilerProcessNode).map(o -> (ProfilerProcessNode) o).forEach(this::refreshProcess);
             });
-        }, 0, 100, TimeUnit.MILLISECONDS);
+        }, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     public void refreshProcesses(TabPane tabPane){
@@ -71,8 +71,13 @@ public class ProfilerTab extends Tab {
                 status = ProcessStatus.EXITED;
             }
         }
+        StringBuilder ids = new StringBuilder();
+        ids.append("Shell pid: ").append(refreshedProcess.pid()).append("\n");
+        for (ProcessHandle p : refreshedProcess.descendants().toList()){
+            ids.append("Process pid: ").append(p.pid()).append("\n");
+        }
         profilerProcessNode.refreshStatus(status, exitCode);
-        profilerProcessNode.refreshID(String.valueOf(refreshedProcess.pid()));
+        profilerProcessNode.refreshID(ids.isEmpty() ? String.valueOf(refreshedProcess.pid()) : ids.toString());
         profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommandDisplayName());
         profilerProcessNode.refreshName(profilerProcessNode.getTab().getText());
     }

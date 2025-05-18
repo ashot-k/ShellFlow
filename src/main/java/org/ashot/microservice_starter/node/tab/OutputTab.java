@@ -40,8 +40,9 @@ public class OutputTab extends Tab {
         this.setTooltip(outputTabBuilder.tooltip);
         this.setText(outputTabBuilder.tabName);
         this.codeArea = new CodeArea();
+        this.codeArea.setStyle("-fx-font-family: 'Noto-Sans'; -fx-font-size: 14");
         this.scrollPane = new VirtualizedScrollPane<>(codeArea);
-        this.outputTabOptions = new OutputTabOptions(this, codeArea);
+        this.outputTabOptions = new OutputTabOptions(this);
         Platform.runLater(this::setupOutputTab);
     }
 
@@ -121,14 +122,14 @@ public class OutputTab extends Tab {
                     addSelectionToClipBoard();
                 } else if (event.getCode() == KeyCode.C) {
                     Utils.killProcess(process);
-                    Platform.runLater(() -> appendColoredLine("^C"));
+                    Platform.runLater(() -> appendLine("^C"));
                 }
             }
             else if (event.getCode() == KeyCode.ENTER) {
                 process.getOutputStream().write('\n');
             } else {
                 process.getOutputStream().write((event.getText()).getBytes());
-                Platform.runLater(() -> appendColoredLine(event.getText()));
+                Platform.runLater(() -> appendLine(event.getText()));
             }
             process.getOutputStream().flush();
         } catch (IOException e) {
@@ -151,14 +152,28 @@ public class OutputTab extends Tab {
         Platform.runLater(() -> getSearchOuterContainer().getChildren().remove(this.outputTabOptions));
     }
 
-    public void appendColoredLine(String line) {
+    public void appendLine(String line) {
         int start = codeArea.getLength();
         line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // strip ansi
         this.codeArea.appendText(line);
         StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
-        String defaultFg = Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+        String defaultFg = Utils.getTextColorClass();
         spans.add(List.of(defaultFg), this.codeArea.getLength());
         this.codeArea.setStyleSpans(start, spans.create());
+    }
+
+    public void appendErrorLine(String line) {
+        int start = codeArea.getLength();
+        line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // strip ansi
+        this.codeArea.appendText(line);
+        StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
+        String defaultFg = Utils.getErrorTextColorClass();
+        spans.add(List.of(defaultFg), this.codeArea.getLength());
+        this.codeArea.setStyleSpans(start, spans.create());
+    }
+
+    public void appendTooltipLineText(String tooltipText){
+        this.getTooltip().setText(this.getTooltip().getText() + "\n" + tooltipText);
     }
 
     public CodeArea getCodeArea() {
@@ -214,7 +229,7 @@ public class OutputTab extends Tab {
         }
 
         public OutputTabBuilder setTabName(String tabName){
-            this.tabName = tabName.replace("\"", "");
+            this.tabName = tabName;
             return this;
         }
 

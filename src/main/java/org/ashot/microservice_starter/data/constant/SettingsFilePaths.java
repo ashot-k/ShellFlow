@@ -1,13 +1,13 @@
 package org.ashot.microservice_starter.data.constant;
 
-public enum SettingsFileNames {
+public enum SettingsFilePaths {
     PRESETS("presets.json"),
     RECENTS_DIR("recent_dirs.json");
 
     private final String value;
-    private final String PREFIX_FOLDER = "saves/";
+    private static final String PREFIX_FOLDER = "saves/";
 
-    SettingsFileNames(String value) {
+    SettingsFilePaths(String value) {
         this.value = value;
     }
 
@@ -15,7 +15,7 @@ public enum SettingsFileNames {
         return PREFIX_FOLDER + value;
     }
 
-    public String PREFIX() {
+    public static String getPrefix() {
         return PREFIX_FOLDER;
     }
 }

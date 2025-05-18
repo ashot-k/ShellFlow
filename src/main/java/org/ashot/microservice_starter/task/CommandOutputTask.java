@@ -3,6 +3,7 @@ package org.ashot.microservice_starter.task;
 import javafx.application.Platform;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.message.OutputMessages;
+import org.ashot.microservice_starter.node.notification.ExecutionFailureNotification;
 import org.ashot.microservice_starter.node.tab.OutputTab;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -75,7 +76,7 @@ public class CommandOutputTask implements Runnable {
                     for (String newLine : batch) {
                         stringBuilder.append(newLine).append("\n");
                     }
-                    outputTab.appendColoredLine(stringBuilder.toString());
+                    outputTab.appendLine(stringBuilder.toString());
                     int lines = codeArea.getParagraphs().size();
                     if (lines > MAX_LINES) {
                         int end = codeArea.getAbsolutePosition(lines - MAX_LINES, 0);
@@ -97,11 +98,10 @@ public class CommandOutputTask implements Runnable {
                 CodeArea codeArea = outputTab.getCodeArea();
                 codeArea.getStyleClass().removeAll("light-mode", "dark-mode");
                 codeArea.getStyleClass().add(darkTheme ? "dark-mode" : "light-mode");
-                int start = 0;
                 StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
                 String defaultFg = darkTheme ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
                 spans.add(List.of(defaultFg), codeArea.getLength());
-                codeArea.setStyleSpans(start, spans.create());
+                codeArea.setStyleSpans(0, spans.create());
             });
         }
     }
@@ -109,16 +109,29 @@ public class CommandOutputTask implements Runnable {
     private void setupOutputReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(outputTab.getProcess().getInputStream()));
         pendingLines.addFirst(OutputMessages.currentlyRunningCommand(outputTab.getCommandDisplayName()));
-        readLineFromStream(reader);
+        readLineFromStream(reader, false);
         pendingLines.add(OutputMessages.commandFinishedMessage(startTime));
+        try {
+            Process process = outputTab.getProcess();
+            process.waitFor();
+            if(process.exitValue() != 0) {
+                Platform.runLater(() -> {
+                    //todo fix
+                    outputTab.appendErrorLine(OutputMessages.failureMessage(outputTab.getCommandDisplayName(), outputTab.getText(), String.valueOf(process.exitValue())));
+                    ExecutionFailureNotification.display(outputTab);
+                });
+            }
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     private void setupOutputErrReading() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(outputTab.getProcess().getErrorStream()));
-        readLineFromStream(reader);
+        readLineFromStream(reader, true);
     }
 
-    private void readLineFromStream(BufferedReader reader) {
+    private void readLineFromStream(BufferedReader reader, boolean errorMode) {
         String line = "";
         try {
             while ((line = reader.readLine()) != null) {
@@ -134,7 +147,11 @@ public class CommandOutputTask implements Runnable {
                 }
                 if (!line.isBlank()) {
                     if(pendingLines.size() > 100){
-                        Thread.sleep(10);
+                        Thread.sleep(100);
+                    }
+                    if(errorMode){
+                        String finalLine = line;
+                        Platform.runLater(()-> ExecutionFailureNotification.display(outputTab, finalLine));
                     }
                     pendingLines.add(line);
                 }

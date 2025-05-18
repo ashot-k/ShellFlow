@@ -25,7 +25,6 @@ public class Command {
     }
 
     private void constructCommand(String name, String path, String arguments, boolean wsl){
-        this.name = formatName(name);
         this.wsl = wsl;
         this.path = path;
         validateArguments(arguments);
@@ -37,6 +36,7 @@ public class Command {
         }
         prefixForOperatingEnvironment();
         this.argumentList.add(arguments);
+        this.name = formatName(name);
         log.info("Command created with name: {}, path: {}, arguments: {}", name, path, arguments);
     }
 
@@ -53,27 +53,30 @@ public class Command {
         path = path.replace("~", System.getProperty("user.home"));
         File f = new File(path);
         if(!f.exists() || !f.isDirectory()){
-            String finalPath = path;
-            Platform.runLater(() -> ErrorPopup.errorPopup(PopupMessages.invalidPathPopupText(finalPath)));
+            Platform.runLater(() -> new ErrorPopup(PopupMessages.INVALID_PATH, path));
             throw new IllegalArgumentException(path);
         }
     }
+
     private void validateArguments(String arguments){
         if(arguments == null || arguments.isBlank()) {
-            Platform.runLater(() -> ErrorPopup.errorPopup(PopupMessages.INVALID_FIELDS));
-            throw new IllegalArgumentException(path);
+            Platform.runLater(() -> new ErrorPopup(PopupMessages.INVALID_ARGUMENTS, arguments));
+            throw new IllegalArgumentException(arguments);
         }
     }
 
     private void prefixForOperatingEnvironment(){
         if(Utils.checkIfLinux()){
             this.argumentList.addAll(0, List.of("sh", "-c"));
+            log.debug("Adjusting command for linux OS {}", this.argumentList);
         } else if (Utils.checkIfWindows()){
             if(wsl){
                 this.argumentList.addAll(0, List.of("wsl.exe", "-e", "sh", "-c"));
+                log.debug("Adjusting command for WSL OS {}", this.argumentList);
             }
             else{
                 this.argumentList.addAll(0, List.of("cmd.exe", "/c"));
+                log.debug("Adjusting command for Windows OS {}", this.argumentList);
             }
         }
     }
@@ -81,11 +84,10 @@ public class Command {
     private String formatName(String name) {
         if (name.isBlank()) {
             //todo change
-            name = "ms-starter-command-" + new Random().nextInt(0, 10000);
+            name = "process-" + new Random().nextInt(0, 10000);
         } else {
             name = name.replace(" ", "-");
         }
-        name = "\"" + name + "\"";
         return name;
     }
 

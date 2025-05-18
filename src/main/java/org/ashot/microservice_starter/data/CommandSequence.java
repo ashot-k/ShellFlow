@@ -13,7 +13,7 @@ public class CommandSequence {
     public CommandSequence(List<Command> commandList, int delayPerCommand, String sequenceName) {
         this.commandList = commandList;
         this.delayPerCommand = delayPerCommand * 1000;
-        this.sequenceName = sequenceName;
+        this.sequenceName = formattedName(sequenceName);
     }
 
     public List<Command> getCommandList() {
@@ -40,12 +40,11 @@ public class CommandSequence {
         this.sequenceName = sequenceName;
     }
 
-    public String formattedName() {
-        if (sequenceName.isBlank()) {
-            sequenceName = "ms-starter-command-" + (ProcessRegistry.getProcesses().size() + 1);
+    private String formattedName(String name) {
+        if (name.isBlank()) {
+            name = "sequence-" + (ProcessRegistry.getProcesses().size() + 1);
         } else {
-            sequenceName = sequenceName.replace(" ", "-");
+            name = name.replace(" ", "-");
         }
-        sequenceName = "\"" + sequenceName + "\"";
-        return sequenceName;
+        return name;
     }}

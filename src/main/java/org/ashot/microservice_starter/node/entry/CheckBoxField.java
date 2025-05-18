@@ -1,5 +1,6 @@
 package org.ashot.microservice_starter.node.entry;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -12,6 +13,7 @@ public class CheckBoxField extends VBox {
         this.checkBox = checkBox;
         this.label = label;
         this.getChildren().addAll(label, checkBox);
+        this.setAlignment(Pos.TOP_CENTER);
         this.setFillWidth(true);
     }
 

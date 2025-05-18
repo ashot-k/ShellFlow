@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.node.tab;
 
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -22,14 +23,26 @@ public class ProfilerProcessNode extends HBox{
         this.processStatus = new Text();
         this.command = new Text(tab.getCommandDisplayName());
 
+        this.processName.setWrappingWidth(240);
+        this.command.setWrappingWidth(600);
+
+        HBox processNameContainer = new HBox(this.processName);
+        processNameContainer.setPrefWidth(250);
+        HBox processIdContainer = new HBox(this.processID);
+        processIdContainer.setPrefWidth(150);
+        HBox processStatusContainer = new HBox(this.processStatus);
+        processStatusContainer.setPrefWidth(80);
+        processStatusContainer.setAlignment(Pos.TOP_CENTER);
+        HBox commandContainer = new HBox(this.command);
+        commandContainer.setPrefWidth(250);
+
         this.getChildren().addAll(
-                this.processName, new Separator(Orientation.VERTICAL),
-                this.processID, new Separator(Orientation.VERTICAL),
-                this.processStatus, new Separator(Orientation.VERTICAL),
-                this.command
-                );
+                processNameContainer, new Separator(Orientation.VERTICAL),
+                processIdContainer, new Separator(Orientation.VERTICAL),
+                processStatusContainer, new Separator(Orientation.VERTICAL),
+                commandContainer
+        );
         this.setFillHeight(true);
-        command.setWrappingWidth(600);
     }
 
     public Text getProcessStatus() {
@@ -62,7 +75,7 @@ public class ProfilerProcessNode extends HBox{
     }
 
     public void refreshCommand(String command){
-        this.command.setText("Current command: (" + command + ")");
+        this.command.setText("Current command: " + command);
     }
 
     public Process getProcess() {

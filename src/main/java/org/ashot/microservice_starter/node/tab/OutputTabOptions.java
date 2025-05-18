@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.CodeAreaSearch;
-import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +25,10 @@ public class OutputTabOptions extends HBox {
     private CodeAreaSearch search;
     private final TextField searchField = new TextField();
     private final TextField inputField = new TextField();
-    private final CodeArea codeArea;
     private boolean autoScroll = true;
 
-    public OutputTabOptions(OutputTab outputTab, CodeArea codeArea) {
+    public OutputTabOptions(OutputTab outputTab) {
         this.outputTab = outputTab;
-        this.codeArea = codeArea;
         setupOptions();
     }
 
@@ -59,7 +56,7 @@ public class OutputTabOptions extends HBox {
 
     private VBox createFind() {
         Label results = new Label();
-        search = new CodeAreaSearch(results, codeArea);
+        search = new CodeAreaSearch(results, outputTab.getCodeArea());
         searchField.setOnKeyPressed(this::handleSearchFieldUserInput);
         searchField.textProperty().addListener((_, _, input) -> {
             autoScroll = false;
@@ -93,10 +90,10 @@ public class OutputTabOptions extends HBox {
                 outputTab.getProcess().getOutputStream().write(inputField.getText().getBytes());
                 outputTab.getProcess().getOutputStream().write("\n".getBytes());
                 outputTab.getProcess().getOutputStream().flush();
-                Platform.runLater(() -> outputTab.appendColoredLine("\n------\nYour input: " + inputField.getText() + "\n------\n"));
+                Platform.runLater(() -> outputTab.appendLine("\n------\nYour input: " + inputField.getText() + "\n------\n"));
             } catch (IOException e) {
                 this.inputField.setDisable(true);
-                ErrorPopup.errorPopup("Process output stream is closed");
+                new ErrorPopup("Process output stream is closed");
                 log.error(e.getMessage());
             }
         }

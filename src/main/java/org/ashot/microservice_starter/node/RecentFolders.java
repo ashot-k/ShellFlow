@@ -3,12 +3,14 @@ package org.ashot.microservice_starter.node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
+import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.DirType;
-import org.ashot.microservice_starter.data.constant.SettingsFileNames;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,18 +19,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecentFolders {
+    private static final int MAX_ENTRIES = 10;
+    private static final Logger log = LoggerFactory.getLogger(RecentFolders.class);
+
     public interface LoadFromFile{
         void run(File file);
     }
 
     public static void refreshCurrentlyOpenedFolders(Menu openRecent, TabPane tabs, LoadFromFile onMenuItemClick){
-        List<String> toRemove = RecentFolders.getInvalidRecentFolders(openRecent);
+        List<String> toRemove = getInvalidRecentFolders(openRecent);
         openRecent.getItems().clear();
-        JSONArray recentFolders = RecentFolders.getRecentFiles();
-        for (Object s : recentFolders.toList().subList(0, 9)) {
+        JSONArray recentFolders = getRecentFiles();
+        if(recentFolders == null){
+            log.debug("No recent folders found");
+            return;
+        }
+        log.debug("Recent folders found: {}", recentFolders.length());
+        for (Object s : recentFolders.toList().stream().limit(MAX_ENTRIES).toList()) {
             String recentFolder = s.toString();
             if (toRemove.contains(recentFolder)) {
-                RecentFolders.removeRecentFile(recentFolder);
+                removeRecentFile(recentFolder);
             }
             MenuItem m = new MenuItem(recentFolder);
             m.setOnAction(_ -> {
@@ -44,10 +54,10 @@ public class RecentFolders {
     }
 
     public static void loadMostRecentFile(LoadFromFile loadFromFile){
-        if(RecentFolders.getRecentFiles() != null && !RecentFolders.getRecentFiles().isEmpty()) {
-            String mostRecentFile = RecentFolders.getRecentFiles().getString(0);
+        if(getRecentFiles() != null && !getRecentFiles().isEmpty()) {
+            String mostRecentFile = getRecentFiles().optString(0);
             if(mostRecentFile != null && !mostRecentFile.isBlank()){
-                loadFromFile.run(new File(RecentFolders.getRecentFiles().getString(0)));
+                loadFromFile.run(new File(getRecentFiles().optString(0)));
             }
         }
     }
@@ -66,12 +76,12 @@ public class RecentFolders {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
+            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             jsonObject.put(dirType.name(), path);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
     }
 
@@ -79,7 +89,7 @@ public class RecentFolders {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
+            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
             List<Object> list = recents.toList();
@@ -90,27 +100,27 @@ public class RecentFolders {
             jsonObject.put(DirType.RECENT.name(), recents);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
     }
 
     public static JSONArray getRecentFiles() {
         JSONObject jsonObject = null;
-        File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
+        File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
         String jsonContent = null;
         try {
             jsonContent = Files.readString(file.toPath());
             jsonObject = new JSONObject(jsonContent);
             return (JSONArray) jsonObject.get(DirType.RECENT.name());
         } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
         return null;
     }
 
     public static void removeRecentFile(String path) {
         JSONObject jsonObject = null;
-        File file = new File(SettingsFileNames.RECENTS_DIR.getValue());
+        File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
         String jsonContent = null;
         try {
             jsonContent = Files.readString(file.toPath());
@@ -123,7 +133,7 @@ public class RecentFolders {
             jsonObject.put(DirType.RECENT.name(), recents);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            ErrorPopup.errorPopup(e.getMessage());
+            new ErrorPopup(e.getMessage());
         }
     }
 }
