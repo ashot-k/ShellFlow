@@ -7,12 +7,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.message.ToolTipMessages;
 import org.ashot.microservice_starter.node.tab.PresetSetupTab;
+import org.ashot.microservice_starter.utils.Utils;
+import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.List;
 import java.util.Map;
@@ -89,8 +92,26 @@ public class Entry extends HBox{
                     return preset.equals(existingKey);
                 });
                 if (existing.isEmpty()) {
-                    MenuItem menuItem = new MenuItem(preset + " (" + searchMap.get(preset) + ")");
+                    MenuItem menuItem = new MenuItem();
+                    StyleClassedTextArea textArea = new StyleClassedTextArea();
+                    textArea.setWrapText(true);
+                    textArea.setEditable(false);
+                    textArea.setPrefWidth(400);
+                    textArea.setPrefHeight(75);
+                    textArea.setBackground(Background.EMPTY);
+
+                    textArea.appendText(preset + "\n");
+                    textArea.setStyleClass(0, textArea.getLength(), Utils.getTextColorClass());
+
+                    String preview = searchMap.get(preset);
+                    textArea.appendText("-> " + preview);
+                    textArea.setStyleClass(textArea.getLength(), textArea.getLength() + preview.length(), Utils.getTextColorClass());
+
+                    textArea.moveTo(0);
+                    textArea.requestFollowCaret();
+                    menuItem.setGraphic(textArea);
                     menuItem.setOnAction(_ -> field.setText(searchMap.get(preset)));
+                    textArea.setOnMouseClicked(_ -> field.setText(searchMap.get(preset)));
                     menu.getItems().add(menuItem);
                 }
             }

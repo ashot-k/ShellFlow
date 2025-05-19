@@ -38,7 +38,7 @@ public class ProfilerTab extends Tab {
             } catch (Exception e){
                 logger.error(e.getMessage());
             }
-        }, 0, 250, TimeUnit.MILLISECONDS);
+        }, 0, 100, TimeUnit.MILLISECONDS);
     }
 
     public void refreshProcesses(TabPane tabPane){

@@ -85,7 +85,7 @@ public class ExecutionFailureNotification {
         titleTextArea.setBackground(Background.EMPTY);
         String title = "Error in tab: " + outputTab.getText() + "\n";
         titleTextArea.appendText(title);
-        titleTextArea.setStyleClass(0, title.length(), Utils.getHighLightedTextColorClass());
+        titleTextArea.setStyleClass(0, title.length(), Utils.getErrorTextColorClass());
         titleTextArea.moveTo(0);
         titleTextArea.requestFollowCaret();
         return titleTextArea;

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+//todo add duplicate name removal upon commit
 public class PresetSetupTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(PresetSetupTab.class);
 

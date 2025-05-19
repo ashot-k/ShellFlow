@@ -182,7 +182,4 @@ public class Utils {
         return "ansi-fg-bright-red";
     }
 
-    public static String getHighLightedTextColorClass(){
-        return "ansi-fg-bright-red";
-    }
 }

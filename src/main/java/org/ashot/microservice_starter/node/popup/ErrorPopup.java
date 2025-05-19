@@ -68,7 +68,7 @@ public class ErrorPopup extends Stage{
         VBox.setVgrow(styleClassedTextArea, Priority.ALWAYS);
         styleClassedTextArea.appendText(msg + "\n");
         if(highlighted != null){
-            styleClassedTextArea.append(highlighted, Utils.getHighLightedTextColorClass());
+            styleClassedTextArea.append(highlighted, Utils.getErrorTextColorClass());
         }
         styleClassedTextArea.setParagraphStyle(1, Set.of("centered-highlighted-text"));
 
