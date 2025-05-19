@@ -20,7 +20,7 @@ public class ProcessRegistry {
     }
 
     public static void killAllProcesses() {
-        processes.values().forEach(Process::destroy);
+        processes.values().forEach(Process::destroyForcibly);
         processes.clear();
     }
 }
