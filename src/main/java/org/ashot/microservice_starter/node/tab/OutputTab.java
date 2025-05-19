@@ -84,14 +84,15 @@ public class OutputTab extends Tab {
             } else {
                 closeOptions();
             }
+            this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
+            this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
+            this.codeArea.setOnMouseClicked((event -> {
+                if(event.getButton().equals(MouseButton.SECONDARY)){
+                    addSelectionToClipBoard();
+                }
+            }));
         });
-        this.getSearchOuterContainer().setOnKeyPressed(this::handleSearchTogglingInput);
-        this.codeArea.setOnKeyPressed(this::handleCodeAreaUserInput);
-        this.codeArea.setOnMouseClicked((event -> {
-            if(event.getButton().equals(MouseButton.SECONDARY)){
-                addSelectionToClipBoard();
-            }
-        }));
+
     }
 
     private void handleSearchTogglingInput(KeyEvent event){

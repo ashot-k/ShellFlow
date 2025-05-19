@@ -33,10 +33,12 @@ public class ProfilerTab extends Tab {
 
     private void checkProcessesStart(){
         checkProcessesTask.scheduleAtFixedRate(()-> {
-            Platform.runLater(() -> {
+            try {
                 profilerProcessNodeList.stream().filter(e -> e instanceof ProfilerProcessNode).map(o -> (ProfilerProcessNode) o).forEach(this::refreshProcess);
-            });
-        }, 0, 500, TimeUnit.MILLISECONDS);
+            } catch (Exception e){
+                logger.error(e.getMessage());
+            }
+        }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
     public void refreshProcesses(TabPane tabPane){
@@ -76,10 +78,13 @@ public class ProfilerTab extends Tab {
         for (ProcessHandle p : refreshedProcess.descendants().toList()){
             ids.append("Process pid: ").append(p.pid()).append("\n");
         }
-        profilerProcessNode.refreshStatus(status, exitCode);
-        profilerProcessNode.refreshID(ids.isEmpty() ? String.valueOf(refreshedProcess.pid()) : ids.toString());
-        profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommandDisplayName());
-        profilerProcessNode.refreshName(profilerProcessNode.getTab().getText());
+        String finalExitCode = exitCode;
+        Platform.runLater(()->{
+            profilerProcessNode.refreshStatus(status, finalExitCode);
+            profilerProcessNode.refreshID(ids.isEmpty() ? String.valueOf(refreshedProcess.pid()) : ids.toString());
+            profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommandDisplayName());
+            profilerProcessNode.refreshName(profilerProcessNode.getTab().getText());
+        });
     }
 
     private void setupProfilerTab(){
