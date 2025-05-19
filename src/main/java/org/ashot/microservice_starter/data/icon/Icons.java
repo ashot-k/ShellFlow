@@ -1,5 +1,6 @@
 package org.ashot.microservice_starter.data.icon;
 
+import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
@@ -113,6 +114,14 @@ public class Icons {
         icon.size(size);
         icon.color(Color.DARKSLATEBLUE);
         setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
+
+    public static Glyph getErrorNotifIcon(double size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
+        icon.size(size);
+        icon.setStyle("-fx-fill: indianred !important;-fx-text-fill: indianred !important; -fx-font-size: " + size + "px");
+        icon.setPadding(Insets.EMPTY);
         return icon;
     }
 }

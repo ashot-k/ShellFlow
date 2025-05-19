@@ -116,10 +116,11 @@ public class CommandOutputTask implements Runnable {
             process.waitFor();
             if(process.exitValue() != 0) {
                 Platform.runLater(() -> {
-                    //todo fix
                     outputTab.appendErrorLine(OutputMessages.failureMessage(outputTab.getCommandDisplayName(), outputTab.getText(), String.valueOf(process.exitValue())));
-                    ExecutionFailureNotification.display(outputTab);
                 });
+                ExecutionFailureNotification.display(outputTab, "Exited with code: " + process.exitValue());
+            } else{
+                //todo normal termination notif
             }
         } catch (InterruptedException e) {
             logger.error(e.getMessage());
@@ -150,8 +151,7 @@ public class CommandOutputTask implements Runnable {
                         Thread.sleep(100);
                     }
                     if(errorMode){
-                        String finalLine = line;
-                        Platform.runLater(()-> ExecutionFailureNotification.display(outputTab, finalLine));
+                        ExecutionFailureNotification.display(outputTab, line);
                     }
                     pendingLines.add(line);
                 }

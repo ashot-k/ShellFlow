@@ -13,12 +13,16 @@
 
 .notification-dark{
     -fx-padding: 5px;
-/*
-    -fx-background-color: #1e1e1e;
-*/
     -fx-background-color: black;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 3, 3);
 }
+
+
+/*compatibility between theme dependency and controls fx*/
+.notification-bar.dark > .pane {
+    -fx-background-color: black; /* no quotes */
+}
+
 
 .ordering-container {
     -fx-spacing: 2px;

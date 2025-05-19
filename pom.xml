@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>microservice_starter</artifactId>
-    <version>0.5.4</version>
+    <version>0.5.43</version>
     <name>microservice_starter</name>
 
     <properties>
