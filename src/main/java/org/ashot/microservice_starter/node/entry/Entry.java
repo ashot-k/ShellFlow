@@ -2,15 +2,10 @@ package org.ashot.microservice_starter.node.entry;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.message.ToolTipMessages;
 import org.ashot.microservice_starter.node.tab.PresetSetupTab;
@@ -93,31 +88,47 @@ public class Entry extends HBox{
                 });
                 if (existing.isEmpty()) {
                     MenuItem menuItem = new MenuItem();
-                    StyleClassedTextArea textArea = new StyleClassedTextArea();
-                    textArea.setWrapText(true);
-                    textArea.setEditable(false);
-                    textArea.setPrefWidth(400);
-                    textArea.setPrefHeight(75);
-                    textArea.setBackground(Background.EMPTY);
+                    double height = 180;
+                    double width = 400;
+                    StyleClassedTextArea presetNameArea = new StyleClassedTextArea();
+                    presetNameArea.setWrapText(true);
+                    presetNameArea.setEditable(false);
+                    presetNameArea.setPrefWidth(width);
+                    presetNameArea.setMaxHeight(height / 5);
+                    presetNameArea.setBackground(Background.EMPTY);
+                    presetNameArea.appendText(preset);
+                    presetNameArea.setStyleClass(0, presetNameArea.getLength(), Utils.boldTextStyleClass());
+                    presetNameArea.setDisable(true);
 
-                    textArea.appendText(preset + "\n");
-                    textArea.setStyleClass(0, textArea.getLength(), Utils.getTextColorClass());
+                    StyleClassedTextArea presetValueArea = new StyleClassedTextArea();
+                    presetValueArea.setWrapText(true);
+                    presetValueArea.setEditable(false);
+                    presetValueArea.setPrefWidth(width);
+                    presetValueArea.setBackground(Background.EMPTY);
+                    String preview = searchMap.getOrDefault(preset, "NO VALUE SET");
+                    presetValueArea.appendText(preview);
+                    presetValueArea.setStyleClass(0, presetValueArea.getLength(), Utils.smallTextStyleClass());
+                    presetValueArea.setMaxHeight(height / 4);
+                    presetValueArea.moveTo(0);
+                    presetValueArea.requestFollowCaret();
+                    presetValueArea.setDisable(true);
+                    VBox menuItemContent = new VBox(new HBox(presetNameArea), new HBox(presetValueArea), new Separator(Orientation.HORIZONTAL));
+                    menuItemContent.setFillWidth(true);
 
-                    String preview = searchMap.get(preset);
-                    textArea.appendText("-> " + preview);
-                    textArea.setStyleClass(textArea.getLength(), textArea.getLength() + preview.length(), Utils.getTextColorClass());
+                    VBox.setVgrow(presetNameArea, Priority.NEVER);
+                    VBox.setVgrow(presetValueArea, Priority.NEVER);
+                    HBox.setHgrow(presetNameArea, Priority.ALWAYS);
+                    HBox.setHgrow(presetValueArea, Priority.ALWAYS);
 
-                    textArea.moveTo(0);
-                    textArea.requestFollowCaret();
-                    menuItem.setGraphic(textArea);
-                    menuItem.setOnAction(_ -> field.setText(searchMap.get(preset)));
-                    textArea.setOnMouseClicked(_ -> field.setText(searchMap.get(preset)));
+                    menuItem.setGraphic(menuItemContent);
+                    menuItem.setOnAction((_)-> field.setText(searchMap.get(preset)));
+                    presetValueArea.setOnMouseClicked(_ -> field.setText(searchMap.get(preset)));
                     menu.getItems().add(menuItem);
                 }
             }
         }
         Bounds boundsInScreen = field.localToScreen(field.getBoundsInLocal());
-        menu.show(field, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
+        menu.show(field, boundsInScreen.getMinX() + 100, boundsInScreen.getMaxY());
     }
 
     public static List<Entry> getEntriesFromPane(Pane container){

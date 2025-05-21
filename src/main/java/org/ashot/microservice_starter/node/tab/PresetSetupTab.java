@@ -22,11 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
-//todo add duplicate name removal upon commit
 public class PresetSetupTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(PresetSetupTab.class);
 
@@ -38,9 +37,9 @@ public class PresetSetupTab extends Tab {
     private static final String TAB_NAME = "Preset Setup";
     private static final String COMMANDS = "commands";
     private static final String PATHS = "paths";
-    public static final Map<String, String> commandsMap = new HashMap<>();
+    public static final Map<String, String> commandsMap = new ConcurrentHashMap<>();
     private static final TableView<Preset> commandsTable = new TableView<>();
-    public static final Map<String, String> pathsMap = new HashMap<>();
+    public static final Map<String, String> pathsMap = new ConcurrentHashMap<>();
     private static final TableView<Preset> pathsTable = new TableView<>();
 
 
@@ -120,7 +119,9 @@ public class PresetSetupTab extends Tab {
         jsonObject.put(COMMANDS, commands);
         jsonObject.put(PATHS, paths);
 
-        FileUtils.writeJSONDataToFile(file, jsonObject);
+        if(FileUtils.writeJSONDataToFile(file, jsonObject)){
+            refreshMaps();
+        }
     }
 
     private static JSONObject createJSONRow(Preset p){
@@ -148,6 +149,19 @@ public class PresetSetupTab extends Tab {
             pathsMap.put(name, value);
             loadRow(pathsTable, new Preset(name, value));
         }
+    }
+
+    private static void refreshMaps(){
+        commandsTable.getItems().forEach(e -> {
+            if(e.getName() != null && e.getValue() != null) {
+                commandsMap.put(e.getName(), e.getValue());
+            }
+        });
+        pathsTable.getItems().forEach(e -> {
+            if(e.getName() != null && e.getValue() != null) {
+                pathsMap.put(e.getName(), e.getValue());
+            }
+        });
     }
 
     private static void loadRow(TableView<Preset> table, Preset preset) {

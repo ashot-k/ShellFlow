@@ -9,20 +9,17 @@
 
 .notification{
     -fx-background-color: #f0f0f0;
+    -fx-background-radius: 5px;
 }
 
 .notification-dark{
-    -fx-padding: 5px;
     -fx-background-color: black;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 3, 3);
+    -fx-background-radius: 5px;
 }
 
-
-/*compatibility between theme dependency and controls fx*/
 .notification-bar.dark > .pane {
-    -fx-background-color: black; /* no quotes */
+    -fx-background-color: black;
 }
-
 
 .ordering-container {
     -fx-spacing: 2px;
@@ -147,4 +144,49 @@
 .centered-highlighted-text{
    -fx-text-alignment: center;
    -fx-padding: 10px;
+}
+
+.error-notif-title {
+    -fx-fill: #FF0000 !important;
+    -fx-font-size: 14px !important;
+}
+
+.error-notif-text-white {
+    -fx-fill: #ffffff !important;
+    -fx-font-size: 12px !important;
+}
+
+.error-notif-text-black {
+    -fx-fill: #000000 !important;
+    -fx-font-size: 12px !important;
+}
+
+.info-notif-text-white {
+    -fx-fill: #ffffff !important;
+    -fx-font-size: 14px !important;
+}
+
+.info-notif-text-black {
+    -fx-fill: #000000 !important;
+    -fx-font-size: 14px !important;
+}
+
+.bold-text-white{
+    -fx-fill: #ffffff !important;
+    -fx-font-weight: 700;
+
+}
+.bold-text-black{
+    -fx-fill: #000000 !important;
+    -fx-font-weight: 700;
+}
+
+.small-text-white{
+    -fx-fill: #ffffff !important;
+    -fx-font-size: 12px !important;
+}
+
+.small-text-black{
+    -fx-fill: #000000 !important;
+    -fx-font-size: 12px !important;
 }

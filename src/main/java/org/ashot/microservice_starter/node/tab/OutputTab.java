@@ -109,6 +109,7 @@ public class OutputTab extends Tab {
         }
         this.searchVisible = !this.searchVisible;
     }
+
     private void addSelectionToClipBoard(){
         Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent clipboardContent = new ClipboardContent();

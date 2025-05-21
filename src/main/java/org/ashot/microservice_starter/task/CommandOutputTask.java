@@ -1,10 +1,13 @@
 package org.ashot.microservice_starter.task;
 
 import javafx.application.Platform;
+import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.data.constant.NotificationType;
 import org.ashot.microservice_starter.data.message.OutputMessages;
-import org.ashot.microservice_starter.node.notification.ExecutionFailureNotification;
+import org.ashot.microservice_starter.node.notification.Notification;
 import org.ashot.microservice_starter.node.tab.OutputTab;
+import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
@@ -117,8 +120,8 @@ public class CommandOutputTask implements Runnable {
             if(process.exitValue() != 0) {
                 Platform.runLater(() -> {
                     outputTab.appendErrorLine(OutputMessages.failureMessage(outputTab.getCommandDisplayName(), outputTab.getText(), String.valueOf(process.exitValue())));
+                    Notification.display(outputTab.getText(), "Exited with code: " + process.exitValue(), null, NotificationType.ERROR);
                 });
-                ExecutionFailureNotification.display(outputTab, "Exited with code: " + process.exitValue());
             } else{
                 //todo normal termination notif
             }
@@ -151,7 +154,17 @@ public class CommandOutputTask implements Runnable {
                         Thread.sleep(100);
                     }
                     if(errorMode){
-                        ExecutionFailureNotification.display(outputTab, line);
+                        String finalLine = line;
+                        Platform.runLater(()->{
+                            Notification.display(
+                                    "Error in tab: " + outputTab.getText(),
+                                    finalLine,
+                                    ()->{
+                                        Main.getPrimaryStage().toFront();
+                                        ControllerRegistry.get("main", Controller.class).getTabPane().getSelectionModel().select(outputTab);
+                                        },
+                                    NotificationType.EXECUTION_FAILURE);
+                        });
                     }
                     pendingLines.add(line);
                 }
