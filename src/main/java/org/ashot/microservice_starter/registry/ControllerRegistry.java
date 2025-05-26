@@ -1,5 +1,7 @@
 package org.ashot.microservice_starter.registry;
 
+import org.ashot.microservice_starter.Controller;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,5 +14,9 @@ public class ControllerRegistry {
 
     public static <T> T get(String key, Class<T> type) {
         return type.cast(controllers.get(key));
+    }
+
+    public static Controller getMainController(){
+        return get("main", Controller.class);
     }
 }

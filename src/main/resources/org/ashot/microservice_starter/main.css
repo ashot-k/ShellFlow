@@ -4,17 +4,19 @@
 
 #container .entry {
     -fx-spacing: 15px;
-    -fx-padding: 15px 10px 15px 10px;
+    -fx-padding: 10px 20px 10px 20px;
+    -fx-background-color: rgba(21, 26, 33, 0.9);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width:5;
 }
 
-.notification{
+.notification-white{
     -fx-background-color: #f0f0f0;
-    -fx-background-radius: 5px;
 }
 
 .notification-dark{
     -fx-background-color: black;
-    -fx-background-radius: 5px;
 }
 
 .notification-bar.dark > .pane {

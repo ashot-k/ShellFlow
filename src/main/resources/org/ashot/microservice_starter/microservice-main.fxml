@@ -44,7 +44,10 @@
                                     <children>
                                         <ScrollPane fx:id="scrollPane" fitToWidth="true" HBox.hgrow="ALWAYS">
                                             <content>
-                                                <FlowPane fx:id="container" alignment="TOP_CENTER" />
+                                                <FlowPane fx:id="container" alignment="TOP_CENTER" vgap="15.0">
+                                          <padding>
+                                             <Insets bottom="15.0" top="20.0" />
+                                          </padding></FlowPane>
                                             </content>
                                         </ScrollPane>
                                     </children>
@@ -57,7 +60,7 @@
       </VBox>
         </StackPane>
         <VBox>
-            <Separator orientation="HORIZONTAL" minHeight="15.0" prefHeight="15.0" VBox.vgrow="NEVER" />
+            <Separator minHeight="15.0" orientation="HORIZONTAL" prefHeight="15.0" VBox.vgrow="NEVER" />
             <HBox alignment="CENTER" fillHeight="false">
                 <children>
                     <GridPane id="options" fx:id="setupSettings" alignment="CENTER" styleClass="grid-pane" HBox.hgrow="ALWAYS">

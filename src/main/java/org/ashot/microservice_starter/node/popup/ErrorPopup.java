@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.ashot.microservice_starter.Main;
-import org.ashot.microservice_starter.utils.Utils;
+import org.ashot.microservice_starter.data.constant.TextStyleClass;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.util.Set;
@@ -64,11 +64,11 @@ public class ErrorPopup extends Stage{
         styleClassedTextArea.setEditable(false);
         styleClassedTextArea.setPrefWidth(500); // or 600 if you want default max
         styleClassedTextArea.setBackground(Background.EMPTY);
-        styleClassedTextArea.setStyleClass(0, msg.length(), Utils.getTextColorClass());
+        styleClassedTextArea.setStyleClass(0, msg.length(), TextStyleClass.getTextColorClass());
         VBox.setVgrow(styleClassedTextArea, Priority.ALWAYS);
         styleClassedTextArea.appendText(msg + "\n");
         if(highlighted != null){
-            styleClassedTextArea.append(highlighted, Utils.getErrorTextColorClass());
+            styleClassedTextArea.append(highlighted, TextStyleClass.getErrorTextColorClass());
         }
         styleClassedTextArea.setParagraphStyle(1, Set.of("centered-highlighted-text"));
 

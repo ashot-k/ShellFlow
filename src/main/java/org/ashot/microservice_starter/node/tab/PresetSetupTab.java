@@ -1,6 +1,7 @@
 package org.ashot.microservice_starter.node.tab;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -9,6 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
+import javafx.util.converter.DefaultStringConverter;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.Preset;
 import org.ashot.microservice_starter.data.constant.PresetType;
@@ -51,10 +54,10 @@ public class PresetSetupTab extends Tab {
         ScrollPane scrollPane = setupScrollPane();
         scrollPane.setFitToWidth(true);
 
-        HBox hbox = new HBox();
-        hbox.setSpacing(SPACING);
-        createTable(commandsTable, PresetType.COMMAND);
-        createTable(pathsTable, PresetType.PATH);
+        HBox tablesContainer = new HBox();
+        tablesContainer.setSpacing(SPACING);
+        createTableContent(commandsTable, PresetType.COMMAND);
+        createTableContent(pathsTable, PresetType.PATH);
 
         setupFromFile();
 
@@ -65,9 +68,6 @@ public class PresetSetupTab extends Tab {
         Button removePathRow = removeEntry(pathsTable, PresetType.PATH);
         HBox pathButtons = new HBox(SPACING, addPathRow, removePathRow);
 
-        Button saveAll = saveButton();
-        saveAll.setPrefWidth(150);
-
         VBox commandsTableContainer = new VBox(SPACING, setupCategoryTitle("Commands"), commandsTable, commandButtons);
         commandsTableContainer.setFillWidth(true);
         commandsTableContainer.setAlignment(Pos.CENTER);
@@ -77,10 +77,12 @@ public class PresetSetupTab extends Tab {
         pathsTableContainer.setFillWidth(true);
         pathsTableContainer.setAlignment(Pos.CENTER);
         HBox.setHgrow(pathsTableContainer, Priority.ALWAYS);
-        hbox.getChildren().addAll(commandsTableContainer, pathsTableContainer);
+        tablesContainer.getChildren().addAll(commandsTableContainer, pathsTableContainer);
 
-        VBox outerContainer = new VBox(SPACING, hbox, saveAll);
-        outerContainer.setPadding(new Insets(10));
+        Button saveAll = saveButton();
+
+        VBox outerContainer = new VBox(SPACING, tablesContainer, saveAll);
+        outerContainer.setPadding(new Insets(10, 20, 10, 20));
         outerContainer.setAlignment(Pos.CENTER);
         scrollPane.setContent(outerContainer);
         this.setContent(scrollPane);
@@ -184,18 +186,17 @@ public class PresetSetupTab extends Tab {
         }
     }
 
-    private static void createTable(TableView<Preset> tableView, PresetType presetType) {
+    private static void createTableContent(TableView<Preset> tableView, PresetType presetType) {
         TableColumn<Preset, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        nameCol.setCellFactory(_ -> createPresetCellWithTooltip());
         nameCol.setOnEditCommit(event -> {
             Preset preset = event.getRowValue();
             preset.setName(event.getNewValue());
         });
-
         TableColumn<Preset, String> valueCol = new TableColumn<>(presetType.getValue());
         valueCol.setCellValueFactory(new PropertyValueFactory<>("value"));
-        valueCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        valueCol.setCellFactory(_ -> createPresetCellWithTooltip());
         valueCol.setOnEditCommit(event -> {
             Preset preset = event.getRowValue();
             preset.setValue(event.getNewValue());
@@ -205,11 +206,27 @@ public class PresetSetupTab extends Tab {
                 pathsMap.put(preset.getName(), preset.getValue());
             }
         });
-
         tableView.getColumns().addAll(nameCol, valueCol);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setEditable(true);
-        tableView.setPrefHeight(300);
+        tableView.setPrefHeight(360);
+    }
+
+    private static TextFieldTableCell<Preset, String> createPresetCellWithTooltip(){
+        TextFieldTableCell<Preset, String> cell = new TextFieldTableCell<>(new DefaultStringConverter());
+        Tooltip tooltip = new Tooltip();
+        tooltip.setWrapText(true);
+        tooltip.setMaxWidth(700);
+        cell.setOnMouseEntered(_ -> {
+            if(cell.getItem() != null && !cell.getItem().isBlank()){
+                tooltip.setText(cell.getItem());
+                tooltip.setShowDelay(Duration.millis(1));
+                Point2D p = cell.localToScreen(0, cell.getHeight());
+                tooltip.show(cell, p.getX(), p.getY());
+            }
+        });
+        cell.setOnMouseExited(_-> tooltip.hide());
+        return cell;
     }
 
     private static ScrollPane setupScrollPane() {
@@ -236,12 +253,12 @@ public class PresetSetupTab extends Tab {
         removeRowButton.setDisable(true);
         removeRowButton.setOnAction(_ -> {
             Preset preset = tableView.getSelectionModel().getSelectedItem();
-            tableView.getItems().remove(preset);
             if (PresetType.COMMAND.equals(presetType)) {
                 commandsMap.remove(preset.getName());
             } else {
                 pathsMap.remove(preset.getName());
             }
+            tableView.getItems().remove(preset);
         });
         return removeRowButton;
     }
@@ -249,6 +266,7 @@ public class PresetSetupTab extends Tab {
     private static Button saveButton() {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(_ -> saveToFile());
+        saveButton.setPrefWidth(150);
         return saveButton;
     }
 

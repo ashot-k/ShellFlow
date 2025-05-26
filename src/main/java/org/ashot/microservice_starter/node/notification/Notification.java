@@ -1,6 +1,5 @@
 package org.ashot.microservice_starter.node.notification;
 
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
@@ -10,15 +9,17 @@ import javafx.util.Duration;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.NotificationType;
+import org.ashot.microservice_starter.data.constant.TextStyleClass;
+import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
-import org.ashot.microservice_starter.utils.Utils;
 import org.controlsfx.control.Notifications;
+import org.controlsfx.glyphfont.Glyph;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 public abstract class Notification {
-    private static final int NOTIFICATION_TIMEOUT = 10;
-    private static final int NOTIFICATION_WIDTH = 300;
-    private static final int NOTIFICATION_HEIGHT = 75;
+    private static final int NOTIFICATION_TIMEOUT = 8;
+    private static final int NOTIFICATION_WIDTH = 250;
+    private static final int NOTIFICATION_HEIGHT = 80;
     private static final int MAX_NOTIFICATIONS = 3;
 
     public static void display(String title, String message, Runnable onAction, NotificationType type) {
@@ -31,61 +32,74 @@ public abstract class Notification {
             notif.onAction(_ -> onAction.run());
         }
         notif.hideAfter(Duration.seconds(NOTIFICATION_TIMEOUT));
-        if(buildNotifCollapse(type) != null) {
-            notif.threshold(MAX_NOTIFICATIONS, buildNotifCollapse(type));
+        Notifications collapse = buildNotifCollapse(type);
+        if(collapse != null) {
+            notif.threshold(MAX_NOTIFICATIONS, collapse);
         }
         notif.position(Pos.BOTTOM_RIGHT);
 
-        VBox contentWrapper = new VBox(5);
-        contentWrapper.setPrefHeight(NOTIFICATION_HEIGHT);
+        VBox contentWrapper = new VBox(2);
+        contentWrapper.setMaxHeight(NOTIFICATION_HEIGHT);
         contentWrapper.setPrefWidth(NOTIFICATION_WIDTH);
 
         StyleClassedTextArea titleArea = setupTitleArea(title, type);
-        HBox titleContent = new HBox(titleArea);
+        Glyph icon = getIconFromType(type, 22);
+
+        HBox titleContent = new HBox(8,  icon, titleArea);
+        titleContent.setAlignment(Pos.CENTER_LEFT);
+
 
         StyleClassedTextArea messageArea = setupMessageArea(message);
         HBox mainContent = new HBox(messageArea);
 
-        contentWrapper.getChildren().addAll(titleContent, mainContent);
+        if(title != null && !title.isBlank()){
+            contentWrapper.getChildren().addAll(titleContent);
+        }
+        if(message != null && !message.isBlank()){
+            contentWrapper.getChildren().addAll(mainContent);
+        }
 
         HBox.setHgrow(titleArea, Priority.ALWAYS);
         HBox.setHgrow(messageArea, Priority.ALWAYS);
 
         setNotifTheme(notif);
         notif.graphic(contentWrapper);
-        Platform.runLater(notif::show);
+        notif.show();
     }
 
     private static StyleClassedTextArea setupTitleArea(String title, NotificationType type) {
         StyleClassedTextArea titleTextArea = new StyleClassedTextArea();
         titleTextArea.setEditable(false);
         titleTextArea.setMaxHeight((double) NOTIFICATION_HEIGHT / 4);
+        titleTextArea.setAutoHeight(false);
         titleTextArea.setBackground(Background.EMPTY);
-        titleTextArea.appendText(title);
-        String typeStyleClass = getTitleStyleClassFromType(type);
-        titleTextArea.setStyleClass(0, title.length(), typeStyleClass);
+        if(title != null) {
+            titleTextArea.appendText(title);
+            String typeStyleClass = getTitleStyleClassFromType(type);
+            titleTextArea.setStyleClass(0, title.length(), typeStyleClass);
+        }
         titleTextArea.moveTo(0);
         titleTextArea.requestFollowCaret();
         titleTextArea.setDisable(true);
         return titleTextArea;
     }
 
-
-
     private static StyleClassedTextArea setupMessageArea(String message) {
         StyleClassedTextArea messageArea = new StyleClassedTextArea();
         messageArea.setWrapText(true);
         messageArea.setEditable(false);
         messageArea.setMaxHeight((double) NOTIFICATION_HEIGHT * 3 / 4);
+        messageArea.setAutoHeight(false);
         messageArea.setBackground(Background.EMPTY);
-        messageArea.appendText(message);
-        messageArea.setStyleClass(0, message.length(), Utils.errorNotifTextStyleClass());
+        if(message != null) {
+            messageArea.appendText(message);
+            messageArea.setStyleClass(0, message.length(), TextStyleClass.errorNotifTextStyleClass());
+        }
         messageArea.moveTo(0);
         messageArea.requestFollowCaret();
         messageArea.setDisable(true);
         return messageArea;
     }
-
 
     private static Notifications buildExecutionFailureCollapse(){
         Notifications collapseNotif = Notifications.create()
@@ -100,23 +114,38 @@ public abstract class Notification {
     }
 
     private static void setNotifTheme(Notifications notif){
+        String baseClass = "notification-base";
         if (Main.getDarkModeSetting()) {
-            notif.styleClass("notification-dark").darkStyle();
+            notif.styleClass(baseClass, "notification-dark").darkStyle();
         } else {
-            notif.styleClass("notification");
+            notif.styleClass(baseClass, "notification-white");
         }
     }
 
     private static String getTitleStyleClassFromType(NotificationType type) {
         switch (type){
             case INFO -> {
-                return Utils.infoNotifTitleStyleClass();
+                return TextStyleClass.infoNotifTitleStyleClass();
             }
             case ERROR, EXECUTION_FAILURE -> {
-                return Utils.errorNotifTitleStyleClass();
+                return TextStyleClass.errorNotifTitleStyleClass();
             }
             default -> {
-                return Utils.getTextColorClass();
+                return TextStyleClass.getTextColorClass();
+            }
+        }
+    }
+
+    private static Glyph getIconFromType(NotificationType type, double size) {
+        switch (type){
+            case INFO -> {
+                return Icons.getInfoNotifIcon(size);
+            }
+            case ERROR, EXECUTION_FAILURE -> {
+                return Icons.getErrorNotifIcon(size);
+            }
+            default -> {
+                return Icons.getInfoNotifIcon(size);
             }
         }
     }
@@ -126,10 +155,7 @@ public abstract class Notification {
             case INFO -> {
                 return null;
             }
-            case ERROR -> {
-                return null;
-            }
-            case EXECUTION_FAILURE -> {
+            case EXECUTION_FAILURE, ERROR -> {
                 return buildExecutionFailureCollapse();
             }
             default -> {

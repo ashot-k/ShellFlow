@@ -11,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
+import org.ashot.microservice_starter.data.constant.TextStyleClass;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.task.CommandOutputTask;
 import org.ashot.microservice_starter.utils.Utils;
@@ -40,7 +41,7 @@ public class OutputTab extends Tab {
         this.setTooltip(outputTabBuilder.tooltip);
         this.setText(outputTabBuilder.tabName);
         this.codeArea = new CodeArea();
-        this.codeArea.setStyle("-fx-font-family: 'Noto-Sans'; -fx-font-size: 14");
+        this.codeArea.setStyle("-fx-font-family: 'Courier New' !important; -fx-font-size: 15");
         this.scrollPane = new VirtualizedScrollPane<>(codeArea);
         this.outputTabOptions = new OutputTabOptions(this);
         Platform.runLater(this::setupOutputTab);
@@ -159,7 +160,7 @@ public class OutputTab extends Tab {
         line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // strip ansi
         this.codeArea.appendText(line);
         StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
-        String defaultFg = Utils.getTextColorClass();
+        String defaultFg = TextStyleClass.getTextColorClass();
         spans.add(List.of(defaultFg), this.codeArea.getLength());
         this.codeArea.setStyleSpans(start, spans.create());
     }
@@ -169,7 +170,7 @@ public class OutputTab extends Tab {
         line = line.replaceAll("\u001B\\[[;\\d]*m", ""); // strip ansi
         this.codeArea.appendText(line);
         StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
-        String defaultFg = Utils.getErrorTextColorClass();
+        String defaultFg = TextStyleClass.getErrorTextColorClass();
         spans.add(List.of(defaultFg), this.codeArea.getLength());
         this.codeArea.setStyleSpans(start, spans.create());
     }

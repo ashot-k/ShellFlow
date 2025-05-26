@@ -1,13 +1,11 @@
 package org.ashot.microservice_starter.task;
 
 import javafx.application.Platform;
-import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.NotificationType;
 import org.ashot.microservice_starter.data.message.OutputMessages;
 import org.ashot.microservice_starter.node.notification.Notification;
 import org.ashot.microservice_starter.node.tab.OutputTab;
-import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
@@ -23,6 +21,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static org.ashot.microservice_starter.registry.ControllerRegistry.getMainController;
 
 public class CommandOutputTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputTask.class);
@@ -120,10 +120,12 @@ public class CommandOutputTask implements Runnable {
             if(process.exitValue() != 0) {
                 Platform.runLater(() -> {
                     outputTab.appendErrorLine(OutputMessages.failureMessage(outputTab.getCommandDisplayName(), outputTab.getText(), String.valueOf(process.exitValue())));
-                    Notification.display(outputTab.getText(), "Exited with code: " + process.exitValue(), null, NotificationType.ERROR);
+                    Notification.display("Failure for: " + outputTab.getText(), "Exited with code: " + process.exitValue(), null, NotificationType.ERROR);
                 });
             } else{
-                //todo normal termination notif
+                Platform.runLater(()->{
+                    Notification.display(outputTab.getText() + " has exited", null, ()-> getMainController().getTabPane().getSelectionModel().select(outputTab), NotificationType.INFO);
+                });
             }
         } catch (InterruptedException e) {
             logger.error(e.getMessage());
@@ -154,17 +156,19 @@ public class CommandOutputTask implements Runnable {
                         Thread.sleep(100);
                     }
                     if(errorMode){
+/*
                         String finalLine = line;
                         Platform.runLater(()->{
                             Notification.display(
-                                    "Error in tab: " + outputTab.getText(),
+                                    "Error in: " + outputTab.getText(),
                                     finalLine,
                                     ()->{
                                         Main.getPrimaryStage().toFront();
-                                        ControllerRegistry.get("main", Controller.class).getTabPane().getSelectionModel().select(outputTab);
+                                        getMainController().getTabPane().getSelectionModel().select(outputTab);
                                         },
                                     NotificationType.EXECUTION_FAILURE);
                         });
+*/
                     }
                     pendingLines.add(line);
                 }
