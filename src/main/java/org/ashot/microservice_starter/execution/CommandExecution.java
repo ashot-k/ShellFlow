@@ -6,8 +6,10 @@ import javafx.scene.layout.Pane;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.data.Command;
 import org.ashot.microservice_starter.data.CommandSequence;
+import org.ashot.microservice_starter.data.constant.NotificationType;
 import org.ashot.microservice_starter.mapper.EntryToCommandMapper;
 import org.ashot.microservice_starter.node.entry.Entry;
+import org.ashot.microservice_starter.node.notification.Notification;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.node.tab.OutputTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
@@ -99,6 +101,9 @@ public class CommandExecution {
                     logger.error(e.getMessage());
                 }
             }
+          Platform.runLater(()->{
+              Notification.display(commandSequence.getSequenceName() + " has finished", null, null, NotificationType.INFO);
+          });
         }).start();
     }
 

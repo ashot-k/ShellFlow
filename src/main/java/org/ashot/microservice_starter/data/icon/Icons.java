@@ -12,14 +12,22 @@ import static org.ashot.microservice_starter.data.icon.IconUtils.setHoverToBrigh
 
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+    private static final DropShadow dropShadow = new DropShadow();
+    static{
+        dropShadow.setRadius(1.8);
+    }
+
+    private static Glyph decorateGlyph(Glyph icon){
+        icon.getStyleClass().add("icon");
+        return icon;
+    }
 
     public static Glyph getChevronUpIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHEVRON_UP);
         icon.size(size);
         icon.color(Color.GRAY);
         setHoverToBrighter(icon, Color.GRAY);
-        icon.setEffect(new DropShadow());
-        return icon;
+        return decorateGlyph(icon);
     }
 
     public static Glyph getChevronDownIcon(int size) {
@@ -27,8 +35,7 @@ public class Icons {
         icon.size(size);
         icon.color(Color.GRAY);
         setHoverToBrighter(icon, Color.GRAY);
-        icon.setEffect(new DropShadow());
-        return icon;
+        return decorateGlyph(icon);
     }
 
     public static Glyph getCloseButtonIcon(int size) {
@@ -36,8 +43,7 @@ public class Icons {
         icon.size(size);
         icon.color(Color.INDIANRED);
         setHover(icon, Color.INDIANRED, Color.CRIMSON);
-        icon.setEffect(new DropShadow());
-        return icon;
+        return decorateGlyph(icon);
     }
 
     public static Glyph getExecuteButtonIcon(int size) {
@@ -45,8 +51,7 @@ public class Icons {
         icon.size(size);
         icon.color(Color.DARKSLATEBLUE);
         setHoverToBrighter(icon, Color.DARKSLATEBLUE);
-        icon.setEffect(new DropShadow());
-        return icon;
+        return decorateGlyph(icon);
     }
 
     public static Glyph getExecuteAllButtonIcon(int size) {

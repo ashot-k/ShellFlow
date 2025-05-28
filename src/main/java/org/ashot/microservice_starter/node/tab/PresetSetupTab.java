@@ -253,9 +253,9 @@ public class PresetSetupTab extends Tab {
         removeRowButton.setDisable(true);
         removeRowButton.setOnAction(_ -> {
             Preset preset = tableView.getSelectionModel().getSelectedItem();
-            if (PresetType.COMMAND.equals(presetType)) {
+            if (PresetType.COMMAND.equals(presetType) && commandsMap.containsKey(preset.getName())) {
                 commandsMap.remove(preset.getName());
-            } else {
+            } else if(pathsMap.containsKey(preset.getName())){
                 pathsMap.remove(preset.getName());
             }
             tableView.getItems().remove(preset);

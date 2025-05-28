@@ -27,7 +27,7 @@ import static org.ashot.microservice_starter.registry.ControllerRegistry.getMain
 public class CommandOutputTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CommandOutputTask.class);
     private static final int MAX_LINES = 8000;
-    private boolean darkTheme = Main.getDarkModeSetting();
+    private boolean darkTheme = false;
     private final long startTime;
     private final OutputTab outputTab;
     private final List<String> pendingLines = Collections.synchronizedList(new ArrayList<>());
@@ -44,6 +44,9 @@ public class CommandOutputTask implements Runnable {
     }
 
     public void run() {
+        Platform.runLater(()->{
+            Notification.display(outputTab.getText() + " has started", null, ()-> getMainController().getTabPane().getSelectionModel().select(outputTab), NotificationType.INFO);
+        });
         setupScheduledOutputPolling();
         Thread readOutputThread = new Thread(this::setupOutputReading);
         readOutputThread.start();
@@ -99,8 +102,7 @@ public class CommandOutputTask implements Runnable {
             Platform.runLater(() -> {
                 darkTheme = Main.getDarkModeSetting();
                 CodeArea codeArea = outputTab.getCodeArea();
-                codeArea.getStyleClass().removeAll("light-mode", "dark-mode");
-                codeArea.getStyleClass().add(darkTheme ? "dark-mode" : "light-mode");
+                codeArea.getStyleClass().addAll("output");
                 StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
                 String defaultFg = darkTheme ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
                 spans.add(List.of(defaultFg), codeArea.getLength());

@@ -1,3 +1,7 @@
+.root{
+    -color-accent-emphasis: darkslateblue;
+}
+
 #container {
     -fx-spacing: 50px;
 }
@@ -5,22 +9,63 @@
 #container .entry {
     -fx-spacing: 15px;
     -fx-padding: 10px 20px 10px 20px;
-    -fx-background-color: rgba(21, 26, 33, 0.9);
     -fx-background-radius: 5;
     -fx-border-radius: 5;
     -fx-border-width:5;
 }
 
-.notification-white{
+.light .entry{
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.5, 0.0, 0.0);
+}
+
+.dark .entry{
+    -fx-background-color: rgba(21, 26, 33, 0.9);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.light .icon{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 2, 0.5, 0.0, 0.0);
+}
+
+.dark .icon{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.autocomplete-entry{
+    -fx-padding: 5px 10px 5px 10px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width:5;
+}
+
+.dark.autocomplete-entry{
+    -fx-background-color: rgba(21, 26, 33, 0.95);
+}
+
+.light.autocomplete-entry{
+    -fx-background-color: rgba(234, 229, 222, 0.95);
+}
+
+.autocomplete-entry-hovered{
+    -fx-background-color: rgba(42, 52, 66, 0.95) !important;
+}
+
+.notification-base{
+    -fx-padding: 10px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width:5;
+}
+
+.light.notification-base{
     -fx-background-color: #f0f0f0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 2, 0.5, 0.0, 0.0);
 }
 
-.notification-dark{
-    -fx-background-color: black;
-}
-
-.notification-bar.dark > .pane {
-    -fx-background-color: black;
+.dark.notification-base{
+    -fx-background-color: #0d1117;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
 }
 
 .ordering-container {
@@ -53,14 +98,13 @@
 
 .command-output-container {
     -fx-padding: 5px 20px 0 20px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
 }
 
-.light-mode {
-    -fx-background-color: #ebebeb;
+.light .output{
+    -fx-background-color: #fbfbfb;
 }
 
-.dark-mode {
+.dark .output{
     -fx-background-color: transparent;
 }
 
@@ -153,42 +197,47 @@
     -fx-font-size: 14px !important;
 }
 
-.error-notif-text-white {
+.dark .error-notif-text{
     -fx-fill: #ffffff !important;
     -fx-font-size: 12px !important;
 }
 
-.error-notif-text-black {
+.light .error-notif-text{
     -fx-fill: #000000 !important;
     -fx-font-size: 12px !important;
 }
 
-.info-notif-text-white {
+.dark .info-notif-text{
     -fx-fill: #ffffff !important;
     -fx-font-size: 14px !important;
 }
 
-.info-notif-text-black {
+.light .info-notif-text{
     -fx-fill: #000000 !important;
     -fx-font-size: 14px !important;
 }
 
-.bold-text-white{
-    -fx-fill: #ffffff !important;
+.bold-text{
     -fx-font-weight: 700;
-
+    -fx-font-size: 14px !important;
 }
-.bold-text-black{
+
+.dark .bold-text{
+    -fx-fill: #ffffff !important;
+}
+
+.light .bold-text{
     -fx-fill: #000000 !important;
-    -fx-font-weight: 700;
 }
 
-.small-text-white{
-    -fx-fill: #ffffff !important;
+.small-text{
     -fx-font-size: 12px !important;
 }
 
-.small-text-black{
+.dark .small-text{
+    -fx-fill: #ffffff !important;
+}
+
+.light .small-text{
     -fx-fill: #000000 !important;
-    -fx-font-size: 12px !important;
 }

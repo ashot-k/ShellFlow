@@ -10,7 +10,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.Controller;
-import org.ashot.microservice_starter.Main;
 import org.ashot.microservice_starter.data.constant.TextStyleClass;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.task.CommandOutputTask;
@@ -48,7 +47,7 @@ public class OutputTab extends Tab {
     }
 
     public void setupOutputTab() {
-        this.codeArea.getStyleClass().addAll("command-output-container", Main.getDarkModeSetting() ? "dark-mode" : "light-mode", Main.getDarkModeSetting() ? "dark-mode-text" : "light-mode-text");
+        this.codeArea.getStyleClass().addAll("command-output-container", "output");
         this.codeArea.setEditable(false);
         this.codeArea.addEventFilter(ScrollEvent.SCROLL, e -> {
             if (e.getDeltaY() < 0) {

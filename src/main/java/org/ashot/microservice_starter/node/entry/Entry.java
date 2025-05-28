@@ -1,10 +1,11 @@
 package org.ashot.microservice_starter.node.entry;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -24,6 +25,7 @@ public class Entry extends HBox{
     private CheckBoxField wslToggle;
     private Button execute;
     private Button deleteEntry;
+
 
     public Entry buildEmptyEntry(Pane v) {
         return buildEntry(v, "", "", "", false);
@@ -61,9 +63,8 @@ public class Entry extends HBox{
         VBox orderingContainer = EntryButton.createOrderingContainer();
 
         this.setAlignment(Pos.TOP_CENTER);
-        this.getChildren().addAll(deleteEntryContainer, nameFieldContainer, pathFieldContainer, commandFieldContainer, wslToggle, executeContainer, orderingContainer);
-        this.getStyleClass().add("entry");
-        this.setEffect(new DropShadow());
+        this.getChildren().addAll(deleteEntryContainer, nameFieldContainer, pathFieldContainer, commandFieldContainer, new Separator(Orientation.VERTICAL), wslToggle, executeContainer, orderingContainer);
+        this.getStyleClass().addAll("entry");
         return this;
     }
 

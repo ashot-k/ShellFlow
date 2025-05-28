@@ -2,32 +2,38 @@ package org.ashot.microservice_starter.data.constant;
 
 import org.ashot.microservice_starter.Main;
 
+import java.util.List;
+
 public class TextStyleClass {
     public static String getTextColorClass(){
         return Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
     }
 
-    public static String boldTextStyleClass(){
-        return Main.getDarkModeSetting() ? "bold-text-white" : "bold-text-black";
+    public static List<String> boldTextStyleClass(){
+        return getClassAndThemeMode("bold-text");
     }
 
-    public static String smallTextStyleClass(){
-        return Main.getDarkModeSetting() ? "small-text-white" : "small-text-black";
+    public static List<String> smallTextStyleClass(){
+        return getClassAndThemeMode("small-text");
     }
 
     public static String getErrorTextColorClass(){
         return "ansi-fg-bright-red";
     }
 
-    public static String errorNotifTitleStyleClass(){
-        return "error-notif-title";
+    public static List<String> errorNotifTitleStyleClass(){
+        return getClassAndThemeMode("error-notif-title");
     }
 
-    public static String infoNotifTitleStyleClass(){
-        return Main.getDarkModeSetting() ? "info-notif-text-white" : "info-notif-text-black";
+    public static List<String> infoNotifTitleStyleClass(){
+        return getClassAndThemeMode("info-notif-text");
     }
 
-    public static String errorNotifTextStyleClass(){
-        return Main.getDarkModeSetting() ? "error-notif-text-white" : "error-notif-text-black";
+    public static List<String> errorNotifTextStyleClass(){
+        return getClassAndThemeMode("error-notif-text");
+    }
+
+    private static List<String> getClassAndThemeMode(String className){
+        return List.of(className);
     }
 }

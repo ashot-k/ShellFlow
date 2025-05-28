@@ -1,10 +1,12 @@
 package org.ashot.microservice_starter.node.notification;
 
-import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import org.ashot.microservice_starter.Controller;
 import org.ashot.microservice_starter.Main;
@@ -12,14 +14,16 @@ import org.ashot.microservice_starter.data.constant.NotificationType;
 import org.ashot.microservice_starter.data.constant.TextStyleClass;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
+import org.ashot.microservice_starter.utils.Utils;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.glyphfont.Glyph;
-import org.fxmisc.richtext.StyleClassedTextArea;
+
+import java.util.List;
 
 public abstract class Notification {
     private static final int NOTIFICATION_TIMEOUT = 8;
     private static final int NOTIFICATION_WIDTH = 250;
-    private static final int NOTIFICATION_HEIGHT = 80;
+    private static final double NOTIFICATION_HEIGHT = 50;
     private static final int MAX_NOTIFICATIONS = 3;
 
     public static void display(String title, String message, Runnable onAction, NotificationType type) {
@@ -36,68 +40,42 @@ public abstract class Notification {
         if(collapse != null) {
             notif.threshold(MAX_NOTIFICATIONS, collapse);
         }
-        notif.position(Pos.BOTTOM_RIGHT);
 
         VBox contentWrapper = new VBox(2);
-        contentWrapper.setMaxHeight(NOTIFICATION_HEIGHT);
         contentWrapper.setPrefWidth(NOTIFICATION_WIDTH);
-
-        StyleClassedTextArea titleArea = setupTitleArea(title, type);
-        Glyph icon = getIconFromType(type, 22);
-
-        HBox titleContent = new HBox(8,  icon, titleArea);
-        titleContent.setAlignment(Pos.CENTER_LEFT);
-
-
-        StyleClassedTextArea messageArea = setupMessageArea(message);
-        HBox mainContent = new HBox(messageArea);
-
-        if(title != null && !title.isBlank()){
-            contentWrapper.getChildren().addAll(titleContent);
+        contentWrapper.setPadding(new Insets(0,  0, 10, 0));
+        if (title != null && !title.isBlank()) {
+            TextFlow titleArea = setupTitleArea(title, type);
+            HBox titleContent = new HBox(Utils.checkIfWindows() ? 0 : 8, getIconFromType(type, 20), titleArea);
+            HBox.setHgrow(titleArea, Priority.ALWAYS);
+            contentWrapper.getChildren().add(titleContent);
         }
-        if(message != null && !message.isBlank()){
-            contentWrapper.getChildren().addAll(mainContent);
+        if (message != null && !message.isBlank()) {
+            TextFlow messageArea = setupMessageArea(message);
+            HBox mainContent = new HBox(messageArea);
+            HBox.setHgrow(messageArea, Priority.ALWAYS);
+            contentWrapper.getChildren().add(mainContent);
         }
-
-        HBox.setHgrow(titleArea, Priority.ALWAYS);
-        HBox.setHgrow(messageArea, Priority.ALWAYS);
-
         setNotifTheme(notif);
         notif.graphic(contentWrapper);
         notif.show();
     }
 
-    private static StyleClassedTextArea setupTitleArea(String title, NotificationType type) {
-        StyleClassedTextArea titleTextArea = new StyleClassedTextArea();
-        titleTextArea.setEditable(false);
-        titleTextArea.setMaxHeight((double) NOTIFICATION_HEIGHT / 4);
-        titleTextArea.setAutoHeight(false);
+    private static TextFlow setupTitleArea(String title, NotificationType type) {
+        Text text = new Text(title);
+        text.getStyleClass().addAll(getTitleStyleClassFromType(type));
+        TextFlow titleTextArea = new TextFlow(text);
+        titleTextArea.setMaxHeight(NOTIFICATION_HEIGHT / 4);
         titleTextArea.setBackground(Background.EMPTY);
-        if(title != null) {
-            titleTextArea.appendText(title);
-            String typeStyleClass = getTitleStyleClassFromType(type);
-            titleTextArea.setStyleClass(0, title.length(), typeStyleClass);
-        }
-        titleTextArea.moveTo(0);
-        titleTextArea.requestFollowCaret();
-        titleTextArea.setDisable(true);
         return titleTextArea;
     }
 
-    private static StyleClassedTextArea setupMessageArea(String message) {
-        StyleClassedTextArea messageArea = new StyleClassedTextArea();
-        messageArea.setWrapText(true);
-        messageArea.setEditable(false);
-        messageArea.setMaxHeight((double) NOTIFICATION_HEIGHT * 3 / 4);
-        messageArea.setAutoHeight(false);
+    private static TextFlow setupMessageArea(String message) {
+        Text text = new Text(message);
+        text.getStyleClass().addAll(TextStyleClass.errorNotifTextStyleClass());
+        TextFlow messageArea = new TextFlow(text);
+        messageArea.setMaxHeight((NOTIFICATION_HEIGHT * 3) / 4);
         messageArea.setBackground(Background.EMPTY);
-        if(message != null) {
-            messageArea.appendText(message);
-            messageArea.setStyleClass(0, message.length(), TextStyleClass.errorNotifTextStyleClass());
-        }
-        messageArea.moveTo(0);
-        messageArea.requestFollowCaret();
-        messageArea.setDisable(true);
         return messageArea;
     }
 
@@ -107,8 +85,8 @@ public abstract class Notification {
                 .onAction((_)->{
                     Main.getPrimaryStage().toFront();
                     ControllerRegistry.get("main", Controller.class).getTabPane().getSelectionModel().select(2);
-                });
-        collapseNotif.hideAfter(Duration.seconds(NOTIFICATION_TIMEOUT * 2));
+                })
+                .hideAfter(Duration.seconds(NOTIFICATION_TIMEOUT * 2));
         setNotifTheme(collapseNotif);
         return collapseNotif;
     }
@@ -116,13 +94,13 @@ public abstract class Notification {
     private static void setNotifTheme(Notifications notif){
         String baseClass = "notification-base";
         if (Main.getDarkModeSetting()) {
-            notif.styleClass(baseClass, "notification-dark").darkStyle();
+            notif.styleClass(baseClass, "dark");
         } else {
-            notif.styleClass(baseClass, "notification-white");
+            notif.styleClass(baseClass, "light");
         }
     }
 
-    private static String getTitleStyleClassFromType(NotificationType type) {
+    private static List<String> getTitleStyleClassFromType(NotificationType type) {
         switch (type){
             case INFO -> {
                 return TextStyleClass.infoNotifTitleStyleClass();
@@ -131,12 +109,15 @@ public abstract class Notification {
                 return TextStyleClass.errorNotifTitleStyleClass();
             }
             default -> {
-                return TextStyleClass.getTextColorClass();
+                return List.of(TextStyleClass.getTextColorClass());
             }
         }
     }
 
     private static Glyph getIconFromType(NotificationType type, double size) {
+        if(Utils.checkIfWindows()){
+            return new Glyph();
+        }
         switch (type){
             case INFO -> {
                 return Icons.getInfoNotifIcon(size);

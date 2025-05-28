@@ -34,8 +34,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         setTheme(getThemeFromConfig());
         Font.loadFont(getClass().getResource("font/roboto-regular.ttf").toString(), 52);
-
+        Font.loadFont(getClass().getResource("font/cour.ttf").toString(), 52);
         Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
+        root.getStyleClass().add(getThemeFromConfig().equals(ThemeMode.DARK_MODE) ? "dark": "light");
         Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
         scene.getStylesheets().add(CSS_FILE_LOCATION);
         primaryStage = stage;
@@ -61,6 +62,11 @@ public class Main extends Application {
             Application.setUserAgentStylesheet(ThemeMode.DARK_MODE_THEME.getUserAgentStylesheet());
         } else {
             Application.setUserAgentStylesheet(ThemeMode.LIGHT_MODE_THEME.getUserAgentStylesheet());
+        }
+        if(getPrimaryStage() != null && getPrimaryStage().getScene() != null) {
+            Parent root = getPrimaryStage().getScene().getRoot();
+            root.getStyleClass().removeAll("dark", "light");
+            root.getStyleClass().add(theme.equals(ThemeMode.DARK_MODE) ? "dark" : "light");
         }
         isDark = theme.equals(ThemeMode.DARK_MODE);
     }

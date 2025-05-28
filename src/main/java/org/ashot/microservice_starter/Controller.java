@@ -132,17 +132,17 @@ public class Controller implements Initializable {
     }
 
     public void stopAll() {
-        ProcessRegistry.killAllProcesses();
         this.tabPane.getTabs().forEach(tab -> {
             if (tab instanceof OutputTab outputTab) {
                 Platform.runLater(() -> {
                     if(outputTab.getProcess() != null && outputTab.getProcess().isAlive()) {
-                        outputTab.getProcess().destroy();
+                        Utils.killProcess(outputTab.getProcess());
                     }
                     tabPane.getTabs().remove(outputTab);
                 });
             }
         });
+        ProcessRegistry.killAllProcesses();
         Platform.runLater(() -> tabPane.getSelectionModel().selectFirst());
     }
 
