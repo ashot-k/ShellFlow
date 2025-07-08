@@ -32,12 +32,12 @@ public class DefaultConfig implements Config{
 
     @Override
     public String getPresetConfigLocation() {
-        return getPropertyOrDefaultFile(ConfigProperties.PRESETS_FILE.getValue(), ConfigProperties.PRESETS_FILE.getDefaultValue());
+        return getPropertyOrDefault(ConfigProperties.PRESETS_FILE.getValue(), ConfigProperties.PRESETS_FILE.getDefaultValue());
     }
 
     @Override
     public String getRecentsDirsConfigLocation() {
-        return getPropertyOrDefaultFile(ConfigProperties.RECENT_DIRS_FILE.getValue(), ConfigProperties.RECENT_DIRS_FILE.getDefaultValue());
+        return getPropertyOrDefault(ConfigProperties.RECENT_DIRS_FILE.getValue(), ConfigProperties.RECENT_DIRS_FILE.getDefaultValue());
     }
 
     @Override
@@ -57,16 +57,6 @@ public class DefaultConfig implements Config{
             return defaultValue;
         }
         return property;
-    }
-
-    private String getPropertyOrDefaultFile(String propertyName, String defaultValue){
-        File file = new File(getPropertyOrDefault(propertyName, defaultValue));
-        if(!file.exists() || !file.isFile()){
-            String message = "Configuration file does not exist or cannot be accessed.";
-            log.error("{}\n {}", message, file.getAbsolutePath());
-            new ErrorPopup(message, file.getAbsolutePath(), true);
-        }
-        return file.getAbsolutePath();
     }
 
 }

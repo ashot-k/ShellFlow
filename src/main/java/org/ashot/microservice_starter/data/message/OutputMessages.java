@@ -3,9 +3,14 @@ package org.ashot.microservice_starter.data.message;
 public class OutputMessages {
     private static final String DASHES = "-----------------------------------------------------------------------------------------------";
     private static final String NEW_LINE = "\n";
+    public static final String COMMAND_FINISHED = "Command(s) finished";
 
     public static String commandFinishedMessage(long startupTime){
-        return decorateMessage("Command(s) finished in: " + ((System.currentTimeMillis() - startupTime) / 1000L) + "s");
+        return decorateMessage(COMMAND_FINISHED + "in: " + ((System.currentTimeMillis() - startupTime) / 1000L) + "s");
+    }
+
+    public static String commandFinishedMessage(){
+        return decorateMessage(COMMAND_FINISHED);
     }
 
     public static String currentlyRunningCommand(String command){

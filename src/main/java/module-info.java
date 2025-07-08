@@ -7,6 +7,10 @@ module org.ashot.microservice_starter {
     requires org.fxmisc.richtext;
     requires org.fxmisc.flowless;
     requires reactfx;
+    requires com.techsenger.jeditermfx.ui;
+    requires com.techsenger.jeditermfx.core;
+    requires org.jetbrains.annotations;
+    requires pty4j;
 
 
     exports org.ashot.microservice_starter;

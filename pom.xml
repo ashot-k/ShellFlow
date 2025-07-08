@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>microservice_starter</artifactId>
-    <version>0.5.6</version>
+    <version>0.5.7</version>
     <name>microservice_starter</name>
 
     <properties>
@@ -48,6 +48,16 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>11.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.techsenger.jeditermfx</groupId>
+            <artifactId>jeditermfx-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.techsenger.jeditermfx</groupId>
+            <artifactId>jeditermfx-ui</artifactId>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -160,7 +170,7 @@
                     <name>microservice-starter-${project.version}</name>
                     <appVersion>${project.version}</appVersion>
                     <vendor>org.ashot</vendor>
-<!--                    for linux app-image-->
+                    <!--                    for linux app-image-->
                     <runtimeImage>${java.home}</runtimeImage>
                     <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
                     <modulePaths>
@@ -177,7 +187,7 @@
                         <id>app-image</id>
                         <configuration>
                             <type>APP_IMAGE</type>
-<!--                            <icon>icons/icon.png</icon>-->
+                            <!--                            <icon>icons/icon.png</icon>-->
                         </configuration>
                     </execution>
                 </executions>

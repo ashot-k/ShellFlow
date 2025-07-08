@@ -1,9 +1,11 @@
 package org.ashot.microservice_starter.data;
 
 import javafx.application.Platform;
+import org.ashot.microservice_starter.data.message.OutputMessages;
 import org.ashot.microservice_starter.data.message.PopupMessages;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ public class Command {
     private String path;
     private boolean wsl;
     private List<String> argumentList = new ArrayList<>();
+    private List<String> rawArgumentsList = new ArrayList<>();
 
     public Command(String name, String path, String argumentList, boolean wsl) {
         constructCommand(name, path, argumentList, wsl);
@@ -34,7 +37,15 @@ public class Command {
         }else{
             validatePath();
         }
+        rawArgumentsList.add(arguments);
         prefixForOperatingEnvironment();
+        if(Utils.checkIfWindows() && !wsl){
+            arguments += " && echo '"  + OutputMessages.commandFinishedMessage() + "'";
+        }
+        else{
+            arguments += "; echo '" + OutputMessages.commandFinishedMessage();
+            arguments += "'; exec $SHELL;";
+        }
         this.argumentList.add(arguments);
         this.name = formatName(name);
         log.info("Command created with name: {}, path: {}, arguments: {}", name, path, arguments);
@@ -71,11 +82,11 @@ public class Command {
             log.debug("Adjusting command for linux OS {}", this.argumentList);
         } else if (Utils.checkIfWindows()){
             if(wsl){
-                this.argumentList.addAll(0, List.of("wsl.exe", "-e", "sh", "-c"));
+                this.argumentList.addAll(0, List.of("wsl", "sh", "-c"));
                 log.debug("Adjusting command for WSL OS {}", this.argumentList);
             }
             else{
-                this.argumentList.addAll(0, List.of("cmd.exe", "/c"));
+                this.argumentList.addAll(0, List.of("cmd.exe", "/k"));
                 log.debug("Adjusting command for Windows OS {}", this.argumentList);
             }
         }
@@ -99,6 +110,13 @@ public class Command {
         return stringBuilder.toString();
     }
 
+    public String getRawArgumentsString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String s : rawArgumentsList){
+            stringBuilder.append(s).append(" ");
+        }
+        return stringBuilder.toString();
+    }
     public String getName() {
         return name;
     }
@@ -115,8 +133,8 @@ public class Command {
         this.path = path;
     }
 
-    public List<String> getArgumentList() {
-        return argumentList;
+    public @NotNull String[] getArgumentList() {
+        return argumentList.toArray(String[]::new);
     }
 
     public void setArgumentList(List<String> argumentList) {

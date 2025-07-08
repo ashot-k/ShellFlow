@@ -83,7 +83,9 @@ public class Controller implements Initializable {
             profilerTab.refreshProcesses(tabPane);
             stopAllBtn.setDisable(tabPane.getTabs().size() <= SETUP_TABS);
         });
-        tabPane.getTabs().addAll(new PresetSetupTab(), profilerTab);
+        tabPane.getTabs().addAll(new PresetSetupTab());
+//        tabPane.getTabs().addAll(profilerTab);
+//        profilerTab.start();
         tabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
 
         setupIcons();
@@ -135,9 +137,7 @@ public class Controller implements Initializable {
         this.tabPane.getTabs().forEach(tab -> {
             if (tab instanceof OutputTab outputTab) {
                 Platform.runLater(() -> {
-                    if(outputTab.getProcess() != null && outputTab.getProcess().isAlive()) {
-                        Utils.killProcess(outputTab.getProcess());
-                    }
+                    outputTab.closeTerminal();
                     tabPane.getTabs().remove(outputTab);
                 });
             }

@@ -15,8 +15,9 @@ public class OutputTabButton extends CustomButton {
         Button clearButton = new Button("", Icons.getClearIcon(20));
         clearButton.setTooltip(new Tooltip(ToolTipMessages.clearOutput()));
         clearButton.setOnAction(_ -> {
-            outputTab.getCodeArea().clear();
-            outputTab.getOutputSearchOptions().setAutoScroll(true);
+
+            //todo implement
+
         });
         clearButton.setOpacity(0.5);
         StackPane.setAlignment(clearButton, Pos.BOTTOM_RIGHT);

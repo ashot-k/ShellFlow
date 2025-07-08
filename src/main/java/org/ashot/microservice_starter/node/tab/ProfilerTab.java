@@ -1,5 +1,7 @@
 package org.ashot.microservice_starter.node.tab;
 
+import com.pty4j.PtyProcess;
+import com.techsenger.jeditermfx.core.ProcessTtyConnector;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -28,6 +30,9 @@ public class ProfilerTab extends Tab {
 
     public ProfilerTab(){
         setupProfilerTab();
+    }
+
+    public void start(){
         checkProcessesStart();
     }
 
@@ -50,7 +55,8 @@ public class ProfilerTab extends Tab {
         }
         else {
             for (OutputTab outputTab : outputTabs) {
-                Process p = outputTab.getProcess();
+
+                Process p = ((ProcessTtyConnector) outputTab.getTerminal().getTtyConnector()).getProcess();
                 ProfilerProcessNode profilerProcessNode = new ProfilerProcessNode(p, String.valueOf(p.pid()), ProcessStatus.ACTIVE, outputTab);
                 profilerProcessNodeList.addAll(List.of(profilerProcessNode, new Separator(Orientation.HORIZONTAL)));
             }
@@ -59,7 +65,7 @@ public class ProfilerTab extends Tab {
     }
 
     private void refreshProcess(ProfilerProcessNode profilerProcessNode){
-        Process refreshedProcess = profilerProcessNode.getTab().getProcess();
+        Process refreshedProcess = ((ProcessTtyConnector) profilerProcessNode.getTab().getTerminal().getTtyConnector()).getProcess();
         ProcessStatus status;
         String exitCode = null;
         if(refreshedProcess.isAlive()){
