@@ -10,9 +10,9 @@ public class ExecutionsTab extends Tab {
     String name = "Executions";
 
     public ExecutionsTab(){
+        this.executionsTabPane = new TabPane();
         Platform.runLater(()->{
             this.setClosable(false);
-            this.executionsTabPane = new TabPane();
             this.setContent(executionsTabPane);
             this.setText(name);
             this.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) change -> {

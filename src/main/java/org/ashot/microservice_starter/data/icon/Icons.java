@@ -104,6 +104,14 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getSaveAsIcon(int size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.FILE_TEXT_ALT);
+        icon.size(size);
+        icon.color(Color.DARKSLATEBLUE);
+        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
+
     public static Glyph getSaveIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SAVE);
         icon.size(size);

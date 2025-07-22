@@ -9,6 +9,7 @@ import org.ashot.microservice_starter.data.CommandSequence;
 import org.ashot.microservice_starter.data.constant.NotificationType;
 import org.ashot.microservice_starter.node.notification.Notification;
 import org.ashot.microservice_starter.node.tab.OutputTab;
+import org.ashot.microservice_starter.node.tab.SequenceTab;
 import org.ashot.microservice_starter.node.tab.SequenceTabPane;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.terminal.TerminalFactory;
@@ -30,7 +31,7 @@ public class SequentialExecutor {
         //todo add thread to a list, track tab closure to terminate the thread
         new Thread(() -> {
             SequenceTabPane sequenceTabPane = new SequenceTabPane();
-            Tab sequenceHolder = new Tab(commandSequence.getSequenceName(), sequenceTabPane);
+            SequenceTab sequenceHolder = new SequenceTab(commandSequence.getSequenceName(), sequenceTabPane);
             sequenceHolder.setOnClosed(_ -> {
                 for (Tab tab : sequenceTabPane.getTabs()) {
                     if (tab instanceof OutputTab outputTab) {
@@ -86,13 +87,14 @@ public class SequentialExecutor {
                         Platform.runLater(() -> {
                             Notification.display("Failure", commandSequence.getSequenceName() + " has failed at step: " + currentCommand.getName(), null, NotificationType.EXECUTION_FAILURE);
                         });
-                        throw new RuntimeException("Sequence Failed");
+                        break;
                     }
                 } catch (IOException | InterruptedException e) {
                     logger.error(e.getMessage());
                 }
             }
-            if (checkIfCanceled(sequenceTabPane.getTabs())) {
+            if (checkIfCanceled(sequenceTabPane.getTabs()) || checkIfFailed(sequenceTabPane.getTabs())) {
+                //todo add logging
                 return;
             }
             setFinished(sequenceHolder);
@@ -111,4 +113,12 @@ public class SequentialExecutor {
         return false;
     }
 
+    private static boolean checkIfFailed(List<Tab> tabs) {
+        for (Tab t : tabs) {
+            if (t instanceof OutputTab outputTab) {
+                if (outputTab.isFailed()) return true;
+            }
+        }
+        return false;
+    }
 }

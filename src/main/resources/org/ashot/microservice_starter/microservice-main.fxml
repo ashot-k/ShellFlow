@@ -13,12 +13,9 @@
                     <items>
                         <MenuItem fx:id="loadBtn" mnemonicParsing="false" onAction="#load" text="Open" />
                         <Menu fx:id="openRecent" mnemonicParsing="false" text="Open Recent" />
+                        <SeparatorMenuItem/>
                         <MenuItem fx:id="saveBtn" mnemonicParsing="false" onAction="#save" text="Save" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                    <items>
-                        <MenuItem fx:id="setupMenu" mnemonicParsing="false" text="Execution Setup" />
+                        <MenuItem fx:id="saveAsBtn" mnemonicParsing="false" onAction="#saveAs" text="Save as" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Settings">
@@ -59,6 +56,12 @@
          </children>
       </VBox>
         </StackPane>
+        <VBox alignment="TOP_LEFT" fillWidth="false" >
+            <padding>
+                <Insets left="10.0" right="5.0" top="5.0" />
+            </padding>
+            <Text fx:id="fileLoaded"></Text>
+        </VBox>
         <VBox>
             <Separator minHeight="15.0" orientation="HORIZONTAL" prefHeight="15.0" VBox.vgrow="NEVER" />
             <HBox alignment="CENTER" fillHeight="false">

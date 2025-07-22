@@ -53,13 +53,16 @@ public class RecentFolders {
         }
     }
 
-    public static void loadMostRecentFile(LoadFromFile loadFromFile){
+    public static File loadMostRecentFile(LoadFromFile loadFromFile){
+        File mostRecentFile = null;
         if(getRecentFiles() != null && !getRecentFiles().isEmpty()) {
-            String mostRecentFile = getRecentFiles().optString(0);
-            if(mostRecentFile != null && !mostRecentFile.isBlank()){
-                loadFromFile.run(new File(getRecentFiles().optString(0)));
+            String path = getRecentFiles().optString(0);
+            if(path != null && !path.isBlank()){
+                mostRecentFile = new File(path);
+                loadFromFile.run(mostRecentFile);
             }
         }
+        return mostRecentFile;
     }
 
     public static List<String> getInvalidRecentFolders(Menu openRecent) {
@@ -85,7 +88,7 @@ public class RecentFolders {
         }
     }
 
-    public static void saveRecentDir(String path) {
+    public static void saveRecentFile(String path) {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
