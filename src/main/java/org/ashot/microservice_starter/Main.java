@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.ashot.microservice_starter.config.Config;
 import org.ashot.microservice_starter.config.DefaultConfig;
@@ -33,10 +32,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         setTheme(getThemeFromConfig());
-        Font.loadFont(getClass().getResource("font/roboto-regular.ttf").toString(), 52);
-        Font.loadFont(getClass().getResource("font/cour.ttf").toString(), 52);
         Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
-        root.getStyleClass().add(getThemeFromConfig().equals(ThemeMode.DARK_MODE) ? "dark": "light");
+        root.getStyleClass().add(getThemeFromConfig().equals(ThemeMode.DARK_MODE) ? "dark" : "light");
         Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
         scene.getStylesheets().add(CSS_FILE_LOCATION);
         primaryStage = stage;
@@ -47,7 +44,6 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(_ -> {
             Platform.exit();
         });
-
     }
 
     @Override

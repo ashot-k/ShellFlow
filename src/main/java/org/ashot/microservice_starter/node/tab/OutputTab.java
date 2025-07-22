@@ -1,15 +1,16 @@
 package org.ashot.microservice_starter.node.tab;
 
-import com.techsenger.jeditermfx.ui.*;
+import com.pty4j.PtyProcess;
+import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.ashot.microservice_starter.terminal.PtyProcessTtyConnector;
+import org.ashot.microservice_starter.data.Command;
+import org.ashot.microservice_starter.terminal.TerminalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,11 @@ public class OutputTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(OutputTab.class);
     private String commandDisplayName;
     private JediTermFxWidget terminal;
+    private VBox terminalWrapper = new VBox();
+    private boolean inProgress = false;
+    private boolean finished = false;
+    private boolean failed = false;
+    private boolean canceled = false;
 
     private OutputTab(OutputTabBuilder outputTabBuilder){
         this.commandDisplayName = outputTabBuilder.commandDisplayName;
@@ -29,26 +35,41 @@ public class OutputTab extends Tab {
     }
 
     public void setupOutputTab() {
-        VBox container = new VBox(terminal.getPane());
-        container.setFillWidth(true);
-        container.setPadding(new Insets(5));
-        VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
-        this.setContent(container);
+        if(terminal != null) {
+            this.terminalWrapper.getChildren().add(terminal.getPane());
+            VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+        }
+        this.terminalWrapper.setFillWidth(true);
+        this.terminalWrapper.setPadding(new Insets(5));
+        this.setContent(this.terminalWrapper);
         this.setClosable(true);
         this.setOnClosed(_ -> this.terminal.close());
-        this.getTerminal().addListener(new TerminalWidgetListener() {
-            @Override
-            public void allSessionsClosed(TerminalWidget widget) {
-                System.out.println("closed");
-
-            }
-        });
     }
 
+    public static OutputTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
+        return new OutputTab.OutputTabBuilder(TerminalFactory.createTerminalWidget(process, null))
+                .setTabName(command.getName())
+                .setCommandDisplayName(command.getArgumentsString())
+                .setTooltip(command.getArgumentsString())
+                .build();
+    }
 
+    public static OutputTab constructSequencePartOutputTab(Command command) {
+        OutputTab tab = new OutputTab.OutputTabBuilder().build();
+        Platform.runLater(() -> {
+            tab.setClosable(false);
+            tab.setCommandDisplayName(command.getArgumentsString());
+            tab.getTooltip().setText(command.getArgumentsString());
+            tab.setText(command.getName());
+            tab.setDisable(true);
+        });
+        return tab;
+    }
 
-    public void appendTooltipLineText(String tooltipText){
-        this.getTooltip().setText(this.getTooltip().getText() + "\n" + tooltipText);
+    public void shutDownTerminal(){
+        if(getTerminal() != null){
+            this.getTerminal().close();
+        }
     }
 
     public static List<OutputTab> getOutputTabsFromTabPane(TabPane tabPane){
@@ -73,6 +94,43 @@ public class OutputTab extends Tab {
 
     public void setTerminal(JediTermFxWidget terminal) {
         this.terminal = terminal;
+        Platform.runLater(()->{
+            this.terminalWrapper.getChildren().clear();
+            this.terminalWrapper.getChildren().add(terminal.getPane());
+            VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+        });
+    }
+
+    public boolean isInProgress() {
+        return inProgress;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public void setFailed(boolean failed) {
+        this.failed = failed;
     }
 
     public static class OutputTabBuilder{
@@ -82,6 +140,9 @@ public class OutputTab extends Tab {
         private String tabName;
         private final Tooltip tooltip = new Tooltip();
         private String commandDisplayName;
+        public OutputTabBuilder(){
+
+        }
 
         public OutputTabBuilder(JediTermFxWidget terminal){
             this.terminal = terminal;

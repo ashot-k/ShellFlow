@@ -16,6 +16,7 @@ import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.data.message.ToolTipMessages;
 import org.ashot.microservice_starter.execution.CommandExecution;
+import org.ashot.microservice_starter.mapper.EntryToCommandMapper;
 import org.ashot.microservice_starter.node.CustomButton;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
 import org.ashot.microservice_starter.utils.Utils;
@@ -34,7 +35,7 @@ public class EntryButton extends CustomButton {
         return btn;
     }
 
-    public static VBox createOrderingContainer(){
+    public static VBox createOrderingContainer() {
         Button moveUpBtn = EntryButton.orderingButton(Direction.UP);
         Button moveDownBtn = EntryButton.orderingButton(Direction.DOWN);
         VBox orderingContainer = new VBox(moveUpBtn, moveDownBtn);
@@ -66,7 +67,7 @@ public class EntryButton extends CustomButton {
         }
     }
 
-    public static Button executeBtn(TextArea nameField, TextArea commandField, TextArea pathField, CheckBoxField wslContainer) {
+    public static Button executeBtn(Entry entry) {
         Button executeBtn = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeBtn.setBackground(Background.EMPTY);
         executeBtn.setId(ButtonType.EXECUTION.getValue());
@@ -74,11 +75,7 @@ public class EntryButton extends CustomButton {
         executeBtn.setTooltip(new Tooltip(ToolTipMessages.execute()));
         executeBtn.setOnAction(_ -> {
             try {
-                String nameSelected = nameField.getText();
-                String commandSelected = commandField.getText();
-                String pathSelected = pathField.getText();
-                boolean wslSelected = wslContainer.getCheckBox().isSelected();
-                execute(commandSelected, pathSelected, nameSelected, wslSelected);
+                execute(EntryToCommandMapper.entryToCommand(entry, true));
             } catch (IOException e) {
                 new ErrorPopup(e.getMessage());
             }
@@ -86,16 +83,17 @@ public class EntryButton extends CustomButton {
         return executeBtn;
     }
 
-    public static Button browsePathBtn(TextArea pathField, CheckBox wslOption){
+    public static Button browsePathBtn(TextArea pathField, CheckBox wslOption) {
         Button pathBrowserBtn = new Button("", Icons.getBrowseIcon(PATH_BROWSE_BUTTON_SIZE));
-        pathBrowserBtn.setOnAction((_)->{
+        pathBrowserBtn.setOnAction(_ -> {
             DirectoryChooser chooser = new DirectoryChooser();
             File f = chooser.showDialog(pathBrowserBtn.getScene().getWindow());
-            if(f != null){
+            if (f != null) {
                 String path = f.getAbsolutePath();
-                if(Utils.getSystemOS().contains("windows") && wslOption.isSelected()) {
+                if (Utils.getSystemOS().contains("windows") && wslOption.isSelected()) {
+                    String drive = String.valueOf(path.charAt(0));
                     path = path.replace("\\", "/");
-                    path = path.replace("C:", "/mnt/c");
+                    path = path.replace(drive + ":", "/mnt/" + drive.toLowerCase());
                 }
                 pathField.setText(path);
             }
@@ -104,8 +102,7 @@ public class EntryButton extends CustomButton {
         return pathBrowserBtn;
     }
 
-    private static void execute(String command, String path, String name, boolean wsl) throws IOException {
-        Command c = new Command(name, path, command, wsl);
-        CommandExecution.execute(c);
+    private static void execute(Command command) throws IOException {
+        new Thread(() -> CommandExecution.execute(command)).start();
     }
 }

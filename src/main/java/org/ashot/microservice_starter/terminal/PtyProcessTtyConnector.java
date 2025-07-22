@@ -1,12 +1,13 @@
 package org.ashot.microservice_starter.terminal;
 
 
-import com.techsenger.jeditermfx.core.util.TermSize;
-import com.techsenger.jeditermfx.core.ProcessTtyConnector;
 import com.pty4j.PtyProcess;
 import com.pty4j.WinSize;
+import com.techsenger.jeditermfx.core.ProcessTtyConnector;
+import com.techsenger.jeditermfx.core.util.TermSize;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.nio.charset.Charset;
 import java.util.List;
 

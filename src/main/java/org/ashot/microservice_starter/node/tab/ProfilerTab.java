@@ -1,6 +1,5 @@
 package org.ashot.microservice_starter.node.tab;
 
-import com.pty4j.PtyProcess;
 import com.techsenger.jeditermfx.core.ProcessTtyConnector;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -55,7 +54,7 @@ public class ProfilerTab extends Tab {
         }
         else {
             for (OutputTab outputTab : outputTabs) {
-
+                if(outputTab.getTerminal() == null) continue;
                 Process p = ((ProcessTtyConnector) outputTab.getTerminal().getTtyConnector()).getProcess();
                 ProfilerProcessNode profilerProcessNode = new ProfilerProcessNode(p, String.valueOf(p.pid()), ProcessStatus.ACTIVE, outputTab);
                 profilerProcessNodeList.addAll(List.of(profilerProcessNode, new Separator(Orientation.HORIZONTAL)));

@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -128,20 +126,6 @@ public class Utils {
     }
     public static boolean checkIfLinux(){
         return System.getProperty("os.name").toLowerCase().contains("linux");
-    }
-
-    public static void killProcess(Process p){
-        p.destroy();
-        p.descendants().forEach((e)->{
-            e.destroy();
-            e.destroyForcibly();
-        });
-        try {
-            p.waitFor(Duration.of(5, ChronoUnit.SECONDS));
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-        }
-        p.destroyForcibly();
     }
 
     public static JSONObject setupFolders() {

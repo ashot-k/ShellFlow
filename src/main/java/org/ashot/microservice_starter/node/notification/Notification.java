@@ -22,7 +22,7 @@ import java.util.List;
 
 public abstract class Notification {
     private static final int NOTIFICATION_TIMEOUT = 8;
-    private static final int NOTIFICATION_WIDTH = 250;
+    private static final int NOTIFICATION_WIDTH = 200;
     private static final double NOTIFICATION_HEIGHT = 50;
     private static final int MAX_NOTIFICATIONS = 3;
 

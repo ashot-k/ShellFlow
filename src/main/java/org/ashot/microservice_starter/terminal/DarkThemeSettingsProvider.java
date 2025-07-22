@@ -20,13 +20,11 @@ public class DarkThemeSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public Font getTerminalFont() {
-//        return Font.font("Monospaced", 16);
         return Font.font("Consolas", 16);
     }
 
     @Override
     public ColorPalette getTerminalColorPalette() {
         return ColorPaletteImpl.WINDOWS_PALETTE;
-//        return super.getTerminalColorPalette();
     }
 }

@@ -1,7 +1,5 @@
 package org.ashot.microservice_starter.data;
 
-import org.ashot.microservice_starter.registry.ProcessRegistry;
-
 import java.util.List;
 
 public class CommandSequence {
@@ -41,10 +39,9 @@ public class CommandSequence {
     }
 
     private String formattedName(String name) {
-        if (name.isBlank()) {
-            name = "sequence-" + (ProcessRegistry.getProcesses().size() + 1);
-        } else {
+        if (!name.isBlank()) {
             name = name.replace(" ", "-");
         }
         return name;
-    }}
+    }
+}

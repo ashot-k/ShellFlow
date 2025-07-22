@@ -14,7 +14,7 @@ import org.ashot.microservice_starter.data.message.ToolTipMessages;
 
 import java.util.List;
 
-public class Entry extends HBox{
+public class Entry extends HBox {
     private static final double PREF_NAME_FIELD_WIDTH = 200;
     private static final double PREF_PATH_FIELD_WIDTH = 400;
     private static final double PREF_COMMAND_FIELD_WIDTH = 400;
@@ -38,7 +38,7 @@ public class Entry extends HBox{
                 ToolTipMessages.nameField(), PREF_NAME_FIELD_WIDTH, "name-field"
         );
         commandField = Fields.createField(
-                FieldType.COMMAND, command,  "Command",
+                FieldType.COMMAND, command, "Command(s)",
                 ToolTipMessages.commandField(), PREF_COMMAND_FIELD_WIDTH, "command-field"
         );
 
@@ -51,13 +51,13 @@ public class Entry extends HBox{
         Button pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
 
         deleteEntry = EntryButton.deleteEntryButton(container, this);
-        deleteEntry.setPadding(new Insets(2, 0, 0,0));
-        execute = EntryButton.executeBtn(nameField, commandField, pathField, wslToggle);
-        execute.setPadding(new Insets(2, 0, 0,0));
+        deleteEntry.setPadding(new Insets(2, 0, 0, 0));
+        execute = EntryButton.executeBtn(this);
+        execute.setPadding(new Insets(2, 0, 0, 0));
 
         HBox deleteEntryContainer = new HBox(deleteEntry);
         HBox nameFieldContainer = new HBox(nameField);
-        HBox pathFieldContainer = new HBox(5, pathField, pathBrowser);
+        HBox pathFieldContainer = new HBox(0, pathField, pathBrowser);
         HBox commandFieldContainer = new HBox(commandField);
         HBox executeContainer = new HBox(execute);
         VBox orderingContainer = EntryButton.createOrderingContainer();
@@ -68,7 +68,7 @@ public class Entry extends HBox{
         return this;
     }
 
-    public static List<Entry> getEntriesFromPane(Pane container){
+    public static List<Entry> getEntriesFromPane(Pane container) {
         return container.getChildren().stream().filter(e -> e instanceof Entry).map(e -> (Entry) e).toList();
     }
 

@@ -2,6 +2,7 @@ package org.ashot.microservice_starter.data.icon;
 
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
+import org.ashot.microservice_starter.utils.Animator;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -13,11 +14,12 @@ import static org.ashot.microservice_starter.data.icon.IconUtils.setHoverToBrigh
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
     private static final DropShadow dropShadow = new DropShadow();
-    static{
+
+    static {
         dropShadow.setRadius(1.8);
     }
 
-    private static Glyph decorateGlyph(Glyph icon){
+    private static Glyph decorateGlyph(Glyph icon) {
         icon.getStyleClass().add("icon");
         return icon;
     }
@@ -126,7 +128,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getErrorNotifIcon(double size){
+    public static Glyph getErrorNotifIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
         icon.size(size);
         icon.setFontSize(size);
@@ -134,11 +136,41 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getInfoNotifIcon(double size){
+    public static Glyph getInfoNotifIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.INFO_CIRCLE);
         icon.size(size);
         icon.setFontSize(size);
         icon.setStyle("-fx-padding: 0; -fx-fill: white !important;-fx-text-fill: white !important; -fx-font-size: " + size + "px");
         return icon;
     }
+
+    public static Glyph getExecutionInProgressIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.SPINNER);
+        icon.size(size);
+        icon.color(Color.CORNFLOWERBLUE);
+        Animator.spinIcon(icon);
+        return icon;
+    }
+
+    public static Glyph getExecutionFinishedIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHECK_CIRCLE);
+        icon.size(size);
+        icon.color(Color.GREEN);
+        return icon;
+    }
+
+    public static Glyph getExecutionErrorIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.MINUS_CIRCLE);
+        icon.size(size);
+        icon.color(Color.INDIANRED);
+        return icon;
+    }
+
+    public static Glyph getExecutionCanceledIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.MINUS);
+        icon.size(size);
+        icon.color(Color.INDIANRED);
+        return icon;
+    }
+
 }
