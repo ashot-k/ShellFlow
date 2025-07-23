@@ -5,11 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ashot</groupId>
-    <artifactId>microservice_starter</artifactId>
-    <version>0.5.8</version>
-    <name>microservice_starter</name>
+    <artifactId>shellflow</artifactId>
+    <version>0.6.0</version>
+    <name>shellflow</name>
 
     <properties>
+        <output.artifact.folder>${project.name}-${project.version}</output.artifact.folder>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
         <json.version>20240303</json.version>
@@ -105,7 +106,7 @@
                 <artifactId>maven-jlink-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <addModules>org.ashot.microservice_starter</addModules>
+                    <addModules>org.ashot.shellflow</addModules>
                     <launcher>
                         <name>Microservice Starter App</name>
                     </launcher>
@@ -129,13 +130,13 @@
                     <noManPages>true</noManPages>
                     <launcher>App</launcher>
                     <jlinkImageName>App</jlinkImageName>
-                    <mainClass>org.ashot.microservice_starter.Main</mainClass>
+                    <mainClass>org.ashot.shellflow.Main</mainClass>
                 </configuration>
                 <executions>
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.ashot.microservice_starter.Main</mainClass>
+                            <mainClass>org.ashot.shellflow.Main</mainClass>
                         </configuration>
                     </execution>
                 </executions>
@@ -165,19 +166,31 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}/output</directory>
+                            <includes>
+                                <include>${output.artifact.folder}/**</include>
+                            </includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.6.4</version>
-
                 <configuration>
-                    <name>microservice-starter-${project.version}</name>
+                    <name>${output.artifact.folder}</name>
                     <appVersion>${project.version}</appVersion>
                     <vendor>org.ashot</vendor>
-                    <!--                    for linux app-image-->
+                    <!-- for linux app-image -->
                     <runtimeImage>${java.home}</runtimeImage>
-                    <module>org.ashot.microservice_starter/org.ashot.microservice_starter.Main</module>
+                    <module>org.ashot.shellflow/org.ashot.shellflow.Main</module>
                     <modulePaths>
                         <modulePath>target/mods</modulePath>
                     </modulePaths>
@@ -192,7 +205,7 @@
                         <id>app-image</id>
                         <configuration>
                             <type>APP_IMAGE</type>
-                            <!--                            <icon>icons/icon.png</icon>-->
+                            <!--<icon>icons/icon.png</icon>-->
                         </configuration>
                     </execution>
                 </executions>

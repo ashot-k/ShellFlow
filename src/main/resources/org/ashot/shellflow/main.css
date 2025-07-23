@@ -1,0 +1,281 @@
+.root{
+    -color-accent-emphasis: darkslateblue;
+}
+
+#container {
+    -fx-spacing: 50px;
+}
+
+#container .entry {
+    -fx-spacing: 15px;
+    -fx-padding: 10px 20px 10px 20px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width:5;
+}
+
+.light .terminal-wrapper{
+    -fx-background-color: rgba(255, 255, 255, 1);
+}
+
+.dark .terminal-wrapper{
+    -fx-background-color: rgb(23, 27, 33);
+}
+
+.light .entry{
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.5, 0.0, 0.0);
+}
+
+.dark .entry{
+    -fx-background-color: rgb(23, 27, 33);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.dark .name-field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.light .name-field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
+}
+
+.dark .path-field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.light .path-field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
+}
+
+.dark .command-field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.light .command-field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
+}
+
+.dark .icon{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+}
+
+.light .icon{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
+}
+
+
+.autocomplete-entry{
+    -fx-padding: 5px 10px 5px 10px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width:5;
+}
+
+.dark.autocomplete-entry{
+    -fx-background-color: rgba(21, 26, 33, 0.95);
+}
+
+.light.autocomplete-entry{
+    -fx-background-color: rgba(234, 229, 222, 0.95);
+}
+
+.autocomplete-entry-hovered{
+    -fx-background-color: rgba(42, 52, 66, 0.95) !important;
+}
+
+.notification-base{
+    -fx-padding: 10px;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-width:5;
+}
+
+.light.notification-base{
+    -fx-background-color: #f0f0f0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0.5, 0.0, 0.0);
+}
+
+.dark.notification-base{
+    -fx-background-color: #0d1117;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.5, 0.0, 0.0);
+}
+
+/* fix for controlsfx 11.2.2 exception */
+.dark.notification-bar > .pane {
+    -fx-background-color: rgb(23, 27, 33);
+}
+
+.ordering-container {
+    -fx-spacing: 2px;
+}
+
+.ordering-container * {
+    -fx-background-color: transparent;
+}
+
+.error-message {
+    -fx-padding: 15px;
+    -fx-spacing: 20px;
+    -fx-alignment: center;
+}
+
+.output-message {
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-alignment: top;
+    -fx-background-color: #1b181b;
+}
+
+.output-message * {
+    -fx-background-color: transparent;
+}
+
+.no-outline-btn {
+    -fx-background-color: transparent;
+}
+
+.command-output-container {
+    -fx-padding: 5px 20px 0 20px;
+}
+
+.light .output{
+    -fx-background-color: #fbfbfb;
+}
+
+.dark .output{
+    -fx-background-color: transparent;
+}
+
+/* Reset */
+.ansi-reset {
+    -fx-fill: inherit;
+    -fx-background-color: transparent;
+    -fx-font-weight: normal;
+    -fx-font-style: normal;
+    -fx-underline: false;
+    -fx-strikethrough: false;
+}
+
+/* Text styles */
+.ansi-bold {
+    -fx-font-weight: bold;
+}
+
+.ansi-dim {
+    -fx-opacity: 1;
+}
+
+.ansi-italic {
+    -fx-font-style: italic;
+}
+
+.ansi-underline {
+    -fx-underline: true;
+}
+
+.ansi-strikethrough {
+    -fx-strikethrough: true;
+}
+
+.ansi-fg-bright-black {
+    -fx-fill: #000000 !important;
+}
+
+.ansi-fg-bright-gray{
+    -fx-fill: gray !important;
+}
+/* Light Gray */
+.ansi-fg-bright-red, .error-line {
+    -fx-fill: #FF0000 !important;
+}
+
+/* Bright Red */
+.ansi-fg-bright-green {
+    -fx-fill: #32FF32 !important;
+}
+
+/* Neon Green */
+.ansi-fg-bright-yellow {
+    -fx-fill: #FFFF66 !important;
+}
+
+/* Bright Yellow */
+.ansi-fg-bright-blue {
+    -fx-fill: #66B2FF !important;
+}
+
+/* Sky Blue */
+.ansi-fg-bright-magenta {
+    -fx-fill: #FF66FF !important;
+}
+
+/* Hot Pink */
+.ansi-fg-bright-cyan {
+    -fx-fill: #66FFFF !important;
+}
+
+/* Electric Cyan */
+.ansi-fg-bright-white {
+    -fx-fill: #ffffff !important;
+}
+
+/* Pure White */
+
+.centered-text{
+   -fx-text-alignment: center;
+}
+
+.centered-highlighted-text{
+   -fx-text-alignment: center;
+   -fx-padding: 10px;
+}
+
+.error-notif-title {
+    -fx-fill: #FF0000 !important;
+    -fx-font-size: 20px !important;
+}
+
+.dark .error-notif-text{
+    -fx-fill: #ffffff !important;
+    -fx-font-size: 16px !important;
+}
+
+.light .error-notif-text{
+    -fx-fill: #000000 !important;
+    -fx-font-size: 16px !important;
+}
+
+.dark .info-notif-text{
+    -fx-fill: #ffffff !important;
+    -fx-font-size: 16px !important;
+}
+
+.light .info-notif-text{
+    -fx-fill: #000000 !important;
+    -fx-font-size: 16px !important;
+}
+
+.bold-text{
+    -fx-font-weight: 700;
+    -fx-font-size: 14px !important;
+}
+
+.dark .bold-text{
+    -fx-fill: #ffffff !important;
+}
+
+.light .bold-text{
+    -fx-fill: #000000 !important;
+}
+
+.small-text{
+    -fx-font-size: 12px !important;
+}
+
+.dark .small-text{
+    -fx-fill: #ffffff !important;
+}
+
+.light .small-text{
+    -fx-fill: #000000 !important;
+}

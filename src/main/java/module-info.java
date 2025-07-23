@@ -1,4 +1,4 @@
-module org.ashot.microservice_starter {
+module org.ashot.shellflow {
     requires javafx.fxml;
     requires atlantafx.base;
     requires org.json;
@@ -13,21 +13,21 @@ module org.ashot.microservice_starter {
     requires pty4j;
 
 
-    exports org.ashot.microservice_starter;
-    exports org.ashot.microservice_starter.node.popup;
-    opens org.ashot.microservice_starter to javafx.fxml;
-    opens org.ashot.microservice_starter.node.popup to javafx.fxml;
-    exports org.ashot.microservice_starter.registry;
-    opens org.ashot.microservice_starter.registry to javafx.fxml;
-    exports org.ashot.microservice_starter.utils;
-    opens org.ashot.microservice_starter.utils to javafx.fxml;
-    opens org.ashot.microservice_starter.data.constant to javafx.base;
-    opens org.ashot.microservice_starter.node.tab to javafx.base;
-    opens org.ashot.microservice_starter.data.icon to javafx.base;
-    exports org.ashot.microservice_starter.data;
-    opens org.ashot.microservice_starter.data.message to javafx.fxml;
-    exports org.ashot.microservice_starter.node.entry;
-    opens org.ashot.microservice_starter.node.tab.main to javafx.base;
-    opens org.ashot.microservice_starter.node.tab.profiler to javafx.base;
-    opens org.ashot.microservice_starter.node.tab.executions to javafx.base;
+    exports org.ashot.shellflow;
+    exports org.ashot.shellflow.node.popup;
+    opens org.ashot.shellflow to javafx.fxml;
+    opens org.ashot.shellflow.node.popup to javafx.fxml;
+    exports org.ashot.shellflow.registry;
+    opens org.ashot.shellflow.registry to javafx.fxml;
+    exports org.ashot.shellflow.utils;
+    opens org.ashot.shellflow.utils to javafx.fxml;
+    opens org.ashot.shellflow.data.constant to javafx.base;
+    opens org.ashot.shellflow.node.tab to javafx.base;
+    opens org.ashot.shellflow.data.icon to javafx.base;
+    exports org.ashot.shellflow.data;
+    opens org.ashot.shellflow.data.message to javafx.fxml;
+    exports org.ashot.shellflow.node.entry;
+    opens org.ashot.shellflow.node.tab.profiler to javafx.base;
+    opens org.ashot.shellflow.node.tab.executions to javafx.base;
+    opens org.ashot.shellflow.node.tab.preset to javafx.base;
 }

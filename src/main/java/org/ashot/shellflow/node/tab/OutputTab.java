@@ -1,0 +1,202 @@
+package org.ashot.shellflow.node.tab;
+
+import com.pty4j.PtyProcess;
+import com.techsenger.jeditermfx.ui.JediTermFxWidget;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import org.ashot.shellflow.Main;
+import org.ashot.shellflow.data.Command;
+import org.ashot.shellflow.node.tab.executions.SequentialExecutionsTab;
+import org.ashot.shellflow.terminal.TerminalFactory;
+import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class OutputTab extends Tab {
+    private static final Logger logger = LoggerFactory.getLogger(OutputTab.class);
+    private String commandDisplayName;
+    private JediTermFxWidget terminal;
+    private final VBox terminalWrapper = new VBox();
+    private boolean inProgress = false;
+    private boolean finished = false;
+    private boolean failed = false;
+    private boolean canceled = false;
+
+    private OutputTab(OutputTabBuilder outputTabBuilder) {
+        this.commandDisplayName = outputTabBuilder.commandDisplayName;
+        this.terminal = outputTabBuilder.terminal;
+        this.setTooltip(outputTabBuilder.tooltip);
+        this.setText(outputTabBuilder.tabName);
+        this.setDisable(outputTabBuilder.disabled);
+        this.setClosable(outputTabBuilder.closable);
+        Platform.runLater(this::setupOutputTab);
+    }
+
+    public void setupOutputTab() {
+        if (terminal != null) {
+            terminalWrapper.getChildren().add(terminal.getPane());
+            VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+        }
+        this.terminalWrapper.setFillWidth(true);
+        this.terminalWrapper.setPadding(new Insets(5));
+        this.terminalWrapper.getStyleClass().addAll(Main.getDarkModeSetting() ? "dark" : "light", "terminal-wrapper");
+        this.setContent(this.terminalWrapper);
+        this.setOnClosed(_ -> this.terminal.close());
+    }
+
+    public static OutputTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
+        return new OutputTabBuilder(TerminalFactory.createTerminalWidget(process))
+                .setTabName(command.isNameSet() ? command.getName() : "Process - " + process.pid())
+                .setCommandDisplayName(command.getArgumentsString())
+                .setTooltip(command.getArgumentsString())
+                .build();
+    }
+
+    public static OutputTab constructSequencePartOutputTab(Command command) {
+        return new OutputTabBuilder()
+                .setTabName(command.getName())
+                .setTooltip(command.getArgumentsString())
+                .setCommandDisplayName(command.getArgumentsString())
+                .setDisabled(true)
+                .setClosable(false)
+                .build();
+    }
+
+    public void shutDownTerminal() {
+        if (getTerminal() != null) {
+            this.getTerminal().close();
+        }
+    }
+
+    public void startTerminal() {
+        if (getTerminal() != null) {
+            this.getTerminal().start();
+        }
+    }
+
+    public static List<OutputTab> getOutputTabsFromTabPane(TabPane tabPane) {
+        List<OutputTab> tabs = new ArrayList<>();
+        for (Tab tab : tabPane.getTabs()) {
+            if (tab instanceof OutputTab outputTab) {
+                tabs.add(outputTab);
+            } else if (tab instanceof SequentialExecutionsTab sequenceTab) {
+                tabs.addAll(sequenceTab.getSequentialExecutionTabPaneTabs());
+            }
+        }
+        return tabs;
+    }
+
+    public void setCommandDisplayName(String commandDisplayName) {
+        this.commandDisplayName = commandDisplayName;
+    }
+
+    public String getCommandDisplayName() {
+        return commandDisplayName;
+    }
+
+    public void closeTerminal() {
+        this.terminal.close();
+    }
+
+    public JediTermFxWidget getTerminal() {
+        return terminal;
+    }
+
+    public void setTerminal(JediTermFxWidget terminal) {
+        this.terminal = terminal;
+        Platform.runLater(() -> {
+            terminalWrapper.getChildren().add(terminal.getPane());
+            VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+            if (this.getText().isBlank()) {
+                this.setText("Process - " + ((PtyProcessTtyConnector) terminal.getTtyConnector()).getProcess().pid());
+            }
+        });
+    }
+
+    public boolean isInProgress() {
+        return inProgress;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public void setFailed(boolean failed) {
+        this.failed = failed;
+    }
+
+    public static class OutputTabBuilder {
+
+        private JediTermFxWidget terminal;
+
+        private String tabName;
+        private final Tooltip tooltip = new Tooltip();
+        private String commandDisplayName;
+        private boolean disabled = false;
+        private boolean closable = true;
+
+        public OutputTabBuilder() {
+        }
+
+        public OutputTabBuilder(JediTermFxWidget terminal) {
+            this.terminal = terminal;
+        }
+
+        public OutputTabBuilder setTabName(String tabName) {
+            this.tabName = tabName;
+            return this;
+        }
+
+        public OutputTabBuilder setCommandDisplayName(String commandDisplayName) {
+            this.commandDisplayName = commandDisplayName;
+            return this;
+        }
+
+        public OutputTabBuilder setTooltip(String tooltipText) {
+            this.tooltip.setText(tooltipText);
+            return this;
+        }
+
+        public OutputTabBuilder setDisabled(boolean disabled) {
+            this.disabled = disabled;
+            return this;
+        }
+
+        public OutputTabBuilder setClosable(boolean closable) {
+            this.closable = closable;
+            return this;
+        }
+
+        public OutputTab build() {
+            return new OutputTab(this);
+        }
+    }
+}
