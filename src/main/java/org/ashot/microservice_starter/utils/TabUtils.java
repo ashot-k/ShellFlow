@@ -41,7 +41,6 @@ public class TabUtils {
         Platform.runLater(() -> {
             tab.setGraphic(Icons.getExecutionErrorIcon(titleIconsSize));
             tab.setDisable(false);
-            tab.setClosable(true);
         });
         if (tab instanceof OutputTab outputTab) {
             outputTab.setInProgress(false);
@@ -53,7 +52,6 @@ public class TabUtils {
         Platform.runLater(() -> {
             tab.setGraphic(Icons.getExecutionFinishedIcon(titleIconsSize));
             tab.setDisable(false);
-            tab.setClosable(true);
         });
         if (tab instanceof OutputTab outputTab) {
             outputTab.setInProgress(false);

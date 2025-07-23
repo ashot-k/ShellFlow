@@ -51,7 +51,7 @@ public class SequentialExecutor {
                     process = processBuilder.start();
                     ProcessRegistry.register(String.valueOf(process.pid()), process);
                     tab.setTerminal(TerminalFactory.createTerminalWidget(process));
-                    tab.getTerminal().start();
+                    tab.startTerminal();
                     tab.setOnCloseRequest(e -> {
                         setCanceled(tab);
                         setCanceled(sequenceHolder);
@@ -75,9 +75,11 @@ public class SequentialExecutor {
                         break;
                     }
                     if (process.exitValue() == 0) {
+                        tab.setClosable(false);
                         setFinished(tab);
                         sequenceTabPane.getSelectionModel().select(i != commandList.size() ? i + 1 : i);
                     } else {
+                        tab.setClosable(false);
                         setFailed(tab);
                         setFailed(sequenceHolder);
                         Notification.display(

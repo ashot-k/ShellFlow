@@ -72,6 +72,11 @@ public class OutputTab extends Tab {
             this.getTerminal().close();
         }
     }
+    public void startTerminal(){
+        if(getTerminal() != null){
+            this.getTerminal().start();
+        }
+    }
 
     public static List<OutputTab> getOutputTabsFromTabPane(TabPane tabPane){
         return tabPane.getTabs().stream().filter(e -> e instanceof OutputTab).map(o -> (OutputTab) o).toList();

@@ -2,7 +2,6 @@ package org.ashot.microservice_starter;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -108,7 +107,7 @@ public class Controller implements Initializable {
         tabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
 
         setupIcons();
-        addNewEntry(null);
+        addNewEntry();
         openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
         loadRecentFolders();
         loadMostRecentFile();
@@ -145,7 +144,7 @@ public class Controller implements Initializable {
         stopAllBtn.setGraphic(Icons.getCloseButtonIcon(CustomButton.BUTTON_ICON_SIZE));
     }
 
-    public void addNewEntry(ActionEvent e) {
+    public void addNewEntry() {
         container.getChildren().add(new Entry().buildEmptyEntry(container));
     }
 
@@ -170,7 +169,7 @@ public class Controller implements Initializable {
         Platform.runLater(() -> tabPane.getSelectionModel().selectFirst());
     }
 
-    public void saveAs(ActionEvent e) {
+    public void saveAs() {
         loadRecentFolders();
         File savedFile = chooseFile(true);
         if (savedFile != null) {
@@ -181,13 +180,13 @@ public class Controller implements Initializable {
         }
     }
 
-    public void save(ActionEvent e) {
+    public void save() {
         loadRecentFolders();
         File savedFile = new File(currentlyLoadedFileLocation);
         saveToFile(savedFile);
     }
 
-    public void load(ActionEvent e) {
+    public void load() {
         loadRecentFolders();
         File loadedFile = chooseFile(false);
         if (loadedFile != null) {
@@ -206,10 +205,10 @@ public class Controller implements Initializable {
         RecentFolders.saveDirReference(DirType.LAST_SAVED, fileToSave.getParent());
     }
 
-    public void clearAllEntries(ActionEvent e) {
+    public void clearAllEntries() {
         Platform.runLater(() -> {
             container.getChildren().clear();
-            addNewEntry(null);
+            addNewEntry();
         });
     }
 
@@ -231,7 +230,7 @@ public class Controller implements Initializable {
                     String wsl = Utils.getOrDefault(entry.opt(FieldType.WSL.getValue()), FieldType.WSL);
                     addNewEntry(name, path, cmd, Boolean.parseBoolean(wsl));
                 } else{
-                    addNewEntry(null);
+                    addNewEntry();
                 }
             }
         }
@@ -248,20 +247,16 @@ public class Controller implements Initializable {
         return FileUtils.chooseFile(save, save ? lastSavedFolderLocation : lastLoadedFolderLocation);
     }
 
-    public void lightMode(ActionEvent e) {
+    public void lightMode() {
         Main.setTheme(ThemeMode.LIGHT_MODE);
     }
 
-    public void darkMode(ActionEvent e) {
+    public void darkMode() {
         Main.setTheme(ThemeMode.DARK_MODE);
     }
 
     public TabPane getTabPane() {
         return tabPane;
-    }
-
-    public VBox getSceneContainer() {
-        return sceneContainer;
     }
 
     public ExecutionsTab getExecutionsTab(){

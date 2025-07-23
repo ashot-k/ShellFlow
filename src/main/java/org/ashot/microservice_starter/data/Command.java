@@ -21,16 +21,17 @@ public class Command {
     private boolean nameSet;
     private boolean persistent;
     private final List<String> argumentList = new ArrayList<>();
-    private final List<String> rawArgumentsList = new ArrayList<>();
+    private final String rawArguments;
     private String argumentsString = "";
 
-    public Command(String name, String path, String argumentList, boolean wsl, boolean persistent) {
-        validateArguments(argumentList);
+    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) {
+        rawArguments = arguments;
+        validateArguments(arguments);
         this.persistent = persistent;
         if (persistent) {
-            constructCommandPersistentSession(name, path, argumentList, wsl);
+            constructCommandPersistentSession(name, path, arguments, wsl);
         } else {
-            constructCommand(name, path, argumentList, wsl);
+            constructCommand(name, path, arguments, wsl);
         }
     }
 
@@ -52,7 +53,6 @@ public class Command {
         } else {
             validatePath();
         }
-        rawArgumentsList.add(arguments);
         prefixForOperatingEnvironment();
         argumentsString = arguments;
         this.argumentList.add(arguments);
@@ -89,7 +89,7 @@ public class Command {
 
     private void prefixForOperatingEnvironment() {
         if (Utils.checkIfLinux()) {
-            this.argumentList.addAll(0, List.of("sh", "-c"));
+            this.argumentList.addAll(0, List.of("$SHELL", "-c"));
             log.debug("Adjusting command for linux OS {}", this.argumentList);
         } else if (Utils.checkIfWindows()) {
             if (wsl) {
@@ -120,12 +120,8 @@ public class Command {
         return argumentsString;
     }
 
-    public String getRawArgumentsString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : rawArgumentsList) {
-            stringBuilder.append(s).append(" ");
-        }
-        return stringBuilder.toString();
+    public String getRawArguments() {
+        return rawArguments;
     }
 
     public String getName() {

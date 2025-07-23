@@ -13,7 +13,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
         <json.version>20240303</json.version>
+        <testfx.version>4.0.18</testfx.version>
+        <jeditermfx.version>1.1.0</jeditermfx.version>
+        <controlsfx.version>11.2.2</controlsfx.version>
         <atlantafx.themes.version>2.0.1</atlantafx.themes.version>
+        <mockito.version>5.16.1</mockito.version>
     </properties>
 
     <dependencies>
@@ -25,13 +29,13 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
-            <version>4.0.18</version>
+            <version>${testfx.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.16.1</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -47,17 +51,17 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.2.2</version>
+            <version>${controlsfx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.techsenger.jeditermfx</groupId>
             <artifactId>jeditermfx-core</artifactId>
-            <version>1.1.0</version>
+            <version>${jeditermfx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.techsenger.jeditermfx</groupId>
             <artifactId>jeditermfx-ui</artifactId>
-            <version>1.1.0</version>
+            <version>${jeditermfx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -89,7 +93,7 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
-            <version>4.0.18</version>
+            <version>${testfx.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

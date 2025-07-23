@@ -9,7 +9,11 @@ public class ProcessUtils {
 
     public static PtyProcessBuilder buildProcess(Command command) {
         HashMap<String, String> environment = new HashMap<>(System.getenv());
-        return new PtyProcessBuilder().setWindowsAnsiColorEnabled(true).setEnvironment(environment).setCommand(command.getArgumentList()).setDirectory(command.isWsl() ? "/" : command.getPath());
+        return new PtyProcessBuilder().
+                setWindowsAnsiColorEnabled(true).
+                setEnvironment(environment).
+                setCommand(command.getArgumentList()).
+                setDirectory(command.isWsl() ? "/" : command.getPath());
     }
 
 }

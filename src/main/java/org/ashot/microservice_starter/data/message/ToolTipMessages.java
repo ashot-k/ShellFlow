@@ -2,11 +2,11 @@ package org.ashot.microservice_starter.data.message;
 
 public class ToolTipMessages {
     public static String nameField() {
-        return "Name of the tab in which the command will be ran in.\nRequires the sequential option to be off.";
+        return "Name of the tab in which the command will be ran in.";
     }
 
     public static String commandField() {
-        return "The command which will be executed.\nSeparate commands with ; if you wish to add multiple in one entry.";
+        return "The command which will be executed.";
     }
 
     public static String pathField() {
