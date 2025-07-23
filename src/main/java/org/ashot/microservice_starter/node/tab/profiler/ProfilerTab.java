@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.tab;
+package org.ashot.microservice_starter.node.tab.profiler;
 
 import com.techsenger.jeditermfx.core.ProcessTtyConnector;
 import javafx.application.Platform;
@@ -12,6 +12,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.constant.ProcessStatus;
+import org.ashot.microservice_starter.node.tab.OutputTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

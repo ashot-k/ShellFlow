@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.tab;
+package org.ashot.microservice_starter.node.tab.executions;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;

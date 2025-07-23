@@ -15,7 +15,7 @@ import org.ashot.microservice_starter.data.constant.ButtonType;
 import org.ashot.microservice_starter.data.constant.Direction;
 import org.ashot.microservice_starter.data.icon.Icons;
 import org.ashot.microservice_starter.data.message.ToolTipMessages;
-import org.ashot.microservice_starter.execution.CommandExecution;
+import org.ashot.microservice_starter.execution.CommandExecutor;
 import org.ashot.microservice_starter.mapper.EntryToCommandMapper;
 import org.ashot.microservice_starter.node.CustomButton;
 import org.ashot.microservice_starter.node.popup.ErrorPopup;
@@ -103,6 +103,6 @@ public class EntryButton extends CustomButton {
     }
 
     private static void execute(Command command) throws IOException {
-        new Thread(() -> CommandExecution.execute(command)).start();
+        new Thread(() -> CommandExecutor.execute(command)).start();
     }
 }

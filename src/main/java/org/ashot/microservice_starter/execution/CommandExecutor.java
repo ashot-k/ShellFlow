@@ -22,9 +22,9 @@ import static org.ashot.microservice_starter.utils.TabUtils.*;
 import static org.ashot.microservice_starter.utils.Utils.calculateDelay;
 
 
-public class CommandExecution {
+public class CommandExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommandExecution.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
     public static void execute(Command command) {
         try {

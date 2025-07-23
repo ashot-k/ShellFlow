@@ -9,7 +9,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import org.ashot.microservice_starter.data.constant.FieldType;
-import org.ashot.microservice_starter.node.tab.PresetSetupTab;
+import org.ashot.microservice_starter.node.tab.main.PresetSetupTab;
 import org.ashot.microservice_starter.utils.Animator;
 
 import java.util.Map;

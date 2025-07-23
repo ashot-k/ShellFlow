@@ -4,13 +4,13 @@ import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import org.ashot.microservice_starter.data.Command;
 import org.ashot.microservice_starter.data.CommandSequence;
 import org.ashot.microservice_starter.data.constant.NotificationType;
 import org.ashot.microservice_starter.node.notification.Notification;
 import org.ashot.microservice_starter.node.tab.OutputTab;
-import org.ashot.microservice_starter.node.tab.SequenceTab;
-import org.ashot.microservice_starter.node.tab.SequenceTabPane;
+import org.ashot.microservice_starter.node.tab.executions.SequentialExecutionsTab;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.terminal.TerminalFactory;
 import org.slf4j.Logger;
@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
+import static org.ashot.microservice_starter.data.message.NotificationMessages.SequentialFailNotificationMessage;
+import static org.ashot.microservice_starter.data.message.NotificationMessages.SequentialFinishedNotificationMessage;
 import static org.ashot.microservice_starter.node.tab.OutputTab.constructSequencePartOutputTab;
 import static org.ashot.microservice_starter.utils.ProcessUtils.buildProcess;
 import static org.ashot.microservice_starter.utils.TabUtils.*;
@@ -30,19 +32,10 @@ public class SequentialExecutor {
     public static void executeSequential(CommandSequence commandSequence) {
         //todo add thread to a list, track tab closure to terminate the thread
         new Thread(() -> {
-            SequenceTabPane sequenceTabPane = new SequenceTabPane();
-            SequenceTab sequenceHolder = new SequenceTab(commandSequence.getSequenceName(), sequenceTabPane);
-            sequenceHolder.setOnClosed(_ -> {
-                for (Tab tab : sequenceTabPane.getTabs()) {
-                    if (tab instanceof OutputTab outputTab) {
-                        outputTab.shutDownTerminal();
-                    }
-                }
-            });
+            SequentialExecutionsTab sequenceHolder = new SequentialExecutionsTab(commandSequence.getSequenceName(), new TabPane());
+            TabPane sequenceTabPane = sequenceHolder.getSequentialExecutionTabPane();
             setInProgress(sequenceHolder);
-            Platform.runLater(() -> {
-                addToExecutions(sequenceHolder);
-            });
+            addToExecutions(sequenceHolder);
             PtyProcessBuilder processBuilder;
             PtyProcess process;
             List<Command> commandList = commandSequence.getCommandList();
@@ -53,16 +46,11 @@ public class SequentialExecutor {
             for (int i = 0; i < commandList.size(); i++) {
                 try {
                     Command currentCommand = commandList.get(i);
-                    OutputTab tab = (OutputTab) sequenceTabPane.getTabs().get(i);
-                    if (commandSequence.getSequenceName().isBlank()) {
-                        String name = "Sequence - " + "(" + currentCommand.getName() + ")";
-                        commandSequence.setSequenceName(name);
-                        sequenceHolder.setText(name);
-                    }
+                    OutputTab tab = sequenceHolder.getSequentialExecutionTabPaneTabs().get(i);
                     processBuilder = buildProcess(currentCommand);
                     process = processBuilder.start();
                     ProcessRegistry.register(String.valueOf(process.pid()), process);
-                    tab.setTerminal(TerminalFactory.createTerminalWidget(process, null));
+                    tab.setTerminal(TerminalFactory.createTerminalWidget(process));
                     tab.getTerminal().start();
                     tab.setOnCloseRequest(e -> {
                         setCanceled(tab);
@@ -72,6 +60,15 @@ public class SequentialExecutor {
                         }
                         e.consume();
                     });
+                    if (commandSequence.getSequenceName().isBlank()) {
+                        String pid = String.valueOf(process.pid());
+                        Platform.runLater(() -> {
+                            String currentTabName = currentCommand.isNameSet() ? currentCommand.getName() : "Process - " + pid;
+                            tab.setText(currentTabName);
+                            String sequenceTabName = "Sequence - " + "(" + currentTabName + ")";
+                            sequenceHolder.setText(sequenceTabName);
+                        });
+                    }
                     setInProgress(tab);
                     process.waitFor();
                     if (tab.isCanceled()) {
@@ -83,9 +80,11 @@ public class SequentialExecutor {
                     } else {
                         setFailed(tab);
                         setFailed(sequenceHolder);
-                        Platform.runLater(() -> {
-                            Notification.display("Failure", commandSequence.getSequenceName() + " has failed at step: " + currentCommand.getName(), null, NotificationType.EXECUTION_FAILURE);
-                        });
+                        Notification.display(
+                                ExecutionState.FAILURE.getValue(),
+                                SequentialFailNotificationMessage(commandSequence.getSequenceName(), currentCommand.getName()),
+                                null,
+                                NotificationType.EXECUTION_FAILURE);
                         break;
                     }
                 } catch (IOException | InterruptedException e) {
@@ -97,9 +96,7 @@ public class SequentialExecutor {
                 return;
             }
             setFinished(sequenceHolder);
-            Platform.runLater(() -> {
-                Notification.display("Success", commandSequence.getSequenceName() + " has finished", null, NotificationType.INFO);
-            });
+            Notification.display(ExecutionState.FINISHED.getValue(), SequentialFinishedNotificationMessage(commandSequence.getSequenceName()), null, NotificationType.INFO);
         }).start();
     }
 

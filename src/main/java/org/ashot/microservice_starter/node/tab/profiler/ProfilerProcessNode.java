@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.tab;
+package org.ashot.microservice_starter.node.tab.profiler;
 
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -6,6 +6,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.ashot.microservice_starter.data.constant.ProcessStatus;
+import org.ashot.microservice_starter.node.tab.OutputTab;
 
 public class ProfilerProcessNode extends HBox{
     private final Process process;

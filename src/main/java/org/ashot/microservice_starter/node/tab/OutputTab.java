@@ -7,8 +7,10 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.ashot.microservice_starter.data.Command;
+import org.ashot.microservice_starter.terminal.PtyProcessTtyConnector;
 import org.ashot.microservice_starter.terminal.TerminalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public class OutputTab extends Tab {
 
     public static OutputTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
         return new OutputTab.OutputTabBuilder(TerminalFactory.createTerminalWidget(process))
-                .setTabName(command.getName())
+                .setTabName(command.isNameSet() ? command.getName() : "Process - " + process.pid())
                 .setCommandDisplayName(command.getArgumentsString())
                 .setTooltip(command.getArgumentsString())
                 .build();
@@ -93,12 +95,15 @@ public class OutputTab extends Tab {
 
     public void setTerminal(JediTermFxWidget terminal) {
         this.terminal = terminal;
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             this.terminalWrapper = new VBox(terminal.getPane());
             this.terminalWrapper.setFillWidth(true);
             this.terminalWrapper.setPadding(new Insets(5));
             VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
             this.setContent(this.terminalWrapper);
+            if(this.getText().isBlank()){
+                this.setText("Process - " + ((PtyProcessTtyConnector) terminal.getTtyConnector()).getProcess().pid());
+            }
         });
     }
 
@@ -141,9 +146,8 @@ public class OutputTab extends Tab {
         private String tabName;
         private final Tooltip tooltip = new Tooltip();
         private String commandDisplayName;
-        public OutputTabBuilder(){
 
-        }
+        public OutputTabBuilder(){}
 
         public OutputTabBuilder(JediTermFxWidget terminal){
             this.terminal = terminal;

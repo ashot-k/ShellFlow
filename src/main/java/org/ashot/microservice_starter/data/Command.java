@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 public class Command {
@@ -19,6 +18,7 @@ public class Command {
     private String name;
     private String path;
     private boolean wsl;
+    private boolean nameSet;
     private boolean persistent;
     private final List<String> argumentList = new ArrayList<>();
     private final List<String> rawArgumentsList = new ArrayList<>();
@@ -102,12 +102,16 @@ public class Command {
         }
     }
 
+    public boolean isNameSet() {
+        return nameSet;
+    }
+
     private String formatName(String name) {
-        if (name.isBlank()) {
-            //todo change
-            name = "process-" + new Random().nextInt(0, 10000);
+        if(name.isBlank()){
+            nameSet = false;
         } else {
             name = name.replace(" ", "-");
+            nameSet = true;
         }
         return name;
     }

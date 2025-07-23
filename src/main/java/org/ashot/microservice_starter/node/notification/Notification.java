@@ -1,5 +1,6 @@
 package org.ashot.microservice_starter.node.notification;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
@@ -58,7 +59,7 @@ public abstract class Notification {
         }
         setNotifTheme(notif);
         notif.graphic(contentWrapper);
-        notif.show();
+        Platform.runLater(notif::show);
     }
 
     private static TextFlow setupTitleArea(String title, NotificationType type) {

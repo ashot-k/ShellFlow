@@ -15,14 +15,14 @@ import org.ashot.microservice_starter.data.constant.FieldType;
 import org.ashot.microservice_starter.data.constant.TabIndices;
 import org.ashot.microservice_starter.data.constant.ThemeMode;
 import org.ashot.microservice_starter.data.icon.Icons;
-import org.ashot.microservice_starter.execution.CommandExecution;
+import org.ashot.microservice_starter.execution.CommandExecutor;
 import org.ashot.microservice_starter.node.CustomButton;
 import org.ashot.microservice_starter.node.RecentFolders;
 import org.ashot.microservice_starter.node.entry.Entry;
-import org.ashot.microservice_starter.node.tab.ExecutionsTab;
 import org.ashot.microservice_starter.node.tab.OutputTab;
-import org.ashot.microservice_starter.node.tab.PresetSetupTab;
-import org.ashot.microservice_starter.node.tab.ProfilerTab;
+import org.ashot.microservice_starter.node.tab.executions.ExecutionsTab;
+import org.ashot.microservice_starter.node.tab.main.PresetSetupTab;
+import org.ashot.microservice_starter.node.tab.profiler.ProfilerTab;
 import org.ashot.microservice_starter.registry.ControllerRegistry;
 import org.ashot.microservice_starter.registry.ProcessRegistry;
 import org.ashot.microservice_starter.utils.FileUtils;
@@ -154,7 +154,7 @@ public class Controller implements Initializable {
     }
 
     public void executeAll() {
-       CommandExecution.executeAll(container, sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
+       CommandExecutor.executeAll(container, sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
     }
 
     public void stopAll() {

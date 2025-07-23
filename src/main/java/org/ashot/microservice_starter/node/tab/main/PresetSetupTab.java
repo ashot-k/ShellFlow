@@ -1,4 +1,4 @@
-package org.ashot.microservice_starter.node.tab;
+package org.ashot.microservice_starter.node.tab.main;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
