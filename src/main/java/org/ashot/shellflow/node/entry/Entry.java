@@ -26,7 +26,6 @@ public class Entry extends HBox {
     private Button execute;
     private Button deleteEntry;
 
-
     public Entry buildEmptyEntry(Pane v) {
         return buildEntry(v, "", "", "", false);
     }

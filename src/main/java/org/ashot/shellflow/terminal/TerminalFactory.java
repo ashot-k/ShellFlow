@@ -7,7 +7,7 @@ import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import com.techsenger.jeditermfx.ui.settings.SettingsProvider;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.terminal.settings.DarkThemeSettingsProvider;
-import org.ashot.shellflow.terminal.settings.WhiteThemeSettingsProvider;
+import org.ashot.shellflow.terminal.settings.LightThemeSettingsProvider;
 import org.ashot.shellflow.terminal.tty.MonitoringTtyConnector;
 import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public class TerminalFactory {
     }
 
     private static SettingsProvider getSettingsProvider() {
-        return Main.getDarkModeSetting() ? new DarkThemeSettingsProvider() : new WhiteThemeSettingsProvider();
+        return Main.getDarkModeSetting() ? new DarkThemeSettingsProvider() : new LightThemeSettingsProvider();
     }
 
 }

@@ -3,16 +3,11 @@ package org.ashot.shellflow.utils;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import org.ashot.shellflow.Main;
-import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.icon.Icons;
-import org.ashot.shellflow.node.popup.ErrorPopup;
-import org.ashot.shellflow.node.tab.OutputTab;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -27,13 +22,6 @@ import java.util.Set;
 public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
-
-    public static OutputTab getSelectedOutputTab(TabPane tabs) {
-        if (tabs.selectionModelProperty().getValue().getSelectedItem() instanceof OutputTab outputTab) {
-            return outputTab;
-        }
-        return null;
-    }
 
     public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName) {
         JSONArray entries = Utils.createJSONArray(container);
@@ -130,26 +118,6 @@ public class Utils {
         return System.getProperty("os.name").toLowerCase().contains("linux");
     }
 
-    public static JSONObject setupFolders() {
-        try {
-            JSONObject jsonObject = null;
-            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
-            if (file.exists()) {
-                String jsonContent = Files.readString(file.toPath());
-                jsonObject = new JSONObject(jsonContent);
-            } else if (file.createNewFile()) {
-                jsonObject = new JSONObject();
-                jsonObject.put(DirType.LAST_LOADED.name(), ".");
-                jsonObject.put(DirType.LAST_SAVED.name(), ".");
-                jsonObject.put(DirType.RECENT.name(), new JSONArray());
-                FileUtils.writeJSONDataToFile(file, jsonObject);
-            }
-            return jsonObject;
-        } catch (IOException e) {
-            new ErrorPopup(e.getMessage());
-        }
-        return null;
-    }
 
     public static void setupOSInfo(Button osInfo) {
         String os = System.getProperty("os.name");

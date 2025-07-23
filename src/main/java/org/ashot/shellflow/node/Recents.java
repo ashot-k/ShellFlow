@@ -2,7 +2,6 @@ package org.ashot.shellflow.node;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TabPane;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.node.popup.ErrorPopup;
@@ -17,49 +16,37 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class RecentFolders {
-    private static final int MAX_ENTRIES = 10;
-    private static final Logger log = LoggerFactory.getLogger(RecentFolders.class);
+public class Recents {
+    private static final Logger log = LoggerFactory.getLogger(Recents.class);
 
-    public interface LoadFromFile {
-        void run(File file);
+    private static String lastSavedFolderLocation;
+    private static String lastLoadedFolderLocation;
+
+    public static void loadRecentFolders() {
+        JSONObject dirs = getRecents();
+        lastSavedFolderLocation = (String) dirs.get(DirType.LAST_SAVED.name());
+        lastLoadedFolderLocation = (String) dirs.get(DirType.LAST_LOADED.name());
     }
 
-    public static void refreshCurrentlyOpenedFolders(Menu openRecent, TabPane tabs, LoadFromFile onMenuItemClick) {
-        List<String> toRemove = getInvalidRecentFolders(openRecent);
-        openRecent.getItems().clear();
-        JSONArray recentFolders = getRecentFiles();
-        if (recentFolders == null) {
-            log.debug("No recent folders found");
-            return;
-        }
-        log.debug("Recent folders found: {}", recentFolders.length());
-        for (Object s : recentFolders.toList().stream().limit(MAX_ENTRIES).toList()) {
-            String recentFolder = s.toString();
-            if (toRemove.contains(recentFolder)) {
-                removeRecentFile(recentFolder);
-            }
-            MenuItem m = new MenuItem(recentFolder);
-            m.setOnAction(_ -> {
-                File file = new File(recentFolder);
-                if (file.exists()) {
-                    onMenuItemClick.run(file);
-                    tabs.getSelectionModel().selectFirst();
-                }
-            });
-            m.setDisable(!new File(recentFolder).exists());
-            openRecent.getItems().add(m);
-        }
+    public static String getLastSavedFolderLocation() {
+        loadRecentFolders();
+        return lastSavedFolderLocation;
     }
 
-    public static File loadMostRecentFile(LoadFromFile loadFromFile) {
+    public static String getLastLoadedFolderLocation() {
+        loadRecentFolders();
+        return lastLoadedFolderLocation;
+    }
+
+    public static File loadMostRecentFile(Consumer<File> loadFromFile) {
         File mostRecentFile = null;
-        if (getRecentFiles() != null && !getRecentFiles().isEmpty()) {
-            String path = getRecentFiles().optString(0);
+        if (getRecents() != null && !getRecents().isEmpty()) {
+            String path = getRecents().getJSONArray(DirType.RECENT.name()).optString(0);
             if (path != null && !path.isBlank()) {
                 mostRecentFile = new File(path);
-                loadFromFile.run(mostRecentFile);
+                loadFromFile.accept(mostRecentFile);
             }
         }
         return mostRecentFile;
@@ -75,7 +62,7 @@ public class RecentFolders {
         return list;
     }
 
-    public static void saveDirReference(DirType dirType, String path) {
+    public static void refreshDir(DirType dirType, String path) {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
@@ -107,14 +94,21 @@ public class RecentFolders {
         }
     }
 
-    public static JSONArray getRecentFiles() {
-        JSONObject jsonObject = null;
-        File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
-        String jsonContent = null;
+    public static JSONObject getRecents() {
         try {
-            jsonContent = Files.readString(file.toPath());
-            jsonObject = new JSONObject(jsonContent);
-            return (JSONArray) jsonObject.get(DirType.RECENT.name());
+            JSONObject jsonObject = null;
+            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
+            if (file.exists()) {
+                String jsonContent = Files.readString(file.toPath());
+                jsonObject = new JSONObject(jsonContent);
+            } else if (file.createNewFile()) {
+                jsonObject = new JSONObject();
+                jsonObject.put(DirType.LAST_LOADED.name(), ".");
+                jsonObject.put(DirType.LAST_SAVED.name(), ".");
+                jsonObject.put(DirType.RECENT.name(), new JSONArray());
+                FileUtils.writeJSONDataToFile(file, jsonObject);
+            }
+            return jsonObject;
         } catch (IOException e) {
             new ErrorPopup(e.getMessage());
         }

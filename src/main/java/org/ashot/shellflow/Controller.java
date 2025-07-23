@@ -12,12 +12,13 @@ import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.data.constant.ThemeMode;
 import org.ashot.shellflow.data.icon.Icons;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.node.CustomButton;
-import org.ashot.shellflow.node.RecentFolders;
+import org.ashot.shellflow.node.Recents;
 import org.ashot.shellflow.node.entry.Entry;
+import org.ashot.shellflow.node.menu.file.FileMenu;
+import org.ashot.shellflow.node.menu.settings.SettingsMenu;
 import org.ashot.shellflow.node.tab.OutputTab;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
@@ -35,19 +36,15 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static org.ashot.shellflow.utils.FileUtils.openMostRecentFile;
+
 
 public class Controller implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     @FXML
     private VBox sceneContainer;
     @FXML
-    private MenuItem loadBtn;
-    @FXML
-    private Menu openRecent;
-    @FXML
-    private MenuItem saveAsBtn;
-    @FXML
-    private MenuItem saveBtn;
+    private MenuBar menuBar;
     @FXML
     private FlowPane container;
     @FXML
@@ -71,9 +68,7 @@ public class Controller implements Initializable {
     @FXML
     private Button clearEntriesBtn;
 
-    private String lastSavedFolderLocation;
-    private String lastLoadedFolderLocation;
-    private String currentlyLoadedFileLocation;
+    private static String currentlyLoadedFileLocation;
 
     public static final int SETUP_TABS = 3;
 
@@ -108,36 +103,20 @@ public class Controller implements Initializable {
 
         setupIcons();
         addNewEntry();
-        openRecent.setOnShowing(_ -> refreshRecentlyOpenedFolders());
-        loadRecentFolders();
-        loadMostRecentFile();
+        if(openMostRecentFile(this::openFile) == null){
+            currentlyLoadedFileLocation = null;
+        };
+        initializeMenuBarItems();
     }
 
-    private void loadRecentFolders() {
-        JSONObject dirs = Utils.setupFolders();
-        lastSavedFolderLocation = (String) dirs.get(DirType.LAST_SAVED.name());
-        lastLoadedFolderLocation = (String) dirs.get(DirType.LAST_LOADED.name());
-        refreshRecentlyOpenedFolders();
-    }
-
-    private void refreshRecentlyOpenedFolders() {
-        RecentFolders.refreshCurrentlyOpenedFolders(openRecent, this.tabPane, this::loadFromFile);
-    }
-
-    private void loadMostRecentFile() {
-        File file = RecentFolders.loadMostRecentFile(this::loadFromFile);
-        if (file != null) {
-            RecentFolders.saveDirReference(DirType.LAST_LOADED, file.getParent());
-            refreshFileLoaded(file.getAbsolutePath());
-        }
+    private void initializeMenuBarItems(){
+        menuBar.getMenus().addAll(
+                new FileMenu(this::openFile, this::writeEntriesToFile, tabPane),
+                new SettingsMenu()
+        );
     }
 
     private void setupIcons() {
-        int MENU_ITEM_ICON_SIZE = 18;
-        loadBtn.setGraphic(Icons.getOpenIcon(MENU_ITEM_ICON_SIZE));
-        openRecent.setGraphic(Icons.getOpenRecentIcon(MENU_ITEM_ICON_SIZE));
-        saveAsBtn.setGraphic(Icons.getSaveAsIcon(MENU_ITEM_ICON_SIZE));
-        saveBtn.setGraphic(Icons.getSaveIcon(MENU_ITEM_ICON_SIZE));
         newEntryBtn.setGraphic(Icons.getAddButtonIcon(CustomButton.BUTTON_ICON_SIZE));
         clearEntriesBtn.setGraphic(Icons.getClearIcon(CustomButton.BUTTON_ICON_SIZE));
         executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(CustomButton.BUTTON_ICON_SIZE));
@@ -169,50 +148,28 @@ public class Controller implements Initializable {
         Platform.runLater(() -> tabPane.getSelectionModel().selectFirst());
     }
 
-    public void saveAs() {
-        loadRecentFolders();
-        File savedFile = chooseFile(true);
-        if (savedFile != null) {
-            if (!savedFile.getAbsolutePath().endsWith(".json")) {
-                savedFile = new File(savedFile.getAbsolutePath() + ".json");
-            }
-            saveToFile(savedFile);
-        }
-    }
-
-    public void save() {
-        loadRecentFolders();
-        File savedFile = new File(currentlyLoadedFileLocation);
-        saveToFile(savedFile);
-    }
-
-    public void load() {
-        loadRecentFolders();
-        File loadedFile = chooseFile(false);
-        if (loadedFile != null) {
-            loadFromFile(loadedFile);
-            RecentFolders.saveDirReference(DirType.LAST_LOADED, loadedFile.getParent());
-        }
-    }
-
-    private void saveToFile(File fileToSave) {
-        log.debug("Saving file: {}", fileToSave.getAbsolutePath());
-        JSONObject jsonObject = Utils.createSaveJSONObject(container, (int) delayPerCmd.getValue(), sequentialOption.isSelected(), sequentialName.getText());
+    private void writeEntriesToFile(File file) {
+        log.debug("Saving file: {}", file.getAbsolutePath());
+        JSONObject jsonObject = Utils.createSaveJSONObject(container,
+                (int) delayPerCmd.getValue(),
+                sequentialOption.isSelected(),
+                sequentialName.getText());
         log.debug("Saving: {}", jsonObject.toString(1));
-        FileUtils.writeJSONDataToFile(fileToSave, jsonObject);
-        log.debug("Saved: {}", fileToSave.getAbsolutePath());
-        RecentFolders.saveRecentFile(fileToSave.getAbsolutePath());
-        RecentFolders.saveDirReference(DirType.LAST_SAVED, fileToSave.getParent());
+        FileUtils.writeJSONDataToFile(file, jsonObject);
+        log.debug("Saved: {}", file.getAbsolutePath());
+        refreshFileLoaded(file.getAbsolutePath());
+        Recents.saveRecentFile(file.getAbsolutePath());
+        Recents.refreshDir(DirType.LAST_SAVED, file.getParent());
     }
 
-    public void clearAllEntries() {
+    public void clearEntries() {
         Platform.runLater(() -> {
             container.getChildren().clear();
             addNewEntry();
         });
     }
 
-    private void loadFromFile(File fileToLoad) {
+    private void openFile(File fileToLoad) {
         log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
         JSONObject jsonData = Utils.createJSONObject(fileToLoad);
         if (jsonData == null || jsonData.isEmpty()) {
@@ -237,22 +194,10 @@ public class Controller implements Initializable {
         delayPerCmd.setValue(jsonData.getDouble("delay"));
         sequentialOption.setSelected(jsonData.getBoolean("sequential"));
         sequentialName.setText(jsonData.getString("sequentialName"));
-        RecentFolders.saveRecentFile(fileToLoad.getAbsolutePath());
-        RecentFolders.saveDirReference(DirType.LAST_LOADED, fileToLoad.getParent());
+        Recents.saveRecentFile(fileToLoad.getAbsolutePath());
+        Recents.refreshDir(DirType.LAST_LOADED, fileToLoad.getParent());
         refreshFileLoaded(fileToLoad.getAbsolutePath());
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
-    }
-
-    private File chooseFile(boolean save) {
-        return FileUtils.chooseFile(save, save ? lastSavedFolderLocation : lastLoadedFolderLocation);
-    }
-
-    public void lightMode() {
-        Main.setTheme(ThemeMode.LIGHT_MODE);
-    }
-
-    public void darkMode() {
-        Main.setTheme(ThemeMode.DARK_MODE);
     }
 
     public TabPane getTabPane() {
@@ -267,4 +212,17 @@ public class Controller implements Initializable {
         currentlyLoadedFileLocation = path;
         fileLoaded.setText("File loaded: " + path);
     }
+
+    private static void resetFileLoaded() {
+        currentlyLoadedFileLocation = null;
+    }
+
+    public static String getCurrentlyLoadedFileLocation() {
+        if (new File(currentlyLoadedFileLocation).exists()) {
+            return currentlyLoadedFileLocation;
+        }
+        resetFileLoaded();
+        return null;
+    }
+
 }

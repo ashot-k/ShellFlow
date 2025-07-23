@@ -7,7 +7,7 @@ import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 
-public class WhiteThemeSettingsProvider extends DefaultSettingsProvider {
+public class LightThemeSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {

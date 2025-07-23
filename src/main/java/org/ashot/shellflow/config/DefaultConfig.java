@@ -1,6 +1,7 @@
 package org.ashot.shellflow.config;
 
 import org.ashot.shellflow.data.constant.ConfigProperties;
+import org.ashot.shellflow.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
@@ -22,31 +22,14 @@ public class DefaultConfig implements Config {
 
     public DefaultConfig() {
         try {
-            checkSettingsFolder();
-            checkConfigFile();
+            //todo recheck validation logic
+            FileUtils.createFileAndDirs(pathToPropertiesFile.toString());
             File propertiesFile = new File(pathToPropertiesFile.toUri());
             InputStream inputStream = new FileInputStream(propertiesFile);
             properties.load(inputStream);
             log.info("Loaded configuration from: {}", propertiesFile.getAbsolutePath());
         } catch (IOException | NullPointerException e) {
             log.error("Error loading configuration: {}", e.getMessage());
-        }
-    }
-
-    private void checkConfigFile() throws IOException {
-        if (Files.exists(pathToPropertiesFile)) {
-
-        } else {
-            Files.createFile(pathToPropertiesFile);
-        }
-    }
-
-    private void checkSettingsFolder() throws IOException {
-        Path pathToSettingsFolder = Path.of(getSettingsFolder());
-        if (Files.isDirectory(pathToSettingsFolder)) {
-
-        } else {
-            Files.createDirectories(pathToSettingsFolder);
         }
     }
 
