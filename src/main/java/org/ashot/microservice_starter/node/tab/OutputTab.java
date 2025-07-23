@@ -7,8 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.ashot.microservice_starter.data.Command;
 import org.ashot.microservice_starter.terminal.TerminalFactory;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ public class OutputTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(OutputTab.class);
     private String commandDisplayName;
     private JediTermFxWidget terminal;
-    private VBox terminalWrapper = new VBox();
+    private VBox terminalWrapper;
     private boolean inProgress = false;
     private boolean finished = false;
     private boolean failed = false;
@@ -36,18 +35,18 @@ public class OutputTab extends Tab {
 
     public void setupOutputTab() {
         if(terminal != null) {
-            this.terminalWrapper.getChildren().add(terminal.getPane());
+            this.terminalWrapper = new VBox(terminal.getPane());
+            this.terminalWrapper.setFillWidth(true);
+            this.terminalWrapper.setPadding(new Insets(5));
             VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+            this.setContent(this.terminalWrapper);
         }
-        this.terminalWrapper.setFillWidth(true);
-        this.terminalWrapper.setPadding(new Insets(5));
-        this.setContent(this.terminalWrapper);
         this.setClosable(true);
         this.setOnClosed(_ -> this.terminal.close());
     }
 
     public static OutputTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
-        return new OutputTab.OutputTabBuilder(TerminalFactory.createTerminalWidget(process, null))
+        return new OutputTab.OutputTabBuilder(TerminalFactory.createTerminalWidget(process))
                 .setTabName(command.getName())
                 .setCommandDisplayName(command.getArgumentsString())
                 .setTooltip(command.getArgumentsString())
@@ -95,9 +94,11 @@ public class OutputTab extends Tab {
     public void setTerminal(JediTermFxWidget terminal) {
         this.terminal = terminal;
         Platform.runLater(()->{
-            this.terminalWrapper.getChildren().clear();
-            this.terminalWrapper.getChildren().add(terminal.getPane());
+            this.terminalWrapper = new VBox(terminal.getPane());
+            this.terminalWrapper.setFillWidth(true);
+            this.terminalWrapper.setPadding(new Insets(5));
             VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+            this.setContent(this.terminalWrapper);
         });
     }
 

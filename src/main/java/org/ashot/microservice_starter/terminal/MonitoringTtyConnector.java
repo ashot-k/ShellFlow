@@ -22,7 +22,14 @@ public class MonitoringTtyConnector extends ProcessTtyConnector {
     }
 
     @Override
+    public String getName() {
+        return "MonitoringTtyConnector";
+    }
+
+    //todo fix, this method prevents the terminal from expanding horizontally for some reason
+    @Override
     public int read(char[] buf, int offset, int length) throws IOException {
+
         int n = delegate.read(buf, offset, length);
         if (n > 0) {
             String output = new String(buf, offset, n);
@@ -32,31 +39,5 @@ public class MonitoringTtyConnector extends ProcessTtyConnector {
             }
         }
         return n;
-    }
-
-    // Delegate all other methods to the original ProcessTtyConnector
-    @Override
-    public void close() {
-        delegate.close();
-    }
-
-    @Override
-    public void write(byte[] bytes) throws IOException {
-        delegate.write(bytes);
-    }
-
-    @Override
-    public void write(String s) throws IOException {
-        delegate.write(s);
-    }
-
-    @Override
-    public boolean isConnected() {
-        return delegate.isConnected();
-    }
-
-    @Override
-    public String getName() {
-        return delegate.getName();
     }
 }

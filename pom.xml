@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>microservice_starter</artifactId>
-    <version>0.5.7</version>
+    <version>0.5.8</version>
     <name>microservice_starter</name>
 
     <properties>
@@ -139,6 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
                 <configuration>
                     <outputDirectory>target/mods</outputDirectory>
                 </configuration>

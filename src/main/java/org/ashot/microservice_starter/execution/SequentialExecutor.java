@@ -63,7 +63,6 @@ public class SequentialExecutor {
                     process = processBuilder.start();
                     ProcessRegistry.register(String.valueOf(process.pid()), process);
                     tab.setTerminal(TerminalFactory.createTerminalWidget(process, null));
-                    tab.setCommandDisplayName(currentCommand.getArgumentsString());
                     tab.getTerminal().start();
                     tab.setOnCloseRequest(e -> {
                         setCanceled(tab);

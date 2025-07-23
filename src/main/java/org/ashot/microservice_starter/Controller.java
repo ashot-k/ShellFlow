@@ -127,8 +127,10 @@ public class Controller implements Initializable {
 
     private void loadMostRecentFile(){
         File file = RecentFolders.loadMostRecentFile(this::loadFromFile);
-        RecentFolders.saveDirReference(DirType.LAST_LOADED, file.getParent());
-        refreshFileLoaded(file.getAbsolutePath());
+        if(file != null) {
+            RecentFolders.saveDirReference(DirType.LAST_LOADED, file.getParent());
+            refreshFileLoaded(file.getAbsolutePath());
+        }
     }
 
     private void setupIcons() {

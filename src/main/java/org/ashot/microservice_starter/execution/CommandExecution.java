@@ -32,7 +32,6 @@ public class CommandExecution {
             ProcessRegistry.register(String.valueOf(process.pid()), process);
             OutputTab tab = OutputTab.constructOutputTabWithTerminalProcess(process, command);
             addToExecutions(tab);
-            tab.setCommandDisplayName(command.getArgumentsString());
             tab.getTerminal().start();
             setInProgress(tab);
             process.waitFor();

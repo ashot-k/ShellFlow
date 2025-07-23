@@ -28,7 +28,8 @@ public class TerminalFactory {
     private static @NotNull ProcessTtyConnector createTtyConnector(PtyProcess process, Consumer<String> outputMonitor) {
         try {
             PtyProcessTtyConnector baseConnector = new PtyProcessTtyConnector(process, StandardCharsets.UTF_8);
-            return new MonitoringTtyConnector(baseConnector, outputMonitor);
+            return baseConnector;
+//            return new MonitoringTtyConnector(baseConnector, outputMonitor);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

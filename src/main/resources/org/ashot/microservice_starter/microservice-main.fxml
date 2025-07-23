@@ -5,25 +5,26 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<VBox fx:id="sceneContainer" alignment="TOP_CENTER" prefHeight="750.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
+<VBox fx:id="sceneContainer" alignment="TOP_CENTER" prefHeight="750.0" xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.microservice_starter.Controller">
     <children>
         <MenuBar fx:id="menuBar" prefHeight="30.0" prefWidth="1200.0" useSystemMenuBar="true" VBox.vgrow="ALWAYS">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="loadBtn" mnemonicParsing="false" onAction="#load" text="Open" />
-                        <Menu fx:id="openRecent" mnemonicParsing="false" text="Open Recent" />
+                        <MenuItem fx:id="loadBtn" mnemonicParsing="false" onAction="#load" text="Open"/>
+                        <Menu fx:id="openRecent" mnemonicParsing="false" text="Open Recent"/>
                         <SeparatorMenuItem/>
-                        <MenuItem fx:id="saveBtn" mnemonicParsing="false" onAction="#save" text="Save" />
-                        <MenuItem fx:id="saveAsBtn" mnemonicParsing="false" onAction="#saveAs" text="Save as" />
+                        <MenuItem fx:id="saveBtn" mnemonicParsing="false" onAction="#save" text="Save"/>
+                        <MenuItem fx:id="saveAsBtn" mnemonicParsing="false" onAction="#saveAs" text="Save as"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Settings">
                     <items>
                         <Menu mnemonicParsing="false" text="Theme">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#darkMode" text="Dark Theme" />
-                                <MenuItem mnemonicParsing="false" onAction="#lightMode" text="Light Theme" />
+                                <MenuItem mnemonicParsing="false" onAction="#darkMode" text="Dark Theme"/>
+                                <MenuItem mnemonicParsing="false" onAction="#lightMode" text="Light Theme"/>
                             </items>
                         </Menu>
                     </items>
@@ -31,136 +32,147 @@
             </menus>
         </MenuBar>
         <StackPane fx:id="outputStack" VBox.vgrow="ALWAYS">
-      <VBox VBox.vgrow="ALWAYS">
-         <children>
-                <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
-                    <tabs>
-                        <Tab fx:id="setupTab" closable="false" text="Setup">
-                            <content>
-                                <HBox alignment="TOP_CENTER">
-                                    <children>
-                                        <ScrollPane fx:id="scrollPane" fitToWidth="true" HBox.hgrow="ALWAYS">
-                                            <content>
-                                                <FlowPane fx:id="container" alignment="TOP_CENTER" vgap="15.0">
-                                          <padding>
-                                             <Insets bottom="15.0" top="20.0" />
-                                          </padding></FlowPane>
-                                            </content>
-                                        </ScrollPane>
-                                    </children>
-                                </HBox>
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
-         </children>
-      </VBox>
+            <VBox VBox.vgrow="ALWAYS">
+                <children>
+                    <TabPane fx:id="tabPane" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
+                        <tabs>
+                            <Tab fx:id="setupTab" closable="false" text="Setup">
+                                <content>
+                                    <HBox alignment="TOP_CENTER">
+                                        <children>
+                                            <ScrollPane fx:id="scrollPane" fitToWidth="true" HBox.hgrow="ALWAYS">
+                                                <content>
+                                                    <FlowPane fx:id="container" alignment="TOP_CENTER" vgap="15.0">
+                                                        <padding>
+                                                            <Insets bottom="15.0" top="20.0"/>
+                                                        </padding>
+                                                    </FlowPane>
+                                                </content>
+                                            </ScrollPane>
+                                        </children>
+                                    </HBox>
+                                </content>
+                            </Tab>
+                        </tabs>
+                    </TabPane>
+                </children>
+            </VBox>
         </StackPane>
-        <VBox alignment="TOP_LEFT" fillWidth="false" >
+        <VBox alignment="TOP_LEFT" fillWidth="true">
             <padding>
-                <Insets left="10.0" right="5.0" top="5.0" />
+                <Insets left="10.0" right="5.0" top="5.0"/>
             </padding>
-            <Text fx:id="fileLoaded"></Text>
+            <Text fx:id="fileLoaded"/>
         </VBox>
         <VBox>
-            <Separator minHeight="15.0" orientation="HORIZONTAL" prefHeight="15.0" VBox.vgrow="NEVER" />
+            <Separator minHeight="15.0" orientation="HORIZONTAL" prefHeight="15.0" VBox.vgrow="NEVER"/>
             <HBox alignment="CENTER" fillHeight="false">
                 <children>
                     <GridPane id="options" fx:id="setupSettings" alignment="CENTER" styleClass="grid-pane" HBox.hgrow="ALWAYS">
                         <columnConstraints>
-                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0" />
-                            <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0" />
-                            <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="300.0" />
-                            <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0" />
-                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0"/>
+                            <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0"/>
+                            <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="300.0"/>
+                            <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0"/>
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0"/>
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints valignment="CENTER" />
-                            <RowConstraints valignment="CENTER" />
-                            <RowConstraints valignment="CENTER" />
+                            <RowConstraints valignment="CENTER"/>
+                            <RowConstraints valignment="CENTER"/>
+                            <RowConstraints valignment="CENTER"/>
                         </rowConstraints>
                         <children>
-                            <VBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-spacing: 5;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                            <VBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-spacing: 5;" GridPane.columnIndex="2"
+                                  GridPane.rowIndex="2">
                                 <children>
                                     <CheckBox fx:id="sequentialOption" mnemonicParsing="false" text="Sequential">
                                         <tooltip>
-                                            <Tooltip text="Run commands in sequence in a single terminal instance" />
+                                            <Tooltip text="Run commands in sequence in a single terminal instance"/>
                                         </tooltip>
                                     </CheckBox>
-                                    <TextField fx:id="sequentialName" promptText="Tab name" visible="false" />
+                                    <TextField fx:id="sequentialName" promptText="Tab name" visible="false"/>
                                 </children>
                                 <GridPane.margin>
-                                    <Insets />
+                                    <Insets/>
                                 </GridPane.margin>
                                 <padding>
-                                    <Insets bottom="5.0" left="10.0" right="10.0" top="10.0" />
+                                    <Insets bottom="5.0" left="10.0" right="10.0" top="10.0"/>
                                 </padding>
                             </VBox>
-                            <VBox alignment="TOP_CENTER" spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                            <VBox alignment="TOP_CENTER" spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="1"
+                                  GridPane.valignment="TOP">
                                 <children>
-                                    <Slider fx:id="delayPerCmd" majorTickUnit="2.0" max="20.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                                    <Slider fx:id="delayPerCmd" majorTickUnit="2.0" max="20.0" minorTickCount="1"
+                                            showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
                                     <Text strokeType="OUTSIDE" text="Delay between commands (in seconds)">
                                         <font>
-                                            <Font size="11.0" />
+                                            <Font size="11.0"/>
                                         </font>
                                     </Text>
                                 </children>
                                 <padding>
-                                    <Insets bottom="5.0" left="10.0" right="10.0" />
+                                    <Insets bottom="5.0" left="10.0" right="10.0"/>
                                 </padding>
                                 <GridPane.margin>
-                                    <Insets />
+                                    <Insets/>
                                 </GridPane.margin>
                                 <opaqueInsets>
-                                    <Insets />
+                                    <Insets/>
                                 </opaqueInsets>
                             </VBox>
-                            <Button fx:id="osInfo" alignment="BOTTOM_LEFT" mnemonicParsing="false" style="-fx-background-color: transparent;" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                            <Button fx:id="osInfo" alignment="BOTTOM_LEFT" mnemonicParsing="false"
+                                    style="-fx-background-color: transparent;" GridPane.halignment="LEFT" GridPane.rowIndex="2"
+                                    GridPane.valignment="BOTTOM">
                             </Button>
                             <Label text="Entry Actions">
                                 <padding>
-                                    <Insets bottom="10.0" left="5.0" right="5.0" top="2.0" />
+                                    <Insets bottom="10.0" left="5.0" right="5.0" top="2.0"/>
                                 </padding>
                             </Label>
                             <Label text="Execution Options" GridPane.columnIndex="2">
                                 <padding>
-                                    <Insets bottom="10.0" left="5.0" right="5.0" top="2.0" />
+                                    <Insets bottom="10.0" left="5.0" right="5.0" top="2.0"/>
                                 </padding>
                             </Label>
                             <Label text="Execution Actions" GridPane.columnIndex="4">
                                 <padding>
-                                    <Insets bottom="10.0" left="5.0" right="5.0" top="2.0" />
+                                    <Insets bottom="10.0" left="5.0" right="5.0" top="2.0"/>
                                 </padding>
                             </Label>
                             <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
                                 <children>
-                                    <Button fx:id="stopAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true" graphicTextGap="10.0" mnemonicParsing="false" onAction="#stopAll" text="Close All">
+                                    <Button fx:id="stopAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true"
+                                            graphicTextGap="10.0" mnemonicParsing="false" onAction="#stopAll" text="Close All">
                                         <tooltip>
-                                            <Tooltip text="Close all tabs and their processes" />
+                                            <Tooltip text="Close all tabs and their processes"/>
                                         </tooltip>
                                     </Button>
-                                    <Button fx:id="executeAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true" graphicTextGap="10.0" mnemonicParsing="false" onAction="#executeAll" prefHeight="26.0" prefWidth="125.0" text="Run All">
+                                    <Button fx:id="executeAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true"
+                                            graphicTextGap="10.0" mnemonicParsing="false" onAction="#executeAll" prefHeight="26.0"
+                                            prefWidth="125.0" text="Run All">
                                         <tooltip>
-                                            <Tooltip text="Run all Entries" />
+                                            <Tooltip text="Run all Entries"/>
                                         </tooltip>
                                     </Button>
                                 </children>
                             </HBox>
                             <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.rowIndex="1">
                                 <children>
-                                    <Button fx:id="clearEntriesBtn" alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="6.0" mnemonicParsing="false" onAction="#clearAllEntries" text="Clear All" />
-                                    <Button fx:id="newEntryBtn" contentDisplay="RIGHT" graphicTextGap="6.0" mnemonicParsing="false" onAction="#addNewEntry" text="Add" />
+                                    <Button fx:id="clearEntriesBtn" alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="6.0"
+                                            mnemonicParsing="false" onAction="#clearAllEntries" text="Clear All"/>
+                                    <Button fx:id="newEntryBtn" contentDisplay="RIGHT" graphicTextGap="6.0"
+                                            mnemonicParsing="false" onAction="#addNewEntry" text="Add"/>
                                 </children>
                             </HBox>
-                            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
-                            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            <Separator orientation="VERTICAL" GridPane.columnIndex="3" />
-                            <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                            <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Separator orientation="VERTICAL" GridPane.columnIndex="1"/>
+                            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Separator orientation="VERTICAL" GridPane.columnIndex="3"/>
+                            <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                            <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
                         </children>
                         <opaqueInsets>
-                            <Insets />
+                            <Insets/>
                         </opaqueInsets>
                     </GridPane>
                 </children>
