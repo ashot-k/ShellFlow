@@ -1,10 +1,9 @@
 package org.ashot.shellflow.node.entry;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -16,9 +15,7 @@ import org.ashot.shellflow.data.constant.Direction;
 import org.ashot.shellflow.data.icon.Icons;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.execution.CommandExecutor;
-import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.CustomButton;
-import org.ashot.shellflow.node.popup.ErrorPopup;
 import org.ashot.shellflow.utils.Utils;
 
 import java.io.File;
@@ -27,10 +24,16 @@ import java.io.IOException;
 
 public class EntryButton extends CustomButton {
 
-    public static Button deleteEntryButton(Pane container, HBox row) {
+    public static Button addEntryButton(EventHandler<ActionEvent> action){
+        Button button = new Button("Add", Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
+        button.setContentDisplay(ContentDisplay.RIGHT);
+        button.setOnAction(action);
+        return button;
+    }
+
+    public static Button deleteEntryButton() {
         Button btn = new Button("", Icons.getCloseButtonIcon(CLOSE_BUTTON_SIZE));
         btn.setId(ButtonType.DELETE.getValue());
-        btn.setOnAction(_ -> container.getChildren().remove(row));
         btn.getStyleClass().add("no-outline-btn");
         return btn;
     }
@@ -67,19 +70,12 @@ public class EntryButton extends CustomButton {
         }
     }
 
-    public static Button executeBtn(Entry entry) {
+    public static Button executeEntryButton() {
         Button executeBtn = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeBtn.setBackground(Background.EMPTY);
         executeBtn.setId(ButtonType.EXECUTION.getValue());
         executeBtn.getStyleClass().add("no-outline-btn");
         executeBtn.setTooltip(new Tooltip(ToolTipMessages.execute()));
-        executeBtn.setOnAction(_ -> {
-            try {
-                execute(EntryToCommandMapper.entryToCommand(entry, true));
-            } catch (IOException e) {
-                new ErrorPopup(e.getMessage());
-            }
-        });
         return executeBtn;
     }
 

@@ -14,18 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ApplicationExtension.class)
-class EntryButtonTest {
+class EntryBoxButtonTest {
 
     @Test
     void deleteEntryButton() {
-        VBox v = new VBox();
-        HBox h = new HBox();
-        v.getChildren().add(h);
-        javafx.scene.control.Button b = EntryButton.deleteEntryButton(v, h);
+        javafx.scene.control.Button b = EntryButton.deleteEntryButton();
         Assertions.assertAll(
                 () -> assertEquals(ButtonType.DELETE.getValue(), b.getId()),
-                () -> assertDoesNotThrow(b::fire),
-                () -> assertEquals(0, v.getChildren().size())
+                () -> assertDoesNotThrow(b::fire)
         );
     }
 

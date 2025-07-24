@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.entry;
 
+import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class Fields {
     private final static int TEXT_AREA_HEIGHT = 40;
-    private final static int TEXT_AREA_HEIGHT_ENLARGED = TEXT_AREA_HEIGHT * 3;
+    private final static int TEXT_AREA_HEIGHT_ENLARGED = TEXT_AREA_HEIGHT * 4;
     private static boolean autoCompleteToggle = true;
 
     public static TextArea createField(FieldType type, String text, String promptText, String toolTip, Double width, String styleClass) {
@@ -73,13 +74,16 @@ public class Fields {
                 popup.show(input, getAutoCompleteMap(type));
             }
         });
+
+        Timeline timeline = new Timeline();
         field.focusedProperty().addListener((_, _, isFocused) -> {
             if (isFocused) {
                 popup.show(field.getText(), getAutoCompleteMap(type));
-                Animator.animateHeightChange(field, TEXT_AREA_HEIGHT_ENLARGED, Duration.millis(150));
+                Animator.animateHeightChange(timeline, field, TEXT_AREA_HEIGHT_ENLARGED, Duration.millis(250));
             } else {
                 field.setMinHeight(TEXT_AREA_HEIGHT);
                 field.setTranslateY(0);
+                timeline.stop();
                 popup.hide();
                 autoCompleteToggle = true;
             }

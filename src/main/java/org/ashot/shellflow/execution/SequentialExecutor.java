@@ -98,7 +98,11 @@ public class SequentialExecutor {
                 return;
             }
             setFinished(sequenceHolder);
-            Notification.display(ExecutionState.FINISHED.getValue(), SequentialFinishedNotificationMessage(sequenceHolder.getText()), null, NotificationType.INFO);
+            Notification.display(
+                    ExecutionState.FINISHED.getValue(),
+                    SequentialFinishedNotificationMessage(sequenceHolder.getText()),
+                    null,
+                    NotificationType.SUCCESS);
         }).start();
     }
 

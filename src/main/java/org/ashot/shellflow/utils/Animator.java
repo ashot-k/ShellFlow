@@ -6,8 +6,8 @@ import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
 public class Animator {
-    public static void animateHeightChange(Region node, double heightGoal, Duration duration) {
-        Timeline timeline = new Timeline();
+
+    public static void animateHeightChange(Timeline timeline, Region node, double heightGoal, Duration duration) {
         KeyValue kv = new KeyValue(node.minHeightProperty(), heightGoal);
         KeyFrame kf = new KeyFrame(duration, kv);
         timeline.getKeyFrames().add(kf);
@@ -19,6 +19,5 @@ public class Animator {
         rotateTransition.setByAngle(360);
         rotateTransition.setCycleCount(Animation.INDEFINITE);
         rotateTransition.setInterpolator(Interpolator.LINEAR);
-        rotateTransition.play();
     }
 }

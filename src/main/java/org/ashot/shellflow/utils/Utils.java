@@ -1,11 +1,7 @@
 package org.ashot.shellflow.utils;
 
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.icon.Icons;
 import org.json.JSONArray;
@@ -16,46 +12,20 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    public static JSONObject createSaveJSONObject(Pane container, int delayPerCmd, boolean seqOption, String seqName) {
-        JSONArray entries = Utils.createJSONArray(container);
+    public static JSONObject createSaveJSONObject(List<Entry> entries, int delayPerCmd, boolean seqOption, String seqName) {
+        JSONArray entriesArray = Entry.createEntryJSONArray(entries);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("entries", entries);
+        jsonObject.put("entries", entriesArray);
         jsonObject.put("delay", delayPerCmd);
         jsonObject.put("sequential", seqOption);
         jsonObject.put("sequentialName", seqName);
         return jsonObject;
-    }
-
-    private static void addEntryToJSONObject(JSONObject object, Node node) {
-        String id = node.getId();
-        String nameType = FieldType.NAME.getValue();
-        String cmdType = FieldType.COMMAND.getValue();
-        String pathType = FieldType.PATH.getValue();
-        String wslType = FieldType.WSL.getValue();
-        if (node instanceof TextArea field) {
-            if (nameType != null && id.contains(nameType)) {
-                object.put(nameType, field.getText());
-            } else if (cmdType != null && id.contains(cmdType)) {
-                object.put(cmdType, field.getText());
-            } else if (pathType != null && id.contains(pathType)) {
-                object.put(pathType, field.getText());
-            }
-        } else if (node instanceof CheckBox checkBox) {
-            if (wslType != null && id.contains(wslType)) {
-                object.put(wslType, checkBox.isSelected());
-            }
-        }
-    }
-
-    public static boolean checkEntryFieldsFromJSON(JSONObject entry) {
-        return entry.has(FieldType.NAME.getValue()) && entry.has(FieldType.PATH.getValue()) && entry.has(FieldType.COMMAND.getValue());
     }
 
     public static String getOrDefault(Object jsonValue, FieldType type) {
@@ -67,24 +37,6 @@ public class Utils {
             }
         }
         return jsonValue.toString();
-    }
-
-    public static JSONArray createJSONArray(Pane container) {
-        JSONArray jsonArray = new JSONArray();
-        for (Node current : container.getChildren()) {
-            if (!(current instanceof HBox)) continue;
-            Set<Node> fields = current.lookupAll("TextArea");
-            Set<Node> checkBoxes = current.lookupAll("CheckBox");
-            Set<Node> nodes = new HashSet<>();
-            nodes.addAll(fields);
-            nodes.addAll(checkBoxes);
-            JSONObject object = new JSONObject();
-            for (Node n : nodes) {
-                addEntryToJSONObject(object, n);
-            }
-            jsonArray.put(object);
-        }
-        return jsonArray;
     }
 
     public static JSONObject createJSONObject(File file) {

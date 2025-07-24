@@ -1,8 +1,7 @@
 package org.ashot.shellflow.data;
 
-import javafx.application.Platform;
-import org.ashot.shellflow.data.message.PopupMessages;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.ashot.shellflow.data.message.ExceptionMessages;
+import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -73,17 +72,14 @@ public class Command {
         path = path.replace("~", System.getProperty("user.home"));
         File f = new File(path);
         if (!f.exists() || !f.isDirectory()) {
-            Platform.runLater(() -> new ErrorPopup(PopupMessages.INVALID_PATH, path));
-            throw new IllegalArgumentException(path);
+            throw new InvalidCommandException(ExceptionMessages.INVALID_PATH + ": " + path);
         }
     }
 
     private void validateArguments(String arguments) {
         if (arguments == null || arguments.isBlank()) {
-            Platform.runLater(() -> {
-                new ErrorPopup(PopupMessages.INVALID_ARGUMENTS, arguments);
-                log.error("Invalid Arguments: {}", arguments);
-            });
+            log.error("Invalid Arguments: {}", arguments);
+            throw new InvalidCommandException(ExceptionMessages.INVALID_ARGUMENTS);
         }
     }
 

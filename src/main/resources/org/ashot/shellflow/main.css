@@ -2,11 +2,11 @@
     -color-accent-emphasis: darkslateblue;
 }
 
-#container {
+.entryContainer {
     -fx-spacing: 50px;
 }
 
-#container .entry {
+.entryContainer .entry {
     -fx-spacing: 15px;
     -fx-padding: 10px 20px 10px 20px;
     -fx-background-radius: 5;
@@ -64,7 +64,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
 }
 
-
 .autocomplete-entry{
     -fx-padding: 5px 10px 5px 10px;
     -fx-background-radius: 5;
@@ -96,15 +95,24 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0.5, 0.0, 0.0);
 }
 
-.dark.notification-base{
+.dark .notification-base{
     -fx-background-color: #0d1117;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.5, 0.0, 0.0);
 }
 
+/* disabling controlsfx internal css background */
+.notification-pane .notification-bar > .pane {
+    -fx-background-color: transparent !important;
+}
+.notification-bar > .pane {
+    -fx-background-color: transparent !important;
+}
 /* fix for controlsfx 11.2.2 exception */
 .dark.notification-bar > .pane {
     -fx-background-color: rgb(23, 27, 33);
 }
+/* */
+
 
 .ordering-container {
     -fx-spacing: 2px;
@@ -230,28 +238,43 @@
    -fx-padding: 10px;
 }
 
-.error-notif-title {
+.dark .default-notif-text{
+    -fx-fill: #ffffff !important;
+    -fx-font-size: 14px !important;
+}
+
+.light .default-notif-text{
+    -fx-fill: #000000 !important;
+    -fx-font-size: 14px !important;
+}
+
+.dark .error-notif-title{
     -fx-fill: #FF0000 !important;
-    -fx-font-size: 20px !important;
+    -fx-font-size: 16px !important;
 }
 
-.dark .error-notif-text{
+.light .error-notif-title{
+    -fx-fill: #FF0000 !important;
+    -fx-font-size: 16px !important;
+}
+
+.dark .info-notif-title{
     -fx-fill: #ffffff !important;
     -fx-font-size: 16px !important;
 }
 
-.light .error-notif-text{
+.light .info-notif-title{
     -fx-fill: #000000 !important;
     -fx-font-size: 16px !important;
 }
 
-.dark .info-notif-text{
-    -fx-fill: #ffffff !important;
+.dark .success-notif-title{
+    -fx-fill: #00FF00 !important;
     -fx-font-size: 16px !important;
 }
 
-.light .info-notif-text{
-    -fx-fill: #000000 !important;
+.light .success-notif-title{
+    -fx-fill: #00FF00 !important;
     -fx-font-size: 16px !important;
 }
 

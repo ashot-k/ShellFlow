@@ -20,6 +20,14 @@ public class ErrorPopup extends Stage {
     boolean criticalError = false;
     Button closeButton = new Button();
 
+    public ErrorPopup() {
+        setupErrorPopup("", null);
+    }
+    public ErrorPopup(boolean criticalError) {
+        this.criticalError = criticalError;
+        setupErrorPopup("", null);
+    }
+
     public ErrorPopup(String msg) {
         setupErrorPopup(msg, null);
     }
@@ -38,7 +46,7 @@ public class ErrorPopup extends Stage {
         setupErrorPopup(msg, highlightedMessage);
     }
 
-    private void showPopup() {
+    public void showPopup() {
         Platform.runLater(() -> {
             if (criticalError) {
                 this.setOnCloseRequest((_) -> Main.getPrimaryStage().close());
@@ -53,9 +61,15 @@ public class ErrorPopup extends Stage {
                 this.closeButton.setText("Exit");
                 this.showAndWait();
             } else {
-                this.show();
+                super.show();
             }
         });
+    }
+
+    public void setMessage(String msg){
+        styleClassedTextArea.clear();
+        styleClassedTextArea.setStyleClass(0, msg.length(), TextStyleClass.getTextColorClass());
+        styleClassedTextArea.appendText(msg + "\n");
     }
 
     private void setupErrorPopup(String msg, String highlighted) {
@@ -86,6 +100,5 @@ public class ErrorPopup extends Stage {
         this.setTitle("Error");
         this.setResizable(false);
         this.setMaxWidth(900);
-        showPopup();
     }
 }

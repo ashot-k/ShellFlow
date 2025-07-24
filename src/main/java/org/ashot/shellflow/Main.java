@@ -11,6 +11,8 @@ import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.config.DefaultConfig;
 import org.ashot.shellflow.data.constant.ThemeMode;
 import org.ashot.shellflow.registry.ProcessRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -21,6 +23,7 @@ public class Main extends Application {
     private static final boolean RESIZABLE = true;
     public static final String CSS_FILE_LOCATION = Main.class.getResource("main.css").toExternalForm();
     public static final URL MAIN_FXML_LOCATION = Main.class.getResource("shellflow-main.fxml");
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static boolean isDark = false;
     private static Stage primaryStage;
     private static final Config config = new DefaultConfig();
@@ -31,19 +34,25 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        setTheme(getThemeFromConfig());
-        Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
-        root.getStyleClass().add(getThemeFromConfig().equals(ThemeMode.DARK_MODE) ? "dark" : "light");
-        Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
-        scene.getStylesheets().add(CSS_FILE_LOCATION);
-        primaryStage = stage;
-        primaryStage.setTitle("ShellFlow");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(RESIZABLE);
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(_ -> {
-            Platform.exit();
-        });
+        try {
+            setTheme(getThemeFromConfig());
+            Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
+            root.getStyleClass().add(getThemeFromConfig().equals(ThemeMode.DARK_MODE) ? "dark" : "light");
+            Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
+            scene.getStylesheets().add(CSS_FILE_LOCATION);
+            primaryStage = stage;
+            primaryStage.setTitle("ShellFlow");
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(RESIZABLE);
+            primaryStage.show();
+            primaryStage.setOnCloseRequest(_ -> {
+                Platform.exit();
+            });
+        } catch (Exception e) {
+            log.error(e.getClass().getName());
+            log.error(e.getMessage());
+            log.error(e.getCause().getMessage());
+        }
     }
 
     @Override

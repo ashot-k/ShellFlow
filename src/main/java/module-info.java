@@ -26,7 +26,6 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.data.icon to javafx.base;
     exports org.ashot.shellflow.data;
     opens org.ashot.shellflow.data.message to javafx.fxml;
-    exports org.ashot.shellflow.node.entry;
     opens org.ashot.shellflow.node.tab.profiler to javafx.base;
     opens org.ashot.shellflow.node.tab.executions to javafx.base;
     opens org.ashot.shellflow.node.tab.preset to javafx.base;

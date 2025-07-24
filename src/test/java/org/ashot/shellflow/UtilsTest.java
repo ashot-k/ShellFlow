@@ -1,10 +1,5 @@
 package org.ashot.shellflow;
 
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import org.ashot.shellflow.data.constant.FieldType;
-import org.ashot.shellflow.node.entry.Fields;
 import org.ashot.shellflow.utils.FileUtils;
 import org.ashot.shellflow.utils.Utils;
 import org.json.JSONArray;
@@ -41,7 +36,7 @@ class UtilsTest {
     }
 
     @Test
-    void createJSONArrayConstructsCorrectObjectFromFile() {
+    void createEntryJSONArrayConstructsCorrectObjectFromFile() {
         JSONObject object = Utils.createJSONObject(new File("src/test/resources/test_1.json"));
         JSONArray entries = (JSONArray) object.get("entries");
         Assertions.assertAll(
@@ -51,21 +46,6 @@ class UtilsTest {
                 () -> assertEquals(12, object.get("delay")),
                 () -> assertEquals(true, object.get("sequential")),
                 () -> assertEquals("whatever", object.get("sequentialName"))
-        );
-    }
-
-    @Test
-    void testCreateJSONArray() {
-        Pane container = new Pane();
-        TextArea field = Fields.createField(FieldType.NAME, "test_name");
-        TextArea field2 = Fields.createField(FieldType.PATH, "test_path");
-        TextArea field3 = Fields.createField(FieldType.COMMAND, "test_command");
-        HBox hBox = new HBox(field, field2, field3);
-        container.getChildren().add(hBox);
-        JSONArray object = Utils.createJSONArray(container);
-        Assertions.assertAll(
-                () -> assertEquals(1, object.length()),
-                () -> assertEquals(3, object.getJSONObject(0).length())
         );
     }
 }

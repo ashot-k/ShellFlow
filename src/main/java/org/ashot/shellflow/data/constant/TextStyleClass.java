@@ -26,11 +26,15 @@ public class TextStyleClass {
     }
 
     public static List<String> infoNotifTitleStyleClass() {
-        return getClassAndThemeMode("info-notif-text");
+        return getClassAndThemeMode("info-notif-title");
     }
 
-    public static List<String> errorNotifTextStyleClass() {
-        return getClassAndThemeMode("error-notif-text");
+    public static List<String> successNotifTitleStyleClass() {
+        return getClassAndThemeMode("success-notif-title");
+    }
+
+    public static List<String> defaultNotifTextStyleClass() {
+        return getClassAndThemeMode("default-notif-text");
     }
 
     private static List<String> getClassAndThemeMode(String className) {
