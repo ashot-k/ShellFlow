@@ -116,21 +116,12 @@ public class Recents {
     }
 
     public static void removeRecentFile(String path) {
-        JSONObject jsonObject = null;
+        JSONObject recentDirs = getRecents();
+        JSONArray recents = recentDirs.getJSONArray(DirType.RECENT.name());
+        List<Object> list = recents.toList();
+        list.removeIf(element -> element.toString().equals(path));
+        recentDirs.put(DirType.RECENT.name(), list);
         File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
-        String jsonContent = null;
-        try {
-            jsonContent = Files.readString(file.toPath());
-            jsonObject = new JSONObject(jsonContent);
-            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
-            List<Object> list = recents.toList();
-            list.removeIf(element -> element.toString().equals(path));
-            recents.clear();
-            recents.putAll(list);
-            jsonObject.put(DirType.RECENT.name(), recents);
-            FileUtils.writeJSONDataToFile(file, jsonObject);
-        } catch (IOException e) {
-            new ErrorPopup(e.getMessage());
-        }
+        FileUtils.writeJSONDataToFile(file, recentDirs);
     }
 }
