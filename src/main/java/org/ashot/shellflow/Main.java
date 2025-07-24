@@ -45,9 +45,7 @@ public class Main extends Application {
             primaryStage.setScene(scene);
             primaryStage.setResizable(RESIZABLE);
             primaryStage.show();
-            primaryStage.setOnCloseRequest(_ -> {
-                Platform.exit();
-            });
+            primaryStage.setOnCloseRequest(_ -> Platform.exit());
         } catch (Exception e) {
             log.error(e.getClass().getName());
             log.error(e.getMessage());

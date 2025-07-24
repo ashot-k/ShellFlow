@@ -23,6 +23,9 @@ import java.io.IOException;
 
 
 public class EntryButton extends CustomButton {
+    private EntryButton(){
+        super();
+    }
 
     public static Button addEntryButton(EventHandler<ActionEvent> action){
         Button button = new Button("Add", Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
@@ -98,7 +101,4 @@ public class EntryButton extends CustomButton {
         return pathBrowserBtn;
     }
 
-    private static void execute(Command command) throws IOException {
-        new Thread(() -> CommandExecutor.execute(command)).start();
-    }
 }

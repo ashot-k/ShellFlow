@@ -28,7 +28,7 @@ public class AutoCompletePopup extends PopupControl {
     }
 
     public void show(String input, Map<String, String> searchMap) {
-        if (searchMap == null) {
+        if (searchMap == null || searchMap.isEmpty()) {
             return;
         }
         entries.clear();

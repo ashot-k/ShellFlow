@@ -1,6 +1,8 @@
 package org.ashot.shellflow.node;
 
 public class CustomButton {
+    protected CustomButton(){}
+
     public static final int SIZE = 18;
     public static final int BUTTON_ICON_SIZE = 18;
     public static final int EXECUTE_BUTTON_SIZE = 32;

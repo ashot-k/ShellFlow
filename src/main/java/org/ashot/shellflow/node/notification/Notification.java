@@ -20,11 +20,13 @@ import org.controlsfx.glyphfont.Glyph;
 
 import java.util.List;
 
-public abstract class Notification {
+public class Notification {
     private static final int NOTIFICATION_TIMEOUT = 8;
     private static final int NOTIFICATION_WIDTH = 200;
     private static final double NOTIFICATION_HEIGHT = 50;
     private static final int MAX_NOTIFICATIONS = 3;
+
+    private Notification(){}
 
     public static void display(String title, String message, Runnable onAction, NotificationType type) {
         buildNotif(title, message, onAction, type);

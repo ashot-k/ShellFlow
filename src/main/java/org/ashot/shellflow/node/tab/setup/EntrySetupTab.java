@@ -48,9 +48,7 @@ public class EntrySetupTab extends Tab {
     public void addEntryBox(Entry entry){
         EntryBox entryBox = new EntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
-        entryBox.setOnExecuteButtonAction(_ ->{
-            CommandExecutor.execute(EntryToCommandMapper.entryToCommand(entryBox, false));
-        });
+        entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(EntryToCommandMapper.entryToCommand(entryBox, false)));
         entryContainer.getChildren().add(entryBox);
     }
 

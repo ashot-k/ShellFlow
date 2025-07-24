@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.popup;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -49,8 +50,8 @@ public class ErrorPopup extends Stage {
     public void showPopup() {
         Platform.runLater(() -> {
             if (criticalError) {
-                this.setOnCloseRequest((_) -> Main.getPrimaryStage().close());
-                this.closeButton.setOnAction((_) -> {
+                this.setOnCloseRequest(_ -> Main.getPrimaryStage().close());
+                this.closeButton.setOnAction(_ -> {
                     this.close();
                     Main.getPrimaryStage().close();
                     Platform.exit();
@@ -95,7 +96,7 @@ public class ErrorPopup extends Stage {
         errorContainer.setFillWidth(true);
 
         Scene scene = new Scene(errorContainer);
-        scene.getStylesheets().addAll(Main.getUserAgentStylesheet(), Main.class.getResource("main.css").toExternalForm());
+        scene.getStylesheets().addAll(Application.getUserAgentStylesheet(), Main.class.getResource("main.css").toExternalForm());
         this.setScene(scene);
         this.setTitle("Error");
         this.setResizable(false);

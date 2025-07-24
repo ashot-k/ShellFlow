@@ -18,8 +18,9 @@ import java.util.function.Consumer;
 import static java.nio.file.Files.createFile;
 
 public class FileUtils {
-
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+
+    private FileUtils(){}
 
     public static File createFileAndDirs(String pathString){
         if(pathString == null) return null;

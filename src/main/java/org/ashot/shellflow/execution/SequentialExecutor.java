@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-import static org.ashot.shellflow.data.message.NotificationMessages.SequentialFailNotificationMessage;
-import static org.ashot.shellflow.data.message.NotificationMessages.SequentialFinishedNotificationMessage;
+import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFailNotificationMessage;
+import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFinishedNotificationMessage;
 import static org.ashot.shellflow.node.tab.OutputTab.constructSequencePartOutputTab;
 import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
 import static org.ashot.shellflow.utils.TabUtils.*;
@@ -84,7 +84,7 @@ public class SequentialExecutor {
                         setFailed(sequenceHolder);
                         Notification.display(
                                 ExecutionState.FAILURE.getValue(),
-                                SequentialFailNotificationMessage(sequenceHolder.getText(), tab.getText()),
+                                sequentialFailNotificationMessage(sequenceHolder.getText(), tab.getText()),
                                 null,
                                 NotificationType.EXECUTION_FAILURE);
                         break;
@@ -100,7 +100,7 @@ public class SequentialExecutor {
             setFinished(sequenceHolder);
             Notification.display(
                     ExecutionState.FINISHED.getValue(),
-                    SequentialFinishedNotificationMessage(sequenceHolder.getText()),
+                    sequentialFinishedNotificationMessage(sequenceHolder.getText()),
                     null,
                     NotificationType.SUCCESS);
         }).start();

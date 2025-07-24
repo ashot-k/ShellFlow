@@ -17,6 +17,7 @@ import java.util.List;
 public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
+    private static String osProperty = "os.name";
 
     public static JSONObject createSaveJSONObject(List<Entry> entries, int delayPerCmd, boolean seqOption, String seqName) {
         JSONArray entriesArray = Entry.createEntryJSONArray(entries);
@@ -59,26 +60,26 @@ public class Utils {
     }
 
     public static String getSystemOS() {
-        return System.getProperty("os.name").toLowerCase();
+        return System.getProperty(osProperty).toLowerCase();
     }
 
     public static boolean checkIfWindows() {
-        return System.getProperty("os.name").toLowerCase().contains("windows");
+        return System.getProperty(osProperty).toLowerCase().contains("windows");
     }
 
     public static boolean checkIfLinux() {
-        return System.getProperty("os.name").toLowerCase().contains("linux");
+        return System.getProperty(osProperty).toLowerCase().contains("linux");
     }
 
 
     public static void setupOSInfo(Button osInfo) {
-        String os = System.getProperty("os.name");
+        String os = System.getProperty(osProperty);
         if (os.toLowerCase().contains("linux")) {
             osInfo.setGraphic(Icons.getLinuxIcon(24));
         } else if (os.toLowerCase().contains("windows")) {
             osInfo.setGraphic(Icons.getWindowsIcon(24));
         }
-        osInfo.setText(System.getProperty("os.name") + " " + System.getProperty("os.version"));
+        osInfo.setText(System.getProperty(osProperty) + " " + System.getProperty("os.version"));
     }
 
 }

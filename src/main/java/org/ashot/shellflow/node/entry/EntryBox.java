@@ -83,7 +83,7 @@ public class EntryBox extends HBox {
     }
 
     public static List<EntryBox> getEntriesFromPane(Pane ownerPane) {
-        return ownerPane.getChildren().stream().filter(e -> e instanceof EntryBox).map(e -> (EntryBox) e).toList();
+        return ownerPane.getChildren().stream().filter(EntryBox.class::isInstance).map(e -> (EntryBox) e).toList();
     }
 
     public TextArea getNameField() {

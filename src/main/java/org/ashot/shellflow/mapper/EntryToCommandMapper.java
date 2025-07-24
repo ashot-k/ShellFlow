@@ -8,7 +8,9 @@ import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.node.popup.ErrorPopup;
 
 public class EntryToCommandMapper {
-    private static ErrorPopup errorPopup = new ErrorPopup();
+    private static final ErrorPopup errorPopup = new ErrorPopup();
+
+    private EntryToCommandMapper(){}
 
     public static Command entryToCommand(EntryBox entryBox, boolean persistent) {
         String name = entryBox.getNameField().getText();
@@ -24,7 +26,7 @@ public class EntryToCommandMapper {
                     errorPopup.showPopup();
                 }
             });
-            throw new RuntimeException(e);
+            throw new InvalidCommandException(e);
         }
     }
 
@@ -42,7 +44,7 @@ public class EntryToCommandMapper {
                     errorPopup.showPopup();
                 }
             });
-            throw new RuntimeException(e);
+            throw new InvalidCommandException(e);
         }
     }
 }

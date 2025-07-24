@@ -17,9 +17,11 @@ import java.util.Map;
 
 
 public class Fields {
-    private final static int TEXT_AREA_HEIGHT = 40;
-    private final static int TEXT_AREA_HEIGHT_ENLARGED = TEXT_AREA_HEIGHT * 4;
+    private static final int TEXT_AREA_HEIGHT = 40;
+    private static final int TEXT_AREA_HEIGHT_ENLARGED = TEXT_AREA_HEIGHT * 4;
     private static boolean autoCompleteToggle = true;
+
+    private Fields(){}
 
     public static TextArea createField(FieldType type, String text, String promptText, String toolTip, Double width, String styleClass) {
         return setupTextField(type, text, promptText, toolTip, width, styleClass);
@@ -77,7 +79,7 @@ public class Fields {
 
         Timeline timeline = new Timeline();
         field.focusedProperty().addListener((_, _, isFocused) -> {
-            if (isFocused) {
+            if (Boolean.TRUE.equals(isFocused)) {
                 popup.show(field.getText(), getAutoCompleteMap(type));
                 Animator.animateHeightChange(timeline, field, TEXT_AREA_HEIGHT_ENLARGED, Duration.millis(250));
             } else {
@@ -88,7 +90,7 @@ public class Fields {
                 autoCompleteToggle = true;
             }
         });
-        field.setOnKeyPressed((e) -> {
+        field.setOnKeyPressed(e -> {
             if (e.isShiftDown() && e.getCode().equals(KeyCode.ENTER)) {
                 autoCompleteToggle = !autoCompleteToggle;
                 if (autoCompleteToggle) {
@@ -110,7 +112,7 @@ public class Fields {
                 return PresetSetupTab.commandsMap;
             }
             default -> {
-                return null;
+                return Map.of();
             }
         }
     }

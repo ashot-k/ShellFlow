@@ -39,7 +39,7 @@ public class ProfilerTab extends Tab {
     private void checkProcessesStart() {
         checkProcessesTask.scheduleAtFixedRate(() -> {
             try {
-                profilerProcessNodeList.stream().filter(e -> e instanceof ProfilerProcessNode).map(o -> (ProfilerProcessNode) o).forEach(this::refreshProcess);
+                profilerProcessNodeList.stream().filter(ProfilerProcessNode.class::isInstance).map(o -> (ProfilerProcessNode) o).forEach(this::refreshProcess);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }

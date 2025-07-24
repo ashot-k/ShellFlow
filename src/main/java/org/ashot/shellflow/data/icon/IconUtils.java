@@ -4,11 +4,14 @@ import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.Glyph;
 
 public class IconUtils {
+
+    private IconUtils(){}
+
     public static void setHover(Glyph icon, Color off, Color hoveredColor) {
         icon.parentProperty().addListener((_, _, p) -> {
             if (p != null) {
                 p.hoverProperty().addListener((_, _, newValue) -> {
-                    if (newValue) {
+                    if (Boolean.TRUE.equals(newValue)) {
                         icon.color(hoveredColor);
                     } else {
                         icon.color(off);
@@ -22,7 +25,7 @@ public class IconUtils {
         icon.parentProperty().addListener((_, _, p) -> {
             if (p != null) {
                 p.hoverProperty().addListener((_, _, newValue) -> {
-                    if (newValue) {
+                    if (Boolean.TRUE.equals(newValue)) {
                         icon.color(off.brighter());
                     } else {
                         icon.color(off);
@@ -37,7 +40,7 @@ public class IconUtils {
         icon.parentProperty().addListener((_, _, p) -> {
             if (p != null) {
                 p.hoverProperty().addListener((_, _, newValue) -> {
-                    if (newValue) {
+                    if (Boolean.TRUE.equals(newValue)) {
                         icon.color(off.darker());
                     } else {
                         icon.color(off);

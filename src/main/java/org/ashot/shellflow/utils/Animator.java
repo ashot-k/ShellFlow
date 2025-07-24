@@ -7,6 +7,8 @@ import javafx.util.Duration;
 
 public class Animator {
 
+    private Animator() {}
+
     public static void animateHeightChange(Timeline timeline, Region node, double heightGoal, Duration duration) {
         KeyValue kv = new KeyValue(node.minHeightProperty(), heightGoal);
         KeyFrame kf = new KeyFrame(duration, kv);

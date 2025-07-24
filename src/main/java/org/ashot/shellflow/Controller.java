@@ -179,12 +179,8 @@ public class Controller implements Initializable {
         entrySetupTab.addEntryBox();
     }
 
-    public TabPane getTabPane() {
-        return mainTabPane;
-    }
-
     public ExecutionsTab getExecutionsTab() {
-        return (ExecutionsTab) getTabPane().getTabs().get(TabIndices.EXECUTIONS.ordinal());
+        return (ExecutionsTab) mainTabPane.getTabs().get(TabIndices.EXECUTIONS.ordinal());
     }
 
     public void refreshFileLoaded(String path) {

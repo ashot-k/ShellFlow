@@ -17,8 +17,8 @@ import static org.ashot.shellflow.data.constant.SettingsFilePaths.getSettingsFol
 public class DefaultConfig implements Config {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
     private static final Properties properties = new Properties();
-    private static final String propertiesFileName = "config.properties";
-    private static final Path pathToPropertiesFile = Path.of(getSettingsFolder() + "/" + propertiesFileName);
+    private static final String PROPERTIES_FILE_NAME = "config.properties";
+    private static final Path pathToPropertiesFile = Path.of(getSettingsFolder() + "/" + PROPERTIES_FILE_NAME);
 
     public DefaultConfig() {
         try {

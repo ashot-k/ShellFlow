@@ -26,6 +26,7 @@ import static org.ashot.shellflow.utils.Utils.calculateDelay;
 
 
 public class CommandExecutor {
+    private CommandExecutor(){}
 
     private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 

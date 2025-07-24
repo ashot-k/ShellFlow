@@ -23,7 +23,7 @@ public class Command {
     private final String rawArguments;
     private String argumentsString = "";
 
-    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) {
+    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException{
         rawArguments = arguments;
         validateArguments(arguments);
         this.persistent = persistent;

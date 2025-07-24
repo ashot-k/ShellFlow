@@ -13,11 +13,8 @@ import static org.ashot.shellflow.data.icon.IconUtils.setHoverToBrighter;
 
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-    private static final DropShadow dropShadow = new DropShadow();
 
-    static {
-        dropShadow.setRadius(1.8);
-    }
+    private Icons(){}
 
     private static Glyph decorateGlyph(Glyph icon) {
         icon.getStyleClass().add("icon");
