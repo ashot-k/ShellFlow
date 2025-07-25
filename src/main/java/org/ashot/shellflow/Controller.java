@@ -93,8 +93,10 @@ public class Controller implements Initializable {
         entrySetupTab = new EntrySetupTab();
         PresetSetupTab presetSetupTab = new PresetSetupTab();
         ExecutionsTab executionsTab = new ExecutionsTab();
-        ProfilerTab profilerTab = new ProfilerTab();
-        mainTabPane.getTabs().addAll(entrySetupTab, presetSetupTab, executionsTab, profilerTab);
+//        ProfilerTab profilerTab = new ProfilerTab();
+        mainTabPane.getTabs().addAll(entrySetupTab, presetSetupTab, executionsTab
+//                ,profilerTab
+                );
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
         mainTabPane.getSelectionModel().selectedIndexProperty().addListener((_, _, newSelection) -> {
             if (newSelection.intValue() != TabIndices.ENTRIES.ordinal()) {
@@ -107,7 +109,7 @@ public class Controller implements Initializable {
         });
         entrySetupTab.addEntryListChangeListener(_ -> executeAllBtn.setDisable(entrySetupTab.getEntryBoxes().isEmpty()));
         executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
-            profilerTab.refreshProcesses(executionsTab.getExecutionsTabPane());
+//            profilerTab.refreshProcesses(executionsTab.getExecutionsTabPane());
             stopAllBtn.setDisable(mainTabPane.getTabs().size() <= SETUP_TABS);
         });
     }

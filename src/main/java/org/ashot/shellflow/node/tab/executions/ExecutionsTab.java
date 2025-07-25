@@ -11,6 +11,7 @@ public class ExecutionsTab extends Tab {
 
     public ExecutionsTab() {
         this.executionsTabPane = new TabPane();
+        executionsTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
         Platform.runLater(() -> {
             this.setClosable(false);
             this.setContent(executionsTabPane);
