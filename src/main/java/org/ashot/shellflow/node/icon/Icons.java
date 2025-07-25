@@ -12,7 +12,7 @@ import static org.ashot.shellflow.utils.IconUtils.setHoverToBrighter;
 
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-    private static final Color preferredColor = Color.DARKSLATEBLUE.brighter();
+    private static final Color preferredColor = Color.SLATEBLUE;
 
     private Icons(){}
 
@@ -89,7 +89,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
@@ -97,7 +97,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN_ALT);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
@@ -105,7 +105,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FILE_TEXT_ALT);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
@@ -113,7 +113,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SAVE);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
@@ -121,7 +121,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TRASH_ALT);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
@@ -129,7 +129,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SEARCH);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
@@ -137,7 +137,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.ADJUST);
         icon.size(size);
         icon.color(preferredColor);
-        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 

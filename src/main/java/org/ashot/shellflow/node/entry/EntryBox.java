@@ -4,24 +4,29 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Separator;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 
 import java.util.List;
 
-public class EntryBox extends HBox {
-    private static final double NAME_FIELD_WIDTH = 200;
-    private static final double PATH_FIELD_WIDTH = 300;
-    private static final double COMMAND_FIELD_WIDTH = 300;
+public class EntryBox extends VBox {
+    private static final double NAME_FIELD_WIDTH = 220;
+    private static final double PATH_FIELD_WIDTH = 320;
+    private static final double COMMAND_FIELD_WIDTH = 550;
+    private static final double COMMAND_FIELD_HEIGHT = 58;
 
     private final TextArea nameField;
     private final TextArea pathField;
@@ -41,9 +46,10 @@ public class EntryBox extends HBox {
                 ToolTipMessages.nameField(), NAME_FIELD_WIDTH, "name-field"
         );
         nameProperty.bind(nameField.textProperty());
+
         commandField = Fields.createField(
                 FieldType.COMMAND, entry.getCommand(), "Command(s)",
-                ToolTipMessages.commandField(), COMMAND_FIELD_WIDTH, "command-field"
+                ToolTipMessages.commandField(), COMMAND_FIELD_WIDTH, COMMAND_FIELD_HEIGHT, "command-field"
         );
         commandProperty.bind(commandField.textProperty());
 
@@ -56,22 +62,56 @@ public class EntryBox extends HBox {
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", entry.isWsl());
         wslProperty.bind(wslToggle.getCheckBox().selectedProperty());
 
+        deleteEntry = EntryButton.deleteEntryButton();
+        deleteEntry.setPadding(new Insets(5, 0, 10, 2.5));
+
+        int fontSize = 11;
+        Insets labelPaddings = new Insets(2.5, 0, 2.5, 15);
+
+        Label nameLabel = new Label("Name");
+        nameLabel.setPadding(labelPaddings);
+        nameLabel.setFont(Font.font(fontSize));
+
+        Label pathLabel = new Label("Path");
+        pathLabel.setPadding(labelPaddings);
+        pathLabel.setFont(Font.font(fontSize));
+
+        Label commandLabel = new Label("Command(s)");
+        commandLabel.setPadding(labelPaddings);
+        commandLabel.setFont(Font.font(fontSize));
+
+        VBox labeledNameField = new VBox(nameField, nameLabel);
+        VBox labeledPathField = new VBox(pathField, pathLabel);
+        VBox labeledCommandField = new VBox(commandField, commandLabel);
         Button pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
 
-        deleteEntry = EntryButton.deleteEntryButton();
-        deleteEntry.setPadding(new Insets(2, 0, 0, 0));
         execute = EntryButton.executeEntryButton();
-        execute.setPadding(new Insets(2, 0, 0, 0));
 
-        HBox deleteEntryContainer = new HBox(deleteEntry);
-        HBox nameFieldContainer = new HBox(nameField);
-        HBox pathFieldContainer = new HBox(5, pathField, pathBrowser);
-        HBox commandFieldContainer = new HBox(commandField);
-        HBox executeContainer = new HBox(execute);
+        GridPane entryGrid = new GridPane();
         VBox orderingContainer = EntryButton.createOrderingContainer();
+        orderingContainer.setAlignment(Pos.TOP_RIGHT);
+        entryGrid.addRow(0, deleteEntry, orderingContainer);
+        GridPane.setConstraints(deleteEntry, 0, 0, 1, 1, HPos.LEFT, VPos.TOP);
+        GridPane.setConstraints(orderingContainer, 2, 0, 1, 1, HPos.RIGHT, VPos.TOP);
 
-        this.getChildren().addAll(deleteEntryContainer, nameFieldContainer, pathFieldContainer, commandFieldContainer, new Separator(Orientation.VERTICAL), wslToggle, executeContainer, orderingContainer);
+        entryGrid.addRow(1, labeledNameField, labeledPathField, pathBrowser);
+        GridPane.setConstraints(labeledNameField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(labeledPathField, 1, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        GridPane.setConstraints(pathBrowser, 2, 1, 1, 1, HPos.RIGHT, VPos.BASELINE);
+
+        entryGrid.addRow(2, labeledCommandField, wslToggle);
+        GridPane.setConstraints(labeledCommandField, 0, 2, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        GridPane.setConstraints(wslToggle, 2, 2, 1, 1, HPos.RIGHT, VPos.TOP);
+
+        entryGrid.addRow(3, execute);
+        GridPane.setConstraints(execute, 0, 3, 3, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
+
+        entryGrid.setHgap(10);
+        entryGrid.setVgap(5);
+
+        this.getChildren().add(entryGrid);
         this.getStyleClass().addAll("entry");
+        this.setMaxWidth(700);
     }
 
     public void setOnDeleteButtonAction(EventHandler<ActionEvent> action){

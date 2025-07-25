@@ -1,5 +1,5 @@
 .root{
-    -color-accent-emphasis: darkslateblue;
+    -color-accent-emphasis: slateblue;
 }
 
 .light .terminal-wrapper{
@@ -11,12 +11,12 @@
 }
 
 .entryContainer {
-    -fx-spacing: 50px;
+    -fx-spacing: 25px;
 }
 
 .entryContainer .entry {
-    -fx-spacing: 15px;
-    -fx-padding: 15px 20px 15px 20px;
+    -fx-spacing: 5px;
+    -fx-padding: 5px 20px 15px 20px;
     -fx-background-radius: 5px;
     -fx-border-color: rgba(255, 255, 255, 0.1);  /* very faint border */
     -fx-border-width: 1;
@@ -24,29 +24,30 @@
 }
 
 .dark .entry{
-    -fx-background-color: rgba(0, 0, 0, 0.02);
+    -fx-background-color: rgba(0, 0, 0, 0.125);
     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.5), 2, 0.0, 0, 2);
 }
 
 .light .entry{
     -fx-background-color: rgba(255, 255, 255, 1);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0.0, 0.0, 0.5);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.35), 8, 0.0, 0.0, 0.5);
 }
 
-.dark .field{
+.dark .field {
+     -fx-border-width: 0 0 1 0 !important;
      -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.25), 2, 0.0, 0, 1);
 }
 
 .light .field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 1, 0.0, 0.0, 0.0);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 1), 1, 0.0, 0.0, 0.0);
 }
 
 .dark, .icon{
-     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.5), 2, 0.0, 0, 2);
+     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.5), 2, 0.0, 0, 1);
 }
 
 .light .icon{
-     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 1), 2, 0.0, 0, 1.5);
+     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.8), 2, 0.0, 0, 1.5);
 }
 
 .autocomplete-entry{
@@ -76,13 +77,13 @@
 }
 
 .light.notification-base{
-    -fx-background-color: #f0f0f0;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0.5, 0.0, 0.0);
+    -fx-background-color: rgb(230, 230, 230);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.1), 2, 0.5, 0.0, 0.0);
 }
 
 .dark .notification-base{
     -fx-background-color: #0d1117;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.5, 0.0, 0.0);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.3), 8, 0.5, 0.0, 0.0);
 }
 
 /* disabling controlsfx internal css background */
@@ -97,11 +98,6 @@
     -fx-background-color: rgb(23, 27, 33);
 }
 /* //// */
-
-
-.ordering-container {
-    -fx-spacing: 4px;
-}
 
 .ordering-container * {
     -fx-background-color: transparent;

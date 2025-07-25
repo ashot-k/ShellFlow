@@ -6,9 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.mapper.EntryToCommandMapper;
@@ -18,13 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntrySetupTab extends Tab {
-    private final FlowPane entryContainer;
+    private final VBox entryContainer;
 
     public EntrySetupTab(){
-        entryContainer = new FlowPane();
+        entryContainer = new VBox();
         entryContainer.setAlignment(Pos.TOP_CENTER);
-        entryContainer.setVgap(15);
-        entryContainer.setPadding(new Insets(20, 0, 0, 15));
+        entryContainer.setPadding(new Insets(20, 15, 0, 15));
         entryContainer.getStyleClass().add("entryContainer");
 
         ScrollPane scrollPane = new ScrollPane();
@@ -34,7 +33,7 @@ public class EntrySetupTab extends Tab {
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.TOP_CENTER);
         hBox.getChildren().add(scrollPane);
-        HBox.setHgrow(scrollPane,  Priority.ALWAYS);
+        HBox.setHgrow(scrollPane, Priority.ALWAYS);
 
         setContent(hBox);
         setClosable(false);

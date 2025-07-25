@@ -4,8 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -37,24 +35,24 @@ public class EntryButton extends CustomButton {
     }
 
     public static VBox createOrderingContainer() {
-        Button moveUpBtn = EntryButton.orderingButton(Direction.UP);
-        Button moveDownBtn = EntryButton.orderingButton(Direction.DOWN);
-        VBox orderingContainer = new VBox(moveUpBtn, moveDownBtn);
+        Button upButton = orderingButton(Direction.UP);
+        Button downButton = orderingButton(Direction.DOWN);
+        VBox orderingContainer = new VBox(upButton, downButton);
         orderingContainer.getStyleClass().add("ordering-container");
         return orderingContainer;
     }
 
     public static Button orderingButton(Direction direction) {
-        Button btn = new Button();
-        btn.getStyleClass().add("no-outline-btn");
-        btn.setPadding(Insets.EMPTY);
-        btn.setOnAction(_ -> performOrdering(direction, (HBox) btn.getParent().getParent()));
-        btn.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(SIZE) : Icons.getChevronDownIcon(SIZE));
-        btn.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipMessages.moveEntryUp() : ToolTipMessages.moveEntryDown()));
-        return btn;
+        Button button = new Button();
+        button.getStyleClass().add("no-outline-btn");
+        button.setPadding(Insets.EMPTY);
+        button.setOnAction(_ -> performOrdering(direction, (Pane) button.getParent().getParent().getParent()));
+        button.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(SIZE) : Icons.getChevronDownIcon(SIZE));
+        button.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipMessages.moveEntryUp() : ToolTipMessages.moveEntryDown()));
+        return button;
     }
 
-    public static void performOrdering(Direction direction, HBox row) {
+    public static void performOrdering(Direction direction, Pane row) {
         Pane parent = (Pane) row.getParent();
         int idxOfCurrent = parent.getChildren().indexOf(row);
         if (direction.equals(Direction.UP)) {
@@ -69,12 +67,13 @@ public class EntryButton extends CustomButton {
     }
 
     public static Button executeEntryButton() {
-        Button executeBtn = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
-        executeBtn.setBackground(Background.EMPTY);
-        executeBtn.setId(ButtonType.EXECUTION.getValue());
-        executeBtn.getStyleClass().add("no-outline-btn");
-        executeBtn.setTooltip(new Tooltip(ToolTipMessages.execute()));
-        return executeBtn;
+        Button executeButton = new Button("", Icons.getExecuteButtonIcon(28));
+        executeButton.setId(ButtonType.EXECUTION.getValue());
+        executeButton.setPrefWidth(100);
+        executeButton.setPrefHeight(38);
+        executeButton.setPadding(Insets.EMPTY);
+        executeButton.setTooltip(new Tooltip(ToolTipMessages.execute()));
+        return executeButton;
     }
 
     public static Button browsePathBtn(TextArea pathField, CheckBox wslOption) {
@@ -93,6 +92,7 @@ public class EntryButton extends CustomButton {
             }
         });
         pathBrowserBtn.setTooltip(new Tooltip(ToolTipMessages.pathBrowse()));
+        pathBrowserBtn.setMinWidth(PATH_BROWSE_BUTTON_SIZE * 2 + 1);
         return pathBrowserBtn;
     }
 
