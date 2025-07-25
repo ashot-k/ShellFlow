@@ -109,6 +109,7 @@ public class OutputTab extends Tab {
     public void setTerminal(JediTermFxWidget terminal) {
         this.terminal = terminal;
         if(terminal != null) {
+            setOnClose(null);
             Platform.runLater(() -> {
                 terminalWrapper.getChildren().add(terminal.getPane());
                 VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
@@ -122,7 +123,9 @@ public class OutputTab extends Tab {
 
     public void setOnClose(EventHandler<Event> event){
         this.setOnCloseRequest(closeEvent->{
-            event.handle(closeEvent);
+            if(event != null) {
+                event.handle(closeEvent);
+            }
             this.terminal.close();
         });
     }

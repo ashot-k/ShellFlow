@@ -60,15 +60,15 @@ public class SequentialExecutor {
                         }
                         e.consume();
                     });
-                    if (commandSequence.getSequenceName().isBlank()) {
-                        String pid = String.valueOf(process.pid());
-                        Platform.runLater(() -> {
-                            String currentTabName = currentCommand.isNameSet() ? currentCommand.getName() : "Process - " + pid;
-                            tab.setText(currentTabName);
-                            String sequenceTabName = "Sequence - " + "(" + currentTabName + ")";
-                            sequenceHolder.setText(sequenceTabName);
-                        });
-                    }
+                    String pid = String.valueOf(process.pid());
+                    int finalI = i;
+                    Platform.runLater(() -> {
+                        String currentTabName = currentCommand.isNameSet() ? currentCommand.getName() : "Process - " + pid;
+                        tab.setText(currentTabName);
+                        String validatedSequenceName = commandSequence.getSequenceName().isBlank() ? "Sequence" : commandSequence.getSequenceName();
+                        String sequenceTabName = validatedSequenceName + " -> " + currentTabName + " (" + (finalI + 1) + "/" + commandList.size() + ")";
+                        sequenceHolder.setText(sequenceTabName);
+                    });
                     setInProgress(tab);
                     process.waitFor();
                     if (tab.isCanceled()) {
@@ -78,7 +78,7 @@ public class SequentialExecutor {
                         tab.setClosable(false);
                         setFinished(tab);
                         sequenceTabPane.getSelectionModel().select(i != commandList.size() ? i + 1 : i);
-                    } else if (process.exitValue() > 0){
+                    } else if (process.exitValue() > 0) {
                         tab.setClosable(false);
                         setFailed(tab);
                         setFailed(sequenceHolder);

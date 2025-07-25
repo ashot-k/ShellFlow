@@ -11,12 +11,12 @@ public class LightThemeSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {
-        return new TerminalColor(255, 255, 255);
+        return new TerminalColor(248, 248, 248);
     }
 
     @Override
     public @NotNull TerminalColor getDefaultForeground() {
-        return new TerminalColor(13, 17, 23);
+        return new TerminalColor(16, 17, 23);
     }
 
     @Override

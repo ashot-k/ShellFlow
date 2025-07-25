@@ -22,7 +22,7 @@ public class Animator {
         icon.setCacheHint(CacheHint.ROTATE);
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(icon.rotateProperty(), 0)),
-                new KeyFrame(Duration.seconds(2), new KeyValue(icon.rotateProperty(), 360))
+                new KeyFrame(Duration.seconds(2.5), new KeyValue(icon.rotateProperty(), 360))
         );
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

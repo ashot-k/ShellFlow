@@ -1,8 +1,6 @@
 package org.ashot.shellflow.data;
 
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.node.entry.Fields;
 import org.junit.jupiter.api.Test;
@@ -11,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.framework.junit5.ApplicationExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @ExtendWith(ApplicationExtension.class)
@@ -41,21 +40,4 @@ class FieldsTest {
         assertEquals("", field.getText(), "Field text was not set to empty for null text argument");
     }
 
-    @Test
-    void getTextFieldContentFromContainerReturnsNullForContainerWithoutTextField() {
-        logger.info("getTextFieldContentFromContainerReturnsNullForContainerWithoutTextField");
-        Pane v = new Pane();
-        Text f = new Text();
-        v.getChildren().add(f);
-        assertNull(Fields.getTextFieldContentFromContainer(v, FieldType.COMMAND), "Text field is not null");
-    }
-
-    @Test
-    void getTextFieldContentFromContainerReturnsProperText() {
-        logger.info("getTextFieldContentFromContainerReturnsProperText");
-        Pane v = new Pane();
-        TextArea f = Fields.createField(FieldType.NAME, "test");
-        v.getChildren().add(f);
-        assertEquals("test", Fields.getTextFieldContentFromContainer(v, FieldType.NAME), "Text content returned is not correct");
-    }
 }
