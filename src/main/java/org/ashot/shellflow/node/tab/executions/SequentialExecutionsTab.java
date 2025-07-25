@@ -2,7 +2,6 @@ package org.ashot.shellflow.node.tab.executions;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.ashot.shellflow.node.tab.OutputTab;
 
 import java.util.List;
 

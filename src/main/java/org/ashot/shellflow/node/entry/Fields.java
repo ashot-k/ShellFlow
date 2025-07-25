@@ -69,6 +69,7 @@ public class Fields {
         if (styleClass != null) {
             field.getStyleClass().add(styleClass);
         }
+        field.getStyleClass().add("field");
 
         AutoCompletePopup popup = new AutoCompletePopup(field);
         field.textProperty().addListener((obs, oldInput, input) -> {

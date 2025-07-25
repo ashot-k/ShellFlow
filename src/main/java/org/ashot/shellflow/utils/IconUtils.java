@@ -1,4 +1,4 @@
-package org.ashot.shellflow.data.icon;
+package org.ashot.shellflow.utils;
 
 import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.Glyph;

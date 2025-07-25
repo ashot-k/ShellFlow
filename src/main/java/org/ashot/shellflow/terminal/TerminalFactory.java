@@ -49,7 +49,7 @@ public class TerminalFactory {
     }
 
     private static SettingsProvider getSettingsProvider() {
-        return Main.getDarkModeSetting() ? new DarkThemeSettingsProvider() : new LightThemeSettingsProvider();
+        return Main.getSelectedThemeOption().isDark() ? new DarkThemeSettingsProvider() : new LightThemeSettingsProvider();
     }
 
 }

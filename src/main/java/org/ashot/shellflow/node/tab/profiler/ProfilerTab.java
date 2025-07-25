@@ -12,7 +12,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.ProcessStatus;
-import org.ashot.shellflow.node.tab.OutputTab;
+import org.ashot.shellflow.node.tab.executions.OutputTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

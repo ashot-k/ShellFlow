@@ -6,7 +6,7 @@ import java.util.List;
 
 public class TextStyleClass {
     public static String getTextColorClass() {
-        return Main.getDarkModeSetting() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+        return Main.getSelectedThemeOption().isDark() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
     }
 
     public static List<String> boldTextStyleClass() {

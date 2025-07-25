@@ -6,7 +6,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.ProcessStatus;
-import org.ashot.shellflow.node.tab.OutputTab;
+import org.ashot.shellflow.node.tab.executions.OutputTab;
 
 public class ProfilerProcessNode extends HBox {
     private final Process process;

@@ -1,6 +1,5 @@
-package org.ashot.shellflow.data.icon;
+package org.ashot.shellflow.node.icon;
 
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import org.ashot.shellflow.utils.Animator;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -8,11 +7,12 @@ import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import static org.ashot.shellflow.data.icon.IconUtils.setHover;
-import static org.ashot.shellflow.data.icon.IconUtils.setHoverToBrighter;
+import static org.ashot.shellflow.utils.IconUtils.setHover;
+import static org.ashot.shellflow.utils.IconUtils.setHoverToBrighter;
 
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+    private static final Color preferredColor = Color.DARKSLATEBLUE.brighter();
 
     private Icons(){}
 
@@ -48,88 +48,96 @@ public class Icons {
     public static Glyph getExecuteButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLAY_CIRCLE);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
         return decorateGlyph(icon);
     }
 
     public static Glyph getExecuteAllButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLAY);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
     public static Glyph getAddButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLUS_CIRCLE);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
     public static Glyph getLinuxIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.LINUX);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
     public static Glyph getWindowsIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.WINDOWS);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHoverToBrighter(icon, Color.DARKSLATEBLUE);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
         return icon;
     }
 
     public static Glyph getOpenIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
         return icon;
     }
 
     public static Glyph getOpenRecentIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FOLDER_OPEN_ALT);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
         return icon;
     }
 
     public static Glyph getSaveAsIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FILE_TEXT_ALT);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
         return icon;
     }
 
     public static Glyph getSaveIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SAVE);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
         return icon;
     }
 
     public static Glyph getClearIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TRASH_ALT);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
         return icon;
     }
 
     public static Glyph getBrowseIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SEARCH);
         icon.size(size);
-        icon.color(Color.DARKSLATEBLUE);
-        setHover(icon, Color.DARKSLATEBLUE, Color.MEDIUMSLATEBLUE);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
+        return icon;
+    }
+
+    public static Glyph getThemeSettingIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.ADJUST);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHover(icon, preferredColor, Color.MEDIUMSLATEBLUE);
         return icon;
     }
 

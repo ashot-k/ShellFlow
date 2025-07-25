@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.config.DefaultConfig;
-import org.ashot.shellflow.data.constant.ThemeMode;
+import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.registry.ProcessRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +24,12 @@ public class Main extends Application {
     public static final String CSS_FILE_LOCATION = Main.class.getResource("main.css").toExternalForm();
     public static final URL MAIN_FXML_LOCATION = Main.class.getResource("shellflow-main.fxml");
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    private static boolean isDark = false;
+    private static ThemeOption selectedTheme;
     private static Stage primaryStage;
     private static final Config config = new DefaultConfig();
 
     public static void main(String[] args) {
+        handleJVMArgs(args);
         launch();
     }
 
@@ -37,7 +38,7 @@ public class Main extends Application {
         try {
             setTheme(getThemeFromConfig());
             Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
-            root.getStyleClass().add(getThemeFromConfig().equals(ThemeMode.DARK_MODE) ? "dark" : "light");
+            root.getStyleClass().add(getThemeFromConfig().equals(ThemeOption.DARK_MODE) ? "dark" : "light");
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
             primaryStage = stage;
@@ -60,33 +61,38 @@ public class Main extends Application {
         System.exit(0);
     }
 
-    public static void setTheme(ThemeMode theme) {
-        if (theme.equals(ThemeMode.DARK_MODE)) {
-            Application.setUserAgentStylesheet(ThemeMode.DARK_MODE_THEME.getUserAgentStylesheet());
-        } else {
-            Application.setUserAgentStylesheet(ThemeMode.LIGHT_MODE_THEME.getUserAgentStylesheet());
+    private static void handleJVMArgs(String[] args) {
+        for (String arg : args){
+            log.info("Found argument: {}", arg);
+            if(arg.equals("debug")){
+                log.info("Running in mode: {}", arg);
+            }
         }
+    }
+
+    public static void setTheme(ThemeOption option) {
+        selectedTheme = option;
+        Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
         if (getPrimaryStage() != null && getPrimaryStage().getScene() != null) {
             Parent root = getPrimaryStage().getScene().getRoot();
             root.getStyleClass().removeAll("dark", "light");
-            root.getStyleClass().add(theme.equals(ThemeMode.DARK_MODE) ? "dark" : "light");
+            root.getStyleClass().add(selectedTheme.isDark() ? "dark" : "light");
         }
-        isDark = theme.equals(ThemeMode.DARK_MODE);
     }
 
-    public static boolean getDarkModeSetting() {
-        return isDark;
+    public static ThemeOption getSelectedThemeOption() {
+        return selectedTheme;
     }
 
     public static Stage getPrimaryStage() {
         return primaryStage;
     }
 
-    private static ThemeMode getThemeFromConfig() {
-        if (!config.getDarkMode()) {
-            return ThemeMode.LIGHT_MODE;
+    private static ThemeOption getThemeFromConfig() {
+        if (config.getDarkMode()) {
+            return ThemeOption.DARK_MODE;
         } else {
-            return ThemeMode.DARK_MODE;
+            return ThemeOption.LIGHT_MODE;
         }
     }
 

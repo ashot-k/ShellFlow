@@ -3,7 +3,7 @@ package org.ashot.shellflow.utils;
 import javafx.scene.control.Button;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
-import org.ashot.shellflow.data.icon.Icons;
+import org.ashot.shellflow.node.icon.Icons;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;

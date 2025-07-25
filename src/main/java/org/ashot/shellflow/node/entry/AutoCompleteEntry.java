@@ -62,7 +62,7 @@ public class AutoCompleteEntry extends HBox {
         this.setPrefWidth(WIDTH);
         this.setFillHeight(true);
         this.setAlignment(Pos.TOP_LEFT);
-        this.getStyleClass().addAll("autocomplete-entry", Main.getDarkModeSetting() ? "dark" : "light");
+        this.getStyleClass().addAll("autocomplete-entry", Main.getSelectedThemeOption().isDark() ? "dark" : "light");
         this.setBorder(new Border(new BorderStroke(Color.DARKSLATEBLUE, BorderStrokeStyle.SOLID, new CornerRadii(1), BorderStroke.DEFAULT_WIDTHS)));
         this.getChildren().addAll(presetNameArea, new Separator(Orientation.VERTICAL), presetValueArea);
         this.setFocusTraversable(true);

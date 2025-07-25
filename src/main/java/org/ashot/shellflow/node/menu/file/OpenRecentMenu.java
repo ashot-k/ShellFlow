@@ -5,7 +5,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.data.icon.Icons;
+import org.ashot.shellflow.node.icon.Icons;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

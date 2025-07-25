@@ -9,23 +9,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
-import org.ashot.shellflow.data.Command;
 import org.ashot.shellflow.data.constant.ButtonType;
 import org.ashot.shellflow.data.constant.Direction;
-import org.ashot.shellflow.data.icon.Icons;
 import org.ashot.shellflow.data.message.ToolTipMessages;
-import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.node.CustomButton;
+import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.utils.Utils;
 
 import java.io.File;
-import java.io.IOException;
 
 
 public class EntryButton extends CustomButton {
-    private EntryButton(){
-        super();
-    }
+    private EntryButton(){}
 
     public static Button addEntryButton(EventHandler<ActionEvent> action){
         Button button = new Button("Add", Icons.getAddButtonIcon(BUTTON_ICON_SIZE));

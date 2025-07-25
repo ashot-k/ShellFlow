@@ -9,7 +9,7 @@ import org.ashot.shellflow.data.Command;
 import org.ashot.shellflow.data.CommandSequence;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.node.notification.Notification;
-import org.ashot.shellflow.node.tab.OutputTab;
+import org.ashot.shellflow.node.tab.executions.OutputTab;
 import org.ashot.shellflow.node.tab.executions.SequentialExecutionsTab;
 import org.ashot.shellflow.registry.ProcessRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFailNotificationMessage;
 import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFinishedNotificationMessage;
-import static org.ashot.shellflow.node.tab.OutputTab.constructSequencePartOutputTab;
+import static org.ashot.shellflow.node.tab.executions.OutputTab.constructSequencePartOutputTab;
 import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
 import static org.ashot.shellflow.utils.TabUtils.*;
 
@@ -52,7 +52,7 @@ public class SequentialExecutor {
                     ProcessRegistry.register(String.valueOf(process.pid()), process);
                     tab.setTerminal(TerminalFactory.createTerminalWidget(process));
                     tab.startTerminal();
-                    tab.setOnCloseRequest(e -> {
+                    tab.setOnClose(e -> {
                         setCanceled(tab);
                         setCanceled(sequenceHolder);
                         if (tab.getTerminal().getTtyConnector().isConnected()) {
@@ -78,7 +78,7 @@ public class SequentialExecutor {
                         tab.setClosable(false);
                         setFinished(tab);
                         sequenceTabPane.getSelectionModel().select(i != commandList.size() ? i + 1 : i);
-                    } else {
+                    } else if (process.exitValue() > 0){
                         tab.setClosable(false);
                         setFailed(tab);
                         setFailed(sequenceHolder);

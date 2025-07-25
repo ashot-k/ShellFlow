@@ -3,9 +3,9 @@ package org.ashot.shellflow.utils;
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import org.ashot.shellflow.Controller;
-import org.ashot.shellflow.data.icon.Icons;
-import org.ashot.shellflow.node.tab.OutputTab;
+import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
+import org.ashot.shellflow.node.tab.executions.OutputTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
 
 public class TabUtils {

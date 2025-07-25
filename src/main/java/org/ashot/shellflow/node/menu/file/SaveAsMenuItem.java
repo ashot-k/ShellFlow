@@ -1,7 +1,7 @@
 package org.ashot.shellflow.node.menu.file;
 
 import javafx.scene.control.MenuItem;
-import org.ashot.shellflow.data.icon.Icons;
+import org.ashot.shellflow.node.icon.Icons;
 
 import java.io.File;
 import java.util.function.Consumer;

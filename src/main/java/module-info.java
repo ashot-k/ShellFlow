@@ -11,6 +11,7 @@ module org.ashot.shellflow {
     requires com.techsenger.jeditermfx.core;
     requires org.jetbrains.annotations;
     requires pty4j;
+    requires java.desktop;
 
 
     exports org.ashot.shellflow;
@@ -20,13 +21,12 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.registry;
     opens org.ashot.shellflow.registry to javafx.fxml;
     exports org.ashot.shellflow.utils;
-    opens org.ashot.shellflow.utils to javafx.fxml;
     opens org.ashot.shellflow.data.constant to javafx.base;
-    opens org.ashot.shellflow.node.tab to javafx.base;
-    opens org.ashot.shellflow.data.icon to javafx.base;
+    opens org.ashot.shellflow.node.icon to javafx.base;
     exports org.ashot.shellflow.data;
     opens org.ashot.shellflow.data.message to javafx.fxml;
     opens org.ashot.shellflow.node.tab.profiler to javafx.base;
     opens org.ashot.shellflow.node.tab.executions to javafx.base;
     opens org.ashot.shellflow.node.tab.preset to javafx.base;
+    opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
 }

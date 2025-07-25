@@ -103,12 +103,7 @@ public class Command {
     }
 
     private String formatName(String name) {
-        if (name.isBlank()) {
-            nameSet = false;
-        } else {
-            name = name.replace(" ", "-");
-            nameSet = true;
-        }
+        nameSet = !name.isBlank();
         return name;
     }
 

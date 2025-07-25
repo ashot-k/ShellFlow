@@ -8,7 +8,7 @@ import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.popup.ErrorPopup;
-import org.ashot.shellflow.node.tab.OutputTab;
+import org.ashot.shellflow.node.tab.executions.OutputTab;
 import org.ashot.shellflow.registry.ProcessRegistry;
 import org.ashot.shellflow.task.CommandExecutionTask;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class CommandExecutor {
                             null,
                             NotificationType.SUCCESS);
                     setFinished(tab);
-                } else {
+                } else if (process.exitValue() > 0){
                     Notification.display(
                             ExecutionState.FAILURE.getValue(),
                             failNotificationMessage(tab.getText(), process.exitValue()),

@@ -2,8 +2,8 @@ package org.ashot.shellflow.node.menu.file;
 
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.data.constant.DirType;
-import org.ashot.shellflow.data.icon.Icons;
 import org.ashot.shellflow.node.Recents;
+import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.utils.FileUtils;
 
 import java.io.File;

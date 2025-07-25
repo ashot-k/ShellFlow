@@ -2,18 +2,6 @@
     -color-accent-emphasis: darkslateblue;
 }
 
-.entryContainer {
-    -fx-spacing: 50px;
-}
-
-.entryContainer .entry {
-    -fx-spacing: 15px;
-    -fx-padding: 10px 20px 10px 20px;
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
-    -fx-border-width:5;
-}
-
 .light .terminal-wrapper{
     -fx-background-color: rgba(255, 255, 255, 1);
 }
@@ -22,46 +10,43 @@
     -fx-background-color: rgb(23, 27, 33);
 }
 
-.light .entry{
-    -fx-background-color: rgba(255, 255, 255, 1);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.5, 0.0, 0.0);
+.entryContainer {
+    -fx-spacing: 50px;
+}
+
+.entryContainer .entry {
+    -fx-spacing: 15px;
+    -fx-padding: 15px 20px 15px 20px;
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.1);  /* very faint border */
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
 }
 
 .dark .entry{
-    -fx-background-color: rgb(23, 27, 33);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+    -fx-background-color: rgba(0, 0, 0, 0.02);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.5), 2, 0.0, 0, 2);
 }
 
-.dark .name-field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+.light .entry{
+    -fx-background-color: rgba(255, 255, 255, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0.0, 0.0, 0.5);
 }
 
-.light .name-field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
+.dark .field{
+     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.25), 2, 0.0, 0, 1);
 }
 
-.dark .path-field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+.light .field{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 1), 1, 0.0, 0.0, 0.0);
 }
 
-.light .path-field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
-}
-
-.dark .command-field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
-}
-
-.light .command-field{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
-}
-
-.dark .icon{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0);
+.dark, .icon{
+     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.5), 2, 0.0, 0, 2);
 }
 
 .light .icon{
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 3, 0.5, 0.0, 0.0);
+     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 1), 2, 0.0, 0, 1.5);
 }
 
 .autocomplete-entry{
@@ -115,7 +100,7 @@
 
 
 .ordering-container {
-    -fx-spacing: 2px;
+    -fx-spacing: 4px;
 }
 
 .ordering-container * {
@@ -139,18 +124,6 @@
 }
 
 .no-outline-btn {
-    -fx-background-color: transparent;
-}
-
-.command-output-container {
-    -fx-padding: 5px 20px 0 20px;
-}
-
-.light .output{
-    -fx-background-color: #fbfbfb;
-}
-
-.dark .output{
     -fx-background-color: transparent;
 }
 

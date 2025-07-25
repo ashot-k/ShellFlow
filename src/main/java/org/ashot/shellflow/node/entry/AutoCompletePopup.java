@@ -12,7 +12,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import org.ashot.shellflow.data.constant.ThemeMode;
+import org.ashot.shellflow.Main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +68,7 @@ public class AutoCompletePopup extends PopupControl {
         }
         getScene().setRoot(setupList());
 
-        getScene().setUserAgentStylesheet(ThemeMode.DARK_MODE_THEME.getUserAgentStylesheet());
+        getScene().setUserAgentStylesheet(Main.getSelectedThemeOption().getTheme().getUserAgentStylesheet());
         Bounds bounds = field.localToScreen(field.getBoundsInLocal());
         this.show(field, bounds.getMinX(), bounds.getMaxY() + 5);
     }

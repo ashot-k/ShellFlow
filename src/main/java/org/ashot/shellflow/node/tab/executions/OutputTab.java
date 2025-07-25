@@ -1,8 +1,10 @@
-package org.ashot.shellflow.node.tab;
+package org.ashot.shellflow.node.tab.executions;
 
 import com.pty4j.PtyProcess;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -11,7 +13,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.Command;
-import org.ashot.shellflow.node.tab.executions.SequentialExecutionsTab;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
 import org.slf4j.Logger;
@@ -32,24 +33,19 @@ public class OutputTab extends Tab {
 
     private OutputTab(OutputTabBuilder outputTabBuilder) {
         this.commandDisplayName = outputTabBuilder.commandDisplayName;
-        this.terminal = outputTabBuilder.terminal;
         this.setTooltip(outputTabBuilder.tooltip);
         this.setText(outputTabBuilder.tabName);
         this.setDisable(outputTabBuilder.disabled);
         this.setClosable(outputTabBuilder.closable);
+        setTerminal(outputTabBuilder.terminal);
         Platform.runLater(this::setupOutputTab);
     }
 
     public void setupOutputTab() {
-        if (terminal != null) {
-            terminalWrapper.getChildren().add(terminal.getPane());
-            VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
-        }
         this.terminalWrapper.setFillWidth(true);
         this.terminalWrapper.setPadding(new Insets(5));
-        this.terminalWrapper.getStyleClass().addAll(Main.getDarkModeSetting() ? "dark" : "light", "terminal-wrapper");
+        this.terminalWrapper.getStyleClass().addAll(Main.getSelectedThemeOption().isDark() ? "dark" : "light", "terminal-wrapper");
         this.setContent(this.terminalWrapper);
-        this.setOnClosed(_ -> this.terminal.close());
     }
 
     public static OutputTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
@@ -112,12 +108,22 @@ public class OutputTab extends Tab {
 
     public void setTerminal(JediTermFxWidget terminal) {
         this.terminal = terminal;
-        Platform.runLater(() -> {
-            terminalWrapper.getChildren().add(terminal.getPane());
-            VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
-            if (this.getText().isBlank()) {
-                this.setText("Process - " + ((PtyProcessTtyConnector) terminal.getTtyConnector()).getProcess().pid());
-            }
+        if(terminal != null) {
+            Platform.runLater(() -> {
+                terminalWrapper.getChildren().add(terminal.getPane());
+                VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
+                if (this.getText().isBlank()) {
+                    this.setText("Process - " + ((PtyProcessTtyConnector) terminal.getTtyConnector()).getProcess().pid());
+                }
+            });
+        }
+    }
+
+
+    public void setOnClose(EventHandler<Event> event){
+        this.setOnCloseRequest(closeEvent->{
+            event.handle(closeEvent);
+            this.terminal.close();
         });
     }
 
