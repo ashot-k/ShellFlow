@@ -21,5 +21,6 @@ public class Animator {
         rotateTransition.setByAngle(360);
         rotateTransition.setCycleCount(Animation.INDEFINITE);
         rotateTransition.setInterpolator(Interpolator.LINEAR);
+        rotateTransition.play();
     }
 }
