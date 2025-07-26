@@ -38,7 +38,7 @@ public class Main extends Application {
         try {
             setTheme(getThemeFromConfig());
             Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
-            root.getStyleClass().add(getThemeFromConfig().equals(ThemeOption.DARK_MODE) ? "dark" : "light");
+            root.getStyleClass().add(getThemeFromConfig().isDark() ? "dark" : "light");
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
             primaryStage = stage;

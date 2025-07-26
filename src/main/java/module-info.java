@@ -15,6 +15,7 @@ module org.ashot.shellflow {
 
 
     exports org.ashot.shellflow;
+    exports org.ashot.shellflow.exception;
     exports org.ashot.shellflow.node.popup;
     opens org.ashot.shellflow to javafx.fxml;
     opens org.ashot.shellflow.node.popup to javafx.fxml;

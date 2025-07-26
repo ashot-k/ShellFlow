@@ -1,6 +1,7 @@
 package org.ashot.shellflow.utils;
 
 import javafx.scene.control.Button;
+import javafx.scene.text.Font;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.node.icon.Icons;
@@ -75,11 +76,12 @@ public class Utils {
     public static void setupOSInfo(Button osInfo) {
         String os = System.getProperty(osProperty);
         if (os.toLowerCase().contains("linux")) {
-            osInfo.setGraphic(Icons.getLinuxIcon(24));
+            osInfo.setGraphic(Icons.getLinuxIcon(18));
         } else if (os.toLowerCase().contains("windows")) {
-            osInfo.setGraphic(Icons.getWindowsIcon(24));
+            osInfo.setGraphic(Icons.getWindowsIcon(18));
         }
         osInfo.setText(System.getProperty(osProperty) + " " + System.getProperty("os.version"));
+        osInfo.setFont(Font.font(14));
     }
 
 }

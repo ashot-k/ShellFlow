@@ -2,6 +2,7 @@ package org.ashot.shellflow.data;
 
 import org.ashot.shellflow.data.message.ExceptionMessages;
 import org.ashot.shellflow.exception.InvalidCommandException;
+import org.ashot.shellflow.exception.InvalidPathException;
 import org.ashot.shellflow.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class Command {
     private final String rawArguments;
     private String argumentsString = "";
 
-    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException{
+    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidPathException{
         rawArguments = arguments;
         validateArguments(arguments);
         this.persistent = persistent;
@@ -34,7 +35,7 @@ public class Command {
         }
     }
 
-    private void constructCommandPersistentSession(String name, String path, String arguments, boolean wsl) {
+    private void constructCommandPersistentSession(String name, String path, String arguments, boolean wsl) throws InvalidPathException {
         if (Utils.checkIfLinux() || wsl) {
             arguments += "; exec $SHELL";
         } else if (Utils.checkIfWindows()) {
@@ -43,7 +44,7 @@ public class Command {
         constructCommand(name, path, arguments, wsl);
     }
 
-    private void constructCommand(String name, String path, String arguments, boolean wsl) {
+    private void constructCommand(String name, String path, String arguments, boolean wsl) throws InvalidPathException {
         this.wsl = wsl;
         this.path = path;
         if (wsl) {
@@ -67,16 +68,16 @@ public class Command {
         path = path.isBlank() ? "/" : path;
     }
 
-    private void validatePath() {
+    private void validatePath() throws InvalidPathException {
         path = path.isBlank() ? "/" : path;
         path = path.replace("~", System.getProperty("user.home"));
         File f = new File(path);
         if (!f.exists() || !f.isDirectory()) {
-            throw new InvalidCommandException(ExceptionMessages.INVALID_PATH + ": " + path);
+            throw new InvalidPathException(ExceptionMessages.INVALID_PATH, path);
         }
     }
 
-    private void validateArguments(String arguments) {
+    private void validateArguments(String arguments) throws InvalidCommandException {
         if (arguments == null || arguments.isBlank()) {
             log.error("Invalid Arguments: {}", arguments);
             throw new InvalidCommandException(ExceptionMessages.INVALID_ARGUMENTS);

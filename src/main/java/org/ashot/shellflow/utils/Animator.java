@@ -1,6 +1,9 @@
 package org.ashot.shellflow.utils;
 
-import javafx.animation.*;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;

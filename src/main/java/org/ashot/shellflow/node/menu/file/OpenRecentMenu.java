@@ -2,9 +2,7 @@ package org.ashot.shellflow.node.menu.file;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TabPane;
 import org.ashot.shellflow.data.constant.DirType;
-import org.ashot.shellflow.data.constant.TabIndices;
 import org.ashot.shellflow.node.icon.Icons;
 import org.json.JSONArray;
 import org.slf4j.Logger;
@@ -23,14 +21,14 @@ public class OpenRecentMenu extends Menu {
     private static final Logger log = LoggerFactory.getLogger(OpenRecentMenu.class);
     private final Consumer<File> open;
 
-    public OpenRecentMenu(Consumer<File> open, TabPane tabPane, Menu parentMenu) {
+    public OpenRecentMenu(Consumer<File> open, Menu parentMenu) {
         this.open = open;
         setText("Open Recent");
         setGraphic(Icons.getOpenRecentIcon(MENU_ITEM_ICON_SIZE));
-        parentMenu.setOnShowing(_ -> refreshRecentlyOpenedFiles(tabPane));
+        parentMenu.setOnShowing(_ -> refreshRecentlyOpenedFiles());
     }
 
-    public void refreshRecentlyOpenedFiles(TabPane tabs) {
+    public void refreshRecentlyOpenedFiles() {
         List<String> toRemove = getInvalidRecentFolders(this);
         this.getItems().clear();
         JSONArray recentFolders = getRecents().getJSONArray(DirType.RECENT.name());
@@ -49,7 +47,6 @@ public class OpenRecentMenu extends Menu {
                 File file = new File(recentFolder);
                 if (file.exists()) {
                     open.accept(file);
-                    tabs.getSelectionModel().select(TabIndices.ENTRIES.ordinal());
                 }
             });
             m.setDisable(!new File(recentFolder).exists());
