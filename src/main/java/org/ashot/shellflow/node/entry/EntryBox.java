@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -41,24 +42,25 @@ public class EntryBox extends VBox {
 
     public EntryBox(Entry entry) {
         nameField = Fields.createField(
-                FieldType.NAME, entry.getName(), "Name",
+                FieldType.NAME, entry.getName(), null,
                 ToolTipMessages.nameField(), NAME_FIELD_WIDTH, "name-field"
         );
         nameProperty.bind(nameField.textProperty());
 
         commandField = Fields.createField(
-                FieldType.COMMAND, entry.getCommand(), "Command(s)",
+                FieldType.COMMAND, entry.getCommand(), null,
                 ToolTipMessages.commandField(), COMMAND_FIELD_WIDTH, COMMAND_FIELD_HEIGHT, "command-field"
         );
         commandProperty.bind(commandField.textProperty());
 
         pathField = Fields.createField(
-                FieldType.PATH, entry.getPath(), "Path",
+                FieldType.PATH, entry.getPath(), null,
                 ToolTipMessages.pathField(), PATH_FIELD_WIDTH, "path-field"
         );
         pathProperty.bind(pathField.textProperty());
 
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", entry.isWsl());
+        wslToggle.getCheckBox().setTooltip(new Tooltip(ToolTipMessages.wsl()));
         wslProperty.bind(wslToggle.getCheckBox().selectedProperty());
 
         deleteEntry = EntryButton.deleteEntryButton();
