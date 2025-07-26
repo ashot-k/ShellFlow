@@ -21,7 +21,7 @@ public class EntryButton extends CustomButton {
     private EntryButton(){}
 
     public static Button addEntryButton(EventHandler<ActionEvent> action){
-        Button button = new Button("Add", Icons.getAddButtonIcon(BUTTON_ICON_SIZE));
+        Button button = new Button("Add", Icons.getAddButtonIcon(DEFAULT_BUTTON_ICON_SIZE));
         button.setContentDisplay(ContentDisplay.RIGHT);
         button.setOnAction(action);
         return button;
@@ -47,7 +47,7 @@ public class EntryButton extends CustomButton {
         button.getStyleClass().add("no-outline-btn");
         button.setPadding(Insets.EMPTY);
         button.setOnAction(_ -> performOrdering(direction, (Pane) button.getParent().getParent().getParent()));
-        button.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(SIZE) : Icons.getChevronDownIcon(SIZE));
+        button.setGraphic(direction.equals(Direction.UP) ? Icons.getChevronUpIcon(ORDERING_BUTTON_ICON_SIZE) : Icons.getChevronDownIcon(ORDERING_BUTTON_ICON_SIZE));
         button.setTooltip(new Tooltip(direction.equals(Direction.UP) ? ToolTipMessages.moveEntryUp() : ToolTipMessages.moveEntryDown()));
         return button;
     }
@@ -67,7 +67,7 @@ public class EntryButton extends CustomButton {
     }
 
     public static Button executeEntryButton() {
-        Button executeButton = new Button("", Icons.getExecuteButtonIcon(28));
+        Button executeButton = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeButton.setId(ButtonType.EXECUTION.getValue());
         executeButton.setPrefWidth(100);
         executeButton.setPrefHeight(38);

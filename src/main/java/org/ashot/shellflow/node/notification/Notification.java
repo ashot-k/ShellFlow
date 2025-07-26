@@ -21,7 +21,7 @@ import org.controlsfx.glyphfont.Glyph;
 import java.util.List;
 
 public class Notification {
-    private static final int NOTIFICATION_TIMEOUT = 8;
+    private static final int NOTIFICATION_TIMEOUT = 5;
     private static final int NOTIFICATION_WIDTH = 200;
     private static final double NOTIFICATION_HEIGHT = 50;
     private static final int MAX_NOTIFICATIONS = 3;
@@ -135,6 +135,7 @@ public class Notification {
     }
 
     private static Glyph getIconFromType(NotificationType type, double size) {
+        //todo fix for windows
         if (Utils.checkIfWindows()) {
             return new Glyph();
         }

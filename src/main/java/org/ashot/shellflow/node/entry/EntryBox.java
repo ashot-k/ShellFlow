@@ -9,13 +9,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.message.ToolTipMessages;
@@ -27,6 +25,7 @@ public class EntryBox extends VBox {
     private static final double PATH_FIELD_WIDTH = 320;
     private static final double COMMAND_FIELD_WIDTH = 550;
     private static final double COMMAND_FIELD_HEIGHT = 58;
+    private static final List<String> styleClasses = List.of("bordered-container");
 
     private final TextArea nameField;
     private final TextArea pathField;
@@ -65,24 +64,9 @@ public class EntryBox extends VBox {
         deleteEntry = EntryButton.deleteEntryButton();
         deleteEntry.setPadding(new Insets(5, 0, 10, 2.5));
 
-        int fontSize = 11;
-        Insets labelPaddings = new Insets(2.5, 0, 2.5, 15);
-
-        Label nameLabel = new Label("Name");
-        nameLabel.setPadding(labelPaddings);
-        nameLabel.setFont(Font.font(fontSize));
-
-        Label pathLabel = new Label("Path");
-        pathLabel.setPadding(labelPaddings);
-        pathLabel.setFont(Font.font(fontSize));
-
-        Label commandLabel = new Label("Command(s)");
-        commandLabel.setPadding(labelPaddings);
-        commandLabel.setFont(Font.font(fontSize));
-
-        VBox labeledNameField = new VBox(nameField, nameLabel);
-        VBox labeledPathField = new VBox(pathField, pathLabel);
-        VBox labeledCommandField = new VBox(commandField, commandLabel);
+        VBox labeledNameField = new LabeledTextField("Name", nameField);
+        VBox labeledPathField = new LabeledTextField("Path", pathField);
+        VBox labeledCommandField = new LabeledTextField("Command(s)", commandField);
         Button pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
 
         execute = EntryButton.executeEntryButton();
@@ -110,7 +94,7 @@ public class EntryBox extends VBox {
         entryGrid.setVgap(5);
 
         this.getChildren().add(entryGrid);
-        this.getStyleClass().addAll("entry");
+        this.getStyleClass().addAll(styleClasses);
         this.setMaxWidth(700);
     }
 

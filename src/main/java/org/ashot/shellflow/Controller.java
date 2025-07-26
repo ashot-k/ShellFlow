@@ -1,27 +1,22 @@
 package org.ashot.shellflow;
 
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.execution.CommandExecutor;
-import org.ashot.shellflow.node.CustomButton;
 import org.ashot.shellflow.node.Recents;
-import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.node.menu.file.FileMenu;
-import org.ashot.shellflow.node.menu.settings.SettingsMenu;
+import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
-import org.ashot.shellflow.registry.ProcessRegistry;
 import org.ashot.shellflow.utils.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,112 +36,52 @@ public class Controller implements Initializable {
     @FXML
     private VBox sceneContainer;
     @FXML
-    private MenuBar menuBar;
-    @FXML
     private TabPane mainTabPane;
     @FXML
     private Text fileLoaded;
-    @FXML
-    private Button osInfo;
-    @FXML
-    private Button newEntryBtn;
-    @FXML
-    private Slider delayPerCmd;
-    @FXML
-    private CheckBox sequentialOption;
-    @FXML
-    private TextField sequentialName;
-    @FXML
-    private Button executeAllBtn;
-    @FXML
-    private Button stopAllBtn;
-    @FXML
-    private Button clearEntriesBtn;
 
     private EntrySetupTab entrySetupTab;
+    private PresetSetupTab presetSetupTab;
+    private ExecutionsTab executionsTab;
     private static String currentlyLoadedFileLocation;
-
-    public static final int SETUP_TABS = 3;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
-        sequentialName.visibleProperty().bind(sequentialOption.selectedProperty());
-        setupMenuBar();
-        setupIcons();
+        sceneContainer.getChildren().addFirst(new MainMenuBar(this::openFile, this::writeEntriesToFile));
         setupTabs();
-        setupOSInfo(osInfo);
         if (openMostRecentFile(this::openFile) == null) {
             currentlyLoadedFileLocation = null;
         }
     }
 
-    private void setupMenuBar() {
-        menuBar.getMenus().addAll(
-                new FileMenu(this::openFile, this::writeEntriesToFile, mainTabPane),
-                new SettingsMenu()
-        );
-    }
-
     private void setupTabs() {
         entrySetupTab = new EntrySetupTab();
-        PresetSetupTab presetSetupTab = new PresetSetupTab();
-        ExecutionsTab executionsTab = new ExecutionsTab();
-//        ProfilerTab profilerTab = new ProfilerTab();
+        presetSetupTab = new PresetSetupTab();
+        executionsTab = new ExecutionsTab();
+//        profilerTab = new ProfilerTab();
         mainTabPane.getTabs().addAll(entrySetupTab, presetSetupTab, executionsTab
 //                ,profilerTab
                 );
-        mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
-        mainTabPane.getSelectionModel().selectedIndexProperty().addListener((_, _, newSelection) -> {
-            if (newSelection.intValue() != TabIndices.ENTRIES.ordinal()) {
-                newEntryBtn.setDisable(true);
-                clearEntriesBtn.setDisable(true);
-            } else {
-                newEntryBtn.setDisable(false);
-                clearEntriesBtn.setDisable(false);
-            }
-        });
-        entrySetupTab.addEntryListChangeListener(_ -> executeAllBtn.setDisable(entrySetupTab.getEntryBoxes().isEmpty()));
-        executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
 //            profilerTab.refreshProcesses(executionsTab.getExecutionsTabPane());
-            stopAllBtn.setDisable(mainTabPane.getTabs().size() <= SETUP_TABS);
+        mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
+        executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
+            entrySetupTab.getCloseAllButton().setDisable(executionsTab.getExecutionsTabPane().getTabs().isEmpty());
         });
-    }
-
-    private void setupIcons() {
-        newEntryBtn.setGraphic(Icons.getAddButtonIcon(CustomButton.BUTTON_ICON_SIZE));
-        clearEntriesBtn.setGraphic(Icons.getClearIcon(CustomButton.BUTTON_ICON_SIZE));
-        executeAllBtn.setGraphic(Icons.getExecuteAllButtonIcon(CustomButton.BUTTON_ICON_SIZE));
-        stopAllBtn.setGraphic(Icons.getCloseButtonIcon(CustomButton.BUTTON_ICON_SIZE));
-    }
-
-    public void executeAll() {
-        CommandExecutor.executeAll(entrySetupTab.getEntries(), sequentialOption.isSelected(), sequentialName.getText(), (int) delayPerCmd.getValue());
-    }
-
-    public void stopAll() {
-        ProcessRegistry.killAllProcesses();
     }
 
     private void writeEntriesToFile(File file) {
         log.debug("Saving file: {}", file.getAbsolutePath());
         JSONObject jsonObject = createSaveJSONObject(entrySetupTab.getEntries(),
-                (int) delayPerCmd.getValue(),
-                sequentialOption.isSelected(),
-                sequentialName.getText());
+                (int) entrySetupTab.getDelayPerCmdSlider().getValue(),
+                entrySetupTab.getSequentialOption().isSelected(),
+                entrySetupTab.getSequentialNameField().getText());
         log.debug("Saving: {}", jsonObject.toString(1));
         FileUtils.writeJSONDataToFile(file, jsonObject);
         log.debug("Saved: {}", file.getAbsolutePath());
         refreshFileLoaded(file.getAbsolutePath());
         Recents.saveRecentFile(file.getAbsolutePath());
         Recents.refreshDir(DirType.LAST_SAVED, file.getParent());
-    }
-
-    public void clearEntries() {
-        Platform.runLater(() -> {
-            entrySetupTab.clearEntryBoxes();
-            entrySetupTab.addEntryBox();
-        });
     }
 
     private void openFile(File fileToLoad) {
@@ -167,21 +102,26 @@ public class Controller implements Initializable {
                 entrySetupTab.addEntryBox(new Entry(name, path, cmd, Boolean.parseBoolean(wsl)));
             }
         }
-        delayPerCmd.setValue(jsonData.getDouble("delay"));
-        sequentialOption.setSelected(jsonData.getBoolean("sequential"));
-        sequentialName.setText(jsonData.getString("sequentialName"));
+        entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getDouble("delay"));
+        entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean("sequential"));
+        entrySetupTab.getSequentialNameField().setText(jsonData.getString("sequentialName"));
         Recents.saveRecentFile(fileToLoad.getAbsolutePath());
         Recents.refreshDir(DirType.LAST_LOADED, fileToLoad.getParent());
         refreshFileLoaded(fileToLoad.getAbsolutePath());
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
-    }
-
-    public void addEntry() {
-        entrySetupTab.addEntryBox();
+        this.mainTabPane.getSelectionModel().select(TabIndices.ENTRIES.ordinal());
     }
 
     public ExecutionsTab getExecutionsTab() {
-        return (ExecutionsTab) mainTabPane.getTabs().get(TabIndices.EXECUTIONS.ordinal());
+        return executionsTab;
+    }
+
+    public EntrySetupTab getEntrySetupTab() {
+        return entrySetupTab;
+    }
+
+    public PresetSetupTab getPresetSetupTab() {
+        return presetSetupTab;
     }
 
     public void refreshFileLoaded(String path) {

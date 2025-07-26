@@ -3,132 +3,22 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<VBox fx:id="sceneContainer" alignment="TOP_CENTER" prefHeight="750.0" xmlns="http://javafx.com/javafx/24.0.1"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.shellflow.Controller">
-    <children>
-        <MenuBar fx:id="menuBar" prefHeight="30.0" prefWidth="1200.0" useSystemMenuBar="true" VBox.vgrow="ALWAYS">
-        </MenuBar>
-        <StackPane VBox.vgrow="ALWAYS">
-            <VBox VBox.vgrow="ALWAYS">
-                <TabPane fx:id="mainTabPane" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
-                </TabPane>
-            </VBox>
-        </StackPane>
-        <VBox alignment="TOP_LEFT" fillWidth="true">
-            <padding>
-                <Insets left="10.0" right="5.0" top="5.0"/>
-            </padding>
-            <Text fx:id="fileLoaded"/>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="sceneContainer" prefHeight="750.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.shellflow.Controller">
+    <HBox alignment="CENTER_LEFT" fillHeight="false">
+    </HBox>
+    <StackPane VBox.vgrow="ALWAYS">
+        <VBox VBox.vgrow="ALWAYS">
+            <TabPane fx:id="mainTabPane" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
+            </TabPane>
         </VBox>
-        <VBox>
-            <Separator minHeight="15.0" orientation="HORIZONTAL" prefHeight="15.0" VBox.vgrow="NEVER"/>
-            <HBox alignment="CENTER" fillHeight="false">
-                <GridPane id="options" fx:id="setupSettings" alignment="CENTER" styleClass="grid-pane"
-                          HBox.hgrow="ALWAYS">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0"/>
-                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0"/>
-                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="300.0"/>
-                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" prefWidth="10.0"/>
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" prefWidth="250.0"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints valignment="CENTER"/>
-                        <RowConstraints valignment="CENTER"/>
-                        <RowConstraints valignment="CENTER"/>
-                    </rowConstraints>
-                    <opaqueInsets>
-                        <Insets/>
-                    </opaqueInsets>
-                    <VBox alignment="CENTER_LEFT" spacing="5.0" style="-fx-spacing: 5;" GridPane.columnIndex="2"
-                          GridPane.rowIndex="2">
-                        <GridPane.margin>
-                            <Insets/>
-                        </GridPane.margin>
-                        <padding>
-                            <Insets bottom="5.0" left="10.0" right="10.0" top="10.0"/>
-                        </padding>
-                        <CheckBox fx:id="sequentialOption" mnemonicParsing="false" text="Sequential">
-                            <tooltip>
-                                <Tooltip text="Run commands in sequence in a single terminal instance"/>
-                            </tooltip>
-                        </CheckBox>
-                        <TextField fx:id="sequentialName" promptText="Tab name" visible="false"/>
-                    </VBox>
-                    <VBox alignment="TOP_CENTER" spacing="2.0" GridPane.columnIndex="2" GridPane.rowIndex="1"
-                          GridPane.valignment="TOP">
-                        <padding>
-                            <Insets bottom="5.0" left="10.0" right="10.0"/>
-                        </padding>
-                        <GridPane.margin>
-                            <Insets/>
-                        </GridPane.margin>
-                        <opaqueInsets>
-                            <Insets/>
-                        </opaqueInsets>
-                        <Slider fx:id="delayPerCmd" majorTickUnit="2.0" max="20.0" minorTickCount="1"
-                                showTickLabels="true" showTickMarks="true" snapToTicks="true"/>
-                        <Text strokeType="OUTSIDE" text="Delay between commands (in seconds)">
-                            <font>
-                                <Font size="11.0"/>
-                            </font>
-                        </Text>
-                    </VBox>
-                    <Button fx:id="osInfo" alignment="BOTTOM_LEFT" mnemonicParsing="false"
-                            style="-fx-background-color: transparent;" GridPane.halignment="LEFT"
-                            GridPane.rowIndex="2"
-                            GridPane.valignment="BOTTOM">
-                    </Button>
-                    <Label text="Entry Actions">
-                        <padding>
-                            <Insets bottom="10.0" left="5.0" right="5.0" top="2.0"/>
-                        </padding>
-                    </Label>
-                    <Label text="Execution Options" GridPane.columnIndex="2">
-                        <padding>
-                            <Insets bottom="10.0" left="5.0" right="5.0" top="2.0"/>
-                        </padding>
-                    </Label>
-                    <Label text="Execution Actions" GridPane.columnIndex="4">
-                        <padding>
-                            <Insets bottom="10.0" left="5.0" right="5.0" top="2.0"/>
-                        </padding>
-                    </Label>
-                    <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
-                        <Button fx:id="stopAllBtn" alignment="CENTER" contentDisplay="RIGHT" disable="true"
-                                graphicTextGap="10.0" mnemonicParsing="false" onAction="#stopAll"
-                                text="Close All">
-                            <tooltip>
-                                <Tooltip text="Close all tabs and their processes"/>
-                            </tooltip>
-                        </Button>
-                        <Button fx:id="executeAllBtn" alignment="CENTER" contentDisplay="RIGHT"
-                                disable="true"
-                                graphicTextGap="10.0" mnemonicParsing="false" onAction="#executeAll"
-                                prefHeight="26.0"
-                                prefWidth="125.0" text="Run All">
-                            <tooltip>
-                                <Tooltip text="Run all Entries"/>
-                            </tooltip>
-                        </Button>
-                    </HBox>
-                    <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.rowIndex="1">
-                        <Button fx:id="clearEntriesBtn" alignment="CENTER" contentDisplay="RIGHT"
-                                graphicTextGap="6.0"
-                                mnemonicParsing="false" onAction="#clearEntries" text="Clear All"/>
-                        <Button fx:id="newEntryBtn" contentDisplay="RIGHT" graphicTextGap="6.0"
-                                mnemonicParsing="false" onAction="#addEntry" text="Add"/>
-                    </HBox>
-                    <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <Separator orientation="VERTICAL" GridPane.columnIndex="1"/>
-                    <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                    <Separator orientation="VERTICAL" GridPane.columnIndex="3"/>
-                    <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-                    <Separator orientation="VERTICAL" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-                </GridPane>
-            </HBox>
-        </VBox>
-    </children>
+    </StackPane>
+    <VBox>
+      <Separator prefWidth="200.0" />
+        <Text fx:id="fileLoaded" />
+      <padding>
+         <Insets bottom="10.0" left="10.0" right="10.0" />
+      </padding>
+    </VBox>
 </VBox>

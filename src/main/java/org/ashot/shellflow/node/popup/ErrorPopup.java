@@ -2,22 +2,28 @@ package org.ashot.shellflow.node.popup;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.constant.TextStyleClass;
-import org.fxmisc.richtext.StyleClassedTextArea;
+import org.ashot.shellflow.node.icon.Icons;
 
-import java.util.Set;
 
 public class ErrorPopup extends Stage {
-    StyleClassedTextArea styleClassedTextArea = new StyleClassedTextArea();
+    TextFlow styleClassedTextArea = new TextFlow();
+    Text message = new Text();
+    Text hightlightText = new Text();
     boolean criticalError = false;
     Button closeButton = new Button();
 
@@ -56,8 +62,6 @@ public class ErrorPopup extends Stage {
                     Main.getPrimaryStage().close();
                     Platform.exit();
                 });
-                this.initModality(Modality.WINDOW_MODAL);
-                this.initOwner(Main.getPrimaryStage().getOwner());
                 this.setTitle("Critical Error");
                 this.closeButton.setText("Exit");
                 this.showAndWait();
@@ -67,39 +71,53 @@ public class ErrorPopup extends Stage {
         });
     }
 
-    public void setMessage(String msg){
-        styleClassedTextArea.clear();
-        styleClassedTextArea.setStyleClass(0, msg.length(), TextStyleClass.getTextColorClass());
-        styleClassedTextArea.appendText(msg + "\n");
+    public void setMessage(String msg, String highlighted){
+        message.setText(msg + "\n");
+        hightlightText.setText(highlighted + "\n");
     }
 
     private void setupErrorPopup(String msg, String highlighted) {
-        styleClassedTextArea.setWrapText(true);
-        styleClassedTextArea.setEditable(false);
-        styleClassedTextArea.setPrefWidth(500); // or 600 if you want default max
+        message.setWrappingWidth(50);
+        message.setText(msg);
+        styleClassedTextArea.setPrefWidth(400);
+        styleClassedTextArea.setPrefHeight(20);
+        styleClassedTextArea.setMaxHeight(400);
         styleClassedTextArea.setBackground(Background.EMPTY);
-        styleClassedTextArea.setStyleClass(0, msg.length(), TextStyleClass.getTextColorClass());
+        styleClassedTextArea.getStyleClass().add(TextStyleClass.getTextColorClass());
+        styleClassedTextArea.getChildren().add(message);
         VBox.setVgrow(styleClassedTextArea, Priority.ALWAYS);
-        styleClassedTextArea.appendText(msg + "\n");
+        HBox.setHgrow(styleClassedTextArea, Priority.ALWAYS);
+
         if (highlighted != null) {
-            styleClassedTextArea.append(highlighted, TextStyleClass.getErrorTextColorClass());
+            hightlightText.setText(highlighted);
+            hightlightText.getStyleClass().add(TextStyleClass.getErrorTextColorClass());
+            styleClassedTextArea.getChildren().add(hightlightText);
         }
-        styleClassedTextArea.setParagraphStyle(1, Set.of("centered-highlighted-text"));
 
         closeButton = new Button("Close");
+        closeButton.setFont(Font.font(14));
         closeButton.setOnAction(_ -> this.close());
-        closeButton.setPrefWidth(100);
+        closeButton.setPrefWidth(80);
 
-        VBox errorContainer = new VBox(styleClassedTextArea, closeButton);
+        HBox iconMsgContainer = new HBox(10, Icons.getErrorIcon(32), styleClassedTextArea);
+        iconMsgContainer.setPadding(new Insets(0, 15, 0, 15));
+        iconMsgContainer.setAlignment(Pos.TOP_LEFT);
+        iconMsgContainer.setFillHeight(true);
+
+        VBox errorContainer = new VBox(iconMsgContainer, closeButton);
         errorContainer.setAlignment(Pos.CENTER);
-        errorContainer.getStyleClass().add("error-message");
+        errorContainer.getStyleClass().add("error-popup");
         errorContainer.setFillWidth(true);
+        errorContainer.setMaxHeight(600);
 
         Scene scene = new Scene(errorContainer);
-        scene.getStylesheets().addAll(Application.getUserAgentStylesheet(), Main.class.getResource("main.css").toExternalForm());
-        this.setScene(scene);
-        this.setTitle("Error");
-        this.setResizable(false);
-        this.setMaxWidth(900);
+        scene.getStylesheets().addAll(Application.getUserAgentStylesheet(), Main.CSS_FILE_LOCATION);
+        getIcons().clear();
+        initModality(Modality.APPLICATION_MODAL);
+        initOwner(Main.getPrimaryStage().getOwner());
+        setScene(scene);
+        setTitle("Error");
+        setResizable(false);
+        setMaxWidth(900);
     }
 }

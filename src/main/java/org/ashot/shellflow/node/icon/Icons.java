@@ -45,6 +45,14 @@ public class Icons {
         return decorateGlyph(icon);
     }
 
+    public static Glyph getErrorIcon(int size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
+        icon.size(size);
+        icon.color(Color.CRIMSON);
+        icon.setStyle("-fx-text-fill: indianred;");
+        return decorateGlyph(icon);
+    }
+
     public static Glyph getExecuteButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLAY_CIRCLE);
         icon.size(size);
