@@ -12,7 +12,7 @@ public enum SettingsFilePaths {
     }
 
     public String getValue() {
-        return SETTINGS_FOLDER + value;
+        return SETTINGS_FOLDER + "/" + value;
     }
 
     public static String getSettingsFolder() {

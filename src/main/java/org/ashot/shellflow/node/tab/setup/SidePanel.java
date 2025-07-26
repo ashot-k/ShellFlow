@@ -8,10 +8,10 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.node.icon.Icons;
 
 import static org.ashot.shellflow.node.CustomButton.DEFAULT_BUTTON_ICON_SIZE;
@@ -26,10 +26,6 @@ public class SidePanel extends VBox {
     private final Button clearAllEntriesButton;
     private final Button addEntryButton;
 
-    private final Font titleFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 16);
-//    private final Font subTitleFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 14);
-    private final Font optionFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 12);
-
     public SidePanel(
             EventHandler<ActionEvent> onExecuteAll,
             EventHandler<ActionEvent> onCloseAll,
@@ -37,17 +33,12 @@ public class SidePanel extends VBox {
             EventHandler<ActionEvent> onClearAllEntries) {
 
         Text entryOptionsTitle= new Text("Entry Options");
-        entryOptionsTitle.setFont(titleFont);
+        entryOptionsTitle.setFont(Fonts.title);
         VBox entryOptionsTitleBox = new VBox(entryOptionsTitle, new Separator(Orientation.HORIZONTAL));
-        entryOptionsTitleBox.setAlignment(Pos.TOP_LEFT);
-        entryOptionsTitleBox.setPadding(new Insets(0, 0, 5, 0));
 
         Text executionOptionsTitle= new Text("Execution Options");
-        executionOptionsTitle.setFont(titleFont);
+        executionOptionsTitle.setFont(Fonts.title);
         VBox executionOptionsTitleBox = new VBox(executionOptionsTitle, new Separator(Orientation.HORIZONTAL));
-        executionOptionsTitleBox.setFillWidth(true);
-        executionOptionsTitleBox.setAlignment(Pos.TOP_LEFT);
-        executionOptionsTitleBox.setPadding(new Insets(0, 0, 5, 0));
 
         delayPerCmdSlider = new Slider(0, 10, 0);
         delayPerCmdSlider.setMajorTickUnit(2);
@@ -57,13 +48,14 @@ public class SidePanel extends VBox {
         delayPerCmdSlider.setSnapToTicks(true);
         delayPerCmdSlider.setPadding(new Insets(0, 5, 0, 5));
         Label sliderLabel = new Label("Delay between commands (seconds)");
-        sliderLabel.setFont(optionFont);
+        sliderLabel.setFont(Fonts.detailText);
         VBox sliderBox = new VBox(2, sliderLabel, delayPerCmdSlider);
+        sliderBox.setAlignment(Pos.CENTER);
 
         sequentialOption = new CheckBox("Sequential");
-        sequentialOption.setFont(optionFont);
+        sequentialOption.setFont(Fonts.detailText);
         sequentialNameField = new TextField();
-        sequentialNameField.setFont(optionFont);
+        sequentialNameField.setFont(Fonts.detailText);
         sequentialNameField.setPromptText("Execution Name");
         sequentialNameField.disableProperty().bind(sequentialOption.selectedProperty().not());
         VBox sequentialOptionBox = new VBox(5, sequentialOption, sequentialNameField);
@@ -91,7 +83,6 @@ public class SidePanel extends VBox {
         executeAllButton.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(executeAllButton, Priority.ALWAYS);
 
-
         HBox entryActionsBox = new HBox(10, clearAllEntriesButton, addEntryButton);
         entryActionsBox.setAlignment(Pos.CENTER);
 
@@ -105,15 +96,14 @@ public class SidePanel extends VBox {
         VBox executionSection = new VBox(2, executionOptionsTitleBox, executionOptions);
         HBox.setHgrow(executionSection, Priority.ALWAYS);
 
-        getChildren().addAll(entrySection, executionSection);
+        Region spacer = new Region();
+//        spacer.setMaxHeight(200);
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        getChildren().addAll(entrySection, spacer, executionSection);
         setSpacing(25);
         getStyleClass().addAll("bordered-container");
     }
-
-
-//    <Button fx:id="clearEntriesBtn"
-//    alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="6.0" mnemonicParsing="false" onAction="#clearEntries" text="Clear All" />
-//    <Button fx:id="newEntryBtn" contentDisplay="RIGHT" graphicTextGap="6.0" mnemonicParsing="false" onAction="#addEntry" text="Add" />
 
     public CheckBox getSequentialOption() {
         return sequentialOption;

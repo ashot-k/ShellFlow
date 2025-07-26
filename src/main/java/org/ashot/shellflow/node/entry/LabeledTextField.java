@@ -4,19 +4,17 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
+import org.ashot.shellflow.data.constant.Fonts;
 
 public class LabeledTextField extends VBox {
-    int fontSize = 11;
-    Insets labelPaddings = new Insets(2.5, 0, 2.5, 15);
-    Label label;
-    TextInputControl textinputControl;
-
+    private final Label label;
+    private final TextInputControl textinputControl;
 
     public LabeledTextField(String labelText, TextInputControl textinputControl) {
         Label label = new Label(labelText);
+        Insets labelPaddings = new Insets(2.5, 0, 2.5, 15);
         label.setPadding(labelPaddings);
-        label.setFont(Font.font(fontSize));
+        label.setFont(Fonts.fieldLabel);
         this.textinputControl = textinputControl;
         this.label = label;
         this.getChildren().addAll(textinputControl, label);

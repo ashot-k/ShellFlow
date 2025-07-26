@@ -9,11 +9,11 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.util.converter.DefaultStringConverter;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.Preset;
+import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.constant.PresetType;
 import org.ashot.shellflow.data.constant.SettingsFilePaths;
 import org.ashot.shellflow.utils.FileUtils;
@@ -238,7 +238,7 @@ public class PresetSetupTab extends Tab {
 
     private static Label setupCategoryTitle(String name) {
         Label title = new Label(name);
-        title.setFont(Font.font(18));
+        title.setFont(Fonts.title);
         return title;
     }
 

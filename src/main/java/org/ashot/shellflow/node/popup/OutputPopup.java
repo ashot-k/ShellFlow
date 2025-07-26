@@ -6,16 +6,15 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.ashot.shellflow.Main;
+import org.ashot.shellflow.data.constant.Fonts;
 
 public class OutputPopup {
     private static Stage outputPopupStage;
     private static final int SIZE_X = 700;
     private static final int SIZE_Y = 450;
     private static final boolean RESIZABLE = true;
-    private static final int TEXT_SIZE = 24;
 
     public static TextArea outputPopup(String msg, String title, boolean sequential) {
         Stage outputStage = new Stage();
@@ -34,7 +33,7 @@ public class OutputPopup {
             textArea.setText(msg);
         }
         textArea.setWrapText(true);
-        textArea.setFont(Font.font(TEXT_SIZE));
+        textArea.setFont(Fonts.title);
         textArea.setEditable(false);
 
         HBox outputContainer = new HBox();

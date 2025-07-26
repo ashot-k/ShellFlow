@@ -10,12 +10,12 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.ashot.shellflow.Main;
+import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.constant.TextStyleClass;
 import org.ashot.shellflow.node.icon.Icons;
 
@@ -95,7 +95,7 @@ public class ErrorPopup extends Stage {
         }
 
         closeButton = new Button("Close");
-        closeButton.setFont(Font.font(14));
+        closeButton.setFont(Fonts.buttonText);
         closeButton.setOnAction(_ -> this.close());
         closeButton.setPrefWidth(80);
 

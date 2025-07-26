@@ -75,10 +75,10 @@ public class EntryBox extends VBox {
 
         GridPane entryGrid = new GridPane();
         VBox orderingContainer = EntryButton.createOrderingContainer();
-        orderingContainer.setAlignment(Pos.TOP_RIGHT);
+        orderingContainer.setAlignment(Pos.TOP_CENTER);
         entryGrid.addRow(0, deleteEntry, orderingContainer);
         GridPane.setConstraints(deleteEntry, 0, 0, 1, 1, HPos.LEFT, VPos.TOP);
-        GridPane.setConstraints(orderingContainer, 2, 0, 1, 1, HPos.RIGHT, VPos.TOP);
+        GridPane.setConstraints(orderingContainer, 2, 0, 1, 1, HPos.CENTER, VPos.TOP);
 
         entryGrid.addRow(1, labeledNameField, labeledPathField, pathBrowser);
         GridPane.setConstraints(labeledNameField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);

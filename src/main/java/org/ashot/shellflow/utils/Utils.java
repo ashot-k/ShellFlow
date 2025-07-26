@@ -1,9 +1,9 @@
 package org.ashot.shellflow.utils;
 
 import javafx.scene.control.Button;
-import javafx.scene.text.Font;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
+import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.node.icon.Icons;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -81,7 +81,7 @@ public class Utils {
             osInfo.setGraphic(Icons.getWindowsIcon(18));
         }
         osInfo.setText(System.getProperty(osProperty) + " " + System.getProperty("os.version"));
-        osInfo.setFont(Font.font(14));
+        osInfo.setFont(Fonts.subTitle);;
     }
 
 }

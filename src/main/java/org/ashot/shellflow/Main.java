@@ -34,7 +34,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         try {
             setTheme(getThemeFromConfig());
             Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
@@ -90,7 +90,7 @@ public class Main extends Application {
 
     private static ThemeOption getThemeFromConfig() {
         if (config.getDarkMode()) {
-            return ThemeOption.DARK_MODE;
+            return ThemeOption.NORD_DARK;
         } else {
             return ThemeOption.LIGHT_MODE;
         }
