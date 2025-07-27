@@ -5,18 +5,28 @@ import com.techsenger.jeditermfx.core.emulator.ColorPalette;
 import com.techsenger.jeditermfx.core.emulator.ColorPaletteImpl;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import javafx.scene.text.Font;
+import org.ashot.shellflow.Main;
 import org.jetbrains.annotations.NotNull;
 
-public class DarkThemeSettingsProvider extends DefaultSettingsProvider {
-
+public class ThemedSettingsProvider extends DefaultSettingsProvider {
     @Override
     public @NotNull TerminalColor getDefaultBackground() {
-        return new TerminalColor(23, 27, 33);
+        if(Main.getSelectedThemeOption().isDark()) {
+            return new TerminalColor(23, 27, 33);
+        }
+        else{
+            return new TerminalColor(248, 248, 248);
+        }
     }
 
     @Override
     public @NotNull TerminalColor getDefaultForeground() {
-        return new TerminalColor(255, 255, 255);
+        if(Main.getSelectedThemeOption().isDark()){
+            return new TerminalColor(255, 255, 255);
+        }
+        else{
+            return new TerminalColor(16, 17, 23);
+        }
     }
 
     @Override

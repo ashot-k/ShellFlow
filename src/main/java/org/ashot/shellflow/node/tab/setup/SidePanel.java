@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.Fonts;
+import org.ashot.shellflow.node.entry.LabeledTextField;
 import org.ashot.shellflow.node.icon.Icons;
 
 import static org.ashot.shellflow.node.CustomButton.DEFAULT_BUTTON_ICON_SIZE;
@@ -56,9 +57,10 @@ public class SidePanel extends VBox {
         sequentialOption.setFont(Fonts.detailText);
         sequentialNameField = new TextField();
         sequentialNameField.setFont(Fonts.detailText);
-        sequentialNameField.setPromptText("Execution Name");
-        sequentialNameField.disableProperty().bind(sequentialOption.selectedProperty().not());
-        VBox sequentialOptionBox = new VBox(5, sequentialOption, sequentialNameField);
+        LabeledTextField labeledSequentialNameField = new LabeledTextField("Execution name", sequentialNameField);
+        labeledSequentialNameField.getTextInputControl().disableProperty().bind(sequentialOption.selectedProperty().not());
+        labeledSequentialNameField.getLabel().disableProperty().bind(sequentialOption.selectedProperty().not());
+        VBox sequentialOptionBox = new VBox(5, sequentialOption, labeledSequentialNameField);
 
         clearAllEntriesButton = new Button("Clear All", Icons.getClearIcon(DEFAULT_BUTTON_ICON_SIZE));
         clearAllEntriesButton.setOnAction(onClearAllEntries);
@@ -97,9 +99,7 @@ public class SidePanel extends VBox {
         HBox.setHgrow(executionSection, Priority.ALWAYS);
 
         Region spacer = new Region();
-//        spacer.setMaxHeight(200);
         VBox.setVgrow(spacer, Priority.ALWAYS);
-
         getChildren().addAll(entrySection, spacer, executionSection);
         setSpacing(25);
         getStyleClass().addAll("bordered-container");

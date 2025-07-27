@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.ashot.shellflow.config.Config;
@@ -20,9 +21,10 @@ public class Main extends Application {
 
     public static final int SIZE_X = 1400;
     public static final int SIZE_Y = 800;
+    public static final String windowTitle = "ShellFlow";
     private static final boolean RESIZABLE = true;
-    public static final String CSS_FILE_LOCATION = Main.class.getResource("main.css").toExternalForm();
-    public static final URL MAIN_FXML_LOCATION = Main.class.getResource("shellflow-main.fxml");
+    public static final String CSS_FILE_LOCATION = Main.class.getResource("/style/main.css").toExternalForm();
+    public static final URL MAIN_FXML_LOCATION = Main.class.getResource("/fxml/shellflow-main.fxml");
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static ThemeOption selectedTheme;
     private static Stage primaryStage;
@@ -42,11 +44,18 @@ public class Main extends Application {
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
             primaryStage = stage;
-            primaryStage.setTitle("ShellFlow");
+            primaryStage.getIcons().add(new Image("icon.png"));
+            primaryStage.setTitle(windowTitle);
             primaryStage.setScene(scene);
             primaryStage.setResizable(RESIZABLE);
+            primaryStage.setMinHeight(600);
+            primaryStage.setMinWidth(800);
             primaryStage.show();
             primaryStage.setOnCloseRequest(_ -> Platform.exit());
+            log.debug("Loaded FXML: {}", MAIN_FXML_LOCATION);
+            log.debug("Loaded css: {}", CSS_FILE_LOCATION);
+            log.debug("Theme: {}", selectedTheme);
+            log.debug("Resizable: {}", RESIZABLE);
         } catch (Exception e) {
             log.error(e.getClass().getName());
             log.error(e.getMessage());

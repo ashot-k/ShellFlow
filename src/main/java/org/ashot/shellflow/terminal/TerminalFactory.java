@@ -4,10 +4,7 @@ import com.pty4j.PtyProcess;
 import com.techsenger.jeditermfx.core.ProcessTtyConnector;
 import com.techsenger.jeditermfx.ui.DefaultHyperlinkFilter;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
-import com.techsenger.jeditermfx.ui.settings.SettingsProvider;
-import org.ashot.shellflow.Main;
-import org.ashot.shellflow.terminal.settings.DarkThemeSettingsProvider;
-import org.ashot.shellflow.terminal.settings.LightThemeSettingsProvider;
+import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import org.ashot.shellflow.terminal.tty.MonitoringTtyConnector;
 import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +15,14 @@ import java.util.function.Consumer;
 public class TerminalFactory {
 
     public static @NotNull JediTermFxWidget createTerminalWidget(PtyProcess process) {
-        JediTermFxWidget widget = new JediTermFxWidget(80, 24, getSettingsProvider());
+        JediTermFxWidget widget = new JediTermFxWidget(new ThemedSettingsProvider());
         widget.setTtyConnector(createTtyConnector(process));
         widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
         return widget;
     }
 
     public static @NotNull JediTermFxWidget createTerminalWidget(PtyProcess process, Consumer<String> outputMonitor) {
-        JediTermFxWidget widget = new JediTermFxWidget(80, 24, getSettingsProvider());
+        JediTermFxWidget widget = new JediTermFxWidget(new ThemedSettingsProvider());
         widget.setTtyConnector(createTtyConnector(process, outputMonitor));
         widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
         return widget;
@@ -46,10 +43,6 @@ public class TerminalFactory {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private static SettingsProvider getSettingsProvider() {
-        return Main.getSelectedThemeOption().isDark() ? new DarkThemeSettingsProvider() : new LightThemeSettingsProvider();
     }
 
 }

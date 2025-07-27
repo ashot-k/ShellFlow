@@ -12,14 +12,15 @@
     <properties>
         <output.artifact.folder>${project.name}-${project.version}</output.artifact.folder>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.10.2</junit.version>
-        <json.version>20240303</json.version>
-        <testfx.version>4.0.18</testfx.version>
-        <jeditermfx.version>1.1.0</jeditermfx.version>
-        <controlsfx.version>11.2.2</controlsfx.version>
-        <atlantafx.themes.version>2.0.1</atlantafx.themes.version>
-        <mockito.version>5.16.1</mockito.version>
         <javafx.version>24.0.2</javafx.version>
+        <jeditermfx.version>1.1.0</jeditermfx.version>
+        <atlantafx.themes.version>2.0.1</atlantafx.themes.version>
+        <controlsfx.version>11.2.2</controlsfx.version>
+        <logback.version>1.5.18</logback.version>
+        <json.version>20240303</json.version>
+        <junit.version>5.10.2</junit.version>
+        <testfx.version>4.0.18</testfx.version>
+        <mockito.version>5.16.1</mockito.version>
     </properties>
 
     <dependencies>
@@ -44,9 +45,14 @@
             <version>${javafx.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.16</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 <!--
         todo consider adding
