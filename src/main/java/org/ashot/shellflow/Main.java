@@ -44,7 +44,7 @@ public class Main extends Application {
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
             primaryStage = stage;
-//            primaryStage.getIcons().add(new Image("icon.png"));
+            primaryStage.getIcons().add(new Image("icon.png"));
             primaryStage.setTitle(windowTitle);
             primaryStage.setScene(scene);
             primaryStage.setResizable(RESIZABLE);
