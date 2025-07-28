@@ -1,5 +1,7 @@
 package org.ashot.shellflow.node.icon;
 
+import atlantafx.base.controls.RingProgressIndicator;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import org.ashot.shellflow.utils.Animator;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -18,6 +20,7 @@ public class Icons {
 
     private static Glyph decorateGlyph(Glyph icon) {
         icon.getStyleClass().add("icon");
+        icon.setMouseTransparent(true);
         return icon;
     }
 
@@ -165,12 +168,10 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getExecutionInProgressIcon(double size) {
-        Glyph icon = fontAwesome.create(FontAwesome.Glyph.SPINNER);
-        icon.size(size);
-        icon.color(Color.CORNFLOWERBLUE);
-        Animator.spinIcon(icon);
-        return icon;
+    public static Node getExecutionInProgressIcon() {
+        RingProgressIndicator progressIndicator = new RingProgressIndicator();
+        progressIndicator.setMouseTransparent(true);
+        return progressIndicator;
     }
 
     public static Glyph getExecutionFinishedIcon(double size) {

@@ -10,7 +10,7 @@ import org.ashot.shellflow.registry.ControllerRegistry;
 
 public class TabUtils {
 
-    private static final int titleIconsSize = 18;
+    private static final int tabIconSize = 18;
 
     public enum ExecutionState {
         IN_PROGRESS("In progress"), FINISHED("Finished"), FAILURE("Failure");
@@ -28,7 +28,7 @@ public class TabUtils {
 
     public static void setInProgress(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionInProgressIcon(titleIconsSize));
+            tab.setGraphic(Icons.getExecutionInProgressIcon());
             tab.setDisable(false);
             tab.setClosable(true);
         });
@@ -39,7 +39,7 @@ public class TabUtils {
 
     public static void setFailed(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionErrorIcon(titleIconsSize));
+            tab.setGraphic(Icons.getExecutionErrorIcon(tabIconSize));
             tab.setDisable(false);
         });
         if (tab instanceof OutputTab outputTab) {
@@ -50,7 +50,7 @@ public class TabUtils {
 
     public static void setFinished(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionFinishedIcon(titleIconsSize));
+            tab.setGraphic(Icons.getExecutionFinishedIcon(tabIconSize));
             tab.setDisable(false);
         });
         if (tab instanceof OutputTab outputTab) {
@@ -61,7 +61,7 @@ public class TabUtils {
 
     public static void setCanceled(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionCanceledIcon(titleIconsSize));
+            tab.setGraphic(Icons.getExecutionCanceledIcon(tabIconSize));
             tab.setDisable(false);
             tab.setClosable(true);
         });

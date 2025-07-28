@@ -6,7 +6,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.FieldType;
@@ -15,6 +14,8 @@ import org.ashot.shellflow.node.Recents;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
+import org.ashot.shellflow.node.tab.profiler.ProfilerTab;
+import org.ashot.shellflow.node.tab.setup.BottomPanel;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.utils.FileUtils;
@@ -37,18 +38,20 @@ public class Controller implements Initializable {
     private VBox sceneContainer;
     @FXML
     private TabPane mainTabPane;
-    @FXML
-    private Text fileLoaded;
 
     private EntrySetupTab entrySetupTab;
     private PresetSetupTab presetSetupTab;
     private ExecutionsTab executionsTab;
+    private ProfilerTab profilerTab;
+    private BottomPanel bottomPane;
     private static String currentlyLoadedFileLocation;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
+        bottomPane = new BottomPanel();
         sceneContainer.getChildren().addFirst(new MainMenuBar(this::openFile, this::writeEntriesToFile));
+        sceneContainer.getChildren().addLast(bottomPane);
         setupTabs();
         if (openMostRecentFile(this::openFile) == null) {
             currentlyLoadedFileLocation = null;
@@ -60,10 +63,12 @@ public class Controller implements Initializable {
         presetSetupTab = new PresetSetupTab();
         executionsTab = new ExecutionsTab();
 //        profilerTab = new ProfilerTab();
-        mainTabPane.getTabs().addAll(entrySetupTab, presetSetupTab, executionsTab
-//                ,profilerTab
+        mainTabPane.getTabs().
+                addAll(entrySetupTab
+                        , presetSetupTab
+                        , executionsTab
+//                        ,profilerTab
                 );
-//            profilerTab.refreshProcesses(executionsTab.getExecutionsTabPane());
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
         executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
             entrySetupTab.getCloseAllButton().setDisable(executionsTab.getExecutionsTabPane().getTabs().isEmpty());
@@ -124,9 +129,13 @@ public class Controller implements Initializable {
         return presetSetupTab;
     }
 
+    public ProfilerTab getProfilerTab() {
+        return profilerTab;
+    }
+
     public void refreshFileLoaded(String path) {
         currentlyLoadedFileLocation = path;
-        fileLoaded.setText("File loaded: " + path);
+        bottomPane.setFileLoadedText("File loaded: " + path);
     }
 
     private static void resetFileLoaded() {
