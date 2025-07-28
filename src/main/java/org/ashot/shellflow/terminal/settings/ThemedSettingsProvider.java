@@ -31,7 +31,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public Font getTerminalFont() {
-        return Font.font("Consolas", 16);
+        return Font.font("Courier New", 16);
     }
 
     @Override
