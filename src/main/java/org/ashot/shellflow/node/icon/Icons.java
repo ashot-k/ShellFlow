@@ -174,6 +174,14 @@ public class Icons {
         return progressIndicator;
     }
 
+    public static Glyph getExecutionInProgressIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.SPINNER);
+        icon.size(size);
+        icon.color(Color.CORNFLOWERBLUE);
+        Animator.spinIcon(icon);
+        return icon;
+    }
+
     public static Glyph getExecutionFinishedIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHECK_CIRCLE);
         icon.size(size);

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFailNotificationMessage;
@@ -39,14 +40,16 @@ public class SequentialExecutor {
             PtyProcessBuilder processBuilder;
             PtyProcess process;
             List<Command> commandList = commandSequence.getCommandList();
+            List<OutputTab> outputTabs = new ArrayList<>();
             for (Command command : commandList) {
                 OutputTab tab = constructSequencePartOutputTab(command);
-                sequenceTabPane.getTabs().add(tab);
+                Platform.runLater(()-> sequenceTabPane.getTabs().add(tab));
+                outputTabs.add(tab);
             }
             for (int i = 0; i < commandList.size(); i++) {
                 try {
                     Command currentCommand = commandList.get(i);
-                    OutputTab tab = sequenceHolder.getSequentialExecutionTabPaneTabs().get(i);
+                    OutputTab tab = outputTabs.get(i);
                     processBuilder = buildProcess(currentCommand);
                     process = processBuilder.start();
                     ProcessRegistry.register(String.valueOf(process.pid()), process);

@@ -15,7 +15,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
             return new TerminalColor(23, 27, 33);
         }
         else{
-            return new TerminalColor(248, 248, 248);
+            return new TerminalColor(220, 220, 220);
         }
     }
 

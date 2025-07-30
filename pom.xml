@@ -210,7 +210,7 @@
                         <id>app-image</id>
                         <configuration>
                             <type>APP_IMAGE</type>
-                            <!--<icon>icons/icon.png</icon>-->
+                            <icon>src/main/resources/icon.png</icon>
                         </configuration>
                     </execution>
                 </executions>

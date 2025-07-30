@@ -34,20 +34,6 @@ public class AutoCompleteEntry extends HBox {
         TextFlow presetValueArea = new TextFlow(previewText);
         presetValueArea.setPrefWidth(WIDTH * 2 / 3);
 
-        this.hoverProperty().addListener((_, _, newValue) -> {
-            if (newValue) {
-                this.getStyleClass().add("autocomplete-entry-hovered");
-            } else {
-                this.getStyleClass().remove("autocomplete-entry-hovered");
-            }
-        });
-        this.focusedProperty().addListener((_, _, newValue) -> {
-            if (newValue) {
-                this.getStyleClass().add("autocomplete-entry-hovered");
-            } else {
-                this.getStyleClass().remove("autocomplete-entry-hovered");
-            }
-        });
         this.setOnKeyPressed(event -> {
             VBox parent = (VBox) this.getParent();
             int index = parent.getChildren().indexOf(this);

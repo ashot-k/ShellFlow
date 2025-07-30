@@ -71,6 +71,7 @@ public class EntryButton extends CustomButton {
         executeButton.setId(ButtonType.EXECUTION.getValue());
         executeButton.setPrefWidth(100);
         executeButton.setPrefHeight(38);
+        executeButton.setMinHeight(38);
         executeButton.setPadding(Insets.EMPTY);
         executeButton.setTooltip(new Tooltip(ToolTipMessages.execute()));
         return executeButton;

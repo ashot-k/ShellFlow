@@ -86,11 +86,11 @@ public class EntryBox extends VBox {
         GridPane.setConstraints(pathBrowser, 2, 1, 1, 1, HPos.RIGHT, VPos.BASELINE);
 
         entryGrid.addRow(2, labeledCommandField, wslToggle);
-        GridPane.setConstraints(labeledCommandField, 0, 2, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        GridPane.setConstraints(labeledCommandField, 0, 2, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
         GridPane.setConstraints(wslToggle, 2, 2, 1, 1, HPos.RIGHT, VPos.TOP);
 
         entryGrid.addRow(3, execute);
-        GridPane.setConstraints(execute, 0, 3, 3, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(execute, 0, 3, 3, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.ALWAYS);
 
         entryGrid.setHgap(10);
         entryGrid.setVgap(5);

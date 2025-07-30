@@ -125,6 +125,7 @@ public class OutputTab extends Tab {
         this.setOnCloseRequest(closeEvent->{
             if(event != null) {
                 event.handle(closeEvent);
+                return;
             }
             this.terminal.close();
         });
