@@ -59,7 +59,12 @@ public class SequentialExecutor {
                         setCanceled(tab);
                         setCanceled(sequenceHolder);
                         if (tab.getTerminal().getTtyConnector().isConnected()) {
-                            tab.getTerminal().getTtyConnector().close();
+                            try {
+                                //todo add this when reading ctrl + c from user
+                                tab.getTerminal().getTtyConnector().write("\u0003");  // same as user pressing Ctrl+C
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                         e.consume();
                     });

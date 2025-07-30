@@ -127,7 +127,9 @@ public class OutputTab extends Tab {
                 event.handle(closeEvent);
                 return;
             }
-            this.terminal.close();
+            if(!closeEvent.isConsumed()) {
+                this.terminal.close();
+            }
         });
     }
 
