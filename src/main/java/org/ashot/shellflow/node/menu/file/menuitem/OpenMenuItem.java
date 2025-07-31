@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.menu.file;
+package org.ashot.shellflow.node.menu.file.menuitem;
 
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.data.constant.DirType;

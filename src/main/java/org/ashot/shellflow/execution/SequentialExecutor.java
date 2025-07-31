@@ -71,6 +71,7 @@ public class SequentialExecutor {
                     String pid = String.valueOf(process.pid());
                     int finalI = i;
                     Platform.runLater(() -> {
+                        sequenceTabPane.getSelectionModel().select(finalI);
                         String currentTabName = currentCommand.isNameSet() ? currentCommand.getName() : "Process - " + pid;
                         tab.setText(currentTabName);
                         String validatedSequenceName = commandSequence.getSequenceName().isBlank() ? "Sequence" : commandSequence.getSequenceName();

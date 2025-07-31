@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.menu.file;
+package org.ashot.shellflow.node.menu.file.menu;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;

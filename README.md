@@ -5,7 +5,7 @@ JavaFX 24
 ### Build
 The application can be built using the following command:
 
-`mvn clean package jpackage:jpackage@app-image `
+`mvn clean package jpackage:jpackage@windows `
 
 This will create a new build of the application inside `${project.basedir}/output`
 

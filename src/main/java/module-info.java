@@ -9,10 +9,8 @@ module org.ashot.shellflow {
     requires reactfx;
     requires com.techsenger.jeditermfx.ui;
     requires com.techsenger.jeditermfx.core;
-    requires org.jetbrains.annotations;
     requires pty4j;
-    requires java.desktop;
-
+    requires org.jetbrains.annotations;
 
     exports org.ashot.shellflow;
     exports org.ashot.shellflow.exception;

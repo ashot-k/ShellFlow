@@ -1,10 +1,11 @@
-package org.ashot.shellflow.node.menu.settings;
+package org.ashot.shellflow.node.menu.settings.menu;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.node.icon.Icons;
+import org.ashot.shellflow.node.menu.settings.menuitem.PerformanceSettingMenuItem;
 
 import static org.ashot.shellflow.data.constant.MenuItemDefaults.MENU_ITEM_ICON_SIZE;
 
@@ -20,7 +21,7 @@ public class SettingsMenu extends Menu {
             });
             themesMenu.getItems().add(themeOptionMenuItem);
         }
-        getItems().add(themesMenu);
+        getItems().addAll(themesMenu, new PerformanceSettingMenuItem());
     }
 
 }
