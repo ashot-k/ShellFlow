@@ -11,6 +11,10 @@ public class PerformanceSettingMenuItem extends MenuItem {
         CheckBox checkBox = new CheckBox();
         setText("Optimized Animations");
         setGraphic(checkBox);
+        this.setOnAction(_ ->{
+            checkBox.setSelected(!checkBox.isSelected());
+        });
+        checkBox.setMouseTransparent(true);
         checkBox.selectedProperty().addListener((_, _, newValue) -> {
             if(newValue){
                 setFrameRate(PERFORMANCE_OPTIMIZATION_FRAME_RATE);
