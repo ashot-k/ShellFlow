@@ -4,8 +4,8 @@ import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.node.icon.Icons;
+import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
-import org.ashot.shellflow.node.tab.executions.OutputTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
 
 public class TabUtils {
@@ -33,8 +33,8 @@ public class TabUtils {
             tab.setDisable(false);
             tab.setClosable(true);
         });
-        if (tab instanceof OutputTab outputTab) {
-            outputTab.setInProgress(true);
+        if (tab instanceof ExecutionTab executionTab) {
+            executionTab.setInProgress(true);
         }
     }
 
@@ -43,9 +43,9 @@ public class TabUtils {
             tab.setGraphic(Icons.getExecutionErrorIcon(tabIconSize));
             tab.setDisable(false);
         });
-        if (tab instanceof OutputTab outputTab) {
-            outputTab.setInProgress(false);
-            outputTab.setFailed(true);
+        if (tab instanceof ExecutionTab executionTab) {
+            executionTab.setInProgress(false);
+            executionTab.setFailed(true);
         }
     }
 
@@ -54,9 +54,9 @@ public class TabUtils {
             tab.setGraphic(Icons.getExecutionFinishedIcon(tabIconSize));
             tab.setDisable(false);
         });
-        if (tab instanceof OutputTab outputTab) {
-            outputTab.setInProgress(false);
-            outputTab.setFinished(true);
+        if (tab instanceof ExecutionTab executionTab) {
+            executionTab.setInProgress(false);
+            executionTab.setFinished(true);
         }
     }
 
@@ -66,9 +66,9 @@ public class TabUtils {
             tab.setDisable(false);
             tab.setClosable(true);
         });
-        if (tab instanceof OutputTab outputTab) {
-            outputTab.setInProgress(false);
-            outputTab.setCanceled(true);
+        if (tab instanceof ExecutionTab executionTab) {
+            executionTab.setInProgress(false);
+            executionTab.setCanceled(true);
         }
     }
 
@@ -81,5 +81,16 @@ public class TabUtils {
             executionsTab.getExecutionsTabPane().getSelectionModel().select(tab);
         });
     }
+
+/*
+    public static void addToProfiler(ExecutionDescriptor executionDescriptor) {
+        if (executionDescriptor == null) throw new RuntimeException("Execution Descriptor is null");
+        Controller controller = ControllerRegistry.get("main", Controller.class);
+        Platform.runLater(() -> {
+            ProfilerTab profilerTab = controller.getProfilerTab();
+            profilerTab.monitorExecution(executionDescriptor);
+        });
+    }
+*/
 
 }

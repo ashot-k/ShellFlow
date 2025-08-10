@@ -37,7 +37,7 @@ public class EntryButton extends CustomButton {
     public static VBox createOrderingContainer() {
         Button upButton = orderingButton(Direction.UP);
         Button downButton = orderingButton(Direction.DOWN);
-        VBox orderingContainer = new VBox(upButton, downButton);
+        VBox orderingContainer = new VBox(0, upButton, downButton);
         orderingContainer.getStyleClass().add("ordering-container");
         return orderingContainer;
     }
@@ -69,9 +69,9 @@ public class EntryButton extends CustomButton {
     public static Button executeEntryButton() {
         Button executeButton = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeButton.setId(ButtonType.EXECUTION.getValue());
-        executeButton.setPrefWidth(100);
-        executeButton.setPrefHeight(38);
-        executeButton.setMinHeight(38);
+        executeButton.setPrefWidth(65);
+        executeButton.setPrefHeight(30);
+        executeButton.setMinHeight(30);
         executeButton.setPadding(Insets.EMPTY);
         executeButton.setTooltip(new Tooltip(ToolTipMessages.execute()));
         return executeButton;
@@ -94,6 +94,7 @@ public class EntryButton extends CustomButton {
         });
         pathBrowserBtn.setTooltip(new Tooltip(ToolTipMessages.pathBrowse()));
         pathBrowserBtn.setMinWidth(PATH_BROWSE_BUTTON_SIZE * 2 + 1);
+        pathBrowserBtn.setMinHeight(Fields.DEFAULT_TEXT_AREA_HEIGHT);
         return pathBrowserBtn;
     }
 

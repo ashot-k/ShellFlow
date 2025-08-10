@@ -12,11 +12,13 @@ public class ExecutionsTab extends Tab {
     public ExecutionsTab() {
         this.executionsTabPane = new TabPane();
         executionsTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+        executionsTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         Platform.runLater(() -> {
             this.setClosable(false);
             this.setContent(executionsTabPane);
             this.setText(name);
-            this.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) change -> {
+            this.setDisable(true);
+            this.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _-> {
                 if (this.executionsTabPane.getTabs().isEmpty()) {
                     this.getTabPane().getSelectionModel().selectFirst();
                     this.setDisable(true);
@@ -24,7 +26,6 @@ public class ExecutionsTab extends Tab {
                     this.setDisable(false);
                 }
             });
-            this.setDisable(true);
         });
     }
 

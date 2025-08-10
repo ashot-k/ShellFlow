@@ -1,6 +1,7 @@
 package org.ashot.shellflow.node.entry;
 
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -8,6 +9,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import org.ashot.shellflow.data.constant.FieldType;
+import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
 import org.ashot.shellflow.utils.Animator;
 
@@ -15,8 +17,8 @@ import java.util.Map;
 
 
 public class Fields {
-    public static final int DEFAULT_TEXT_AREA_HEIGHT = 40;
-    private static final int TEXT_AREA_HEIGHT_ENLARGED_MULT = 4;
+    public static final int DEFAULT_TEXT_AREA_HEIGHT = 36;
+    private static final int TEXT_AREA_HEIGHT_ENLARGED_MULT = 3;
     private static boolean autoCompleteToggle = false;
 
     private Fields(){}
@@ -42,6 +44,7 @@ public class Fields {
         checkBox.setSelected(initialSelection);
         Label label = new Label(text);
         label.setLabelFor(checkBox);
+        label.setFont(Fonts.fieldLabel);
         return new CheckBoxField(checkBox, label);
     }
 
@@ -53,6 +56,7 @@ public class Fields {
             throw new NullPointerException("TextFieldType can't be null");
         }
         TextArea field = new TextArea(text);
+        field.setPadding(Insets.EMPTY);
         field.setId(type.getValue());
         field.setWrapText(true);
         if (promptText != null && !promptText.isBlank()) {
@@ -78,6 +82,7 @@ public class Fields {
             field.getStyleClass().add(styleClass);
         }
         field.getStyleClass().add("field");
+        field.setFont(Fonts.fieldText);
 
         AutoCompletePopup popup = new AutoCompletePopup(field);
         field.textProperty().addListener((_, _, input) -> {
@@ -90,9 +95,14 @@ public class Fields {
         field.focusedProperty().addListener((_, _, isFocused) -> {
             if (Boolean.TRUE.equals(isFocused)) {
 //                popup.show(field.getText(), getAutoCompleteMap(type));
-                Animator.animateHeightChange(timeline, field, field.getHeight() * TEXT_AREA_HEIGHT_ENLARGED_MULT, Duration.millis(250));
+                double heightGoal = field.getHeight() * TEXT_AREA_HEIGHT_ENLARGED_MULT;
+                Animator.animateHeightChange(timeline, field, heightGoal, Duration.millis(250));
             } else {
-                field.setMinHeight(DEFAULT_TEXT_AREA_HEIGHT);
+                if(height != null){
+                    field.setMinHeight(height);
+                }else{
+                    field.setMinHeight(DEFAULT_TEXT_AREA_HEIGHT);
+                }
                 field.setTranslateY(0);
                 timeline.stop();
                 popup.hide();

@@ -1,103 +1,87 @@
 package org.ashot.shellflow.node.tab.profiler;
 
-import com.techsenger.jeditermfx.core.ProcessTtyConnector;
-import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import org.ashot.shellflow.data.constant.ProcessStatus;
-import org.ashot.shellflow.node.tab.executions.OutputTab;
+import org.ashot.shellflow.data.command.CommandSequence;
+import org.ashot.shellflow.data.execution.Execution;
+import org.ashot.shellflow.data.execution.ExecutionDescriptor;
+import org.ashot.shellflow.data.execution.SequenceExecution;
+import org.ashot.shellflow.node.icon.Icons;
+import org.controlsfx.control.TaskProgressView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 public class ProfilerTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(ProfilerTab.class);
-    private final ScheduledExecutorService checkProcessesTask = Executors.newSingleThreadScheduledExecutor();
     private final VBox content = new VBox();
-    private final List<Node> profilerProcessNodeList = new ArrayList<>();
+    TaskProgressView<Task<ExecutionDescriptor>> taskProgressView = new TaskProgressView<>();
 
     public ProfilerTab() {
         setupProfilerTab();
     }
 
-    public void start() {
-        checkProcessesStart();
-    }
-
-    private void checkProcessesStart() {
-        checkProcessesTask.scheduleAtFixedRate(() -> {
-            try {
-                profilerProcessNodeList.stream().filter(ProfilerProcessNode.class::isInstance).map(o -> (ProfilerProcessNode) o).forEach(this::refreshProcess);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
+    public void monitorExecution(ExecutionDescriptor executionDescriptor) {
+        Task<ExecutionDescriptor> task = new Task<>() {
+            @Override
+            protected ExecutionDescriptor call() throws InterruptedException {
+                if (executionDescriptor instanceof Execution execution) {
+                    updateTitle(execution.getCommand().getName());
+                    Process process = execution.getProcess();
+                    process.waitFor();
+                    if (process.exitValue() == 0) {
+                        updateProgress(100, 100);
+                    } else {
+                        updateProgress(0, 100);
+                        updateMessage("Failed with exit code: " + process.exitValue());
+                    }
+                } else if (executionDescriptor instanceof SequenceExecution sequenceExecution) {
+                    updateTitle(sequenceExecution.getCommandSequence().getSequenceName());
+                    while (sequenceExecution.getCommandSequence().getCurrentStep() <= sequenceExecution.getCommandSequence().getSteps()){
+                        CommandSequence commandSequence = sequenceExecution.getCommandSequence();
+                        updateMessage(commandSequence.getCommandList().get(commandSequence.getCurrentStep()).getName() + " (" + commandSequence.getCurrentStep() + "/" + commandSequence.getSteps() + ")");
+                        updateProgress(commandSequence.getCurrentStep(), commandSequence.getSteps());
+                        if(sequenceExecution.getCurrentProcess() != null) {
+                            sequenceExecution.getCurrentProcess().waitFor();
+                            if (sequenceExecution.getCurrentProcess().exitValue() != 0) {
+                                updateMessage("Failed at step: " + sequenceExecution.getCommandSequence().getCurrentStep());
+                                break;
+                            }
+                        }
+                        updateProgress(commandSequence.getCurrentStep(), commandSequence.getSteps());
+                    }
+                }
+                return null;
             }
-        }, 0, 100, TimeUnit.MILLISECONDS);
-    }
 
-    public void refreshProcesses(TabPane tabPane) {
-        profilerProcessNodeList.clear();
-        content.getChildren().clear();
-        List<OutputTab> outputTabs = OutputTab.getOutputTabsFromTabPane(tabPane);
-        if (outputTabs.isEmpty()) {
-            content.getChildren().add(new Text("No active processes"));
-        } else {
-            for (OutputTab outputTab : outputTabs) {
-                if (outputTab.getTerminal() == null) continue;
-                Process p = ((ProcessTtyConnector) outputTab.getTerminal().getTtyConnector()).getProcess();
-                ProfilerProcessNode profilerProcessNode = new ProfilerProcessNode(p, String.valueOf(p.pid()), ProcessStatus.ACTIVE, outputTab);
-                profilerProcessNodeList.addAll(List.of(profilerProcessNode, new Separator(Orientation.HORIZONTAL)));
-            }
-            content.getChildren().addAll(profilerProcessNodeList);
-        }
-    }
-
-    private void refreshProcess(ProfilerProcessNode profilerProcessNode) {
-        Process refreshedProcess = ((ProcessTtyConnector) profilerProcessNode.getTab().getTerminal().getTtyConnector()).getProcess();
-        ProcessStatus status;
-        String exitCode = null;
-        if (refreshedProcess.isAlive()) {
-            status = ProcessStatus.ACTIVE;
-        } else {
-            if (refreshedProcess.exitValue() != 0) {
-                status = ProcessStatus.FAILED;
-                exitCode = String.valueOf(refreshedProcess.exitValue());
-            } else {
-                status = ProcessStatus.EXITED;
-            }
-        }
-        StringBuilder ids = new StringBuilder();
-        ids.append("Shell pid: ").append(refreshedProcess.pid()).append("\n");
-        for (ProcessHandle p : refreshedProcess.descendants().toList()) {
-            ids.append("Process pid: ").append(p.pid()).append("\n");
-        }
-        String finalExitCode = exitCode;
-        Platform.runLater(() -> {
-            profilerProcessNode.refreshStatus(status, finalExitCode);
-            profilerProcessNode.refreshID(ids.isEmpty() ? String.valueOf(refreshedProcess.pid()) : ids.toString());
-            profilerProcessNode.refreshCommand(profilerProcessNode.getTab().getCommandDisplayName());
-            profilerProcessNode.refreshName(profilerProcessNode.getTab().getText());
+        };
+        task.setOnCancelled(e -> {
+            System.out.println("canceled");
         });
+        taskProgressView.getTasks().add(task);
+        taskProgressView.setRetainTasks(true);
+        new Thread(task).start();
     }
 
     private void setupProfilerTab() {
-        this.setText("Status");
-        this.setClosable(false);
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
-        this.setContent(scrollPane);
-        content.setFillWidth(true);
+        content.setFillWidth(false);
         content.setPadding(new Insets(15));
+        taskProgressView.setGraphicFactory(t -> {
+            if (t.getValue() instanceof CommandSequence) {
+                return Icons.getExecuteAllButtonIcon(32);
+            } else {
+                return Icons.getAddButtonIcon(32);
+            }
+        });
+        taskProgressView.getStyleClass().addAll("dark", "bordered-container");
+        content.getChildren().add(taskProgressView);
+
+        setText("Status");
+        setClosable(false);
+        setContent(scrollPane);
     }
 }

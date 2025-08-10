@@ -1,14 +1,13 @@
 package org.ashot.shellflow.execution;
 
 import com.pty4j.PtyProcess;
-import org.ashot.shellflow.data.Command;
-import org.ashot.shellflow.data.CommandSequence;
 import org.ashot.shellflow.data.Entry;
+import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.popup.ErrorPopup;
-import org.ashot.shellflow.node.tab.executions.OutputTab;
+import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.registry.ProcessRegistry;
 import org.ashot.shellflow.task.CommandExecutionTask;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class CommandExecutor {
             try {
                 PtyProcess process = buildProcess(command).start();
                 ProcessRegistry.register(String.valueOf(process.pid()), process);
-                OutputTab tab = OutputTab.constructOutputTabWithTerminalProcess(process, command);
+                ExecutionTab tab = ExecutionTab.constructOutputTabWithTerminalProcess(process, command);
                 tab.startTerminal();
                 addToExecutions(tab);
                 setInProgress(tab);
@@ -62,25 +61,7 @@ public class CommandExecutor {
         }).start();
     }
 
-    public static void executeAll(List<Entry> entries, boolean seqOption, String seqName, int delayPerCmd) {
-        if (seqOption) {
-            executeAllSequential(entries, seqName, delayPerCmd);
-        } else {
-            executeAllSeparate(entries, delayPerCmd);
-        }
-    }
-
-    private static void executeAllSequential(List<Entry> entries, String seqName, int delayPerCmd) {
-        List<Command> seqCommands = new ArrayList<>();
-        for (Entry entry: entries) {
-            Command cmd = EntryToCommandMapper.entryToCommand(entry, false);
-            seqCommands.add(cmd);
-        }
-        CommandSequence commandSequence = new CommandSequence(seqCommands, delayPerCmd, seqName);
-        SequentialExecutor.executeSequential(commandSequence);
-    }
-
-    private static void executeAllSeparate(List<Entry> entries, int delayPerCmd) {
+    public static void executeAll(List<Entry> entries, int delayPerCmd) {
         List<CommandExecutionTask> tasks = new ArrayList<>();
         int i = 0;
         for (Entry entry: entries) {

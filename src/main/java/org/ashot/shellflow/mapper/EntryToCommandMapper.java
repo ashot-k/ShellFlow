@@ -1,8 +1,8 @@
 package org.ashot.shellflow.mapper;
 
 import javafx.application.Platform;
-import org.ashot.shellflow.data.Command;
 import org.ashot.shellflow.data.Entry;
+import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.exception.InvalidPathException;
 import org.ashot.shellflow.node.entry.EntryBox;

@@ -13,7 +13,7 @@ import java.util.List;
 public class Animator {
 
     public static int DEFAULT_FRAME_RATE = 60;
-    public static int PERFORMANCE_OPTIMIZATION_FRAME_RATE = 10;
+    public static int PERFORMANCE_OPTIMIZATION_FRAME_RATE = 5;
     private static int frameRate = 60;
     private static List<Timeline> timelineList = new ArrayList<>();
     private static List<Node> nodes = new ArrayList<>();

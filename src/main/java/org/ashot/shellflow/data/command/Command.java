@@ -1,4 +1,4 @@
-package org.ashot.shellflow.data;
+package org.ashot.shellflow.data.command;
 
 import org.ashot.shellflow.data.message.ExceptionMessages;
 import org.ashot.shellflow.exception.InvalidCommandException;
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,24 +58,43 @@ public class Command {
         argumentsString = arguments;
         this.argumentList.add(arguments);
         this.name = formatName(name);
-        log.info("Command created with name: {}, path: {}, arguments: {}", name, path, arguments);
+        log.info("Created command: { name: {}, path: {}, arguments: {}, WSL: {} }", this.name, this.path, arguments, this.wsl);
     }
 
     private String adjustWslArguments(String arguments) {
         return "cd " + path + " && " + arguments;
     }
 
-    private void validateWslPath() {
+    private void validateWslPath() throws InvalidPathException {
+        log.debug("Checking WSL Path: {}", path);
         path = path.isBlank() ? "/" : path;
+        if (!wslPathExists(path)) {
+            throw new InvalidPathException(ExceptionMessages.INVALID_PATH + ": " + path, path);
+        }
+        log.debug("Checked WSL Path: {}", path);
+    }
+
+    public static boolean wslPathExists(String wslPath) {
+        try {
+            ProcessBuilder builder = new ProcessBuilder("wsl", "test", "-e", wslPath);
+            Process process = builder.start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (IOException | InterruptedException e) {
+            log.error(e.getMessage());
+            return false;
+        }
     }
 
     private void validatePath() throws InvalidPathException {
+        log.debug("Checking Path: {}", path);
         path = path.isBlank() ? "/" : path;
         path = path.replace("~", System.getProperty("user.home"));
         File f = new File(path);
         if (!f.exists() || !f.isDirectory()) {
             throw new InvalidPathException(ExceptionMessages.INVALID_PATH, path);
         }
+        log.debug("Checked Path: {}", path);
     }
 
     private void validateArguments(String arguments) throws InvalidCommandException {
@@ -120,16 +140,8 @@ public class Command {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getPath() {
         return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public @NotNull String[] getArgumentList() {
@@ -144,7 +156,4 @@ public class Command {
         return persistent;
     }
 
-    public void setWsl(boolean wsl) {
-        this.wsl = wsl;
-    }
 }

@@ -4,23 +4,37 @@ import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
+import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.registry.ProcessRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EntrySetupTab extends Tab {
+    private static final Logger log = LoggerFactory.getLogger(EntrySetupTab.class);
     private final VBox entriesContainer;
     private final SidePanel sidePanel;
+
+    private int dragSourceIndex = -1;
+
 
     public EntrySetupTab() {
         entriesContainer = new VBox();
@@ -38,9 +52,7 @@ public class EntrySetupTab extends Tab {
         sidePanel.setMaxWidth(300);
 
         Region spacer = new Region();
-//        spacer.setMaxWidth(100);
         Region spacer2 = new Region();
-//        spacer2.setMaxWidth(100);
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
@@ -79,6 +91,43 @@ public class EntrySetupTab extends Tab {
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(EntryToCommandMapper.entryToCommand(entryBox, false)));
         entriesContainer.getChildren().add(entryBox);
+        setupDragging(entryBox);
+    }
+
+    private void setupDragging(EntryBox entryBox){
+        entryBox.setOnDragDetected(e ->{
+            dragSourceIndex = entriesContainer.getChildren().indexOf(entryBox);
+            Dragboard dragboard = entryBox.startDragAndDrop(TransferMode.MOVE);
+            SnapshotParameters snapshotParameters = new SnapshotParameters();
+            snapshotParameters.setFill(Color.TRANSPARENT);
+            HashMap<DataFormat, Object> dataFormatStringHashMap = new HashMap<>();
+            //placeholder just to allow dragover detection
+            dataFormatStringHashMap.put(DataFormat.PLAIN_TEXT, "");
+            dragboard.setContent(dataFormatStringHashMap);
+            dragboard.setDragView(entryBox.snapshot(snapshotParameters, new WritableImage((int) entryBox.getWidth(), (int) entryBox.getHeight())));
+            e.consume();
+        });
+        entryBox.setOnDragOver(e ->{
+            if(dragSourceIndex != -1 && entryBox != entriesContainer.getChildren().get(dragSourceIndex)){
+                e.acceptTransferModes(TransferMode.MOVE);
+            }
+            e.consume();
+        });
+        entryBox.setOnDragDropped(e -> {
+            int dropIndex = entriesContainer.getChildren().indexOf(entryBox);
+            if (dragSourceIndex != -1) {
+                var node = entriesContainer.getChildren().remove(dragSourceIndex);
+                entriesContainer.getChildren().add(dropIndex, node);
+            }
+            dragSourceIndex = -1;
+            e.setDropCompleted(true);
+            e.consume();
+        });
+        entryBox.setOnDragDone(e -> {
+            dragSourceIndex = -1;
+            e.consume();
+        });
+
     }
 
     public void removeEntryBox(EntryBox entryBox) {
@@ -110,12 +159,12 @@ public class EntrySetupTab extends Tab {
     }
 
     public void executeAll() {
-        CommandExecutor.executeAll(
-                getEntries(),
-                getSequentialOption().isSelected(),
-                getSequentialNameField().getText(),
-                (int) getDelayPerCmdSlider().getValue()
-        );
+        if(getSequentialOption().isSelected()){
+            SequenceExecutor.execute(getEntries(), getSequentialNameField().getText(), getDelayPerCmd());
+        }
+        else {
+            CommandExecutor.executeAll(getEntries(), getDelayPerCmd());
+        }
     }
 
     public void stopAll() {
@@ -140,5 +189,9 @@ public class EntrySetupTab extends Tab {
     }
     public Button getCloseAllButton() {
         return sidePanel.getCloseAllButton();
+    }
+
+    public int getDelayPerCmd(){
+        return (int) sidePanel.getDelayPerCmdSlider().getValue();
     }
 }

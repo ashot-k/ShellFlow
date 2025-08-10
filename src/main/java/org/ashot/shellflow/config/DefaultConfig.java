@@ -49,7 +49,6 @@ public class DefaultConfig implements Config {
         if(!ThemeOption.valueExists(value)){
             return property.getDefaultValue();
         }
-
         return value;
     }
 

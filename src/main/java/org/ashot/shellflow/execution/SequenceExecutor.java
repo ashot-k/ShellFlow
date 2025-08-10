@@ -2,15 +2,16 @@ package org.ashot.shellflow.execution;
 
 import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
-import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.ashot.shellflow.data.Command;
-import org.ashot.shellflow.data.CommandSequence;
+import org.ashot.shellflow.data.Entry;
+import org.ashot.shellflow.data.command.Command;
+import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.NotificationType;
+import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.notification.Notification;
-import org.ashot.shellflow.node.tab.executions.OutputTab;
-import org.ashot.shellflow.node.tab.executions.SequentialExecutionsTab;
+import org.ashot.shellflow.node.tab.executions.ExecutionTab;
+import org.ashot.shellflow.node.tab.executions.SequenceExecutionsTab;
 import org.ashot.shellflow.registry.ProcessRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.slf4j.Logger;
@@ -20,36 +21,47 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFailNotificationMessage;
 import static org.ashot.shellflow.data.message.NotificationMessages.sequentialFinishedNotificationMessage;
-import static org.ashot.shellflow.node.tab.executions.OutputTab.constructSequencePartOutputTab;
+import static org.ashot.shellflow.node.tab.executions.ExecutionTab.constructSequencePartOutputTab;
 import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
 import static org.ashot.shellflow.utils.TabUtils.*;
 
-public class SequentialExecutor {
+public class SequenceExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(SequentialExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(SequenceExecutor.class);
 
-    public static void executeSequential(CommandSequence commandSequence) {
+    public static void execute(List<Entry> entries, String seqName, int delayPerCmd) {
+        List<Command> seqCommands = new ArrayList<>();
+        for (Entry entry: entries) {
+            Command cmd = EntryToCommandMapper.entryToCommand(entry, false);
+            seqCommands.add(cmd);
+        }
+        CommandSequence commandSequence = new CommandSequence(seqCommands, delayPerCmd, seqName);
+        execute(commandSequence);
+    }
+
+    private static void execute(CommandSequence commandSequence) {
         //todo add thread to a list, track tab closure to terminate the thread
         new Thread(() -> {
-            SequentialExecutionsTab sequenceHolder = new SequentialExecutionsTab(commandSequence.getSequenceName(), new TabPane());
+            SequenceExecutionsTab sequenceHolder = new SequenceExecutionsTab(commandSequence, new TabPane());
             TabPane sequenceTabPane = sequenceHolder.getSequentialExecutionTabPane();
             setInProgress(sequenceHolder);
             addToExecutions(sequenceHolder);
             PtyProcessBuilder processBuilder;
             PtyProcess process;
             List<Command> commandList = commandSequence.getCommandList();
-            List<OutputTab> outputTabs = new ArrayList<>();
+            List<ExecutionTab> executionTabs = new ArrayList<>();
             for (Command command : commandList) {
-                OutputTab tab = constructSequencePartOutputTab(command);
-                Platform.runLater(()-> sequenceTabPane.getTabs().add(tab));
-                outputTabs.add(tab);
+                ExecutionTab tab = constructSequencePartOutputTab(command);
+                runLater(()-> sequenceTabPane.getTabs().add(tab));
+                executionTabs.add(tab);
             }
             for (int i = 0; i < commandList.size(); i++) {
                 try {
                     Command currentCommand = commandList.get(i);
-                    OutputTab tab = outputTabs.get(i);
+                    ExecutionTab tab = executionTabs.get(i);
                     processBuilder = buildProcess(currentCommand);
                     process = processBuilder.start();
                     ProcessRegistry.register(String.valueOf(process.pid()), process);
@@ -70,7 +82,7 @@ public class SequentialExecutor {
                     });
                     String pid = String.valueOf(process.pid());
                     int finalI = i;
-                    Platform.runLater(() -> {
+                    runLater(() -> {
                         sequenceTabPane.getSelectionModel().select(finalI);
                         String currentTabName = currentCommand.isNameSet() ? currentCommand.getName() : "Process - " + pid;
                         tab.setText(currentTabName);
@@ -117,8 +129,8 @@ public class SequentialExecutor {
 
     private static boolean checkIfCanceled(List<Tab> tabs) {
         for (Tab t : tabs) {
-            if (t instanceof OutputTab outputTab) {
-                if (outputTab.isCanceled()) return true;
+            if (t instanceof ExecutionTab executionTab) {
+                if (executionTab.isCanceled()) return true;
             }
         }
         return false;
@@ -126,8 +138,8 @@ public class SequentialExecutor {
 
     private static boolean checkIfFailed(List<Tab> tabs) {
         for (Tab t : tabs) {
-            if (t instanceof OutputTab outputTab) {
-                if (outputTab.isFailed()) return true;
+            if (t instanceof ExecutionTab executionTab) {
+                if (executionTab.isFailed()) return true;
             }
         }
         return false;

@@ -1,7 +1,7 @@
 package org.ashot.shellflow.utils;
 
 import com.pty4j.PtyProcessBuilder;
-import org.ashot.shellflow.data.Command;
+import org.ashot.shellflow.data.command.Command;
 
 import java.util.HashMap;
 

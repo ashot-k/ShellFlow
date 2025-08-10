@@ -1,6 +1,6 @@
 package org.ashot.shellflow.task;
 
-import org.ashot.shellflow.data.Command;
+import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.node.popup.ErrorPopup;
 

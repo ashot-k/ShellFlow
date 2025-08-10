@@ -12,7 +12,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.Main;
-import org.ashot.shellflow.data.Command;
+import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
 import org.slf4j.Logger;
@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OutputTab extends Tab {
-    private static final Logger logger = LoggerFactory.getLogger(OutputTab.class);
+public class ExecutionTab extends Tab {
+    private static final Logger logger = LoggerFactory.getLogger(ExecutionTab.class);
     private String commandDisplayName;
     private JediTermFxWidget terminal;
     private final VBox terminalWrapper = new VBox();
@@ -31,7 +31,7 @@ public class OutputTab extends Tab {
     private boolean failed = false;
     private boolean canceled = false;
 
-    private OutputTab(OutputTabBuilder outputTabBuilder) {
+    private ExecutionTab(OutputTabBuilder outputTabBuilder) {
         this.commandDisplayName = outputTabBuilder.commandDisplayName;
         this.setTooltip(outputTabBuilder.tooltip);
         this.setText(outputTabBuilder.tabName);
@@ -48,7 +48,7 @@ public class OutputTab extends Tab {
         this.setContent(this.terminalWrapper);
     }
 
-    public static OutputTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
+    public static ExecutionTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
         return new OutputTabBuilder(TerminalFactory.createTerminalWidget(process))
                 .setTabName(command.isNameSet() ? command.getName() : "Process - " + process.pid())
                 .setCommandDisplayName(command.getArgumentsString())
@@ -56,7 +56,7 @@ public class OutputTab extends Tab {
                 .build();
     }
 
-    public static OutputTab constructSequencePartOutputTab(Command command) {
+    public static ExecutionTab constructSequencePartOutputTab(Command command) {
         return new OutputTabBuilder()
                 .setTabName(command.getName())
                 .setTooltip(command.getArgumentsString())
@@ -78,12 +78,12 @@ public class OutputTab extends Tab {
         }
     }
 
-    public static List<OutputTab> getOutputTabsFromTabPane(TabPane tabPane) {
-        List<OutputTab> tabs = new ArrayList<>();
+    public static List<ExecutionTab> getOutputTabsFromTabPane(TabPane tabPane) {
+        List<ExecutionTab> tabs = new ArrayList<>();
         for (Tab tab : tabPane.getTabs()) {
-            if (tab instanceof OutputTab outputTab) {
-                tabs.add(outputTab);
-            } else if (tab instanceof SequentialExecutionsTab sequenceTab) {
+            if (tab instanceof ExecutionTab executionTab) {
+                tabs.add(executionTab);
+            } else if (tab instanceof SequenceExecutionsTab sequenceTab) {
                 tabs.addAll(sequenceTab.getSequentialExecutionTabPaneTabs());
             }
         }
@@ -207,8 +207,8 @@ public class OutputTab extends Tab {
             return this;
         }
 
-        public OutputTab build() {
-            return new OutputTab(this);
+        public ExecutionTab build() {
+            return new ExecutionTab(this);
         }
     }
 }

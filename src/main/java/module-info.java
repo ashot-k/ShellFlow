@@ -28,4 +28,6 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.node.tab.executions to javafx.base;
     opens org.ashot.shellflow.node.tab.preset to javafx.base;
     opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
+    exports org.ashot.shellflow.data.execution;
+    exports org.ashot.shellflow.data.command;
 }

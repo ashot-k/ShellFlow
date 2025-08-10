@@ -60,12 +60,12 @@ public class Controller implements Initializable {
 
     private void setupTabs() {
         entrySetupTab = new EntrySetupTab();
-        presetSetupTab = new PresetSetupTab();
+//        presetSetupTab = new PresetSetupTab();
         executionsTab = new ExecutionsTab();
 //        profilerTab = new ProfilerTab();
         mainTabPane.getTabs().
                 addAll(entrySetupTab
-                        , presetSetupTab
+//                        , presetSetupTab
                         , executionsTab
 //                        ,profilerTab
                 );
