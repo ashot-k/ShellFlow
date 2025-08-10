@@ -30,10 +30,6 @@ public class ErrorPopup extends Stage {
     public ErrorPopup() {
         setupErrorPopup("", null);
     }
-    public ErrorPopup(boolean criticalError) {
-        this.criticalError = criticalError;
-        setupErrorPopup("", null);
-    }
 
     public ErrorPopup(String msg) {
         setupErrorPopup(msg, null);

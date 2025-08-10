@@ -26,7 +26,7 @@ public class Main extends Application {
     public static final String CSS_FILE_LOCATION = Main.class.getResource("/style/main.css").toExternalForm();
     public static final URL MAIN_FXML_LOCATION = Main.class.getResource("/fxml/shellflow-main.fxml");
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    private static ThemeOption selectedTheme;
+    private static ThemeOption selectedTheme = ThemeOption.DARK_MODE;
     private static Stage primaryStage;
     private static final Config config = new DefaultConfig();
 
@@ -99,11 +99,7 @@ public class Main extends Application {
     }
 
     private static ThemeOption getThemeFromConfig() {
-        if (config.getDarkMode()) {
-            return ThemeOption.NORD_DARK;
-        } else {
-            return ThemeOption.LIGHT_MODE;
-        }
+        return ThemeOption.getByValue(getConfig().getTheme());
     }
 
     public static Config getConfig() {

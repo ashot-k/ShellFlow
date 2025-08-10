@@ -17,7 +17,7 @@ import static org.ashot.shellflow.node.Recents.*;
 
 public class OpenRecentMenu extends Menu {
 
-    private static final int MAX_ENTRIES = 10;
+    private static final int MAX_ENTRIES = 15;
     private static final Logger log = LoggerFactory.getLogger(OpenRecentMenu.class);
     private final Consumer<File> open;
 

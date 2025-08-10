@@ -17,7 +17,7 @@ import java.util.Map;
 public class Fields {
     public static final int DEFAULT_TEXT_AREA_HEIGHT = 40;
     private static final int TEXT_AREA_HEIGHT_ENLARGED_MULT = 4;
-    private static boolean autoCompleteToggle = true;
+    private static boolean autoCompleteToggle = false;
 
     private Fields(){}
 
@@ -82,14 +82,14 @@ public class Fields {
         AutoCompletePopup popup = new AutoCompletePopup(field);
         field.textProperty().addListener((_, _, input) -> {
             if (autoCompleteToggle) {
-                popup.show(input, getAutoCompleteMap(type));
+//                popup.show(input, getAutoCompleteMap(type));
             }
         });
 
         Timeline timeline = new Timeline();
         field.focusedProperty().addListener((_, _, isFocused) -> {
             if (Boolean.TRUE.equals(isFocused)) {
-                popup.show(field.getText(), getAutoCompleteMap(type));
+//                popup.show(field.getText(), getAutoCompleteMap(type));
                 Animator.animateHeightChange(timeline, field, field.getHeight() * TEXT_AREA_HEIGHT_ENLARGED_MULT, Duration.millis(250));
             } else {
                 field.setMinHeight(DEFAULT_TEXT_AREA_HEIGHT);
@@ -103,7 +103,7 @@ public class Fields {
             if (e.isShiftDown() && e.getCode().equals(KeyCode.ENTER)) {
                 autoCompleteToggle = !autoCompleteToggle;
                 if (autoCompleteToggle) {
-                    popup.show(field.getText(), getAutoCompleteMap(type));
+//                    popup.show(field.getText(), getAutoCompleteMap(type));
                 } else {
                     popup.hide();
                 }

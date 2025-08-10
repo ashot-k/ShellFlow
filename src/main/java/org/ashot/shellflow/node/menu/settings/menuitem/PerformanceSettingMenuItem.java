@@ -3,6 +3,7 @@ package org.ashot.shellflow.node.menu.settings.menuitem;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 
+import static org.ashot.shellflow.Main.getConfig;
 import static org.ashot.shellflow.utils.Animator.*;
 
 public class PerformanceSettingMenuItem extends MenuItem {
@@ -22,5 +23,6 @@ public class PerformanceSettingMenuItem extends MenuItem {
                 setFrameRate(DEFAULT_FRAME_RATE);
             }
         });
+        checkBox.setSelected(getConfig().getOptimizedMode());
     }
 }

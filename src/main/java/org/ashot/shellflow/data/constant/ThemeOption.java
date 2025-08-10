@@ -21,6 +21,24 @@ public enum ThemeOption {
         this.isDark = isDark;
     }
 
+    public static ThemeOption getByValue(String value){
+        for (ThemeOption option : ThemeOption.values()){
+            if(option.getValue().equalsIgnoreCase(value)){
+                return option;
+            }
+        }
+        return null;
+    }
+
+    public static boolean valueExists(String value){
+        for (ThemeOption option : ThemeOption.values()){
+            if(option.getValue().equalsIgnoreCase(value)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getValue() {
         return value;
     }
