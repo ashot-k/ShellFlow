@@ -1,7 +1,7 @@
 package org.ashot.shellflow.config;
 
-import org.ashot.shellflow.data.constant.ConfigProperties;
-import org.ashot.shellflow.utils.FileUtils;
+import org.ashot.shellflow.data.constant.ConfigProperty;
+import org.ashot.shellflow.data.constant.ThemeOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,18 +12,15 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 
-import static org.ashot.shellflow.data.constant.SettingsFilePaths.getSettingsFolder;
-
 public class DefaultConfig implements Config {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
     private static final Properties properties = new Properties();
     private static final String PROPERTIES_FILE_NAME = "config.properties";
-    private static final Path pathToPropertiesFile = Path.of(getSettingsFolder() + "/" + PROPERTIES_FILE_NAME);
+    private static final Path pathToPropertiesFile = Path.of(PROPERTIES_FILE_NAME);
 
     public DefaultConfig() {
         try {
             //todo recheck validation logic
-            FileUtils.createFileAndDirs(pathToPropertiesFile.toString());
             File propertiesFile = new File(pathToPropertiesFile.toUri());
             InputStream inputStream = new FileInputStream(propertiesFile);
             properties.load(inputStream);
@@ -33,27 +30,33 @@ public class DefaultConfig implements Config {
         }
     }
 
-    public String getProperty(String propertyName) {
-        return properties.getProperty(propertyName);
-    }
-
     @Override
     public String getPresetConfigLocation() {
-        return getPropertyOrDefault(ConfigProperties.PRESETS_FILE.getValue(), ConfigProperties.PRESETS_FILE.getDefaultValue());
+        ConfigProperty property = ConfigProperty.PRESETS_FILE;
+        return getPropertyOrDefault(property.getValue(), property.getDefaultValue());
     }
 
     @Override
     public String getRecentsDirsConfigLocation() {
-        return getPropertyOrDefault(ConfigProperties.RECENT_DIRS_FILE.getValue(), ConfigProperties.RECENT_DIRS_FILE.getDefaultValue());
+        ConfigProperty property = ConfigProperty.RECENT_DIRS_FILE;
+        return getPropertyOrDefault(property.getValue(), property.getDefaultValue());
     }
 
     @Override
-    public boolean getDarkMode() {
-        String value = getPropertyOrDefault(ConfigProperties.DARK_MODE.getValue(), ConfigProperties.DARK_MODE.getDefaultValue());
-        if (!value.equals("true") && !value.equals("false")) {
-            log.error("Theme setting is not boolean: [{}], defaulting to [{}]", value, "true");
-            value = "true";
+    public String getTheme() {
+        ConfigProperty property = ConfigProperty.THEME;
+        String value = getPropertyOrDefault(property.getValue(), property.getDefaultValue());
+        if(!ThemeOption.valueExists(value)){
+            return property.getDefaultValue();
         }
+
+        return value;
+    }
+
+    @Override
+    public boolean getOptimizedMode() {
+        ConfigProperty property = ConfigProperty.OPTIMIZED_MODE;
+        String value = getPropertyOrDefault(property.getValue(), property.getDefaultValue());
         return Boolean.parseBoolean(value);
     }
 

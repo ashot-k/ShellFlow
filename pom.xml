@@ -6,15 +6,15 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.6.3</version>
+    <version>0.6.4</version>
     <name>shellflow</name>
 
     <properties>
         <output.artifact>${project.name}</output.artifact>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>24.0.2</javafx.version>
-        <jeditermfx.version>1.1.0</jeditermfx.version>
-        <atlantafx.themes.version>2.0.1</atlantafx.themes.version>
+        <jeditermfx.version>1.2.0-SNAPSHOT</jeditermfx.version>
+        <atlantafx.themes.version>2.1.0</atlantafx.themes.version>
         <controlsfx.version>11.2.2</controlsfx.version>
         <logback.version>1.5.18</logback.version>
         <json.version>20240303</json.version>
@@ -168,7 +168,9 @@
                         <fileset>
                             <directory>${project.basedir}/output</directory>
                             <includes>
-                                <include>${output.artifact}/**</include>
+                                <!--delete app image folder-->
+                                <include>${output.artifact}-${project.version}/**</include>
+                                <!--delete installer-->
                                 <include>${output.artifact}-${project.version}.exe</include>
                             </includes>
                         </fileset>
@@ -180,7 +182,6 @@
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.6.4</version>
                 <configuration>
-                    <name>${output.artifact}</name>
                     <appVersion>${project.version}</appVersion>
                     <vendor>org.ashot</vendor>
                     <!--this includes the full jdk runtime, allows for automatic modules but increases exe file size by alot-->
@@ -194,18 +195,26 @@
                         <option>--enable-preview</option>
                         <option>-Dfile.encoding=UTF-8</option>
                     </javaOptions>
-                    <winDirChooser>true</winDirChooser>
-                    <winShortcut>true</winShortcut>
-                    <winMenu>true</winMenu>
-                    <winShortcutPrompt>true</winShortcutPrompt>
-                    <winUpgradeUuid>4b728778-c894-4fd0-84f2-16165f90f951</winUpgradeUuid>
+                    <icon>${project.basedir}/src/main/resources/icon.ico</icon>
                 </configuration>
                 <executions>
                     <execution>
                         <id>windows</id>
                         <configuration>
-                            <type>EXE</type> <!--APP_IMAGE for linux-->
-                            <icon>${project.basedir}/src/main/resources/icon.ico</icon>
+                            <name>${output.artifact}</name>
+                            <winDirChooser>true</winDirChooser>
+                            <winShortcut>true</winShortcut>
+                            <winMenu>true</winMenu>
+                            <winShortcutPrompt>true</winShortcutPrompt>
+                            <winUpgradeUuid>4b728778-c894-4fd0-84f2-16165f90f951</winUpgradeUuid>
+                            <type>EXE</type>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>app-image</id>
+                        <configuration>
+                            <name>${output.artifact}-${project.version}</name>
+                            <type>APP_IMAGE</type>
                         </configuration>
                     </execution>
                 </executions>
