@@ -1,7 +1,9 @@
 package org.ashot.shellflow.config;
 
+import javafx.application.Platform;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
+import org.ashot.shellflow.node.popup.ErrorPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,11 @@ public class DefaultConfig implements Config {
         try {
             //todo recheck validation logic
             File propertiesFile = new File(pathToPropertiesFile.toUri());
+            if(!propertiesFile.exists()){
+                Platform.runLater(()->{
+                    new ErrorPopup("Could not find: " + pathToPropertiesFile.toAbsolutePath(), true).showPopup();
+                });
+            }
             InputStream inputStream = new FileInputStream(propertiesFile);
             properties.load(inputStream);
             log.info("Loaded configuration from: {}", propertiesFile.getAbsolutePath());

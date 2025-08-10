@@ -69,9 +69,9 @@ public class EntryButton extends CustomButton {
     public static Button executeEntryButton() {
         Button executeButton = new Button("", Icons.getExecuteButtonIcon(EXECUTE_BUTTON_SIZE));
         executeButton.setId(ButtonType.EXECUTION.getValue());
-        executeButton.setPrefWidth(65);
-        executeButton.setPrefHeight(30);
-        executeButton.setMinHeight(30);
+        executeButton.setPrefWidth(50);
+        executeButton.setPrefHeight(31);
+        executeButton.setMinHeight(31);
         executeButton.setPadding(Insets.EMPTY);
         executeButton.setTooltip(new Tooltip(ToolTipMessages.execute()));
         return executeButton;

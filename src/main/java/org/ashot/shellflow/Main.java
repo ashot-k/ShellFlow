@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.config.DefaultConfig;
 import org.ashot.shellflow.data.constant.ThemeOption;
-import org.ashot.shellflow.registry.ProcessRegistry;
+import org.ashot.shellflow.registry.TerminalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class Main extends Application {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static ThemeOption selectedTheme = ThemeOption.DARK_MODE;
     private static Stage primaryStage;
-    private static final Config config = new DefaultConfig();
+    private static Config config;
 
     public static void main(String[] args) {
         handleJVMArgs(args);
@@ -38,24 +38,26 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
+            primaryStage = stage;
+            config = new DefaultConfig();
             setTheme(getThemeFromConfig());
+
             Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
-            root.getStyleClass().add(getThemeFromConfig().isDark() ? "dark" : "light");
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
-            primaryStage = stage;
+            root.getStyleClass().add(getThemeFromConfig().isDark() ? "dark" : "light");
             primaryStage.getIcons().add(new Image("icon.png"));
             primaryStage.setTitle(windowTitle);
             primaryStage.setScene(scene);
             primaryStage.setResizable(RESIZABLE);
             primaryStage.setMinHeight(600);
             primaryStage.setMinWidth(800);
-            primaryStage.show();
             primaryStage.setOnCloseRequest(_ -> Platform.exit());
+            primaryStage.show();
             log.debug("Loaded FXML: {}", MAIN_FXML_LOCATION);
-            log.debug("Loaded css: {}", CSS_FILE_LOCATION);
-            log.debug("Theme: {}", selectedTheme);
-            log.debug("Resizable: {}", RESIZABLE);
+            log.debug("Loaded CSS: {}", CSS_FILE_LOCATION);
+            log.debug("Loaded Theme: {}", selectedTheme);
+            log.debug("Is main stage Resizable: {}", RESIZABLE);
         } catch (Exception e) {
             log.error(e.getClass().getName());
             log.error(e.getMessage());
@@ -66,7 +68,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
-        ProcessRegistry.killAllProcesses();
+        TerminalRegistry.stopAllTerminals();
         //add timeout for process killing
         System.exit(0);
     }

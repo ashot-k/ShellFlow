@@ -68,12 +68,10 @@ public class Command {
     private void validateWslPath() throws InvalidPathException {
         log.debug("Checking WSL Path: {}", path);
         path = path.isBlank() ? "/" : path;
-        if (!wslPathExists(path)) {
-            throw new InvalidPathException(ExceptionMessages.INVALID_PATH + ": " + path, path);
-        }
         log.debug("Checked WSL Path: {}", path);
     }
 
+/*
     public static boolean wslPathExists(String wslPath) {
         try {
             ProcessBuilder builder = new ProcessBuilder("wsl", "test", "-e", wslPath);
@@ -85,6 +83,7 @@ public class Command {
             return false;
         }
     }
+*/
 
     private void validatePath() throws InvalidPathException {
         log.debug("Checking Path: {}", path);

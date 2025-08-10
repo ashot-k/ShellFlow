@@ -1,8 +1,9 @@
 # project specific
 /settings/
+/settings/**
+config.properties
 /target/
 /output/
-settings/config.properties
 #
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

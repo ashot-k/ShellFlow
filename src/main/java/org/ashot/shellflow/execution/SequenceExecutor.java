@@ -12,7 +12,7 @@ import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.node.tab.executions.SequenceExecutionsTab;
-import org.ashot.shellflow.registry.ProcessRegistry;
+import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +32,9 @@ public class SequenceExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(SequenceExecutor.class);
 
-    public static void execute(List<Entry> entries, String seqName, int delayPerCmd) {
+    public static void executeSequence(List<Entry> entries, String seqName, int delayPerCmd) {
         List<Command> seqCommands = new ArrayList<>();
-        for (Entry entry: entries) {
+        for (Entry entry : entries) {
             Command cmd = EntryToCommandMapper.entryToCommand(entry, false);
             seqCommands.add(cmd);
         }
@@ -55,7 +55,7 @@ public class SequenceExecutor {
             List<ExecutionTab> executionTabs = new ArrayList<>();
             for (Command command : commandList) {
                 ExecutionTab tab = constructSequencePartOutputTab(command);
-                runLater(()-> sequenceTabPane.getTabs().add(tab));
+                runLater(() -> sequenceTabPane.getTabs().add(tab));
                 executionTabs.add(tab);
             }
             for (int i = 0; i < commandList.size(); i++) {
@@ -64,15 +64,14 @@ public class SequenceExecutor {
                     ExecutionTab tab = executionTabs.get(i);
                     processBuilder = buildProcess(currentCommand);
                     process = processBuilder.start();
-                    ProcessRegistry.register(String.valueOf(process.pid()), process);
                     tab.setTerminal(TerminalFactory.createTerminalWidget(process));
+                    TerminalRegistry.register(String.valueOf(process.pid()), tab.getTerminal().getTtyConnector());
                     tab.startTerminal();
                     tab.setOnClose(e -> {
                         setCanceled(tab);
                         setCanceled(sequenceHolder);
                         if (tab.getTerminal().getTtyConnector().isConnected()) {
                             try {
-                                //todo add this when reading ctrl + c from user
                                 tab.getTerminal().getTtyConnector().write("\u0003");  // same as user pressing Ctrl+C
                             } catch (IOException ex) {
                                 throw new RuntimeException(ex);

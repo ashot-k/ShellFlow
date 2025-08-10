@@ -8,7 +8,7 @@ import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.popup.ErrorPopup;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
-import org.ashot.shellflow.registry.ProcessRegistry;
+import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.task.CommandExecutionTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,8 @@ public class CommandExecutor {
         new Thread(()->{
             try {
                 PtyProcess process = buildProcess(command).start();
-                ProcessRegistry.register(String.valueOf(process.pid()), process);
                 ExecutionTab tab = ExecutionTab.constructOutputTabWithTerminalProcess(process, command);
+                TerminalRegistry.register(String.valueOf(process.pid()), tab.getTerminal().getTtyConnector());
                 tab.startTerminal();
                 addToExecutions(tab);
                 setInProgress(tab);

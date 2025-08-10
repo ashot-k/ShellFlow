@@ -20,7 +20,7 @@ import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.entry.EntryBox;
-import org.ashot.shellflow.registry.ProcessRegistry;
+import org.ashot.shellflow.registry.TerminalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +160,7 @@ public class EntrySetupTab extends Tab {
 
     public void executeAll() {
         if(getSequentialOption().isSelected()){
-            SequenceExecutor.execute(getEntries(), getSequentialNameField().getText(), getDelayPerCmd());
+            SequenceExecutor.executeSequence(getEntries(), getSequentialNameField().getText(), getDelayPerCmd());
         }
         else {
             CommandExecutor.executeAll(getEntries(), getDelayPerCmd());
@@ -168,8 +168,7 @@ public class EntrySetupTab extends Tab {
     }
 
     public void stopAll() {
-        //todo implement
-        ProcessRegistry.killAllProcesses();
+        TerminalRegistry.stopAllTerminals();
     }
 
     public void addEntryListChangeListener(ListChangeListener<Node> changeListener) {
