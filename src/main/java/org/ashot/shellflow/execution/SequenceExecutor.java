@@ -8,7 +8,7 @@ import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.NotificationType;
-import org.ashot.shellflow.mapper.EntryToCommandMapper;
+import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.node.tab.executions.SequenceExecutionsTab;
@@ -35,7 +35,10 @@ public class SequenceExecutor {
     public static void executeSequence(List<Entry> entries, String seqName, int delayPerCmd) {
         List<Command> seqCommands = new ArrayList<>();
         for (Entry entry : entries) {
-            Command cmd = EntryToCommandMapper.entryToCommand(entry, false);
+            Command cmd = EntryMapper.entryToCommand(entry, false);
+            if(cmd == null){
+                continue;
+            }
             seqCommands.add(cmd);
         }
         CommandSequence commandSequence = new CommandSequence(seqCommands, delayPerCmd, seqName);

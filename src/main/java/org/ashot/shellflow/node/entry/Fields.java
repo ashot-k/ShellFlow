@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.entry;
 
+import atlantafx.base.controls.ToggleSwitch;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
@@ -46,6 +47,17 @@ public class Fields {
         label.setLabelFor(checkBox);
         label.setFont(Fonts.fieldLabel);
         return new CheckBoxField(checkBox, label);
+    }
+
+    public static ToggleSwitch createToggleSwitch(FieldType type, String text, boolean initialSelection) {
+        return setupToggleSwitch(type, text, initialSelection);
+    }
+
+    private static ToggleSwitch setupToggleSwitch(FieldType type, String text, boolean initialSelection) {
+        ToggleSwitch toggleSwitch = new ToggleSwitch(text);
+        toggleSwitch.setId(type.getValue());
+        toggleSwitch.setSelected(initialSelection);
+        return toggleSwitch;
     }
 
     private static TextArea setupTextField(FieldType type, String text, String promptText, String toolTip, Double width, Double height, String styleClass) {

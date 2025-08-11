@@ -9,7 +9,6 @@ import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-import static org.ashot.shellflow.utils.IconUtils.setHover;
 import static org.ashot.shellflow.utils.IconUtils.setHoverToBrighter;
 
 public class Icons {
@@ -44,7 +43,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
         icon.size(size);
         icon.color(Color.INDIANRED);
-        setHover(icon, Color.INDIANRED, Color.CRIMSON);
+        setHoverToBrighter(icon, Color.INDIANRED);
         return decorateGlyph(icon);
     }
 
@@ -133,6 +132,13 @@ public class Icons {
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getEnableEntryIcon(double size) {
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHECK_CIRCLE);
+        icon.size(size);
+        icon.color(preferredColor);
         return icon;
     }
 

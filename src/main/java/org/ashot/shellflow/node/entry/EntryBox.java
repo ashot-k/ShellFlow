@@ -1,7 +1,8 @@
 package org.ashot.shellflow.node.entry;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
+import atlantafx.base.controls.ToggleSwitch;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -35,37 +36,34 @@ public class EntryBox extends VBox {
     private final TextArea pathField;
     private final TextArea commandField;
     private final CheckBoxField wslToggle;
+    private final ToggleSwitch enabledToggle;
     private final Button execute;
     private final Button deleteEntry;
+    private final Button pathBrowser;
 
-    private final SimpleStringProperty nameProperty = new SimpleStringProperty();
-    private final SimpleStringProperty pathProperty = new SimpleStringProperty();
-    private final SimpleStringProperty commandProperty = new SimpleStringProperty();
-    private final SimpleBooleanProperty wslProperty = new SimpleBooleanProperty();
-
+    private Entry entry;
+    private boolean edited = false;
 
     public EntryBox(Entry entry) {
+        this.entry = entry;
         nameField = Fields.createField(
                 FieldType.NAME, entry.getName(), null,
                 ToolTipMessages.nameField(), NAME_FIELD_WIDTH, "name-field"
         );
-        nameProperty.bind(nameField.textProperty());
-
         commandField = Fields.createField(
                 FieldType.COMMAND, entry.getCommand(), null,
                 ToolTipMessages.commandField(), COMMAND_FIELD_WIDTH, COMMAND_FIELD_HEIGHT, "command-field"
         );
-        commandProperty.bind(commandField.textProperty());
-
         pathField = Fields.createField(
                 FieldType.PATH, entry.getPath(), null,
                 ToolTipMessages.pathField(), PATH_FIELD_WIDTH, "path-field"
         );
-        pathProperty.bind(pathField.textProperty());
 
         wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", entry.isWsl());
         wslToggle.getCheckBox().setTooltip(new Tooltip(ToolTipMessages.wsl()));
-        wslProperty.bind(wslToggle.getCheckBox().selectedProperty());
+
+        enabledToggle = Fields.createToggleSwitch(FieldType.ENABLED, null, entry.isEnabled());
+        enabledToggle.setPadding(new Insets(0, 0, 8, 0));
 
         deleteEntry = EntryButton.deleteEntryButton();
         deleteEntry.setPadding(new Insets(0, 0, 8, 0));
@@ -73,13 +71,15 @@ public class EntryBox extends VBox {
         VBox labeledNameField = new LabeledTextField("Name", nameField);
         VBox labeledPathField = new LabeledTextField("Path", pathField);
         VBox labeledCommandField = new LabeledTextField("Command(s)", commandField);
-        Button pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
+
+        pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
 
         execute = EntryButton.executeEntryButton();
 
         GridPane entryGrid = new GridPane();
-        entryGrid.addRow(0, deleteEntry);
-        GridPane.setConstraints(deleteEntry, 0, 0, 3, 1, HPos.LEFT, VPos.TOP);
+        entryGrid.addRow(0, deleteEntry, enabledToggle);
+        GridPane.setConstraints(deleteEntry, 0, 0, 2, 1, HPos.LEFT, VPos.TOP);
+        GridPane.setConstraints(enabledToggle, 2, 0, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
 
         entryGrid.addRow(1, labeledNameField, labeledPathField, pathBrowser);
         GridPane.setConstraints(labeledNameField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
@@ -94,10 +94,80 @@ public class EntryBox extends VBox {
         entryGrid.setHgap(10);
         entryGrid.setVgap(3);
 
+        setupEditingTracking();
 
         this.getChildren().add(entryGrid);
         this.getStyleClass().addAll(styleClasses);
         this.setMaxWidth(ROW_WIDTH);
+
+        toggleEntryBox(entry.isEnabled());
+        enabledToggle.selectedProperty().addListener((_, _, value) -> {
+            toggleEntryBox(value);
+        });
+    }
+
+    private void toggleEntryBox(boolean enable){
+        execute.setDisable(!enable);
+        nameField.setDisable(!enable);
+        pathField.setDisable(!enable);
+        commandField.setDisable(!enable);
+        pathBrowser.setDisable(!enable);
+        wslToggle.getCheckBox().setDisable(!enable);
+        if(enable){
+            getStyleClass().remove("disabled-entry");
+        } else{
+            getStyleClass().add("disabled-entry");
+        }
+    }
+
+    private void setupEditingTracking(){
+        addEditedListenerForTextProperties(nameField.textProperty(), entry.getName());
+        addEditedListenerForTextProperties(pathField.textProperty(), entry.getPath());
+        addEditedListenerForTextProperties(commandField.textProperty(), entry.getCommand());
+        addEditedListenerForCheckbox(wslToggle.getCheckBox().selectedProperty(), entry.isWsl());
+        addEditedListenerForCheckbox(enabledToggle.selectedProperty(), entry.isEnabled());
+    }
+
+    private void addEditedListenerForTextProperties(StringProperty stringProperty, String originalValue){
+        stringProperty.addListener((_, _, newValue) -> {
+            if(newValue.equals(originalValue) && checkAllFieldsEdited()){
+                setUnedited();
+            }else{
+                setEdited();
+            }
+        });
+    }
+
+    private void addEditedListenerForCheckbox(BooleanProperty booleanProperty, boolean originalValue){
+        booleanProperty.addListener((_, _, newValue) -> {
+            if(newValue.equals(originalValue) && checkAllFieldsEdited()){
+                setUnedited();
+            }else{
+                setEdited();
+            }
+        });
+    }
+
+    private void setUnedited(){
+        getStyleClass().remove("edited-field");
+        edited = false;
+    }
+
+    private void setEdited(){
+        if(!getStyleClass().contains("edited-field")) {
+            getStyleClass().add("edited-field");
+        }
+        edited = true;
+    }
+    public void refreshEdited(){
+        setUnedited();
+    }
+
+    private boolean checkAllFieldsEdited(){
+        return nameField.getText().equals(entry.getName())
+                && pathField.getText().equals(entry.getPath())
+                && commandField.getText().equals(entry.getCommand())
+                && wslToggle.getCheckBox().isSelected() == entry.isWsl();
     }
 
     public void setOnDeleteButtonAction(EventHandler<ActionEvent> action){
@@ -136,35 +206,15 @@ public class EntryBox extends VBox {
         return execute;
     }
 
-    public String getNameProperty() {
-        return nameProperty.get();
+    public ToggleSwitch getEnabledToggle() {
+        return enabledToggle;
     }
 
-    public SimpleStringProperty namePropertyProperty() {
-        return nameProperty;
+    public Entry getEntry() {
+        return entry;
     }
 
-    public String getPathProperty() {
-        return pathProperty.get();
-    }
-
-    public SimpleStringProperty pathPropertyProperty() {
-        return pathProperty;
-    }
-
-    public String getCommandProperty() {
-        return commandProperty.get();
-    }
-
-    public SimpleStringProperty commandPropertyProperty() {
-        return commandProperty;
-    }
-
-    public boolean isWslProperty() {
-        return wslProperty.get();
-    }
-
-    public SimpleBooleanProperty wslPropertyProperty() {
-        return wslProperty;
+    public void setEntry(Entry entry) {
+        this.entry = entry;
     }
 }

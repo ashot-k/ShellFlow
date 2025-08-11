@@ -10,26 +10,29 @@ import org.ashot.shellflow.node.popup.ErrorPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EntryToCommandMapper {
-    private static final Logger log = LoggerFactory.getLogger(EntryToCommandMapper.class);
+public class EntryMapper {
+    private static final Logger log = LoggerFactory.getLogger(EntryMapper.class);
     private static ErrorPopup errorPopup = new ErrorPopup();
 
-    private EntryToCommandMapper(){}
+    private EntryMapper(){}
 
-    public static Command entryToCommand(EntryBox entryBox, boolean persistent) {
-        String name = entryBox.getNameField().getText();
-        String cmd = entryBox.getCommandField().getText();
-        String path = entryBox.getPathField().getText();
-        boolean wsl = entryBox.getWslToggle().getCheckBox().isSelected();
-        try {
-            return new Command(name, path, cmd, wsl, persistent);
-        } catch (InvalidCommandException | InvalidPathException e) {
-            handleError(e);
-        }
-        return null;
+    public static EntryBox entryToEntryBox(Entry entry){
+        return new EntryBox(entry);
+    }
+
+    public static Entry entryBoxToEntry(EntryBox entryBox){
+        return new Entry(
+                entryBox.getNameField().getText(),
+                entryBox.getPathField().getText(),
+                entryBox.getCommandField().getText(),
+                entryBox.getWslToggle().getCheckBox().isSelected(),
+                entryBox.getEnabledToggle().isSelected());
     }
 
     public static Command entryToCommand(Entry entry, boolean persistent) {
+        if(!entry.isEnabled()){
+            return null;
+        }
         String name = entry.getName();
         String command = entry.getCommand();
         String path = entry.getPath();
@@ -41,7 +44,6 @@ public class EntryToCommandMapper {
         }
         return null;
     }
-
 
     private static void handleError(Exception e) {
         Platform.runLater(() -> {

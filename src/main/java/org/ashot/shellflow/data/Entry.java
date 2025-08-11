@@ -11,6 +11,7 @@ public class Entry {
     private String name = "";
     private String path = "";
     private String command = "";
+    private boolean enabled = true;
     private boolean wsl = false;
 
     public Entry() {
@@ -23,9 +24,17 @@ public class Entry {
         this.wsl = wsl;
     }
 
+    public Entry(String name, String path, String command, boolean wsl, boolean enabled) {
+        this.name = name;
+        this.path = path;
+        this.command = command;
+        this.wsl = wsl;
+        this.enabled = enabled;
+    }
+
     public static JSONArray createEntryJSONArray(List<Entry> entries) {
         JSONArray jsonArray = new JSONArray();
-        for (Entry entry : entries){
+        for (Entry entry : entries) {
             JSONObject jsonObject = new JSONObject();
             entryToJSONObject(jsonObject, entry);
             jsonArray.put(jsonObject);
@@ -38,6 +47,7 @@ public class Entry {
         object.put(FieldType.PATH.getValue(), entry.getPath());
         object.put(FieldType.COMMAND.getValue(), entry.getCommand());
         object.put(FieldType.WSL.getValue(), entry.isWsl());
+        object.put(FieldType.ENABLED.getValue(), entry.isEnabled());
     }
 
     public String getName() {
@@ -70,5 +80,13 @@ public class Entry {
 
     public void setWsl(boolean wsl) {
         this.wsl = wsl;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

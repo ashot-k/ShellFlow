@@ -87,6 +87,8 @@ public class Controller implements Initializable {
         refreshFileLoaded(file.getAbsolutePath());
         Recents.saveRecentFile(file.getAbsolutePath());
         Recents.refreshDir(DirType.LAST_SAVED, file.getParent());
+        entrySetupTab.resetEdited();
+        openFile(file);
     }
 
     private void openFile(File fileToLoad) {
@@ -104,7 +106,8 @@ public class Controller implements Initializable {
                 String path = getOrDefault(entryJSON.opt(FieldType.PATH.getValue()), FieldType.PATH);
                 String cmd = getOrDefault(entryJSON.opt(FieldType.COMMAND.getValue()), FieldType.COMMAND);
                 String wsl = getOrDefault(entryJSON.opt(FieldType.WSL.getValue()), FieldType.WSL);
-                entrySetupTab.addEntryBox(new Entry(name, path, cmd, Boolean.parseBoolean(wsl)));
+                String enabled = getOrDefault(entryJSON.opt(FieldType.ENABLED.getValue()), FieldType.ENABLED);
+                entrySetupTab.addEntryBox(new Entry(name, path, cmd, Boolean.parseBoolean(wsl), Boolean.parseBoolean(enabled)));
             }
         }
         entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getDouble("delay"));

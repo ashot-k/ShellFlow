@@ -32,11 +32,7 @@ public class Utils {
 
     public static String getOrDefault(Object jsonValue, FieldType type) {
         if (jsonValue == null) {
-            if (type.equals(FieldType.WSL)) {
-                return "false";
-            } else {
-                return "";
-            }
+            return type.getDefaultValue();
         }
         return jsonValue.toString();
     }

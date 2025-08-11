@@ -4,7 +4,7 @@ import com.pty4j.PtyProcess;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.NotificationType;
-import org.ashot.shellflow.mapper.EntryToCommandMapper;
+import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.popup.ErrorPopup;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
@@ -27,9 +27,13 @@ import static org.ashot.shellflow.utils.Utils.calculateDelay;
 public class CommandExecutor {
     private CommandExecutor(){}
 
-    private static final Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
 
     public static void execute(Command command) {
+        if(command == null){
+            return;
+        }
+
         new Thread(()->{
             try {
                 PtyProcess process = buildProcess(command).start();
@@ -55,7 +59,7 @@ public class CommandExecutor {
                     setFailed(tab);
                 }
             } catch (InterruptedException | IOException e) {
-                logger.error(e.getMessage());
+                log.error(e.getMessage());
                 new ErrorPopup(e.getMessage());
             }
         }).start();
@@ -65,7 +69,10 @@ public class CommandExecutor {
         List<CommandExecutionTask> tasks = new ArrayList<>();
         int i = 0;
         for (Entry entry: entries) {
-            Command cmd = EntryToCommandMapper.entryToCommand(entry, false);
+            Command cmd = EntryMapper.entryToCommand(entry, false);
+            if(cmd == null){
+                continue;
+            }
             long delay = calculateDelay(i++, delayPerCmd);
             tasks.add(new CommandExecutionTask(cmd, delay));
         }

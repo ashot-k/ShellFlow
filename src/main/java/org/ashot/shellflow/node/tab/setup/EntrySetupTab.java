@@ -18,7 +18,6 @@ import javafx.scene.paint.Color;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.execution.SequenceExecutor;
-import org.ashot.shellflow.mapper.EntryToCommandMapper;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.slf4j.Logger;
@@ -27,6 +26,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static org.ashot.shellflow.mapper.EntryMapper.*;
 
 public class EntrySetupTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(EntrySetupTab.class);
@@ -80,18 +81,28 @@ public class EntrySetupTab extends Tab {
         setContent(content);
         setClosable(false);
         setText("Entry Setup");
+        log.debug("EntrySetupTab initialized");
     }
 
     public void addEntryBox() {
+        log.debug("Adding empty entry box");
         addEntryBox(new Entry());
     }
 
     public void addEntryBox(Entry entry) {
-        EntryBox entryBox = new EntryBox(entry);
+        log.debug("Adding entry box with name: {}, path: {}, command: {}", entry.getName(), entry.getPath(), entry.getCommand());
+        EntryBox entryBox = entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
-        entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(EntryToCommandMapper.entryToCommand(entryBox, false)));
+        entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(entryToCommand(entryBoxToEntry(entryBox), false)));
         entriesContainer.getChildren().add(entryBox);
         setupDragging(entryBox);
+    }
+
+    public void resetEdited(){
+        log.debug("Reset edited state for all entries");
+        entriesContainer.getChildren().stream()
+                .filter(e -> e instanceof EntryBox)
+                .map(e -> (EntryBox) e).forEach(EntryBox::refreshEdited);
     }
 
     private void setupDragging(EntryBox entryBox){
@@ -152,13 +163,14 @@ public class EntrySetupTab extends Tab {
         List<Entry> entries = new ArrayList<>();
         for (Node node : entriesContainer.getChildren()) {
             if (node instanceof EntryBox entryBox) {
-                entries.add(new Entry(entryBox.getNameProperty(), entryBox.getPathProperty(), entryBox.getCommandProperty(), entryBox.isWslProperty()));
+                entries.add(entryBoxToEntry(entryBox));
             }
         }
         return entries;
     }
 
     public void executeAll() {
+        log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
         if(getSequentialOption().isSelected()){
             SequenceExecutor.executeSequence(getEntries(), getSequentialNameField().getText(), getDelayPerCmd());
         }
@@ -168,6 +180,7 @@ public class EntrySetupTab extends Tab {
     }
 
     public void stopAll() {
+        log.debug("Stopping all processes / terminals");
         TerminalRegistry.stopAllTerminals();
     }
 
