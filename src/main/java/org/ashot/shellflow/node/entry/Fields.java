@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 public class Fields {
-    public static final int DEFAULT_TEXT_AREA_HEIGHT = 36;
+    public static final int DEFAULT_TEXT_AREA_HEIGHT = 38;
     private static final int TEXT_AREA_HEIGHT_ENLARGED_MULT = 3;
     private static boolean autoCompleteToggle = false;
 

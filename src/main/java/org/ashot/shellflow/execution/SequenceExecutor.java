@@ -58,6 +58,8 @@ public class SequenceExecutor {
             List<ExecutionTab> executionTabs = new ArrayList<>();
             for (Command command : commandList) {
                 ExecutionTab tab = constructSequencePartOutputTab(command);
+                String currentTabName = command.isNameSet() ? command.getName() : "Process - Unknown";
+                tab.setText(currentTabName);
                 runLater(() -> sequenceTabPane.getTabs().add(tab));
                 executionTabs.add(tab);
             }

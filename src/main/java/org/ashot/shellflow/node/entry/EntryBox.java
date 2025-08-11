@@ -24,20 +24,21 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class EntryBox extends VBox {
+    private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
+
     private static final double NAME_FIELD_WIDTH = 150;
     private static final double PATH_FIELD_WIDTH = 200;
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
     private static final double COMMAND_FIELD_HEIGHT = Fields.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
     private static final double ROW_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 200;
     private static final List<String> styleClasses = List.of("bordered-container");
-    private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
 
     private final TextArea nameField;
     private final TextArea pathField;
     private final TextArea commandField;
     private final CheckBoxField wslToggle;
     private final ToggleSwitch enabledToggle;
-    private final Button execute;
+    private final Button executeButton;
     private final Button deleteEntry;
     private final Button pathBrowser;
 
@@ -74,7 +75,9 @@ public class EntryBox extends VBox {
 
         pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
 
-        execute = EntryButton.executeEntryButton();
+        executeButton = EntryButton.executeEntryButton();
+        executeButton.setPrefHeight(34);
+        executeButton.setMinHeight(34);
 
         GridPane entryGrid = new GridPane();
         entryGrid.addRow(0, deleteEntry, enabledToggle);
@@ -86,10 +89,10 @@ public class EntryBox extends VBox {
         GridPane.setConstraints(labeledPathField, 1, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
         GridPane.setConstraints(pathBrowser, 2, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.SOMETIMES, Priority.ALWAYS);
 
-        entryGrid.addRow(2, labeledCommandField, wslToggle, execute);
+        entryGrid.addRow(2, labeledCommandField, wslToggle, executeButton);
         GridPane.setConstraints(labeledCommandField, 0, 2, 2, 2, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
         GridPane.setConstraints(wslToggle, 2, 2, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(execute, 2, 3, 1, 1, HPos.CENTER, VPos.TOP, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(executeButton, 2, 3, 1, 1, HPos.CENTER, VPos.TOP, Priority.NEVER, Priority.NEVER);
 
         entryGrid.setHgap(10);
         entryGrid.setVgap(3);
@@ -107,7 +110,7 @@ public class EntryBox extends VBox {
     }
 
     private void toggleEntryBox(boolean enable){
-        execute.setDisable(!enable);
+        executeButton.setDisable(!enable);
         nameField.setDisable(!enable);
         pathField.setDisable(!enable);
         commandField.setDisable(!enable);
@@ -175,7 +178,7 @@ public class EntryBox extends VBox {
     }
 
     public void setOnExecuteButtonAction(EventHandler<ActionEvent> action){
-        this.execute.setOnAction(action);
+        this.executeButton.setOnAction(action);
     }
 
     public static List<EntryBox> getEntriesFromPane(Pane ownerPane) {
@@ -202,8 +205,8 @@ public class EntryBox extends VBox {
         return deleteEntry;
     }
 
-    public Button getExecute() {
-        return execute;
+    public Button getExecuteButton() {
+        return executeButton;
     }
 
     public ToggleSwitch getEnabledToggle() {

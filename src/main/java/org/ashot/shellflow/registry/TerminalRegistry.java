@@ -25,11 +25,16 @@ public class TerminalRegistry {
 
     public static void stopAllTerminals() {
         ttyConnectors.values().forEach(ttyConnector -> {
-            try {
-                ttyConnector.write("\u0003");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            new Thread(()->{
+                try {
+                    ttyConnector.write("\u0003");
+                    ttyConnector.waitFor();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
         });
     }
 }

@@ -15,10 +15,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.node.entry.EntryBox;
+import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,7 +183,9 @@ public class EntrySetupTab extends Tab {
 
     public void stopAll() {
         log.debug("Stopping all processes / terminals");
+        Controller controller = ControllerRegistry.getMainController();
         TerminalRegistry.stopAllTerminals();
+        controller.getExecutionsTab().getExecutionsTabPane().getTabs().clear();
     }
 
     public void addEntryListChangeListener(ListChangeListener<Node> changeListener) {
