@@ -26,6 +26,7 @@ public class SidePanel extends VBox {
     private final Button closeAllButton;
     private final Button clearAllEntriesButton;
     private final Button addEntryButton;
+    private final EntryInfoBar entryInfoBar;
 
     public SidePanel(
             EventHandler<ActionEvent> onExecuteAll,
@@ -100,7 +101,8 @@ public class SidePanel extends VBox {
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
-        getChildren().addAll(entrySection, spacer, executionSection);
+        entryInfoBar = new EntryInfoBar();
+        getChildren().addAll(entryInfoBar, entrySection, spacer, executionSection);
         setSpacing(25);
         getStyleClass().addAll("bordered-container");
     }
@@ -131,6 +133,10 @@ public class SidePanel extends VBox {
 
     public Button getAddEntryButton() {
         return addEntryButton;
+    }
+
+    public EntryInfoBar getEntryInfoBar() {
+        return entryInfoBar;
     }
 }
 

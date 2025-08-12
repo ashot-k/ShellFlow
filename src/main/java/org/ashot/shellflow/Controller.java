@@ -15,7 +15,6 @@ import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
 import org.ashot.shellflow.node.tab.profiler.ProfilerTab;
-import org.ashot.shellflow.node.tab.setup.BottomPanel;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.utils.FileUtils;
@@ -43,15 +42,12 @@ public class Controller implements Initializable {
     private PresetSetupTab presetSetupTab;
     private ExecutionsTab executionsTab;
     private ProfilerTab profilerTab;
-    private BottomPanel bottomPane;
     private static String currentlyLoadedFileLocation;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerRegistry.register("main", this);
-        bottomPane = new BottomPanel();
         sceneContainer.getChildren().addFirst(new MainMenuBar(this::openFile, this::writeEntriesToFile));
-        sceneContainer.getChildren().addLast(bottomPane);
         setupTabs();
         if (openMostRecentFile(this::openFile) == null) {
             currentlyLoadedFileLocation = null;
@@ -138,7 +134,7 @@ public class Controller implements Initializable {
 
     public void refreshFileLoaded(String path) {
         currentlyLoadedFileLocation = path;
-        bottomPane.setFileLoadedText(path);
+        entrySetupTab.setFileLoadedText(path);
     }
 
     private static void resetFileLoaded() {

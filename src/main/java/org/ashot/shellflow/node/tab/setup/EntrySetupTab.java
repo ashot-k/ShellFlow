@@ -3,6 +3,7 @@ package org.ashot.shellflow.node.tab.setup;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
@@ -10,10 +11,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.Entry;
@@ -33,33 +31,40 @@ import static org.ashot.shellflow.mapper.EntryMapper.*;
 
 public class EntrySetupTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(EntrySetupTab.class);
-    private final VBox entriesContainer;
+    private final FlowPane entriesContainer;
     private final SidePanel sidePanel;
+    private final int entriesContainerGap = 25;
 
     private int dragSourceIndex = -1;
 
-
     public EntrySetupTab() {
-        entriesContainer = new VBox();
-        entriesContainer.setAlignment(Pos.TOP_CENTER);
-        entriesContainer.setPadding(new Insets(2, 15, 0, 15));
+        entriesContainer = new FlowPane();
+        entriesContainer.setAlignment(Pos.TOP_LEFT);
+        entriesContainer.setPadding(new Insets(10, 15, 0, 15));
         entriesContainer.getStyleClass().addAll("entry-container");
-        entriesContainer.setSpacing(10);
+        entriesContainer.setHgap(entriesContainerGap);
+        entriesContainer.setVgap(entriesContainerGap);
+        entriesContainer.setRowValignment(VPos.TOP);
+
+        HBox.setHgrow(entriesContainer, Priority.ALWAYS);
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        scrollPane.setContent(entriesContainer);
+        HBox entriesContainerWrapper = new HBox(entriesContainer);
+        entriesContainerWrapper.getStyleClass().add("bordered-container-no-hover");
+        entriesContainerWrapper.setAlignment(Pos.CENTER);
+        scrollPane.setContent(entriesContainerWrapper);
 
         sidePanel = new SidePanel(_ -> executeAll(), _ -> stopAll(), _ -> addEntryBox(), _ -> clearEntryBoxes());
-        sidePanel.setMaxWidth(300);
+        sidePanel.setMaxWidth(325);
 
         Region spacer = new Region();
         Region spacer2 = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
-        HBox pane = new HBox(sidePanel, scrollPane);
+        HBox pane = new HBox(5, sidePanel, scrollPane);
         HBox.setHgrow(scrollPane, Priority.ALWAYS);
         HBox.setHgrow(sidePanel, Priority.ALWAYS);
         HBox.setHgrow(pane, Priority.ALWAYS);
@@ -79,6 +84,8 @@ public class EntrySetupTab extends Tab {
         content.setPadding(new Insets(10));
         content.setAlignment(Pos.TOP_CENTER);
         content.getChildren().add(pane);
+
+        entriesContainer.setMaxWidth(EntryBox.MAX_WIDTH * 3 + (entriesContainer.getHgap() * 2 + content.getPadding().getLeft() + content.getPadding().getRight() + 15));
 
         setContent(content);
         setClosable(false);
@@ -209,5 +216,9 @@ public class EntrySetupTab extends Tab {
 
     public int getDelayPerCmd(){
         return (int) sidePanel.getDelayPerCmdSlider().getValue();
+    }
+
+    public void setFileLoadedText(String text){
+        sidePanel.getEntryInfoBar().setFileLoadedText(text);
     }
 }

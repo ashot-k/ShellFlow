@@ -30,7 +30,8 @@ public class EntryBox extends VBox {
     private static final double PATH_FIELD_WIDTH = 200;
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
     private static final double COMMAND_FIELD_HEIGHT = Fields.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
-    private static final double ROW_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 200;
+    private static final double ROW_WIDTH = 460;
+    public static final double MAX_WIDTH = ROW_WIDTH;
     private static final List<String> styleClasses = List.of("bordered-container");
 
     private final TextArea nameField;
@@ -101,7 +102,8 @@ public class EntryBox extends VBox {
 
         this.getChildren().add(entryGrid);
         this.getStyleClass().addAll(styleClasses);
-        this.setMaxWidth(ROW_WIDTH);
+        this.setMaxWidth(MAX_WIDTH);
+        this.setMaxHeight(200);
 
         toggleEntryBox(entry.isEnabled());
         enabledToggle.selectedProperty().addListener((_, _, value) -> {

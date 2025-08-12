@@ -1,22 +1,21 @@
 package org.ashot.shellflow.node.tab.setup;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import org.ashot.shellflow.data.constant.Fonts;
 
-public class BottomPanel extends VBox {
+public class EntryInfoBar extends VBox {
     private final Text fileLoaded;
 
-    public BottomPanel() {
+    public EntryInfoBar() {
         fileLoaded = new Text();
         fileLoaded.setFont(Fonts.fileLabelText);
         TextFlow textFlow = new TextFlow(fileLoaded);
-        textFlow.setPadding(new Insets(0, 10, 10 ,10));
-        getChildren().add(new Separator(Orientation.HORIZONTAL));
+        textFlow.setPadding(new Insets(0, 10, 0, 10));
+        textFlow.setTextAlignment(TextAlignment.CENTER);
         getChildren().add(textFlow);
     }
 

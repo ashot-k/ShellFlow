@@ -21,7 +21,7 @@ public class Animator {
     private Animator() {}
 
     public static void animateHeightChange(Timeline timeline, Region node, double heightGoal, Duration duration) {
-        KeyValue kv = new KeyValue(node.minHeightProperty(), heightGoal);
+        KeyValue kv = new KeyValue(node.minHeightProperty(), heightGoal, Interpolator.EASE_BOTH);
         KeyFrame kf = new KeyFrame(duration, kv);
         timeline.getKeyFrames().add(kf);
         timeline.play();

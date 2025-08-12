@@ -19,7 +19,14 @@
 }
 
 .bordered-container {
-    -fx-padding: 10px 10px 15px 15px;
+    -fx-padding: 10px 18px 10px 18px;
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+.bordered-container-no-hover {
+    -fx-padding: 10px 18px 10px 18px;
     -fx-background-radius: 5px;
     -fx-border-color: rgba(255, 255, 255, 0.1);
     -fx-border-width: 1;
@@ -37,19 +44,30 @@
     -fx-border-style: solid;
 }
 
-.dark .bordered-container {
+.dark .bordered-container-no-hover {
     -fx-background-color: -fx-base-background;
     -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 4, 0.0, 0, 1);
 }
 
-.dark .bordered-container:hover{
-    -fx-background-color: -fx-hover-background;
+.light .bordered-container-no-hover {
+    -fx-background-color: -fx-base-background;
+    -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
+}
+
+.dark .bordered-container {
+    -fx-background-color: -fx-base-background;
+    -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 4, 0.0, 0, 1);
 }
 
 .light .bordered-container {
     -fx-background-color: -fx-base-background;
     -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
 }
+
+.dark .bordered-container:hover{
+    -fx-background-color: -fx-hover-background;
+}
+
 
 .light .bordered-container:hover {
     -fx-background-color: -fx-hover-background;
