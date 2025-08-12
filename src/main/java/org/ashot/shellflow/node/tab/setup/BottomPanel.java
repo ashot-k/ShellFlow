@@ -9,10 +9,11 @@ import javafx.scene.text.TextFlow;
 import org.ashot.shellflow.data.constant.Fonts;
 
 public class BottomPanel extends VBox {
-    Text fileLoaded = new Text();
+    private final Text fileLoaded;
 
     public BottomPanel() {
-        fileLoaded.setFont(Fonts.detailText);
+        fileLoaded = new Text();
+        fileLoaded.setFont(Fonts.fileLabelText);
         TextFlow textFlow = new TextFlow(fileLoaded);
         textFlow.setPadding(new Insets(0, 10, 10 ,10));
         getChildren().add(new Separator(Orientation.HORIZONTAL));

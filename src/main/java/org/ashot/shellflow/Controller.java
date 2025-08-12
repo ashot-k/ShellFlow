@@ -138,7 +138,7 @@ public class Controller implements Initializable {
 
     public void refreshFileLoaded(String path) {
         currentlyLoadedFileLocation = path;
-        bottomPane.setFileLoadedText("File loaded: " + path);
+        bottomPane.setFileLoadedText(path);
     }
 
     private static void resetFileLoaded() {
