@@ -1,18 +1,20 @@
 package org.ashot.shellflow.mapper;
 
-import javafx.application.Platform;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.exception.InvalidPathException;
 import org.ashot.shellflow.node.entry.EntryBox;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static javafx.application.Platform.runLater;
+import static javafx.scene.control.Alert.AlertType;
+
 public class EntryMapper {
     private static final Logger log = LoggerFactory.getLogger(EntryMapper.class);
-    private static ErrorPopup errorPopup = new ErrorPopup();
+    private static AlertPopup errorPopup = new AlertPopup(AlertType.ERROR);
 
     private EntryMapper(){}
 
@@ -25,7 +27,7 @@ public class EntryMapper {
                 entryBox.getNameField().getText(),
                 entryBox.getPathField().getText(),
                 entryBox.getCommandField().getText(),
-                entryBox.getWslToggle().getCheckBox().isSelected(),
+                entryBox.getWslToggle().isSelected(),
                 entryBox.getEnabledToggle().isSelected());
     }
 
@@ -46,16 +48,17 @@ public class EntryMapper {
     }
 
     private static void handleError(Exception e) {
-        Platform.runLater(() -> {
+        runLater(() -> {
             if (!errorPopup.isShowing()) {
-                errorPopup = new ErrorPopup();
+                String msg = "";
                 if(e instanceof InvalidPathException invalidPathException){
-                    errorPopup.setMessage(invalidPathException.getMessage(), invalidPathException.getPath());
+                    msg = invalidPathException.getPath();
                 }
                 else {
-                    errorPopup.setMessage(e.getMessage(), null);
+                    msg = e.getMessage();
                 }
-                errorPopup.showPopup();
+                errorPopup = new AlertPopup("Execution construction error", null, msg, false);
+                errorPopup.show();
             }
         });
         throw new RuntimeException("Execution cannot begin due to invalid entry: " + e.getMessage());

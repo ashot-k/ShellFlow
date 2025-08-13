@@ -7,16 +7,16 @@ public enum FieldType {
     WSL("wsl", "false"),
     ENABLED("enabled", "true");
 
-    private final String value;
+    private final String id;
     private final String defaultValue;
 
-    FieldType(String value, String defaultValue) {
-        this.value = value;
+    FieldType(String id, String defaultValue) {
+        this.id = id;
         this.defaultValue = defaultValue;
     }
 
-    public String getValue() {
-        return value;
+    public String getId() {
+        return id;
     }
 
     public String getDefaultValue() {

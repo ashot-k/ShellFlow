@@ -6,7 +6,7 @@ import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.notification.Notification;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.task.CommandExecutionTask;
@@ -60,7 +60,7 @@ public class CommandExecutor {
                 }
             } catch (InterruptedException | IOException e) {
                 log.error(e.getMessage());
-                new ErrorPopup(e.getMessage());
+                new AlertPopup("Execution Error", null, e.getMessage(), false).show();
             }
         }).start();
     }

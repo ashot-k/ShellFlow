@@ -12,6 +12,7 @@ import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.config.DefaultConfig;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.registry.TerminalRegistry;
+import org.ashot.shellflow.utils.Animator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,6 @@ public class Main extends Application {
             primaryStage = stage;
             config = new DefaultConfig();
             setTheme(getThemeFromConfig());
-
             Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
@@ -84,12 +84,13 @@ public class Main extends Application {
 
     public static void setTheme(ThemeOption option) {
         selectedTheme = option;
-        Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
         if (getPrimaryStage() != null && getPrimaryStage().getScene() != null) {
             Parent root = getPrimaryStage().getScene().getRoot();
             root.getStyleClass().removeAll("dark", "light");
             root.getStyleClass().add(selectedTheme.isDark() ? "dark" : "light");
+            Animator.animateThemeChange(getPrimaryStage().getScene());
         }
+        Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
     }
 
     public static ThemeOption getSelectedThemeOption() {

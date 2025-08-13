@@ -3,7 +3,7 @@ package org.ashot.shellflow.config;
 import javafx.application.Platform;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,20 +14,25 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import static org.ashot.shellflow.node.popup.AlertPopup.DEFAULT_CRITICAL_ERROR_TITLE;
+
 public class DefaultConfig implements Config {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
     private static final Properties properties = new Properties();
     private static final String PROPERTIES_FILE_NAME = "config.properties";
     private static final Path pathToPropertiesFile = Path.of(PROPERTIES_FILE_NAME);
+    private static final String PROPERTIES_FILE_NOT_FOUND_FULL = "Error while loading properties: \n" + "Could not find: " + pathToPropertiesFile.toAbsolutePath();
 
     public DefaultConfig() {
         try {
             //todo recheck validation logic
             File propertiesFile = new File(pathToPropertiesFile.toUri());
             if(!propertiesFile.exists()){
-                Platform.runLater(()->{
-                    new ErrorPopup("Could not find: " + pathToPropertiesFile.toAbsolutePath(), true).showPopup();
-                });
+                Platform.runLater(()-> new AlertPopup(
+                        DEFAULT_CRITICAL_ERROR_TITLE,
+                        null,
+                        PROPERTIES_FILE_NOT_FOUND_FULL,
+                        true).show());
             }
             InputStream inputStream = new FileInputStream(propertiesFile);
             properties.load(inputStream);

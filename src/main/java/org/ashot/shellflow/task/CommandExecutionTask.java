@@ -2,9 +2,12 @@ package org.ashot.shellflow.task;
 
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.execution.CommandExecutor;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class CommandExecutionTask implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(CommandExecutionTask.class);
     private final Command command;
     private final long delay;
 
@@ -18,8 +21,9 @@ public class CommandExecutionTask implements Runnable {
         try {
             Thread.sleep(delay);
             CommandExecutor.execute(command);
+            throw new InterruptedException();
         } catch (InterruptedException e) {
-            new ErrorPopup(e.getMessage());
+            log.error("Interrupted exception: " + e.getMessage());
         }
     }
 }

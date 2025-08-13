@@ -201,7 +201,7 @@ public class EntrySetupTab extends Tab {
         entriesContainer.getChildren().addListener(changeListener);
     }
 
-    public CheckBox getSequentialOption() {
+    public ToggleButton getSequentialOption() {
         return sidePanel.getSequentialOption();
     }
 

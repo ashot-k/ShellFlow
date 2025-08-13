@@ -4,7 +4,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.constant.DirType;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.utils.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +17,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static javafx.application.Platform.runLater;
 
 public class Recents {
     private static final Logger log = LoggerFactory.getLogger(Recents.class);
@@ -71,7 +73,7 @@ public class Recents {
             jsonObject.put(dirType.name(), path);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            new ErrorPopup(e.getMessage());
+            runLater(()-> new AlertPopup("Could not refresh recent dirs", null, e.getMessage(), false).show());
         }
     }
 
@@ -90,7 +92,7 @@ public class Recents {
             jsonObject.put(DirType.RECENT.name(), recents);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            new ErrorPopup(e.getMessage());
+            runLater(()-> new AlertPopup("Could not save file to recents", null, e.getMessage(), false).show());
         }
     }
 
@@ -110,7 +112,7 @@ public class Recents {
             }
             return jsonObject;
         } catch (IOException e) {
-            new ErrorPopup(e.getMessage());
+            runLater(()-> new AlertPopup("Could not get recent files", null, e.getMessage(), false).show());
         }
         return null;
     }

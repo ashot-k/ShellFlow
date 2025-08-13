@@ -5,6 +5,9 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
@@ -18,6 +21,7 @@ public class Animator {
     public static int DEFAULT_FRAME_RATE = 60;
     public static int PERFORMANCE_OPTIMIZATION_FRAME_RATE = 5;
     public static Duration DEFAULT_FADE_ANIMATION_DURATION = Duration.millis((double) 250 * 3 / 4);
+    public static Duration DEFAULT_THEME_CHANGE_ANIMATION_DURATION = Duration.millis(250);
     public static Duration DEFAULT_ROTATE_IN_AND_WOBBLE_DURATION= Duration.millis(500);
     private static int frameRate = 60;
     private static List<Timeline> timelineList = new ArrayList<>();
@@ -53,6 +57,27 @@ public class Animator {
         Timeline t = Animations.rotateIn(node, DEFAULT_ROTATE_IN_AND_WOBBLE_DURATION);
         t.setOnFinished(_ -> Animations.wobble(node).play());
         t.play();
+    }
+
+    public static void animateThemeChange(Scene scene) {
+        Image snapshot = scene.snapshot(null);
+        Pane root = (Pane) scene.getRoot();
+
+        ImageView imageView = new ImageView(snapshot);
+        root.getChildren().addFirst(imageView); // add snapshot on top
+        var fadeOutTransition = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(root.opacityProperty(), 1, Interpolator.EASE_OUT)),
+                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(root.opacityProperty(), 0, Interpolator.EASE_OUT))
+        );
+        fadeOutTransition.setOnFinished(_ -> {
+            var fadeInTransition = new Timeline(
+                    new KeyFrame(Duration.ZERO, new KeyValue(root.opacityProperty(), 0, Interpolator.EASE_IN)),
+                    new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(root.opacityProperty(), 1, Interpolator.EASE_IN))
+            );
+            fadeInTransition.play();
+            root.getChildren().remove(imageView);
+        });
+        fadeOutTransition.play();
     }
 
     public static void spinIcon(Node icon) {

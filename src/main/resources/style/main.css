@@ -1,5 +1,6 @@
 .root {
     -color-accent-emphasis: rgba(106, 90, 205, 1.0); /* slateblue */
+    -color-accent-6: rgba(106, 90, 205, 1.0); /* slateblue */
 }
 
 .dark {
@@ -13,7 +14,7 @@
 .light{
     -fx-base-background: rgba(250, 252, 255, 1.0);
     -fx-edited-background: rgba(106, 90, 205, 0.15);
-    -fx-disabled-background: rgba(106, 90, 205, 0.1);
+    -fx-disabled-background: rgba(250, 252, 255, 0.9);
     -fx-hover-background: rgba(245, 250, 255, 1.0);
     -fx-shadow-color: rgba(60, 65, 70, 0.5);
 }
@@ -25,6 +26,7 @@
     -fx-border-width: 1;
     -fx-border-radius: 8;
 }
+
 .bordered-container-no-hover {
     -fx-padding: 10px 18px 10px 18px;
     -fx-background-radius: 5px;

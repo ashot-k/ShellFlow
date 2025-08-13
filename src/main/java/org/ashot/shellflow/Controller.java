@@ -98,11 +98,11 @@ public class Controller implements Initializable {
         entrySetupTab.clearEntryBoxes();
         for (Object object: jsonArray) {
             if (object instanceof JSONObject entryJSON) {
-                String name = getOrDefault(entryJSON.opt(FieldType.NAME.getValue()), FieldType.NAME);
-                String path = getOrDefault(entryJSON.opt(FieldType.PATH.getValue()), FieldType.PATH);
-                String cmd = getOrDefault(entryJSON.opt(FieldType.COMMAND.getValue()), FieldType.COMMAND);
-                String wsl = getOrDefault(entryJSON.opt(FieldType.WSL.getValue()), FieldType.WSL);
-                String enabled = getOrDefault(entryJSON.opt(FieldType.ENABLED.getValue()), FieldType.ENABLED);
+                String name = getOrDefault(entryJSON.opt(FieldType.NAME.getId()), FieldType.NAME);
+                String path = getOrDefault(entryJSON.opt(FieldType.PATH.getId()), FieldType.PATH);
+                String cmd = getOrDefault(entryJSON.opt(FieldType.COMMAND.getId()), FieldType.COMMAND);
+                String wsl = getOrDefault(entryJSON.opt(FieldType.WSL.getId()), FieldType.WSL);
+                String enabled = getOrDefault(entryJSON.opt(FieldType.ENABLED.getId()), FieldType.ENABLED);
                 entrySetupTab.addEntryBox(new Entry(name, path, cmd, Boolean.parseBoolean(wsl), Boolean.parseBoolean(enabled)));
             }
         }

@@ -6,11 +6,11 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.constant.Fonts;
 
-public class LabeledTextField extends VBox {
+public class LabeledTextInput extends VBox {
     private final Label label;
     private final TextInputControl textinputControl;
 
-    public LabeledTextField(String labelText, TextInputControl textinputControl) {
+    public LabeledTextInput(String labelText, TextInputControl textinputControl) {
         Label label = new Label(labelText);
         Insets labelPaddings = new Insets(2.5, 0, 2.5, 15);
         label.setPadding(labelPaddings);

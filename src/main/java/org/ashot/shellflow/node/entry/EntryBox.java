@@ -5,19 +5,17 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.VPos;
+import javafx.geometry.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.layout.*;
 import org.ashot.shellflow.data.Entry;
-import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.message.ToolTipMessages;
+import org.ashot.shellflow.node.entry.button.EnableEntryBoxSwitch;
+import org.ashot.shellflow.node.entry.button.WslOption;
+import org.ashot.shellflow.node.entry.field.CommandTextArea;
+import org.ashot.shellflow.node.entry.field.NameField;
+import org.ashot.shellflow.node.entry.field.PathField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,86 +25,99 @@ public class EntryBox extends VBox {
     private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
 
     private static final double NAME_FIELD_WIDTH = 150;
-    private static final double PATH_FIELD_WIDTH = 200;
+    private static final double PATH_FIELD_WIDTH = 300;
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
-    private static final double COMMAND_FIELD_HEIGHT = Fields.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
-    private static final double ROW_WIDTH = 460;
-    public static final double MAX_WIDTH = ROW_WIDTH;
+    private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
+    public static final double MAX_WIDTH = 460;
     private static final List<String> styleClasses = List.of("bordered-container");
 
-    private final TextArea nameField;
-    private final TextArea pathField;
-    private final TextArea commandField;
-    private final CheckBoxField wslToggle;
+    private final NameField nameField;
+    private final PathField pathField;
+    private final CommandTextArea commandField;
+    private final WslOption wslToggle;
     private final ToggleSwitch enabledToggle;
     private final Button executeButton;
     private final Button deleteEntry;
-    private final Button pathBrowser;
 
     private Entry entry;
     private boolean edited = false;
 
     public EntryBox(Entry entry) {
         this.entry = entry;
-        nameField = Fields.createField(
-                FieldType.NAME, entry.getName(), null,
-                ToolTipMessages.nameField(), NAME_FIELD_WIDTH, "name-field"
+
+        nameField = new NameField(
+                entry.getName(), null,
+                ToolTipMessages.nameField(), NAME_FIELD_WIDTH, null, "name-field"
         );
-        commandField = Fields.createField(
-                FieldType.COMMAND, entry.getCommand(), null,
-                ToolTipMessages.commandField(), COMMAND_FIELD_WIDTH, COMMAND_FIELD_HEIGHT, "command-field"
+        pathField = new PathField(
+                entry.getPath(), null, ToolTipMessages.pathField(),
+                PATH_FIELD_WIDTH, null, "path-field"
         );
-        pathField = Fields.createField(
-                FieldType.PATH, entry.getPath(), null,
-                ToolTipMessages.pathField(), PATH_FIELD_WIDTH, "path-field"
+        commandField = new CommandTextArea(
+                entry.getCommand(), null, ToolTipMessages.commandField(),
+                COMMAND_FIELD_WIDTH, COMMAND_FIELD_HEIGHT, "command-field"
         );
 
-        wslToggle = Fields.createCheckBox(FieldType.WSL, "WSL", entry.isWsl());
-        wslToggle.getCheckBox().setTooltip(new Tooltip(ToolTipMessages.wsl()));
+        wslToggle = new WslOption("WSL", entry.isWsl());
+        wslToggle.setAlignment(Pos.CENTER_RIGHT);
+        pathField.setWsl(wslToggle.isSelected());
+        wslToggle.selectedProperty().addListener((_, _, value) -> {
+            pathField.setWsl(value);
+        });
 
-        enabledToggle = Fields.createToggleSwitch(FieldType.ENABLED, null, entry.isEnabled());
+        enabledToggle = new EnableEntryBoxSwitch("", entry.isEnabled());
+        enabledToggle.setLabelPosition(HorizontalDirection.LEFT);
         enabledToggle.setPadding(new Insets(0, 0, 8, 0));
 
         deleteEntry = EntryButton.deleteEntryButton();
         deleteEntry.setPadding(new Insets(0, 0, 8, 0));
 
-        VBox labeledNameField = new LabeledTextField("Name", nameField);
-        VBox labeledPathField = new LabeledTextField("Path", pathField);
-        VBox labeledCommandField = new LabeledTextField("Command(s)", commandField);
-
-        pathBrowser = EntryButton.browsePathBtn(pathField, wslToggle.getCheckBox());
+        VBox labeledNameField = new LabeledTextInput("Name", nameField);
+        VBox labeledPathField = new LabeledTextInput("Path", pathField);
+        VBox labeledCommandField = new LabeledTextInput("Command(s)", commandField);
 
         executeButton = EntryButton.executeEntryButton();
         executeButton.setPrefHeight(34);
         executeButton.setMinHeight(34);
+        executeButton.setMaxWidth(50);
+        HBox executeButtonContainer = new HBox(executeButton);
+        executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
+        HBox.setHgrow(executeButton, Priority.ALWAYS);
 
         GridPane entryGrid = new GridPane();
         entryGrid.addRow(0, deleteEntry, enabledToggle);
         GridPane.setConstraints(deleteEntry, 0, 0, 2, 1, HPos.LEFT, VPos.TOP);
         GridPane.setConstraints(enabledToggle, 2, 0, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
 
-        entryGrid.addRow(1, labeledNameField, labeledPathField, pathBrowser);
+        entryGrid.addRow(1, labeledNameField, labeledPathField);
         GridPane.setConstraints(labeledNameField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(labeledPathField, 1, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
-        GridPane.setConstraints(pathBrowser, 2, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.SOMETIMES, Priority.ALWAYS);
+        GridPane.setConstraints(labeledPathField, 1, 1, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
 
-        entryGrid.addRow(2, labeledCommandField, wslToggle, executeButton);
+        entryGrid.addRow(2, labeledCommandField, wslToggle, executeButtonContainer);
         GridPane.setConstraints(labeledCommandField, 0, 2, 2, 2, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
         GridPane.setConstraints(wslToggle, 2, 2, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(executeButton, 2, 3, 1, 1, HPos.CENTER, VPos.TOP, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(executeButtonContainer, 2, 3, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
+
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.NEVER);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.ALWAYS);
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setHgrow(Priority.SOMETIMES);
+        entryGrid.getColumnConstraints().addAll(col1, col2 ,col3);
 
         entryGrid.setHgap(10);
         entryGrid.setVgap(3);
 
         setupEditingTracking();
 
-        this.getChildren().add(entryGrid);
-        this.getStyleClass().addAll(styleClasses);
-        this.setMaxWidth(MAX_WIDTH);
-        this.setMaxHeight(200);
+        getChildren().add(entryGrid);
+        getStyleClass().addAll(styleClasses);
+        setMaxWidth(MAX_WIDTH);
+        setMaxHeight(200);
 
         toggleEntryBox(entry.isEnabled());
-        enabledToggle.selectedProperty().addListener((_, _, value) -> {
+        enabledToggle.selectedProperty().addListener((e, _, value) -> {
             toggleEntryBox(value);
         });
     }
@@ -116,8 +127,7 @@ public class EntryBox extends VBox {
         nameField.setDisable(!enable);
         pathField.setDisable(!enable);
         commandField.setDisable(!enable);
-        pathBrowser.setDisable(!enable);
-        wslToggle.getCheckBox().setDisable(!enable);
+        wslToggle.setDisable(!enable);
         if(enable){
             getStyleClass().remove("disabled-entry");
         } else{
@@ -129,7 +139,7 @@ public class EntryBox extends VBox {
         addEditedListenerForTextProperties(nameField.textProperty(), entry.getName());
         addEditedListenerForTextProperties(pathField.textProperty(), entry.getPath());
         addEditedListenerForTextProperties(commandField.textProperty(), entry.getCommand());
-        addEditedListenerForCheckbox(wslToggle.getCheckBox().selectedProperty(), entry.isWsl());
+        addEditedListenerForCheckbox(wslToggle.selectedProperty(), entry.isWsl());
         addEditedListenerForCheckbox(enabledToggle.selectedProperty(), entry.isEnabled());
     }
 
@@ -172,7 +182,7 @@ public class EntryBox extends VBox {
         return nameField.getText().equals(entry.getName())
                 && pathField.getText().equals(entry.getPath())
                 && commandField.getText().equals(entry.getCommand())
-                && wslToggle.getCheckBox().isSelected() == entry.isWsl();
+                && wslToggle.isSelected() == entry.isWsl();
     }
 
     public void setOnDeleteButtonAction(EventHandler<ActionEvent> action){
@@ -187,19 +197,19 @@ public class EntryBox extends VBox {
         return ownerPane.getChildren().stream().filter(EntryBox.class::isInstance).map(e -> (EntryBox) e).toList();
     }
 
-    public TextArea getNameField() {
+    public TextInputControl getNameField() {
         return nameField;
     }
 
-    public TextArea getPathField() {
+    public TextInputControl getPathField() {
         return pathField;
     }
 
-    public TextArea getCommandField() {
+    public TextInputControl getCommandField() {
         return commandField;
     }
 
-    public CheckBoxField getWslToggle() {
+    public WslOption getWslToggle() {
         return wslToggle;
     }
 

@@ -43,11 +43,11 @@ public class Entry {
     }
 
     private static void entryToJSONObject(JSONObject object, Entry entry) {
-        object.put(FieldType.NAME.getValue(), entry.getName());
-        object.put(FieldType.PATH.getValue(), entry.getPath());
-        object.put(FieldType.COMMAND.getValue(), entry.getCommand());
-        object.put(FieldType.WSL.getValue(), entry.isWsl());
-        object.put(FieldType.ENABLED.getValue(), entry.isEnabled());
+        object.put(FieldType.NAME.getId(), entry.getName());
+        object.put(FieldType.PATH.getId(), entry.getPath());
+        object.put(FieldType.COMMAND.getId(), entry.getCommand());
+        object.put(FieldType.WSL.getId(), entry.isWsl());
+        object.put(FieldType.ENABLED.getId(), entry.isEnabled());
     }
 
     public String getName() {

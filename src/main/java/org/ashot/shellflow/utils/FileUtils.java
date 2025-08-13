@@ -3,7 +3,7 @@ package org.ashot.shellflow.utils;
 import javafx.stage.FileChooser;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.node.Recents;
-import org.ashot.shellflow.node.popup.ErrorPopup;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.function.Consumer;
 
 import static java.nio.file.Files.createFile;
+import static javafx.application.Platform.runLater;
 
 public class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
@@ -77,8 +78,8 @@ public class FileUtils {
             data.write(f, 1, 1);
             f.close();
             return true;
-        } catch (IOException ex) {
-            new ErrorPopup(ex.getMessage());
+        } catch (IOException e) {
+            runLater(()-> new AlertPopup("Could not save data to file", null, "Could not save entries to file: " + fileToSave.getAbsolutePath() + "\n" +  e.getMessage(), false).show());
         }
         return false;
     }

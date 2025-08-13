@@ -12,14 +12,14 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.Fonts;
-import org.ashot.shellflow.node.entry.LabeledTextField;
+import org.ashot.shellflow.node.entry.LabeledTextInput;
 import org.ashot.shellflow.node.icon.Icons;
 
 import static org.ashot.shellflow.node.CustomButton.DEFAULT_BUTTON_ICON_SIZE;
 
 
 public class SidePanel extends VBox {
-    private final CheckBox sequentialOption;
+    private final ToggleButton  sequentialOption;
     private final TextField sequentialNameField;
     private final Slider delayPerCmdSlider;
     private final Button executeAllButton;
@@ -42,7 +42,7 @@ public class SidePanel extends VBox {
         executionOptionsTitle.setFont(Fonts.title);
         VBox executionOptionsTitleBox = new VBox(executionOptionsTitle, new Separator(Orientation.HORIZONTAL));
 
-        delayPerCmdSlider = new Slider(0, 10, 0);
+        delayPerCmdSlider = new Slider(0, 20, 0);
         delayPerCmdSlider.setMajorTickUnit(2);
         delayPerCmdSlider.setMinorTickCount(1);
         delayPerCmdSlider.setShowTickLabels(true);
@@ -54,11 +54,11 @@ public class SidePanel extends VBox {
         VBox sliderBox = new VBox(2, sliderLabel, delayPerCmdSlider);
         sliderBox.setAlignment(Pos.CENTER);
 
-        sequentialOption = new CheckBox("Sequential");
+        sequentialOption = new ToggleButton("Sequential");
         sequentialOption.setFont(Fonts.detailText);
         sequentialNameField = new TextField();
         sequentialNameField.setFont(Fonts.detailText);
-        LabeledTextField labeledSequentialNameField = new LabeledTextField("Execution name", sequentialNameField);
+        LabeledTextInput labeledSequentialNameField = new LabeledTextInput("Execution name", sequentialNameField);
         labeledSequentialNameField.getTextInputControl().disableProperty().bind(sequentialOption.selectedProperty().not());
         labeledSequentialNameField.getLabel().disableProperty().bind(sequentialOption.selectedProperty().not());
         VBox sequentialOptionBox = new VBox(5, sequentialOption, labeledSequentialNameField);
@@ -107,7 +107,7 @@ public class SidePanel extends VBox {
         getStyleClass().addAll("bordered-container");
     }
 
-    public CheckBox getSequentialOption() {
+    public ToggleButton getSequentialOption() {
         return sequentialOption;
     }
 

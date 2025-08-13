@@ -10,5 +10,5 @@ public class Fonts {
     public static final Font detailText = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 12);
     public static final Font fileLabelText = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 14);
     public static final Font fieldLabel = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 11);
-    public static final Font fieldText = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 12);
+    public static final Font fieldText = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 11.5);
 }

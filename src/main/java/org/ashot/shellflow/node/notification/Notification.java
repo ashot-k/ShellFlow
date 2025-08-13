@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.notification;
 
+import atlantafx.base.controls.SelectableTextFlow;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -8,7 +9,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.constant.NotificationType;
@@ -37,7 +37,7 @@ public class Notification {
         if (onAction != null) {
             notif.onAction(_ -> onAction.run());
         }else{
-            notif.onAction(_-> notif.hideAfter(Duration.millis(250)));
+//            notif.onAction(_-> notif.hideAfter(Duration.millis(250)));
         }
         notif.hideAfter(Duration.seconds(NOTIFICATION_TIMEOUT));
         Notifications collapse = buildNotifCollapse(type);
@@ -50,14 +50,14 @@ public class Notification {
         contentWrapper.setPrefWidth(NOTIFICATION_WIDTH);
         contentWrapper.setPadding(new Insets(0, 0, 20, 0));
         if (title != null && !title.isBlank()) {
-            TextFlow titleArea = setupTitleArea(title, type);
+            SelectableTextFlow titleArea = setupTitleArea(title, type);
             titleArea.prefWidthProperty().bind(contentWrapper.prefWidthProperty());
             HBox titleContent = new HBox(Utils.checkIfWindows() ? 0 : 8, getIconFromType(type, 20), titleArea);
             HBox.setHgrow(titleArea, Priority.ALWAYS);
             contentWrapper.getChildren().add(titleContent);
         }
         if (message != null && !message.isBlank()) {
-            TextFlow messageArea = setupMessageArea(message);
+            SelectableTextFlow messageArea = setupMessageArea(message);
             messageArea.prefWidthProperty().bind(contentWrapper.prefWidthProperty());
             HBox mainContent = new HBox(messageArea);
             HBox.setHgrow(messageArea, Priority.ALWAYS);
@@ -70,24 +70,26 @@ public class Notification {
         Platform.runLater(notif::show);
     }
 
-    private static TextFlow setupTitleArea(String title, NotificationType type) {
+    private static SelectableTextFlow setupTitleArea(String title, NotificationType type) {
         Text text = new Text(title);
         text.getStyleClass().addAll(getTitleStyleClassFromType(type));
-        TextFlow titleTextArea = new TextFlow(text);
+        SelectableTextFlow titleTextArea = new SelectableTextFlow(text);
         titleTextArea.setMaxHeight(NOTIFICATION_HEIGHT / 4);
         titleTextArea.setBackground(Background.EMPTY);
         return titleTextArea;
     }
 
-    private static TextFlow setupMessageArea(String message) {
+    private static SelectableTextFlow setupMessageArea(String message) {
         Text text = new Text(message);
         text.getStyleClass().addAll(TextStyleClass.defaultNotifTextStyleClass());
-        TextFlow messageArea = new TextFlow(text);
+        SelectableTextFlow messageArea = new SelectableTextFlow(text);
         messageArea.setMaxHeight((NOTIFICATION_HEIGHT * 3) / 4);
         messageArea.setBackground(Background.EMPTY);
         messageArea.setPadding(new Insets(0, 0, 10, 0));
         return messageArea;
     }
+
+
 
     private static Notifications buildExecutionFailureCollapse() {
         Notifications collapseNotif = Notifications.create()
