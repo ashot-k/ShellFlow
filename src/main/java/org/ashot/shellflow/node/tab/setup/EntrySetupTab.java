@@ -20,6 +20,7 @@ import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
+import org.ashot.shellflow.utils.Animator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +104,7 @@ public class EntrySetupTab extends Tab {
         EntryBox entryBox = entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(entryToCommand(entryBoxToEntry(entryBox), false)));
+        Animator.fadeInBeforeAdditionToList(entryBox);
         entriesContainer.getChildren().add(entryBox);
         setupDragging(entryBox);
     }
@@ -151,7 +153,7 @@ public class EntrySetupTab extends Tab {
     }
 
     public void removeEntryBox(EntryBox entryBox) {
-        entriesContainer.getChildren().remove(entryBox);
+        Animator.removeFromListAndFadeOut(entryBox, entriesContainer);
     }
 
     public void clearEntryBoxes() {

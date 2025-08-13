@@ -7,6 +7,7 @@ import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
+import org.controlsfx.glyphfont.Glyph;
 
 public class TabUtils {
 
@@ -40,8 +41,10 @@ public class TabUtils {
 
     public static void setFailed(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionErrorIcon(tabIconSize));
+            Glyph icon = Icons.getExecutionErrorIcon(tabIconSize);
+            tab.setGraphic(icon);
             tab.setDisable(false);
+            Animator.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
             executionTab.setInProgress(false);
@@ -51,8 +54,10 @@ public class TabUtils {
 
     public static void setFinished(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionFinishedIcon(tabIconSize));
+            Glyph icon = Icons.getExecutionFinishedIcon(tabIconSize);
+            tab.setGraphic(icon);
             tab.setDisable(false);
+            Animator.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
             executionTab.setInProgress(false);
@@ -62,9 +67,11 @@ public class TabUtils {
 
     public static void setCanceled(Tab tab) {
         Platform.runLater(() -> {
-            tab.setGraphic(Icons.getExecutionCanceledIcon(tabIconSize));
+            Glyph icon = Icons.getExecutionCanceledIcon(tabIconSize);
+            tab.setGraphic(icon);
             tab.setDisable(false);
             tab.setClosable(true);
+            Animator.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
             executionTab.setInProgress(false);
