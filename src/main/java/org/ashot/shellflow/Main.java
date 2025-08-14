@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.config.DefaultConfig;
+import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.Animator;
@@ -86,9 +87,10 @@ public class Main extends Application {
         selectedTheme = option;
         if (getPrimaryStage() != null && getPrimaryStage().getScene() != null) {
             Parent root = getPrimaryStage().getScene().getRoot();
+            Animator.animateThemeChange(getPrimaryStage().getScene());
             root.getStyleClass().removeAll("dark", "light");
             root.getStyleClass().add(selectedTheme.isDark() ? "dark" : "light");
-            Animator.animateThemeChange(getPrimaryStage().getScene());
+            getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
         }
         Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
     }

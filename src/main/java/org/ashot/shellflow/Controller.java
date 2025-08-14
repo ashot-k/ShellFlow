@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.DirType;
@@ -59,16 +61,15 @@ public class Controller implements Initializable {
 //        presetSetupTab = new PresetSetupTab();
         executionsTab = new ExecutionsTab();
 //        profilerTab = new ProfilerTab();
-        mainTabPane.getTabs().
-                addAll(entrySetupTab
-//                        , presetSetupTab
-                        , executionsTab
-//                        ,profilerTab
-                );
+        mainTabPane.getTabs().add(TabIndices.ENTRIES.ordinal(), entrySetupTab);
+//        mainTabPane.getTabs().add(TabIndices.PRESET_TAB.ordinal(), presetSetupTab);
+        mainTabPane.getTabs().add(TabIndices.EXECUTIONS.ordinal() - 1, executionsTab);
+
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
         executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
             entrySetupTab.getCloseAllButton().setDisable(executionsTab.getExecutionsTabPane().getTabs().isEmpty());
         });
+        this.sceneContainer.setOnKeyPressed(this::handleUserInput);
     }
 
     private void writeEntriesToFile(File file) {
@@ -149,4 +150,23 @@ public class Controller implements Initializable {
         return null;
     }
 
+    private void handleUserInput(KeyEvent keyEvent) {
+        KeyCode keyCode = keyEvent.getCode();
+        if (getExecutionsTab().isSelected() && keyEvent.isControlDown()) {
+            TabPane executionsTabPane = executionsTab.getExecutionsTabPane();
+            if (keyEvent.isShiftDown()) {
+                if (keyCode.equals(KeyCode.COMMA)) {
+                    executionsTabPane.getSelectionModel().selectFirst();
+                } else if (keyCode.equals(KeyCode.PERIOD)) {
+                    executionsTabPane.getSelectionModel().selectLast();
+                }
+            } else {
+                if (keyCode.equals(KeyCode.COMMA)) {
+                    executionsTabPane.getSelectionModel().selectPrevious();
+                } else if (keyCode.equals(KeyCode.PERIOD)) {
+                    executionsTabPane.getSelectionModel().selectNext();
+                }
+            }
+        }
+    }
 }

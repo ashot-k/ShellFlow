@@ -17,14 +17,6 @@ public class ToolTipMessages {
         return "Browse";
     }
 
-    public static String moveEntryUp() {
-        return "Move entry up";
-    }
-
-    public static String moveEntryDown() {
-        return "Move entry down";
-    }
-
     public static String wsl(){
         return "Will run inside WSL\n In addition the path browser will attempt to translate windows paths to valid WSL paths";
     }

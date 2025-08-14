@@ -15,7 +15,7 @@ import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.node.entry.LabeledTextInput;
 import org.ashot.shellflow.node.icon.Icons;
 
-import static org.ashot.shellflow.node.CustomButton.DEFAULT_BUTTON_ICON_SIZE;
+import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_ICON_SIZE;
 
 
 public class SidePanel extends VBox {

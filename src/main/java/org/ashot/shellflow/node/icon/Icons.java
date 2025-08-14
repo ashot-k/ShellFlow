@@ -1,7 +1,5 @@
 package org.ashot.shellflow.node.icon;
 
-import atlantafx.base.controls.RingProgressIndicator;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import org.ashot.shellflow.utils.Animator;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -23,35 +21,11 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getChevronUpIcon(int size) {
-        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHEVRON_UP);
-        icon.size(size);
-        icon.color(Color.GRAY);
-        setHoverToBrighter(icon, Color.GRAY);
-        return decorateGlyph(icon);
-    }
-
-    public static Glyph getChevronDownIcon(int size) {
-        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHEVRON_DOWN);
-        icon.size(size);
-        icon.color(Color.GRAY);
-        setHoverToBrighter(icon, Color.GRAY);
-        return decorateGlyph(icon);
-    }
-
     public static Glyph getCloseButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
         icon.size(size);
         icon.color(Color.INDIANRED);
         setHoverToBrighter(icon, Color.INDIANRED);
-        return decorateGlyph(icon);
-    }
-
-    public static Glyph getErrorIcon(int size) {
-        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
-        icon.size(size);
-        icon.color(Color.CRIMSON);
-        icon.setStyle("-fx-text-fill: indianred;");
         return decorateGlyph(icon);
     }
 
@@ -135,13 +109,6 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getEnableEntryIcon(double size) {
-        Glyph icon = fontAwesome.create(FontAwesome.Glyph.CHECK_CIRCLE);
-        icon.size(size);
-        icon.color(preferredColor);
-        return icon;
-    }
-
     public static Glyph getBrowseIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SEARCH);
         icon.size(size);
@@ -174,16 +141,10 @@ public class Icons {
         return icon;
     }
 
-    public static Node getExecutionInProgressIcon() {
-        RingProgressIndicator progressIndicator = new RingProgressIndicator();
-        progressIndicator.setMouseTransparent(true);
-        return progressIndicator;
-    }
-
     public static Glyph getExecutionInProgressIcon(double size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.SPINNER);
         icon.size(size);
-        icon.color(Color.CORNFLOWERBLUE);
+        icon.color(preferredColor);
         Animator.spinIcon(icon);
         return icon;
     }

@@ -3,6 +3,7 @@ package org.ashot.shellflow.node.entry.button;
 import atlantafx.base.controls.ToggleSwitch;
 import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Insets;
+import javafx.scene.layout.HBox;
 import org.ashot.shellflow.data.constant.FieldType;
 
 public class EnableEntryBoxSwitch extends ToggleSwitch {
@@ -11,6 +12,7 @@ public class EnableEntryBoxSwitch extends ToggleSwitch {
         setId(FieldType.ENABLED.getId());
         setSelected(initialSelection);
         setPadding(Insets.EMPTY);
+        setGraphic(new HBox());
         setLabelPosition(HorizontalDirection.LEFT);
     }
 }

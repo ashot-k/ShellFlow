@@ -7,7 +7,7 @@ public class IconUtils {
 
     private IconUtils(){}
 
-    public static void setHover(Glyph icon, Color off, Color hoveredColor) {
+    public static void setHoveredColor(Glyph icon, Color off, Color hoveredColor) {
         icon.parentProperty().addListener((_, _, p) -> {
             if (p != null) {
                 p.hoverProperty().addListener((_, _, newValue) -> {

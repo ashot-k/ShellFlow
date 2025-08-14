@@ -106,12 +106,12 @@ public class Animator {
         return duration / frameRate;
     }
 
-    public static void setFrameRate(int frameRate) {
+    public static void setFrameRateForSpin(int frameRate) {
         Animator.frameRate = frameRate;
-        refreshAnimations();
+        refreshSpinAnimations();
     }
 
-    public static void refreshAnimations(){
+    public static void refreshSpinAnimations(){
         Platform.runLater(()->{
             for (Timeline t : timelineList){
                 t.stop();

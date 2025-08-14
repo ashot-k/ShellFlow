@@ -8,19 +8,19 @@ public enum ConfigProperty {
     THEME("theme", Main.getSelectedThemeOption().getValue()),
     OPTIMIZED_MODE("optimized-mode", "true");
 
-    private final String value;
-    private final String defaultValue;
+    private final String propertyName;
+    private final String defaultPropertyValue;
 
-    ConfigProperty(String value, String defaultValue) {
-        this.value = value;
-        this.defaultValue = defaultValue;
+    ConfigProperty(String propertyName, String defaultPropertyValue) {
+        this.propertyName = propertyName;
+        this.defaultPropertyValue = defaultPropertyValue;
     }
 
-    public String getValue() {
-        return value;
+    public String getPropertyName() {
+        return propertyName;
     }
 
-    public String getDefaultValue() {
-        return defaultValue;
+    public String getDefaultPropertyValue() {
+        return defaultPropertyValue;
     }
 }

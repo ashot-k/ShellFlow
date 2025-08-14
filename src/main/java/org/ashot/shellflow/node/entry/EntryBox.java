@@ -11,7 +11,9 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.*;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.message.ToolTipMessages;
+import org.ashot.shellflow.node.entry.button.DeleteEntryButton;
 import org.ashot.shellflow.node.entry.button.EnableEntryBoxSwitch;
+import org.ashot.shellflow.node.entry.button.ExecuteEntryButton;
 import org.ashot.shellflow.node.entry.button.WslOption;
 import org.ashot.shellflow.node.entry.field.CommandTextArea;
 import org.ashot.shellflow.node.entry.field.NameField;
@@ -69,17 +71,17 @@ public class EntryBox extends VBox {
         enabledToggle.setLabelPosition(HorizontalDirection.LEFT);
         enabledToggle.setPadding(new Insets(0, 0, 8, 0));
 
-        deleteEntry = EntryButton.deleteEntryButton();
-        deleteEntry.setPadding(new Insets(0, 0, 8, 0));
+        deleteEntry = new DeleteEntryButton();
 
         VBox labeledNameField = new LabeledTextInput("Name", nameField);
         VBox labeledPathField = new LabeledTextInput("Path", pathField);
         VBox labeledCommandField = new LabeledTextInput("Command(s)", commandField);
 
-        executeButton = EntryButton.executeEntryButton();
+        executeButton = new ExecuteEntryButton();
         executeButton.setPrefHeight(34);
         executeButton.setMinHeight(34);
         executeButton.setMaxWidth(50);
+
         HBox executeButtonContainer = new HBox(executeButton);
         executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
         HBox.setHgrow(executeButton, Priority.ALWAYS);

@@ -3,8 +3,8 @@ package org.ashot.shellflow.data.constant;
 import atlantafx.base.theme.*;
 
 public enum ThemeOption {
-    DARK_MODE("Default Dark", new PrimerDark(), true),
-    LIGHT_MODE("Default Light", new PrimerLight(), false),
+    DARK_MODE("Primer Dark", new PrimerDark(), true),
+    LIGHT_MODE("Primer Light", new PrimerLight(), false),
     NORD_DARK("Nord Dark", new NordDark(), true),
     NORD_LIGHT("Nord Light", new NordLight(), false),
     CUPERTINO_DARK("Cupertino Dark", new CupertinoDark(), true),

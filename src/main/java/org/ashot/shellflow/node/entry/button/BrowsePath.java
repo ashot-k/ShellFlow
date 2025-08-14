@@ -7,7 +7,8 @@ import javafx.scene.layout.Background;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.icon.Icons;
 
-import static org.ashot.shellflow.node.CustomButton.PATH_BROWSE_BUTTON_SIZE;
+import static org.ashot.shellflow.data.constant.ButtonDefaults.PATH_BROWSE_BUTTON_SIZE;
+
 
 public class BrowsePath extends Button {
 

@@ -7,10 +7,7 @@ import org.ashot.shellflow.node.popup.AlertPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.Properties;
 
@@ -25,7 +22,6 @@ public class DefaultConfig implements Config {
 
     public DefaultConfig() {
         try {
-            //todo recheck validation logic
             File propertiesFile = new File(pathToPropertiesFile.toUri());
             if(!propertiesFile.exists()){
                 Platform.runLater(()-> new AlertPopup(
@@ -45,21 +41,21 @@ public class DefaultConfig implements Config {
     @Override
     public String getPresetConfigLocation() {
         ConfigProperty property = ConfigProperty.PRESETS_FILE;
-        return getPropertyOrDefault(property.getValue(), property.getDefaultValue());
+        return getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
     }
 
     @Override
     public String getRecentsDirsConfigLocation() {
         ConfigProperty property = ConfigProperty.RECENT_DIRS_FILE;
-        return getPropertyOrDefault(property.getValue(), property.getDefaultValue());
+        return getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
     }
 
     @Override
     public String getTheme() {
         ConfigProperty property = ConfigProperty.THEME;
-        String value = getPropertyOrDefault(property.getValue(), property.getDefaultValue());
+        String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
         if(!ThemeOption.valueExists(value)){
-            return property.getDefaultValue();
+            return property.getDefaultPropertyValue();
         }
         return value;
     }
@@ -67,7 +63,7 @@ public class DefaultConfig implements Config {
     @Override
     public boolean getOptimizedMode() {
         ConfigProperty property = ConfigProperty.OPTIMIZED_MODE;
-        String value = getPropertyOrDefault(property.getValue(), property.getDefaultValue());
+        String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
         return Boolean.parseBoolean(value);
     }
 
@@ -80,4 +76,13 @@ public class DefaultConfig implements Config {
         return property;
     }
 
+    @Override
+    public void saveProperty(ConfigProperty property, String value){
+        properties.setProperty(property.getPropertyName(), value);
+        try (FileOutputStream out = new FileOutputStream(pathToPropertiesFile.toFile())) {
+            properties.store(out, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
