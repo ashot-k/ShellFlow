@@ -3,7 +3,6 @@ package org.ashot.shellflow.terminal;
 import com.pty4j.PtyProcess;
 import com.techsenger.jeditermfx.core.ProcessTtyConnector;
 import com.techsenger.jeditermfx.ui.DefaultHyperlinkFilter;
-import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import org.ashot.shellflow.terminal.tty.MonitoringTtyConnector;
 import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
@@ -14,15 +13,15 @@ import java.util.function.Consumer;
 
 public class TerminalFactory {
 
-    public static @NotNull JediTermFxWidget createTerminalWidget(PtyProcess process) {
-        JediTermFxWidget widget = new JediTermFxWidget(new ThemedSettingsProvider());
+    public static @NotNull ShellFlowTerminalWidget createTerminalWidget(PtyProcess process) {
+        ShellFlowTerminalWidget widget = new ShellFlowTerminalWidget(new ThemedSettingsProvider());
         widget.setTtyConnector(createTtyConnector(process));
         widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
         return widget;
     }
 
-    public static @NotNull JediTermFxWidget createTerminalWidget(PtyProcess process, Consumer<String> outputMonitor) {
-        JediTermFxWidget widget = new JediTermFxWidget(new ThemedSettingsProvider());
+    public static @NotNull ShellFlowTerminalWidget createTerminalWidget(PtyProcess process, Consumer<String> outputMonitor) {
+        ShellFlowTerminalWidget widget = new ShellFlowTerminalWidget(new ThemedSettingsProvider());
         widget.setTtyConnector(createTtyConnector(process, outputMonitor));
         widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
         return widget;

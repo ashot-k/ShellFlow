@@ -21,6 +21,18 @@ public class ToolTipMessages {
         return "Will run inside WSL\n In addition the path browser will attempt to translate windows paths to valid WSL paths";
     }
 
+    public static String stopProcess(){
+        return "Attempt a graceful termination by sending a SIGINT to the current process";
+    }
+
+    public static String find(){
+        return "Open the find component";
+    }
+
+    public static String font(){
+        return "Edit terminal font";
+    }
+
     public static String execute() {
         return "Run entry";
     }

@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.config.DefaultConfig;
@@ -43,6 +44,7 @@ public class Main extends Application {
             primaryStage = stage;
             config = new DefaultConfig();
             setTheme(getThemeFromConfig());
+            loadCustomFonts();
             Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(CSS_FILE_LOCATION);
@@ -54,6 +56,7 @@ public class Main extends Application {
             primaryStage.setMinHeight(600);
             primaryStage.setMinWidth(800);
             primaryStage.setOnCloseRequest(_ -> Platform.exit());
+            updateFont("Cascadia Mono", 16);
             primaryStage.show();
             log.debug("Loaded FXML: {}", MAIN_FXML_LOCATION);
             log.debug("Loaded CSS: {}", CSS_FILE_LOCATION);
@@ -93,6 +96,14 @@ public class Main extends Application {
             getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
         }
         Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
+    }
+
+    public static void loadCustomFonts(){
+        Font.loadFont(String.valueOf(Main.class.getResource("/fonts/CascadiaMono-VariableFont_wght.ttf")), 0);
+    }
+
+    public static void updateFont(String fontFamily, double size){
+        getPrimaryStage().getScene().getRoot().setStyle("-fx-font-family: '" + fontFamily  + "'; -fx-font-size: " + size + "px;");
     }
 
     public static ThemeOption getSelectedThemeOption() {

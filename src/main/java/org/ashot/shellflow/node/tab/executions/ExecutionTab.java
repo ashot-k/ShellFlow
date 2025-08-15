@@ -1,18 +1,20 @@
 package org.ashot.shellflow.node.tab.executions;
 
 import com.pty4j.PtyProcess;
-import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.Main;
 import org.ashot.shellflow.data.command.Command;
+import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
 import org.slf4j.Logger;
@@ -24,7 +26,8 @@ import java.util.List;
 public class ExecutionTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(ExecutionTab.class);
     private String commandDisplayName;
-    private JediTermFxWidget terminal;
+    private ShellFlowTerminalWidget terminal;
+    private TerminalToolBar terminalToolBar;
     private final VBox terminalWrapper = new VBox();
     private boolean inProgress = false;
     private boolean finished = false;
@@ -37,6 +40,7 @@ public class ExecutionTab extends Tab {
         this.setText(outputTabBuilder.tabName);
         this.setDisable(outputTabBuilder.disabled);
         this.setClosable(outputTabBuilder.closable);
+        this.terminalToolBar = new TerminalToolBar(outputTabBuilder.terminal);
         setTerminal(outputTabBuilder.terminal);
         Platform.runLater(this::setupOutputTab);
     }
@@ -45,7 +49,11 @@ public class ExecutionTab extends Tab {
         this.terminalWrapper.setFillWidth(true);
         this.terminalWrapper.setPadding(new Insets(5));
         this.terminalWrapper.getStyleClass().addAll(Main.getSelectedThemeOption().isDark() ? "dark" : "light", "terminal-wrapper");
-        this.setContent(this.terminalWrapper);
+        StackPane stackPane = new StackPane();
+        StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(terminalToolBar, new Insets(0, 25, 20, 0));
+        stackPane.getChildren().addAll(terminalWrapper, terminalToolBar);
+        this.setContent(stackPane);
     }
 
     public static ExecutionTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
@@ -102,13 +110,14 @@ public class ExecutionTab extends Tab {
         this.terminal.close();
     }
 
-    public JediTermFxWidget getTerminal() {
+    public ShellFlowTerminalWidget getTerminal() {
         return terminal;
     }
 
-    public void setTerminal(JediTermFxWidget terminal) {
+    public void setTerminal(ShellFlowTerminalWidget terminal) {
         this.terminal = terminal;
         if(terminal != null) {
+            terminalToolBar.setTerminalWidget(terminal);
             setOnClose(null);
             Platform.runLater(() -> {
                 terminalWrapper.getChildren().add(terminal.getPane());
@@ -167,7 +176,7 @@ public class ExecutionTab extends Tab {
 
     public static class OutputTabBuilder {
 
-        private JediTermFxWidget terminal;
+        private ShellFlowTerminalWidget terminal;
 
         private String tabName;
         private final Tooltip tooltip = new Tooltip();
@@ -178,7 +187,7 @@ public class ExecutionTab extends Tab {
         public OutputTabBuilder() {
         }
 
-        public OutputTabBuilder(JediTermFxWidget terminal) {
+        public OutputTabBuilder(ShellFlowTerminalWidget terminal) {
             this.terminal = terminal;
         }
 

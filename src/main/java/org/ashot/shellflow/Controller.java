@@ -1,5 +1,6 @@
 package org.ashot.shellflow;
 
+import atlantafx.base.controls.ModalPane;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +37,8 @@ import static org.ashot.shellflow.utils.Utils.*;
 public class Controller implements Initializable {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     @FXML
+    private ModalPane mainModal;
+    @FXML
     private VBox sceneContainer;
     @FXML
     private TabPane mainTabPane;
@@ -54,6 +57,7 @@ public class Controller implements Initializable {
         if (openMostRecentFile(this::openFile) == null) {
             currentlyLoadedFileLocation = null;
         }
+        mainModal.getStyleClass().add("modal");
     }
 
     private void setupTabs() {
@@ -168,5 +172,9 @@ public class Controller implements Initializable {
                 }
             }
         }
+    }
+
+    public ModalPane getMainModal() {
+        return mainModal;
     }
 }

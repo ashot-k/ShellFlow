@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
-    private static final TerminalColor DEFAULT_DARK_MODE_BACKGROUND = new TerminalColor(23, 27, 33);
+    private static final TerminalColor DEFAULT_DARK_MODE_BACKGROUND = new TerminalColor(0, 0, 0);
     private static final TerminalColor DEFAULT_DARK_MODE_FOREGROUND = new TerminalColor(255, 255, 255);
 
-    private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(220, 220, 220);
+    private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(240, 240, 240);
     private static final TerminalColor DEFAULT_LIGHT_MODE_FOREGROUND = new TerminalColor(16, 17, 23);
-    private static double fontSize = 15;
+
+    private static String fontFamily = Main.getConfig().getTerminalFontFamily().getFamily();
+    private static double fontSize = Main.getConfig().getTerminalFontSize();
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {
@@ -39,7 +41,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public Font getTerminalFont() {
-        return Font.font("Courier New", fontSize);
+        return Font.font(fontFamily, fontSize);
     }
 
     @Override
@@ -47,7 +49,16 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
         return ColorPaletteImpl.WINDOWS_PALETTE;
     }
 
-    public static void setFontSize(double fontSize) {
+    private static void setFontSize(double fontSize) {
         ThemedSettingsProvider.fontSize = fontSize;
+    }
+
+    private static void setFontFamily(String fontFamily) {
+        ThemedSettingsProvider.fontFamily = fontFamily;
+    }
+
+    public static void updateFont(String fontFamily, double fontSize){
+        setFontFamily(fontFamily);
+        setFontSize(fontSize);
     }
 }

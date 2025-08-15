@@ -170,4 +170,12 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getFontSelectionMenuIcon(double size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.FONT);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
 }

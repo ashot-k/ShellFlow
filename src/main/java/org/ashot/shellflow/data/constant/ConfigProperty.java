@@ -6,7 +6,9 @@ public enum ConfigProperty {
     PRESETS_FILE("presets-file", SettingsFilePaths.getSettingsFolder() + "/" + "presets.json"),
     RECENT_DIRS_FILE("recent-dirs-file", SettingsFilePaths.getSettingsFolder() + "/" + "recent_dirs.json"),
     THEME("theme", Main.getSelectedThemeOption().getValue()),
-    OPTIMIZED_MODE("optimized-mode", "true");
+    OPTIMIZED_MODE("optimized-mode", "true"),
+    TERMINAL_FONT_FAMILY("terminal-font-family", "Cascadia Mono"),
+    TERMINAL_FONT_SIZE("terminal-font-size", "16"),;
 
     private final String propertyName;
     private final String defaultPropertyValue;

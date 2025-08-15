@@ -7,7 +7,7 @@ public class SettingsMenu extends Menu {
 
     public SettingsMenu() {
         setText("Settings");
-        getItems().addAll(new ThemeSelectionMenu(), new PerformanceSettingMenuItem());
+        getItems().addAll(new ThemeSelectionMenu(), new FontSelectionMenuItem(), new PerformanceSettingMenuItem());
     }
 
 }

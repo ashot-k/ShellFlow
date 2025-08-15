@@ -1,6 +1,7 @@
 package org.ashot.shellflow.config;
 
 import javafx.application.Platform;
+import javafx.scene.text.Font;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.node.popup.AlertPopup;
@@ -61,6 +62,18 @@ public class DefaultConfig implements Config {
     }
 
     @Override
+    public Font getTerminalFontFamily() {
+        ConfigProperty property = ConfigProperty.TERMINAL_FONT_FAMILY;
+        return Font.font(getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue()));
+    }
+
+    @Override
+    public double getTerminalFontSize() {
+        ConfigProperty property = ConfigProperty.TERMINAL_FONT_SIZE;
+        return Double.parseDouble(getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue()));
+    }
+
+    @Override
     public boolean getOptimizedMode() {
         ConfigProperty property = ConfigProperty.OPTIMIZED_MODE;
         String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
@@ -80,7 +93,7 @@ public class DefaultConfig implements Config {
     public void saveProperty(ConfigProperty property, String value){
         properties.setProperty(property.getPropertyName(), value);
         try (FileOutputStream out = new FileOutputStream(pathToPropertiesFile.toFile())) {
-            properties.store(out, null);
+            properties.store(out, "THIS FILE IS MANAGED BY THE APPLICATION, EDIT BEFORE STARTUP");
         } catch (IOException e) {
             e.printStackTrace();
         }

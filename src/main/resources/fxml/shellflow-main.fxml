@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import atlantafx.base.controls.ModalPane?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.*?>
-<VBox fx:id="sceneContainer" prefHeight="750.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.shellflow.Controller">
-    <HBox alignment="CENTER_LEFT" fillHeight="false">
-    </HBox>
-    <StackPane VBox.vgrow="ALWAYS">
-        <VBox VBox.vgrow="ALWAYS">
-            <TabPane fx:id="mainTabPane" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
-            </TabPane>
-        </VBox>
-    </StackPane>
-</VBox>
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ashot.shellflow.Controller">
+    <VBox fx:id="sceneContainer" prefHeight="750.0">
+        <StackPane VBox.vgrow="ALWAYS">
+            <VBox VBox.vgrow="ALWAYS">
+                <TabPane fx:id="mainTabPane" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
+            </VBox>
+        </StackPane>
+    </VBox>
+    <ModalPane fx:id="mainModal" alignment="CENTER"/>
+</StackPane>
