@@ -14,7 +14,7 @@ public class LabeledTextInput extends VBox {
         Label label = new Label(labelText);
         Insets labelPaddings = new Insets(2.5, 0, 2.5, 15);
         label.setPadding(labelPaddings);
-        label.setFont(Fonts.fieldLabel);
+        label.setFont(Fonts.fieldLabel());
         this.textinputControl = textinputControl;
         this.label = label;
         this.getChildren().addAll(textinputControl, label);

@@ -5,7 +5,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 
 import static java.lang.Double.MAX_VALUE;
 
@@ -15,7 +15,7 @@ public class AlertPopup extends Alert{
 
     public AlertPopup(AlertType alertType){
         super(alertType);
-        getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet(), Main.CSS_FILE_LOCATION);
+        getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet());
     }
 
     public AlertPopup(String title, String header, String msg, boolean criticalError) {
@@ -32,7 +32,7 @@ public class AlertPopup extends Alert{
     }
 
     private void setupAlertPopup(String title, String header, String msg){
-        getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet(), Main.getUserAgentStylesheet());
+        getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet(), ShellFlow.getUserAgentStylesheet());
         setTitle(title);
         setHeaderText(header);
         setContentText(msg);
@@ -47,13 +47,13 @@ public class AlertPopup extends Alert{
         getDialogPane().setExpandableContent(content);
 
         setWidth(500);
-        initOwner(Main.getPrimaryStage().getScene().getWindow());
+        initOwner(ShellFlow.getPrimaryStage().getScene().getWindow());
     }
 
     private void setupCriticalErrorAlert(){
         setOnCloseRequest(_->{
             close();
-            Main.getPrimaryStage().close();
+            ShellFlow.getPrimaryStage().close();
             Platform.exit();
         });
     }

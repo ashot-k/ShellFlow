@@ -13,7 +13,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.config.Config;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.Fonts;
@@ -28,26 +28,25 @@ public class FontSelectionDialog extends VBox {
             Font.font("Consolas"),
             Font.font("Courier New")
     );
-    private static Config config = Main.getConfig();
+    private static Config config = ShellFlow.getConfig();
 
     public static SimpleObjectProperty<Font> selectedFont = new SimpleObjectProperty<>(config.getTerminalFontFamily());
     public static SimpleDoubleProperty selectedSize = new SimpleDoubleProperty(config.getTerminalFontSize());
-    private final ComboBox<Double> fontSizeComboBox = new ComboBox<>(
-    );
+    private final ComboBox<Double> fontSizeComboBox = new ComboBox<>();
     private final ListView<Text> list = new ListView<>();
 
     public FontSelectionDialog(Runnable closeHandler){
-        this((int) (Main.getPrimaryStage().getWidth() / 2), (int) (Main.getPrimaryStage().getHeight() / 3), closeHandler);
+        this((int) (ShellFlow.getPrimaryStage().getWidth() / 2), (int) (ShellFlow.getPrimaryStage().getHeight() / 3), closeHandler);
     }
 
     public FontSelectionDialog(int width, int height, Runnable closeHandler) {
         super();
 
         Text title = new Text("Terminal font settings");
-        title.setFont(Fonts.title);
+        title.setFont(Fonts.title());
 
         Text fontFamilySectionTitle= new Text("Font family");
-        fontFamilySectionTitle.setFont(Fonts.subTitle);
+        fontFamilySectionTitle.setFont(Fonts.subTitle());
         List<Font> fonts = FXCollections.observableArrayList(fontList);
         for (Font f : fonts){
             list.getItems().add(new Text(f.getFamily()));
@@ -67,7 +66,7 @@ public class FontSelectionDialog extends VBox {
         VBox.setVgrow(list, Priority.ALWAYS);
 
         Text fontSizeSectionTitle= new Text("Font size");
-        fontSizeSectionTitle.setFont(Fonts.subTitle);
+        fontSizeSectionTitle.setFont(Fonts.subTitle());
         List<Double> sizes = List.of(9.0, 11.0, 12.0, 14.0, 16.0, 20.0, 22.0, 24.0);
         double sizeOptionSelected = sizes.stream().filter(e -> e.equals(selectedSize.get())).toList().getFirst();
         fontSizeComboBox.getItems().addAll(sizes);

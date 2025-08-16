@@ -10,7 +10,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.data.constant.TextStyleClass;
 import org.ashot.shellflow.node.icon.Icons;
@@ -103,7 +103,7 @@ public class Notification {
 
     private static void setNotifTheme(Notifications notif) {
         String baseClass = "notification-wrapper";
-        if (Main.getSelectedThemeOption().isDark()) {
+        if (ShellFlow.getSelectedThemeOption().isDark()) {
             notif.styleClass(baseClass, "dark");
         } else {
             notif.styleClass(baseClass, "light");
@@ -112,7 +112,7 @@ public class Notification {
 
     private static void setNotifContentTheme(Node node){
         String baseClass = "notification-base";
-        if (Main.getSelectedThemeOption().isDark()) {
+        if (ShellFlow.getSelectedThemeOption().isDark()) {
             node.getStyleClass().addAll(baseClass, "dark");
         } else {
             node.getStyleClass().addAll(baseClass, "light");

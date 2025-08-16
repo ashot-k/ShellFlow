@@ -2,7 +2,7 @@ package org.ashot.shellflow.node;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.utils.FileUtils;
@@ -68,7 +68,7 @@ public class Recents {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
+            File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             jsonObject.put(dirType.name(), path);
             FileUtils.writeJSONDataToFile(file, jsonObject);
@@ -81,7 +81,7 @@ public class Recents {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
+            File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
             JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
             List<Object> list = recents.toList();
@@ -99,7 +99,7 @@ public class Recents {
     public static JSONObject getRecents() {
         try {
             JSONObject jsonObject = null;
-            File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
+            File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
             if (file.exists()) {
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);
@@ -123,7 +123,7 @@ public class Recents {
         List<Object> list = recents.toList();
         list.removeIf(element -> element.toString().equals(path));
         recentDirs.put(DirType.RECENT.name(), list);
-        File file = new File(Main.getConfig().getRecentsDirsConfigLocation());
+        File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
         FileUtils.writeJSONDataToFile(file, recentDirs);
     }
 }

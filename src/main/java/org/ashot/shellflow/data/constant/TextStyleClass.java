@@ -1,12 +1,12 @@
 package org.ashot.shellflow.data.constant;
 
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 
 import java.util.List;
 
 public class TextStyleClass {
     public static String getTextColorClass() {
-        return Main.getSelectedThemeOption().isDark() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
+        return ShellFlow.getSelectedThemeOption().isDark() ? "ansi-fg-bright-white" : "ansi-fg-bright-black";
     }
 
     public static List<String> boldTextStyleClass() {

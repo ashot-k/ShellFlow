@@ -12,7 +12,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
@@ -48,7 +48,7 @@ public class ExecutionTab extends Tab {
     public void setupOutputTab() {
         this.terminalWrapper.setFillWidth(true);
         this.terminalWrapper.setPadding(new Insets(5));
-        this.terminalWrapper.getStyleClass().addAll(Main.getSelectedThemeOption().isDark() ? "dark" : "light", "terminal-wrapper");
+        this.terminalWrapper.getStyleClass().addAll(ShellFlow.getSelectedThemeOption().isDark() ? "dark" : "light", "terminal-wrapper");
         StackPane stackPane = new StackPane();
         StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(terminalToolBar, new Insets(0, 25, 20, 0));

@@ -34,6 +34,7 @@ public class EntrySetupTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(EntrySetupTab.class);
     private final FlowPane entriesContainer;
     private final SidePanel sidePanel;
+    private final EntryInfoBar entryInfoBar;
     private final int entriesContainerGap = 25;
 
     private int dragSourceIndex = -1;
@@ -52,9 +53,10 @@ public class EntrySetupTab extends Tab {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        HBox entriesContainerWrapper = new HBox(entriesContainer);
+        entryInfoBar = new EntryInfoBar();
+        VBox entriesContainerWrapper = new VBox(entryInfoBar, entriesContainer);
         entriesContainerWrapper.getStyleClass().add("bordered-container-no-hover");
-        entriesContainerWrapper.setAlignment(Pos.CENTER);
+        entriesContainerWrapper.setAlignment(Pos.TOP_LEFT);
         scrollPane.setContent(entriesContainerWrapper);
 
         sidePanel = new SidePanel(_ -> executeAll(), _ -> stopAll(), _ -> addEntryBox(), _ -> clearEntryBoxes());
@@ -104,9 +106,9 @@ public class EntrySetupTab extends Tab {
         EntryBox entryBox = entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(entryToCommand(entryBoxToEntry(entryBox), false)));
+        setupDragging(entryBox);
         Animator.fadeInBeforeAdditionToList(entryBox);
         entriesContainer.getChildren().add(entryBox);
-        setupDragging(entryBox);
     }
 
     public void resetEdited(){
@@ -220,7 +222,11 @@ public class EntrySetupTab extends Tab {
         return (int) sidePanel.getDelayPerCmdSlider().getValue();
     }
 
+    public EntryInfoBar getEntryInfoBar() {
+        return entryInfoBar;
+    }
+
     public void setFileLoadedText(String text){
-        sidePanel.getEntryInfoBar().setFileLoadedText(text);
+        getEntryInfoBar().setFileLoadedText(text);
     }
 }

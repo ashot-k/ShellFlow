@@ -2,6 +2,8 @@ package org.ashot.shellflow.node.tab.setup;
 
 import atlantafx.base.controls.SelectableTextFlow;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -12,11 +14,12 @@ public class EntryInfoBar extends VBox {
 
     public EntryInfoBar() {
         fileLoaded = new Text();
-        fileLoaded.setFont(Fonts.fileLabelText);
+        fileLoaded.setFont(Fonts.fileLabelText());
         SelectableTextFlow textFlow = new SelectableTextFlow(fileLoaded);
-        textFlow.setPadding(new Insets(0, 10, 0, 10));
         textFlow.setTextAlignment(TextAlignment.CENTER);
-        getChildren().add(textFlow);
+        Separator separator = new Separator(Orientation.HORIZONTAL);
+        separator.setPadding(new Insets(10, 0, 10, 0));
+        getChildren().addAll(textFlow, separator);
     }
 
     public void setFileLoadedText(String text) {

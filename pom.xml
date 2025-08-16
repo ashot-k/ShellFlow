@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.6.11</version>
+    <version>0.6.12</version>
     <name>shellflow</name>
 
     <properties>
@@ -178,7 +178,7 @@
                     <vendor>org.ashot</vendor>
                     <!--this includes the full jdk runtime, allows for automatic modules but increases exe file size by alot-->
                     <runtimeImage>${java.home}</runtimeImage>
-                    <module>org.ashot.shellflow/org.ashot.shellflow.Main</module>
+                    <module>org.ashot.shellflow/org.ashot.shellflow.ShellFlow</module>
                     <modulePaths>
                         <modulePath>target/mods</modulePath>
                     </modulePaths>

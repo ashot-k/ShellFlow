@@ -80,10 +80,10 @@ public class EntryBox extends VBox {
         executeButton = new ExecuteEntryButton();
         executeButton.setPrefHeight(34);
         executeButton.setMinHeight(34);
-        executeButton.setMaxWidth(50);
-
+        executeButton.setMaxWidth(80);
         HBox executeButtonContainer = new HBox(executeButton);
         executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
+        executeButtonContainer.setPrefWidth(80);
         HBox.setHgrow(executeButton, Priority.ALWAYS);
 
         GridPane entryGrid = new GridPane();

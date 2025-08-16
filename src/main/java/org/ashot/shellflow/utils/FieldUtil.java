@@ -6,6 +6,7 @@ import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.Fonts;
 
 public class FieldUtil {
+    private static final double DEFAULT_FIELD_HEIGHT = 35;
 
     public static void setupField(TextInputControl field, FieldType fieldType, String text, String promptText, String toolTip, Double width, Double height, String styleClass){
         if (text == null) {
@@ -22,6 +23,9 @@ public class FieldUtil {
         if (height != null) {
             NodeUtils.setHeights(field, height);
         }
+        else{
+            NodeUtils.setHeights(field, DEFAULT_FIELD_HEIGHT);
+        }
         if (toolTip != null) {
             field.setTooltip(new Tooltip(toolTip));
         }
@@ -29,6 +33,6 @@ public class FieldUtil {
             field.getStyleClass().add(styleClass);
         }
         field.getStyleClass().add("field");
-        field.setFont(Fonts.fieldText);
+        field.setFont(Fonts.fieldText());
     }
 }

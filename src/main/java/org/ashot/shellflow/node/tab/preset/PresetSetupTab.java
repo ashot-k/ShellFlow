@@ -11,7 +11,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.util.converter.DefaultStringConverter;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.Preset;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.constant.PresetType;
@@ -96,7 +96,7 @@ public class PresetSetupTab extends Tab {
     }
 
     private static void setupFromFile() {
-        File file = new File(Main.getConfig().getPresetConfigLocation());
+        File file = new File(ShellFlow.getConfig().getPresetConfigLocation());
         if (file.exists()) {
             loadExisting(file);
         } else {
@@ -231,14 +231,14 @@ public class PresetSetupTab extends Tab {
 
     private static ScrollPane setupScrollPane() {
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setPrefWidth(Main.SIZE_X);
+        scrollPane.setPrefWidth(ShellFlow.SIZE_X);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         return scrollPane;
     }
 
     private static Label setupCategoryTitle(String name) {
         Label title = new Label(name);
-        title.setFont(Fonts.title);
+        title.setFont(Fonts.title());
         return title;
     }
 
