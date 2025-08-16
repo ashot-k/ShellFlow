@@ -90,6 +90,7 @@ public class ShellFlow extends Application {
     @Override
     public void stop() {
         TerminalRegistry.stopAllTerminals();
+        Platform.exit();
     }
 
     private static void handleJVMArgs(String[] args) {
