@@ -3,7 +3,6 @@ package org.ashot.shellflow;
 import atlantafx.base.controls.ModalPane;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
@@ -27,14 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 import static org.ashot.shellflow.utils.FileUtils.openMostRecentFile;
 import static org.ashot.shellflow.utils.Utils.*;
 
 
-public class Controller implements Initializable {
+public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     @FXML
     private ModalPane mainModal;
@@ -49,8 +46,7 @@ public class Controller implements Initializable {
     private ProfilerTab profilerTab;
     private static String currentlyLoadedFileLocation;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void init(){
         ControllerRegistry.register("main", this);
         sceneContainer.getChildren().addFirst(new MainMenuBar(this::openFile, this::writeEntriesToFile));
         setupTabs();

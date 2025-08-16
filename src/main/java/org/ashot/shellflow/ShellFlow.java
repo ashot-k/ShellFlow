@@ -20,16 +20,15 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
-public class Main extends Application {
+public class ShellFlow extends Application {
 
+    private static final Logger log = LoggerFactory.getLogger(ShellFlow.class);
     public static final int SIZE_X = 1400;
     public static final int SIZE_Y = 800;
-    public static final String windowTitle = "ShellFlow";
+    public static final String WINDOW_TITLE = "ShellFlow";
     private static final boolean RESIZABLE = true;
-    public static final String CSS_FILE_LOCATION = Main.class.getResource("/style/main.css").toExternalForm();
-    public static final URL MAIN_FXML_LOCATION = Main.class.getResource("/fxml/shellflow-main.fxml");
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static ThemeOption selectedTheme = ThemeOption.DARK_MODE;
+    private static Font applicationFont;
     private static Stage primaryStage;
     private static Config config;
 
@@ -43,23 +42,41 @@ public class Main extends Application {
         try {
             primaryStage = stage;
             config = new DefaultConfig();
+            loadAdditionalFonts();
             setTheme(getThemeFromConfig());
-            loadCustomFonts();
-            Parent root = FXMLLoader.load(MAIN_FXML_LOCATION);
+            applicationFont = Font.font("Cascadia Mono");
+
+            URL url = ShellFlow.class.getResource("/fxml/shellflow-main.fxml");
+            String styleSheet = ShellFlow.class.getResource("/style/main.css").toExternalForm();
+            if(url == null){
+                throw new IllegalStateException("Could not load FXML");
+            }
+            if(styleSheet == null){
+                throw new IllegalStateException("Could not load css stylesheet");
+            }
+
+            FXMLLoader fxmlLoader = new FXMLLoader(url);
+            fxmlLoader.load();
+
+            Controller controller = fxmlLoader.getController();
+            controller.init();
+            Parent root = fxmlLoader.getRoot();
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
-            scene.getStylesheets().add(CSS_FILE_LOCATION);
+            scene.getStylesheets().add(styleSheet);
             root.getStyleClass().add(getThemeFromConfig().isDark() ? "dark" : "light");
-            primaryStage.getIcons().add(new Image("icon.png"));
-            primaryStage.setTitle(windowTitle);
             primaryStage.setScene(scene);
+            primaryStage.getIcons().add(new Image("icon.png"));
+            primaryStage.setTitle(WINDOW_TITLE);
             primaryStage.setResizable(RESIZABLE);
             primaryStage.setMinHeight(600);
             primaryStage.setMinWidth(800);
             primaryStage.setOnCloseRequest(_ -> Platform.exit());
-            updateFont("Cascadia Mono", 16);
+            updateFont(applicationFont.getFamily(), 14);
             primaryStage.show();
-            log.debug("Loaded FXML: {}", MAIN_FXML_LOCATION);
-            log.debug("Loaded CSS: {}", CSS_FILE_LOCATION);
+            log.info("JavaFX Version: {}", System.getProperty("javafx.runtime.version"));
+            log.info("Java Version: {}", System.getProperty("java.version"));
+            log.debug("Loaded FXML: {}", url);
+            log.debug("Loaded CSS: {}", styleSheet);
             log.debug("Loaded Theme: {}", selectedTheme);
             log.debug("Is main stage Resizable: {}", RESIZABLE);
         } catch (Exception e) {
@@ -73,14 +90,12 @@ public class Main extends Application {
     @Override
     public void stop() {
         TerminalRegistry.stopAllTerminals();
-        //add timeout for process killing
-        System.exit(0);
     }
 
     private static void handleJVMArgs(String[] args) {
-        for (String arg : args){
+        for (String arg : args) {
             log.info("Found argument: {}", arg);
-            if(arg.equals("debug")){
+            if (arg.equals("debug")) {
                 log.info("Running in mode: {}", arg);
             }
         }
@@ -98,12 +113,16 @@ public class Main extends Application {
         Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
     }
 
-    public static void loadCustomFonts(){
-        Font.loadFont(String.valueOf(Main.class.getResource("/fonts/CascadiaMono-VariableFont_wght.ttf")), 0);
+    private static void updateFont(Font font) {
+        updateFont(font.getFamily(), font.getSize());
     }
 
-    public static void updateFont(String fontFamily, double size){
-        getPrimaryStage().getScene().getRoot().setStyle("-fx-font-family: '" + fontFamily  + "'; -fx-font-size: " + size + "px;");
+    public static void updateFont(String fontFamily, double size) {
+        getPrimaryStage().getScene().getRoot().setStyle("-fx-font-family: '" + fontFamily + "'; -fx-font-size: " + size + "px;");
+    }
+
+    private void loadAdditionalFonts(){
+        Font.loadFont(String.valueOf(ShellFlow.class.getResource("/fonts/CascadiaMono-VariableFont_wght.ttf")), 14);
     }
 
     public static ThemeOption getSelectedThemeOption() {
@@ -120,5 +139,9 @@ public class Main extends Application {
 
     public static Config getConfig() {
         return config;
+    }
+
+    public static Font getApplicationFont() {
+        return applicationFont;
     }
 }

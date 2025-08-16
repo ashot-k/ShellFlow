@@ -26,7 +26,6 @@ public class SidePanel extends VBox {
     private final Button closeAllButton;
     private final Button clearAllEntriesButton;
     private final Button addEntryButton;
-    private final EntryInfoBar entryInfoBar;
 
     public SidePanel(
             EventHandler<ActionEvent> onExecuteAll,
@@ -35,11 +34,11 @@ public class SidePanel extends VBox {
             EventHandler<ActionEvent> onClearAllEntries) {
 
         Text entryOptionsTitle= new Text("Entry Options");
-        entryOptionsTitle.setFont(Fonts.title);
+        entryOptionsTitle.setFont(Fonts.title());
         VBox entryOptionsTitleBox = new VBox(entryOptionsTitle, new Separator(Orientation.HORIZONTAL));
 
         Text executionOptionsTitle= new Text("Execution Options");
-        executionOptionsTitle.setFont(Fonts.title);
+        executionOptionsTitle.setFont(Fonts.title());
         VBox executionOptionsTitleBox = new VBox(executionOptionsTitle, new Separator(Orientation.HORIZONTAL));
 
         delayPerCmdSlider = new Slider(0, 20, 0);
@@ -50,14 +49,14 @@ public class SidePanel extends VBox {
         delayPerCmdSlider.setSnapToTicks(true);
         delayPerCmdSlider.setPadding(new Insets(0, 5, 0, 5));
         Label sliderLabel = new Label("Delay between commands (seconds)");
-        sliderLabel.setFont(Fonts.detailText);
+        sliderLabel.setFont(Fonts.detailText());
         VBox sliderBox = new VBox(2, sliderLabel, delayPerCmdSlider);
         sliderBox.setAlignment(Pos.CENTER);
 
         sequentialOption = new ToggleButton("Sequential");
-        sequentialOption.setFont(Fonts.detailText);
+        sequentialOption.setFont(Fonts.detailText());
         sequentialNameField = new TextField();
-        sequentialNameField.setFont(Fonts.detailText);
+        sequentialNameField.setFont(Fonts.detailText());
         LabeledTextInput labeledSequentialNameField = new LabeledTextInput("Execution name", sequentialNameField);
         labeledSequentialNameField.getTextInputControl().disableProperty().bind(sequentialOption.selectedProperty().not());
         labeledSequentialNameField.getLabel().disableProperty().bind(sequentialOption.selectedProperty().not());
@@ -99,10 +98,14 @@ public class SidePanel extends VBox {
         VBox executionSection = new VBox(2, executionOptionsTitleBox, executionOptions);
         HBox.setHgrow(executionSection, Priority.ALWAYS);
 
+        executeAllButton.setFont(Fonts.buttonText());
+        clearAllEntriesButton.setFont(Fonts.buttonText());
+        closeAllButton.setFont(Fonts.buttonText());
+        addEntryButton.setFont(Fonts.buttonText());
+
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
-        entryInfoBar = new EntryInfoBar();
-        getChildren().addAll(entryInfoBar, entrySection, spacer, executionSection);
+        getChildren().addAll(entrySection, spacer, executionSection);
         setSpacing(25);
         getStyleClass().addAll("bordered-container");
     }
@@ -135,8 +138,5 @@ public class SidePanel extends VBox {
         return addEntryButton;
     }
 
-    public EntryInfoBar getEntryInfoBar() {
-        return entryInfoBar;
-    }
 }
 

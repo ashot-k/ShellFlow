@@ -19,7 +19,7 @@ public class WslOption extends HBox {
         checkBox.setTooltip(new Tooltip(ToolTipMessages.wsl()));
         Label label = new Label(text);
         label.setLabelFor(checkBox);
-        label.setFont(Fonts.fieldLabel);
+        label.setFont(Fonts.fieldLabel());
         setFillHeight(false);
         setAlignment(Pos.CENTER_RIGHT);
         setSpacing(5);

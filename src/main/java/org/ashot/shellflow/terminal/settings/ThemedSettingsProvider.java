@@ -5,7 +5,7 @@ import com.techsenger.jeditermfx.core.emulator.ColorPalette;
 import com.techsenger.jeditermfx.core.emulator.ColorPaletteImpl;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import javafx.scene.text.Font;
-import org.ashot.shellflow.Main;
+import org.ashot.shellflow.ShellFlow;
 import org.jetbrains.annotations.NotNull;
 
 public class ThemedSettingsProvider extends DefaultSettingsProvider {
@@ -16,12 +16,12 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
     private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(240, 240, 240);
     private static final TerminalColor DEFAULT_LIGHT_MODE_FOREGROUND = new TerminalColor(16, 17, 23);
 
-    private static String fontFamily = Main.getConfig().getTerminalFontFamily().getFamily();
-    private static double fontSize = Main.getConfig().getTerminalFontSize();
+    private static String fontFamily = ShellFlow.getConfig().getTerminalFontFamily().getFamily();
+    private static double fontSize = ShellFlow.getConfig().getTerminalFontSize();
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {
-        if(Main.getSelectedThemeOption().isDark()) {
+        if(ShellFlow.getSelectedThemeOption().isDark()) {
             return DEFAULT_DARK_MODE_BACKGROUND;
         }
         else{
@@ -31,7 +31,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public @NotNull TerminalColor getDefaultForeground() {
-        if(Main.getSelectedThemeOption().isDark()){
+        if(ShellFlow.getSelectedThemeOption().isDark()){
             return DEFAULT_DARK_MODE_FOREGROUND;
         }
         else{

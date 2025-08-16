@@ -77,7 +77,7 @@ public class Utils {
             osInfo.setGraphic(Icons.getWindowsIcon(18));
         }
         osInfo.setText(System.getProperty(osProperty) + " " + System.getProperty("os.version"));
-        osInfo.setFont(Fonts.subTitle);;
+        osInfo.setFont(Fonts.subTitle());;
     }
 
 }
