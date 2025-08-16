@@ -23,16 +23,18 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javafx.application.Platform.runLater;
+
 public class ExecutionTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(ExecutionTab.class);
     private String commandDisplayName;
     private ShellFlowTerminalWidget terminal;
-    private TerminalToolBar terminalToolBar;
     private final VBox terminalWrapper = new VBox();
     private boolean inProgress = false;
     private boolean finished = false;
     private boolean failed = false;
     private boolean canceled = false;
+    private final StackPane stackPane = new StackPane();
 
     private ExecutionTab(OutputTabBuilder outputTabBuilder) {
         this.commandDisplayName = outputTabBuilder.commandDisplayName;
@@ -40,19 +42,15 @@ public class ExecutionTab extends Tab {
         this.setText(outputTabBuilder.tabName);
         this.setDisable(outputTabBuilder.disabled);
         this.setClosable(outputTabBuilder.closable);
-        this.terminalToolBar = new TerminalToolBar(outputTabBuilder.terminal);
         setTerminal(outputTabBuilder.terminal);
-        Platform.runLater(this::setupOutputTab);
+        runLater(this::setupOutputTab);
     }
 
     public void setupOutputTab() {
         this.terminalWrapper.setFillWidth(true);
         this.terminalWrapper.setPadding(new Insets(5));
         this.terminalWrapper.getStyleClass().addAll(ShellFlow.getSelectedThemeOption().isDark() ? "dark" : "light", "terminal-wrapper");
-        StackPane stackPane = new StackPane();
-        StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
-        StackPane.setMargin(terminalToolBar, new Insets(0, 25, 20, 0));
-        stackPane.getChildren().addAll(terminalWrapper, terminalToolBar);
+        this.stackPane.getChildren().add(terminalWrapper);
         this.setContent(stackPane);
     }
 
@@ -83,6 +81,13 @@ public class ExecutionTab extends Tab {
     public void startTerminal() {
         if (getTerminal() != null) {
             this.getTerminal().start();
+            runLater(()->{
+                this.terminal.createToolBar();
+                TerminalToolBar terminalToolBar = this.terminal.getTerminalToolBar();
+                this.stackPane.getChildren().add(terminalToolBar);
+                StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
+                StackPane.setMargin(terminalToolBar, new Insets(0, 25, 20, 0));
+            });
         }
     }
 
@@ -117,9 +122,8 @@ public class ExecutionTab extends Tab {
     public void setTerminal(ShellFlowTerminalWidget terminal) {
         this.terminal = terminal;
         if(terminal != null) {
-            terminalToolBar.setTerminalWidget(terminal);
             setOnClose(null);
-            Platform.runLater(() -> {
+            runLater(() -> {
                 terminalWrapper.getChildren().add(terminal.getPane());
                 VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
                 if (this.getText().isBlank()) {

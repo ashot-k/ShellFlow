@@ -3,9 +3,11 @@ package org.ashot.shellflow.terminal;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import com.techsenger.jeditermfx.ui.settings.SettingsProvider;
 import org.ashot.shellflow.node.modal.FontSelectionDialog;
+import org.ashot.shellflow.node.tab.executions.TerminalToolBar;
 import org.jetbrains.annotations.NotNull;
 
 public class ShellFlowTerminalWidget extends JediTermFxWidget {
+    private TerminalToolBar terminalToolBar;
 
     public ShellFlowTerminalWidget(@NotNull SettingsProvider settingsProvider) {
         super(settingsProvider);
@@ -17,11 +19,19 @@ public class ShellFlowTerminalWidget extends JediTermFxWidget {
         });
     }
 
+    public void createToolBar(){
+        terminalToolBar = new TerminalToolBar(this);
+    }
+
     public void toggleFind(){
         if(super.isShowingFind()) {
             super.hideFindComponent();
         }else{
             super.showFindComponent();
         }
+    }
+
+    public TerminalToolBar getTerminalToolBar() {
+        return terminalToolBar;
     }
 }

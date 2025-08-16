@@ -19,7 +19,6 @@ import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_IC
 public class TerminalToolBar extends VBox {
     private ShellFlowTerminalWidget terminalWidget;
 
-
     public TerminalToolBar(ShellFlowTerminalWidget termFxWidget){
         this.terminalWidget = termFxWidget;
 
@@ -42,7 +41,9 @@ public class TerminalToolBar extends VBox {
         });
         new Thread(()->{
             try {
-                terminalWidget.getTtyConnector().waitFor();
+                if(terminalWidget.getTtyConnector() != null) {
+                    terminalWidget.getTtyConnector().waitFor();
+                }
                 stopProcessButton.setDisable(true);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -67,7 +68,4 @@ public class TerminalToolBar extends VBox {
         getStyleClass().addAll( "terminal-toolBar");
     }
 
-    public void setTerminalWidget(ShellFlowTerminalWidget terminalWidget) {
-        this.terminalWidget = terminalWidget;
-    }
 }
