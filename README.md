@@ -5,9 +5,13 @@ JavaFX 24
 ### Build
 The application can be built using the following command:
 
+`mvn clean package jpackage:jpackage@app-image `
+
+An application installer (for windows) can be made by running: 
+
 `mvn clean package jpackage:jpackage@windows `
 
-This will create a new build of the application inside `${project.basedir}/output`
+These will create a new build of the application inside `${project.basedir}/output`
 
 ### Dependencies
 - atlantafx-base 
