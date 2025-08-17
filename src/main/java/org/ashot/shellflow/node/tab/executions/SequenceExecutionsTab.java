@@ -7,15 +7,16 @@ import org.ashot.shellflow.data.command.CommandSequence;
 import java.util.List;
 
 public class SequenceExecutionsTab extends Tab {
-    private TabPane sequentialExecutionTabPane;
-    private CommandSequence commandSequence;
+    private final TabPane sequenceExecutionTabPane;
+    private final CommandSequence commandSequence;
 
-    public SequenceExecutionsTab(CommandSequence commandSequence, TabPane content) {
-        super(commandSequence.getSequenceName(), content);
+    public SequenceExecutionsTab(CommandSequence commandSequence) {
+        super(commandSequence.getSequenceName());
         this.commandSequence = commandSequence;
-        this.sequentialExecutionTabPane = content;
-        this.setOnClosed(_ -> {
-            for (Tab tab : sequentialExecutionTabPane.getTabs()) {
+        this.sequenceExecutionTabPane = new TabPane();
+        setContent(sequenceExecutionTabPane);
+        setOnClosed(_ -> {
+            for (Tab tab : sequenceExecutionTabPane.getTabs()) {
                 if (tab instanceof ExecutionTab executionTab) {
                     executionTab.shutDownTerminal();
                 }
@@ -24,11 +25,11 @@ public class SequenceExecutionsTab extends Tab {
     }
 
     public List<ExecutionTab> getSequentialExecutionTabPaneTabs() {
-        return sequentialExecutionTabPane.getTabs().stream().filter(e -> e instanceof ExecutionTab).map(o -> (ExecutionTab) o).toList();
+        return sequenceExecutionTabPane.getTabs().stream().filter(e -> e instanceof ExecutionTab).map(o -> (ExecutionTab) o).toList();
     }
 
-    public TabPane getSequentialExecutionTabPane() {
-        return sequentialExecutionTabPane;
+    public TabPane getSequenceTabPane() {
+        return sequenceExecutionTabPane;
     }
 
     public CommandSequence getCommandSequence() {

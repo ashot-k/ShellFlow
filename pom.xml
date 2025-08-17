@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.6.12</version>
+    <version>0.6.13</version>
     <name>shellflow</name>
 
     <properties>

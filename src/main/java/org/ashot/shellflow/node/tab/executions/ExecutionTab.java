@@ -1,7 +1,5 @@
 package org.ashot.shellflow.node.tab.executions;
 
-import com.pty4j.PtyProcess;
-import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,7 +14,6 @@ import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
-import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,16 +51,20 @@ public class ExecutionTab extends Tab {
         this.setContent(stackPane);
     }
 
-    public static ExecutionTab constructOutputTabWithTerminalProcess(PtyProcess process, Command command) {
-        return new OutputTabBuilder(TerminalFactory.createTerminalWidget(process))
-                .setTabName(command.isNameSet() ? command.getName() : "Process - " + process.pid())
+    public void checkTabName(Command command, Process process){
+        setText(command.isNameSet() ? command.getName() : "Process - " + process.pid());
+    }
+
+    public static ExecutionTab constructTabFromCommand(Command command) {
+        return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
+                .setTabName(command.isNameSet() ? command.getName() : "")
                 .setCommandDisplayName(command.getArgumentsString())
                 .setTooltip(command.getArgumentsString())
                 .build();
     }
 
     public static ExecutionTab constructSequencePartOutputTab(Command command) {
-        return new OutputTabBuilder()
+        return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
                 .setTabName(command.getName())
                 .setTooltip(command.getArgumentsString())
                 .setCommandDisplayName(command.getArgumentsString())
@@ -79,7 +80,7 @@ public class ExecutionTab extends Tab {
     }
 
     public void startTerminal() {
-        if (getTerminal() != null) {
+        if (getTerminal() != null && getTerminal().getTtyConnector() != null) {
             this.getTerminal().start();
             runLater(()->{
                 this.terminal.createToolBar();
@@ -126,13 +127,9 @@ public class ExecutionTab extends Tab {
             runLater(() -> {
                 terminalWrapper.getChildren().add(terminal.getPane());
                 VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
-                if (this.getText().isBlank()) {
-                    this.setText("Process - " + ((PtyProcessTtyConnector) terminal.getTtyConnector()).getProcess().pid());
-                }
             });
         }
     }
-
 
     public void setOnClose(EventHandler<Event> event){
         this.setOnCloseRequest(closeEvent->{

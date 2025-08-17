@@ -2,7 +2,6 @@ package org.ashot.shellflow.node.tab.setup;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -16,6 +15,7 @@ import org.ashot.shellflow.node.entry.LabeledTextInput;
 import org.ashot.shellflow.node.icon.Icons;
 
 import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_ICON_SIZE;
+import static org.ashot.shellflow.utils.NodeUtils.addPaddingHorizontal;
 
 
 public class SidePanel extends VBox {
@@ -47,7 +47,7 @@ public class SidePanel extends VBox {
         delayPerCmdSlider.setShowTickLabels(true);
         delayPerCmdSlider.setShowTickMarks(true);
         delayPerCmdSlider.setSnapToTicks(true);
-        delayPerCmdSlider.setPadding(new Insets(0, 5, 0, 5));
+        addPaddingHorizontal(delayPerCmdSlider, 5);
         Label sliderLabel = new Label("Delay between commands (seconds)");
         sliderLabel.setFont(Fonts.detailText());
         VBox sliderBox = new VBox(2, sliderLabel, delayPerCmdSlider);
@@ -60,6 +60,7 @@ public class SidePanel extends VBox {
         LabeledTextInput labeledSequentialNameField = new LabeledTextInput("Execution name", sequentialNameField);
         labeledSequentialNameField.getTextInputControl().disableProperty().bind(sequentialOption.selectedProperty().not());
         labeledSequentialNameField.getLabel().disableProperty().bind(sequentialOption.selectedProperty().not());
+        sliderBox.disableProperty().bind(sequentialOption.selectedProperty());
         VBox sequentialOptionBox = new VBox(5, sequentialOption, labeledSequentialNameField);
 
         clearAllEntriesButton = new Button("Clear All", Icons.getClearIcon(DEFAULT_BUTTON_ICON_SIZE));

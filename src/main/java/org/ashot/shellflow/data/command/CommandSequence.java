@@ -10,10 +10,9 @@ public class CommandSequence {
     private int steps;
     private int currentStep = 0;
 
-    public CommandSequence(List<Command> commandList, int delayPerCommand, String sequenceName) {
+    public CommandSequence(List<Command> commandList, String sequenceName) {
         this.commandList = commandList;
         this.steps = commandList.size();
-        this.delayPerCommand = delayPerCommand * 1000;
         this.sequenceName = formattedName(sequenceName);
     }
 

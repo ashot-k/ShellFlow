@@ -13,6 +13,12 @@ import java.util.function.Consumer;
 
 public class TerminalFactory {
 
+    public static @NotNull ShellFlowTerminalWidget createTerminalWidget(){
+        ShellFlowTerminalWidget widget = new ShellFlowTerminalWidget(new ThemedSettingsProvider());
+        widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
+        return widget;
+    }
+
     public static @NotNull ShellFlowTerminalWidget createTerminalWidget(PtyProcess process) {
         ShellFlowTerminalWidget widget = new ShellFlowTerminalWidget(new ThemedSettingsProvider());
         widget.setTtyConnector(createTtyConnector(process));
@@ -27,7 +33,7 @@ public class TerminalFactory {
         return widget;
     }
 
-    private static @NotNull ProcessTtyConnector createTtyConnector(PtyProcess process) {
+    public static @NotNull ProcessTtyConnector createTtyConnector(PtyProcess process) {
         try {
             return new PtyProcessTtyConnector(process, StandardCharsets.UTF_8);
         } catch (Exception e) {
@@ -35,7 +41,7 @@ public class TerminalFactory {
         }
     }
 
-    private static @NotNull ProcessTtyConnector createTtyConnector(PtyProcess process, Consumer<String> outputMonitor) {
+    public static @NotNull ProcessTtyConnector createTtyConnector(PtyProcess process, Consumer<String> outputMonitor) {
         try {
             PtyProcessTtyConnector baseConnector = new PtyProcessTtyConnector(process, StandardCharsets.UTF_8);
             return new MonitoringTtyConnector(baseConnector, outputMonitor);

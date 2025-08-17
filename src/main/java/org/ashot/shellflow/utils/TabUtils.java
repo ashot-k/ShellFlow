@@ -29,7 +29,6 @@ public class TabUtils {
 
     public static void setInProgress(Tab tab) {
         Platform.runLater(() -> {
-//            tab.setGraphic(Icons.getExecutionInProgressIcon());
             tab.setGraphic(Icons.getExecutionInProgressIcon(tabIconSize));
             tab.setDisable(false);
             tab.setClosable(true);

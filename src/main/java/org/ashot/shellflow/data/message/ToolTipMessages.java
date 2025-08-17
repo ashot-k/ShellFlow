@@ -18,7 +18,7 @@ public class ToolTipMessages {
     }
 
     public static String wsl(){
-        return "Will run inside WSL\n In addition the path browser will attempt to translate windows paths to valid WSL paths";
+        return "Will run inside WSL\nIn addition the path browser will attempt to translate windows paths to valid WSL paths";
     }
 
     public static String stopProcess(){

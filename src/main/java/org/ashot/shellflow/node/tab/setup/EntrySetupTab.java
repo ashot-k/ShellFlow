@@ -105,7 +105,7 @@ public class EntrySetupTab extends Tab {
         log.debug("Adding entry box with name: {}, path: {}, command: {}", entry.getName(), entry.getPath(), entry.getCommand());
         EntryBox entryBox = entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
-        entryBox.setOnExecuteButtonAction(_ -> CommandExecutor.execute(entryToCommand(entryBoxToEntry(entryBox), false)));
+        entryBox.setOnExecuteButtonAction(_ -> new CommandExecutor().execute(entryToCommand(entryBoxToEntry(entryBox), false)));
         setupDragging(entryBox);
         Animator.fadeInBeforeAdditionToList(entryBox);
         entriesContainer.getChildren().add(entryBox);
@@ -185,10 +185,10 @@ public class EntrySetupTab extends Tab {
     public void executeAll() {
         log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
         if(getSequentialOption().isSelected()){
-            SequenceExecutor.executeSequence(getEntries(), getSequentialNameField().getText(), getDelayPerCmd());
+            new SequenceExecutor().executeSequence(getEntries(), getSequentialNameField().getText());
         }
         else {
-            CommandExecutor.executeAll(getEntries(), getDelayPerCmd());
+            new CommandExecutor().executeAll(getEntries(), getDelayPerCmd());
         }
     }
 
