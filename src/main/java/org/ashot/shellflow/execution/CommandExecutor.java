@@ -9,6 +9,7 @@ import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.notification.Notification;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
+import org.ashot.shellflow.node.tab.executions.ParallelExecutionsTab;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.ashot.shellflow.utils.TabUtils;
@@ -16,12 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.message.NotificationMessages.failNotificationMessage;
 import static org.ashot.shellflow.data.message.NotificationMessages.finishedNotificationMessage;
+import static org.ashot.shellflow.node.tab.executions.ExecutionTab.constructSequencePartOutputTab;
 import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
 import static org.ashot.shellflow.utils.TabUtils.*;
 import static org.ashot.shellflow.utils.Utils.calculateDelay;
@@ -50,6 +52,22 @@ public class CommandExecutor {
             PtyProcessBuilder processBuilder = buildProcess(command);
             ExecutionTab tab = ExecutionTab.constructTabFromCommand(command);
             addToExecutions(tab);
+            PtyProcess process = startProcess(tab, processBuilder);
+            runLater(()-> tab.checkTabName(command, process));
+            waitForProcess(process);
+            handleProcessExit(tab, process);
+        }).start();
+    }
+
+    public void execute(ExecutionTab tab, Command command, long delay){
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage());
+                new AlertPopup("Execution startup Error", null, e.getMessage(), false).show();
+            }
+            PtyProcessBuilder processBuilder = buildProcess(command);
             PtyProcess process = startProcess(tab, processBuilder);
             runLater(()-> tab.checkTabName(command, process));
             waitForProcess(process);
@@ -87,29 +105,46 @@ public class CommandExecutor {
         return -1;
     }
 
-    private int handleProcessExit(ExecutionTab tab, Process process){
+    private void handleProcessExit(ExecutionTab tab, Process process){
         if (process.exitValue() == 0) {
             handleProcessFinished(tab);
         } else if (process.exitValue() > 0){
             handleProcessFailed(tab, process.exitValue());
         }
-        return process.exitValue();
     }
 
-    public void executeAll(List<Entry> entries, int delayPerCmd) {
-        HashMap<Command, Long> tasks = new HashMap<>();
-        int i = 0;
+    public void executeAll(List<Entry> entries, String executionName, int delayPerCmd) {
+        List<Command> commandList = new ArrayList<>();
         for (Entry entry: entries) {
             Command cmd = EntryMapper.entryToCommand(entry, false);
             if(cmd == null){
                 continue;
             }
-            long delay = calculateDelay(i++, delayPerCmd);
-            tasks.put(cmd,  delay);
+            commandList.add(cmd);
         }
-        for(Command command : tasks.keySet()){
-            execute(command, tasks.get(command));
+        ParallelExecutionsTab parallelExecutionsTab = new ParallelExecutionsTab();
+        parallelExecutionsTab.setName(executionName);
+        addToExecutions(parallelExecutionsTab);
+
+        List<ExecutionTab> executionTabs = constructPlaceHolderTabs(commandList, parallelExecutionsTab);
+        runLater(()-> parallelExecutionsTab.getParallelExecutionTabPane().getSelectionModel().select(0));
+        for (int i = 0; i < executionTabs.size(); i++) {
+            ExecutionTab executionTab = executionTabs.get(i);
+            long delay = calculateDelay(i, delayPerCmd);
+            execute(executionTab, commandList.get(i), delay);
         }
+    }
+
+    private List<ExecutionTab> constructPlaceHolderTabs(List<Command> commandList, ParallelExecutionsTab parallelExecutionsTab) {
+        List<ExecutionTab> executionTabs = new ArrayList<>();
+        for (Command command : commandList) {
+            ExecutionTab tab = constructSequencePartOutputTab(command);
+            String currentTabName = command.isNameSet() ? command.getName() : "Process - Unknown";
+            tab.setText(currentTabName);
+            executionTabs.add(tab);
+            runLater(() -> parallelExecutionsTab.getParallelExecutionTabPane().getTabs().add(tab));
+        }
+        return executionTabs;
     }
 
     public void handleProcessFinished(ExecutionTab tab){

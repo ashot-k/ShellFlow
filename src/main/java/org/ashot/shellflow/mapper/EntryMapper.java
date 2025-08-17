@@ -9,6 +9,9 @@ import org.ashot.shellflow.node.popup.AlertPopup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javafx.application.Platform.runLater;
 import static javafx.scene.control.Alert.AlertType;
 
@@ -45,6 +48,18 @@ public class EntryMapper {
             handleError(e);
         }
         return null;
+    }
+
+    public static List<Command> buildCommands(List<Entry> entries) {
+        List<Command> commands = new ArrayList<>();
+        for (Entry entry : entries) {
+            Command cmd = EntryMapper.entryToCommand(entry, false);
+            if (cmd == null) {
+                continue;
+            }
+            commands.add(cmd);
+        }
+        return commands;
     }
 
     private static void handleError(Exception e) {

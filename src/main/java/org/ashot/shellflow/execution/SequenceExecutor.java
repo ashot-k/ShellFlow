@@ -34,14 +34,13 @@ public class SequenceExecutor extends CommandExecutor {
         //todo add thread to a list, track tab closure to terminate the thread
         //todo add logs
         new Thread(() -> {
-            List<Command> commandList = buildCommands(entries);
+            List<Command> commandList = EntryMapper.buildCommands(entries);
             CommandSequence commandSequence = new CommandSequence(commandList, seqName);
 
             SequenceExecutionsTab sequenceTab = new SequenceExecutionsTab(commandSequence);
             TabPane sequenceTabPane = sequenceTab.getSequenceTabPane();
             addToExecutions(sequenceTab);
             setInProgress(sequenceTab);
-
             List<ExecutionTab> executionTabs = constructPlaceHolderTabs(commandList, sequenceTab);
 
             for (int i = 0; i < commandList.size(); i++) {
@@ -89,18 +88,6 @@ public class SequenceExecutor extends CommandExecutor {
             return false;
         }
         return true;
-    }
-
-    private List<Command> buildCommands(List<Entry> entries) {
-        List<Command> seqCommands = new ArrayList<>();
-        for (Entry entry : entries) {
-            Command cmd = EntryMapper.entryToCommand(entry, false);
-            if (cmd == null) {
-                continue;
-            }
-            seqCommands.add(cmd);
-        }
-        return seqCommands;
     }
 
 

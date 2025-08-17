@@ -77,7 +77,7 @@ public class Controller {
         JSONObject jsonObject = createSaveJSONObject(entrySetupTab.getEntries(),
                 (int) entrySetupTab.getDelayPerCmdSlider().getValue(),
                 entrySetupTab.getSequentialOption().isSelected(),
-                entrySetupTab.getSequentialNameField().getText());
+                entrySetupTab.getExecutionName().getText());
         log.debug("Saving: {}", jsonObject.toString(1));
         FileUtils.writeJSONDataToFile(file, jsonObject);
         log.debug("Saved: {}", file.getAbsolutePath());
@@ -109,7 +109,7 @@ public class Controller {
         }
         entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getDouble("delay"));
         entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean("sequential"));
-        entrySetupTab.getSequentialNameField().setText(jsonData.getString("sequentialName"));
+        entrySetupTab.getExecutionName().setText(jsonData.getString("sequentialName"));
         Recents.saveRecentFile(fileToLoad.getAbsolutePath());
         Recents.refreshDir(DirType.LAST_LOADED, fileToLoad.getParent());
         refreshFileLoaded(fileToLoad.getAbsolutePath());

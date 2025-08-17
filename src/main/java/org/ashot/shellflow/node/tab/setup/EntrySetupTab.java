@@ -74,11 +74,6 @@ public class EntrySetupTab extends Tab {
         VBox.setVgrow(sidePanel, Priority.ALWAYS);
         pane.setAlignment(Pos.CENTER);
 
-        selectedProperty().addListener((_, _, isSelected) -> {
-            sidePanel.getAddEntryButton().setDisable(!isSelected);
-            sidePanel.getClearAllEntriesButton().setDisable(!isSelected || getEntryBoxes().isEmpty());
-        });
-
         addEntryListChangeListener(_ -> sidePanel.getExecuteAllButton().setDisable(getEntryBoxes().isEmpty()));
         addEntryListChangeListener(_ -> sidePanel.getClearAllEntriesButton().setDisable(getEntryBoxes().isEmpty()));
 
@@ -185,10 +180,10 @@ public class EntrySetupTab extends Tab {
     public void executeAll() {
         log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
         if(getSequentialOption().isSelected()){
-            new SequenceExecutor().executeSequence(getEntries(), getSequentialNameField().getText());
+            new SequenceExecutor().executeSequence(getEntries(), getExecutionName().getText());
         }
         else {
-            new CommandExecutor().executeAll(getEntries(), getDelayPerCmd());
+            new CommandExecutor().executeAll(getEntries(), getExecutionName().getText(), getDelayPerCmd());
         }
     }
 
@@ -207,8 +202,8 @@ public class EntrySetupTab extends Tab {
         return sidePanel.getSequentialOption();
     }
 
-    public TextField getSequentialNameField() {
-        return sidePanel.getSequentialNameField();
+    public TextField getExecutionName() {
+        return sidePanel.getExecutionNameField();
     }
 
     public Slider getDelayPerCmdSlider() {

@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.tab.setup;
 
+import atlantafx.base.controls.Spacer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -7,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.ashot.shellflow.data.constant.Fonts;
@@ -20,7 +20,7 @@ import static org.ashot.shellflow.utils.NodeUtils.addPaddingHorizontal;
 
 public class SidePanel extends VBox {
     private final ToggleButton  sequentialOption;
-    private final TextField sequentialNameField;
+    private final TextField executionNameField;
     private final Slider delayPerCmdSlider;
     private final Button executeAllButton;
     private final Button closeAllButton;
@@ -55,13 +55,12 @@ public class SidePanel extends VBox {
 
         sequentialOption = new ToggleButton("Sequential");
         sequentialOption.setFont(Fonts.detailText());
-        sequentialNameField = new TextField();
-        sequentialNameField.setFont(Fonts.detailText());
-        LabeledTextInput labeledSequentialNameField = new LabeledTextInput("Execution name", sequentialNameField);
-        labeledSequentialNameField.getTextInputControl().disableProperty().bind(sequentialOption.selectedProperty().not());
-        labeledSequentialNameField.getLabel().disableProperty().bind(sequentialOption.selectedProperty().not());
         sliderBox.disableProperty().bind(sequentialOption.selectedProperty());
-        VBox sequentialOptionBox = new VBox(5, sequentialOption, labeledSequentialNameField);
+
+        executionNameField = new TextField();
+        executionNameField.setFont(Fonts.detailText());
+        LabeledTextInput labeledExecutionNameField = new LabeledTextInput("Execution name", executionNameField);
+        VBox executionOptionsBox = new VBox(5, labeledExecutionNameField, sliderBox, sequentialOption);
 
         clearAllEntriesButton = new Button("Clear All", Icons.getClearIcon(DEFAULT_BUTTON_ICON_SIZE));
         clearAllEntriesButton.setOnAction(onClearAllEntries);
@@ -91,12 +90,12 @@ public class SidePanel extends VBox {
 
         HBox executionActionsBox = new HBox(10, closeAllButton, executeAllButton);
         executionActionsBox.setAlignment(Pos.CENTER);
-        VBox executionOptions = new VBox(8, sliderBox, sequentialOptionBox, executionActionsBox);
+        VBox executionOptions = new VBox(8,  executionOptionsBox, executionActionsBox);
 
         VBox entrySection = new VBox(2, entryOptionsTitleBox, entryActionsBox);
         HBox.setHgrow(entrySection, Priority.ALWAYS);
 
-        VBox executionSection = new VBox(2, executionOptionsTitleBox, executionOptions);
+        VBox executionSection = new VBox(5, executionOptionsTitleBox, executionOptions);
         HBox.setHgrow(executionSection, Priority.ALWAYS);
 
         executeAllButton.setFont(Fonts.buttonText());
@@ -104,8 +103,7 @@ public class SidePanel extends VBox {
         closeAllButton.setFont(Fonts.buttonText());
         addEntryButton.setFont(Fonts.buttonText());
 
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
+        Spacer spacer = new Spacer(Orientation.VERTICAL);
         getChildren().addAll(entrySection, spacer, executionSection);
         setSpacing(25);
         getStyleClass().addAll("bordered-container");
@@ -115,8 +113,8 @@ public class SidePanel extends VBox {
         return sequentialOption;
     }
 
-    public TextField getSequentialNameField() {
-        return sequentialNameField;
+    public TextField getExecutionNameField() {
+        return executionNameField;
     }
 
     public Slider getDelayPerCmdSlider() {
