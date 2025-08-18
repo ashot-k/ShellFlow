@@ -13,5 +13,5 @@
   ],
   "delay": 12,
   "sequential": true,
-  "sequentialName": "whatever"
+  "executionName": "whatever"
 }
