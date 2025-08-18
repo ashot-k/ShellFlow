@@ -109,7 +109,7 @@ public class Controller {
         }
         entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getDouble("delay"));
         entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean("sequential"));
-        entrySetupTab.getExecutionName().setText(jsonData.getString("sequentialName"));
+        entrySetupTab.getExecutionName().setText(jsonData.getString("executionName"));
         Recents.saveRecentFile(fileToLoad.getAbsolutePath());
         Recents.refreshDir(DirType.LAST_LOADED, fileToLoad.getParent());
         refreshFileLoaded(fileToLoad.getAbsolutePath());

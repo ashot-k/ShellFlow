@@ -20,13 +20,13 @@ public class Utils {
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
     private static String osProperty = "os.name";
 
-    public static JSONObject createSaveJSONObject(List<Entry> entries, int delayPerCmd, boolean seqOption, String seqName) {
+    public static JSONObject createSaveJSONObject(List<Entry> entries, int delayPerCmd, boolean seqOption, String executionName) {
         JSONArray entriesArray = Entry.createEntryJSONArray(entries);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("entries", entriesArray);
         jsonObject.put("delay", delayPerCmd);
         jsonObject.put("sequential", seqOption);
-        jsonObject.put("sequentialName", seqName);
+        jsonObject.put("executionName", executionName);
         return jsonObject;
     }
 

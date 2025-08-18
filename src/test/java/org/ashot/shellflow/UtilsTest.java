@@ -45,7 +45,7 @@ class UtilsTest {
                 () -> assertEquals("cmd_1", ((JSONObject) entries.get(0)).get("name")),
                 () -> assertEquals(12, object.get("delay")),
                 () -> assertEquals(true, object.get("sequential")),
-                () -> assertEquals("whatever", object.get("sequentialName"))
+                () -> assertEquals("whatever", object.get("executionName"))
         );
     }
 }
