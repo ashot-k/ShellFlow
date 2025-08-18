@@ -83,7 +83,7 @@ public class EntryBox extends VBox {
         executeButton.setMaxWidth(80);
         HBox executeButtonContainer = new HBox(executeButton);
         executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
-        executeButtonContainer.setPrefWidth(80);
+        executeButtonContainer.setPrefWidth(60);
         HBox.setHgrow(executeButton, Priority.ALWAYS);
 
         GridPane entryGrid = new GridPane();
@@ -108,8 +108,8 @@ public class EntryBox extends VBox {
         col3.setHgrow(Priority.SOMETIMES);
         entryGrid.getColumnConstraints().addAll(col1, col2 ,col3);
 
-        entryGrid.setHgap(10);
-        entryGrid.setVgap(3);
+        entryGrid.setHgap(8);
+        entryGrid.setVgap(5);
 
         setupEditingTracking();
 

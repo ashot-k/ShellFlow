@@ -107,9 +107,9 @@ public class Controller {
                 entrySetupTab.addEntryBox(new Entry(name, path, cmd, Boolean.parseBoolean(wsl), Boolean.parseBoolean(enabled)));
             }
         }
-        entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getDouble("delay"));
-        entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean("sequential"));
-        entrySetupTab.getExecutionName().setText(jsonData.getString("executionName"));
+        entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getInt(FieldType.DELAY.getId()));
+        entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean(FieldType.SEQUENTIAL.getId()));
+        entrySetupTab.getExecutionName().setText(jsonData.getString(FieldType.EXECUTION_NAME.getId()));
         Recents.saveRecentFile(fileToLoad.getAbsolutePath());
         Recents.refreshDir(DirType.LAST_LOADED, fileToLoad.getParent());
         refreshFileLoaded(fileToLoad.getAbsolutePath());

@@ -5,9 +5,6 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
@@ -36,6 +33,34 @@ public class Animator {
         timeline.play();
     }
 
+    public static Timeline fadeOut(Node node){
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), 1, Interpolator.EASE_IN)),
+                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(node.opacityProperty(), 0, Interpolator.EASE_IN))
+        );
+    }
+
+    public static Timeline fadeIn(Node node){
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), 0, Interpolator.EASE_IN)),
+                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(node.opacityProperty(), 1, Interpolator.EASE_IN))
+        );
+    }
+
+    public static Timeline fade(Node node, double initial, double end, Duration duration){
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), initial, Interpolator.EASE_IN)),
+                new KeyFrame(duration, new KeyValue(node.opacityProperty(), end, Interpolator.EASE_IN))
+        );
+    }
+
+    public static Timeline fade(Node node, double initial, double end){
+        return new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), initial, Interpolator.EASE_IN)),
+                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(node.opacityProperty(), end, Interpolator.EASE_IN))
+        );
+    }
+
     public static void fadeInBeforeAdditionToList(Node node){
         node.setOpacity(0);
         AtomicBoolean finished = new AtomicBoolean(false);
@@ -57,27 +82,6 @@ public class Animator {
         Timeline t = Animations.rotateIn(node, DEFAULT_ROTATE_IN_AND_WOBBLE_DURATION);
         t.setOnFinished(_ -> Animations.wobble(node).play());
         t.play();
-    }
-
-    public static void animateThemeChange(Scene scene) {
-        Image snapshot = scene.snapshot(null);
-        Pane root = (Pane) scene.getRoot();
-
-        ImageView imageView = new ImageView(snapshot);
-        root.getChildren().addFirst(imageView); // add snapshot on top
-        var fadeOutTransition = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(root.opacityProperty(), 1, Interpolator.EASE_OUT)),
-                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(root.opacityProperty(), 0, Interpolator.EASE_OUT))
-        );
-        fadeOutTransition.setOnFinished(_ -> {
-            var fadeInTransition = new Timeline(
-                    new KeyFrame(Duration.ZERO, new KeyValue(root.opacityProperty(), 0, Interpolator.EASE_IN)),
-                    new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(root.opacityProperty(), 1, Interpolator.EASE_IN))
-            );
-            fadeInTransition.play();
-            root.getChildren().remove(imageView);
-        });
-        fadeOutTransition.play();
     }
 
     public static void spinIcon(Node icon) {

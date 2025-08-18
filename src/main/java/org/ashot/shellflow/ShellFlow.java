@@ -1,11 +1,14 @@
 package org.ashot.shellflow;
 
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -105,14 +108,25 @@ public class ShellFlow extends Application {
     public static void setTheme(ThemeOption option) {
         selectedTheme = option;
         if (getPrimaryStage() != null && getPrimaryStage().getScene() != null) {
-            Parent root = getPrimaryStage().getScene().getRoot();
-            Animator.animateThemeChange(getPrimaryStage().getScene());
-            root.getStyleClass().removeAll("dark", "light");
-            root.getStyleClass().add(selectedTheme.isDark() ? "dark" : "light");
-            getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
+            Pane root = (Pane) getPrimaryStage().getScene().getRoot();
+            Image snapshot = getPrimaryStage().getScene().snapshot(null);
+            ImageView imageView = new ImageView(snapshot);
+            root.getChildren().addFirst(imageView); // add snapshot on top
+            Timeline fadeOutTransition = Animator.fadeOut(root);
+            fadeOutTransition.setOnFinished(_ -> {
+                root.getChildren().remove(imageView);
+                root.getStyleClass().removeAll("dark", "light");
+                root.getStyleClass().add(selectedTheme.isDark() ? "dark" : "light");
+                getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
+                Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
+                Animator.fadeIn(root).play();
+            });
+            fadeOutTransition.play();
+        }else{
+            Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
         }
-        Application.setUserAgentStylesheet(option.getTheme().getUserAgentStylesheet());
     }
+
 
     private static void updateFont(Font font) {
         updateFont(font.getFamily(), font.getSize());

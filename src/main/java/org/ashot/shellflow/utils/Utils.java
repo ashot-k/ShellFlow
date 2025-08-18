@@ -23,10 +23,10 @@ public class Utils {
     public static JSONObject createSaveJSONObject(List<Entry> entries, int delayPerCmd, boolean seqOption, String executionName) {
         JSONArray entriesArray = Entry.createEntryJSONArray(entries);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("entries", entriesArray);
-        jsonObject.put("delay", delayPerCmd);
-        jsonObject.put("sequential", seqOption);
-        jsonObject.put("executionName", executionName);
+        jsonObject.put(FieldType.ENTRIES.getId(), entriesArray);
+        jsonObject.put(FieldType.DELAY.getId(), delayPerCmd);
+        jsonObject.put(FieldType.SEQUENTIAL.getId(), seqOption);
+        jsonObject.put(FieldType.EXECUTION_NAME.getId(), executionName);
         return jsonObject;
     }
 
