@@ -140,7 +140,7 @@ public class Controller {
     }
 
     private static void resetFileLoaded() {
-        currentlyLoadedFileLocation = null;
+        currentlyLoadedFileLocation = "";
     }
 
     public static String getCurrentlyLoadedFileLocation() {
@@ -148,7 +148,7 @@ public class Controller {
             return currentlyLoadedFileLocation;
         }
         resetFileLoaded();
-        return null;
+        return "";
     }
 
     private void handleUserInput(KeyEvent keyEvent) {

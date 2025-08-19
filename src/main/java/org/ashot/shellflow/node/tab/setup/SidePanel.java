@@ -33,11 +33,11 @@ public class SidePanel extends VBox {
             EventHandler<ActionEvent> onAddEntry,
             EventHandler<ActionEvent> onClearAllEntries) {
 
-        Text entryOptionsTitle= new Text("Entry Options");
+        Text entryOptionsTitle = new Text("Entry Options");
         entryOptionsTitle.setFont(Fonts.title());
         VBox entryOptionsTitleBox = new VBox(entryOptionsTitle, new Separator(Orientation.HORIZONTAL));
 
-        Text executionOptionsTitle= new Text("Execution Options");
+        Text executionOptionsTitle = new Text("Execution Options");
         executionOptionsTitle.setFont(Fonts.title());
         VBox executionOptionsTitleBox = new VBox(executionOptionsTitle, new Separator(Orientation.HORIZONTAL));
 
@@ -90,7 +90,7 @@ public class SidePanel extends VBox {
 
         HBox executionActionsBox = new HBox(10, closeAllButton, executeAllButton);
         executionActionsBox.setAlignment(Pos.CENTER);
-        VBox executionOptions = new VBox(8,  executionOptionsBox, executionActionsBox);
+        VBox executionOptions = new VBox(8, executionOptionsBox, executionActionsBox);
 
         VBox entrySection = new VBox(2, entryOptionsTitleBox, entryActionsBox);
         HBox.setHgrow(entrySection, Priority.ALWAYS);

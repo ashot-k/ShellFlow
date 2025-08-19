@@ -30,7 +30,7 @@ public class EntryBox extends VBox {
     private static final double PATH_FIELD_WIDTH = 300;
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
     private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
-    public static final double MAX_WIDTH = 460;
+    public static final double MAX_WIDTH = 480;
     private static final List<String> styleClasses = List.of("bordered-container");
 
     private final NameField nameField;

@@ -16,7 +16,9 @@ public class FontSelectionMenuItem extends MenuItem {
     public FontSelectionMenuItem(){
         modal = ControllerRegistry.getMainController().getMainModal();
         setOnAction(_-> {
-            fontSelectionDialog = new FontSelectionDialog(() -> modal.hide(true));
+            if(fontSelectionDialog == null) {
+                fontSelectionDialog = new FontSelectionDialog(() -> modal.hide(true));
+            }
             showFontModal();
         });
         setText("Font...");

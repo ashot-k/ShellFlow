@@ -26,8 +26,8 @@ import java.net.URL;
 public class ShellFlow extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(ShellFlow.class);
-    public static final int SIZE_X = 1400;
-    public static final int SIZE_Y = 800;
+    public static final int SIZE_X = 1500;
+    public static final int SIZE_Y = 750;
     public static final String WINDOW_TITLE = "ShellFlow";
     private static final boolean RESIZABLE = true;
     private static ThemeOption selectedTheme = ThemeOption.DARK_MODE;

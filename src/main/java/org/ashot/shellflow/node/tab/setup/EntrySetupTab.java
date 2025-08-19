@@ -1,6 +1,9 @@
 package org.ashot.shellflow.node.tab.setup;
 
+import atlantafx.base.controls.Spacer;
+import atlantafx.base.util.Animations;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -21,6 +24,7 @@ import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.Animator;
+import org.ashot.shellflow.utils.DebugUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,18 +39,17 @@ public class EntrySetupTab extends Tab {
     private final FlowPane entriesContainer;
     private final SidePanel sidePanel;
     private final EntryInfoBar entryInfoBar;
-    private final int entriesContainerGap = 25;
+    private final int entriesContainerGap = 15;
 
     private int dragSourceIndex = -1;
 
     public EntrySetupTab() {
         entriesContainer = new FlowPane();
-        entriesContainer.setAlignment(Pos.TOP_LEFT);
         entriesContainer.setPadding(new Insets(10, 15, 0, 15));
-        entriesContainer.getStyleClass().addAll("entry-container");
         entriesContainer.setHgap(entriesContainerGap);
         entriesContainer.setVgap(entriesContainerGap);
         entriesContainer.setRowValignment(VPos.TOP);
+        entriesContainer.setAlignment(Pos.TOP_CENTER);
 
         HBox.setHgrow(entriesContainer, Priority.ALWAYS);
 
@@ -60,7 +63,7 @@ public class EntrySetupTab extends Tab {
         scrollPane.setContent(entriesContainerWrapper);
 
         sidePanel = new SidePanel(_ -> executeAll(), _ -> stopAll(), _ -> addEntryBox(), _ -> clearEntryBoxes());
-        sidePanel.setMaxWidth(325);
+        sidePanel.setMaxWidth(300);
 
         Region spacer = new Region();
         Region spacer2 = new Region();
@@ -83,8 +86,6 @@ public class EntrySetupTab extends Tab {
         content.setAlignment(Pos.TOP_CENTER);
         content.getChildren().add(pane);
 
-        entriesContainer.setMaxWidth(EntryBox.MAX_WIDTH * 3 + (entriesContainer.getHgap() * 2 + content.getPadding().getLeft() + content.getPadding().getRight() + 15));
-
         setContent(content);
         setClosable(false);
         setText("Entry Setup");
@@ -100,7 +101,10 @@ public class EntrySetupTab extends Tab {
         log.debug("Adding entry box with name: {}, path: {}, command: {}", entry.getName(), entry.getPath(), entry.getCommand());
         EntryBox entryBox = entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
-        entryBox.setOnExecuteButtonAction(_ -> new CommandExecutor().execute(entryToCommand(entryBoxToEntry(entryBox), false)));
+        entryBox.setOnExecuteButtonAction(_ -> {
+            Animations.shakeY(entryBox.getExecuteButton(), 1.5).play();
+            new CommandExecutor().execute(entryToCommand(entryBoxToEntry(entryBox), false));
+        });
         setupDragging(entryBox);
         Animator.fadeInBeforeAdditionToList(entryBox);
         entriesContainer.getChildren().add(entryBox);
