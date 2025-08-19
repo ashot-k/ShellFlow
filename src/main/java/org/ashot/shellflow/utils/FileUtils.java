@@ -2,7 +2,6 @@ package org.ashot.shellflow.utils;
 
 import javafx.stage.FileChooser;
 import org.ashot.shellflow.data.constant.DirType;
-import org.ashot.shellflow.node.Recents;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -53,8 +52,9 @@ public class FileUtils {
     }
 
     public static File chooseFile(boolean save) {
-        return FileUtils.chooseFile(save, save ? Recents.getLastSavedFolderLocation(): Recents.getLastLoadedFolderLocation());
+        return FileUtils.chooseFile(save, save ? RecentFileUtils.getLastSavedFolderLocation(): RecentFileUtils.getLastLoadedFolderLocation());
     }
+
     private static File chooseFile(boolean saveMode, String initialDir) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", "*.json");
@@ -79,15 +79,21 @@ public class FileUtils {
             f.close();
             return true;
         } catch (IOException e) {
-            runLater(()-> new AlertPopup("Could not save data to file", null, "Could not save entries to file: " + fileToSave.getAbsolutePath() + "\n" +  e.getMessage(), false).show());
+            runLater(()-> new AlertPopup(
+                    "Error",
+                    null,
+                    "Could not save data to file: " + fileToSave.getAbsolutePath() + "\n" +  (e.getMessage() != null ? e.getMessage() : ""),
+                    "Data:\n" + data.toString(1),
+                    false)
+                    .show());
         }
         return false;
     }
 
     public static File openMostRecentFile(Consumer<File> loadFromFile) {
-        File file = Recents.loadMostRecentFile(loadFromFile);
+        File file = RecentFileUtils.loadMostRecentFile(loadFromFile);
         if (file != null) {
-            Recents.refreshDir(DirType.LAST_LOADED, file.getParent());
+            RecentFileUtils.refreshDirLocation(DirType.LAST_LOADED, file.getParent());
         }
         return file;
     }

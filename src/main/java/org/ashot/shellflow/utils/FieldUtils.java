@@ -5,7 +5,7 @@ import javafx.scene.control.Tooltip;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.Fonts;
 
-public class FieldUtil {
+public class FieldUtils {
     private static final double DEFAULT_FIELD_HEIGHT = 35;
 
     public static void setupField(TextInputControl field, FieldType fieldType, String text, String promptText, String toolTip, Double width, Double height, String styleClass){

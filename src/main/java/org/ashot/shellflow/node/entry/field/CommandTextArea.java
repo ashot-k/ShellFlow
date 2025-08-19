@@ -5,7 +5,7 @@ import javafx.scene.control.TextArea;
 import javafx.util.Duration;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.utils.Animator;
-import org.ashot.shellflow.utils.FieldUtil;
+import org.ashot.shellflow.utils.FieldUtils;
 
 public class CommandTextArea extends TextArea {
     public static final int DEFAULT_TEXT_AREA_HEIGHT = 38;
@@ -16,7 +16,7 @@ public class CommandTextArea extends TextArea {
             height = (double) DEFAULT_TEXT_AREA_HEIGHT;
         }
 
-        FieldUtil.setupField(this, FieldType.COMMAND, text, promptText, toolTip, width, height, styleClass);
+        FieldUtils.setupField(this, FieldType.COMMAND, text, promptText, toolTip, width, height, styleClass);
 
         setWrapText(true);
         addHeightExpansionListener(height);

@@ -4,7 +4,7 @@ import atlantafx.base.controls.CustomTextField;
 import javafx.stage.DirectoryChooser;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.node.entry.button.BrowsePath;
-import org.ashot.shellflow.utils.FieldUtil;
+import org.ashot.shellflow.utils.FieldUtils;
 import org.ashot.shellflow.utils.Utils;
 
 import java.io.File;
@@ -13,7 +13,7 @@ public class PathField extends CustomTextField {
     private boolean wsl = false;
 
     public PathField(String text, String promptText, String toolTip, Double width, Double height, String styleClass){
-        FieldUtil.setupField(this, FieldType.PATH, text, promptText, toolTip, width, height, styleClass);
+        FieldUtils.setupField(this, FieldType.PATH, text, promptText, toolTip, width, height, styleClass);
         setRight(new BrowsePath(this::onPathBrowse));
     }
 

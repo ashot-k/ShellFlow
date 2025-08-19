@@ -3,6 +3,7 @@ package org.ashot.shellflow;
 import atlantafx.base.controls.ModalPane;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
@@ -12,7 +13,6 @@ import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.node.Recents;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
@@ -20,6 +20,7 @@ import org.ashot.shellflow.node.tab.profiler.ProfilerTab;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.utils.FileUtils;
+import org.ashot.shellflow.utils.RecentFileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class Controller {
         executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
             entrySetupTab.getCloseAllButton().setDisable(executionsTab.getExecutionsTabPane().getTabs().isEmpty());
         });
-        this.sceneContainer.setOnKeyPressed(this::handleUserInput);
+        sceneContainer.getScene().setOnKeyPressed(this::handleUserInput);
     }
 
     private void writeEntriesToFile(File file) {
@@ -82,8 +83,8 @@ public class Controller {
         FileUtils.writeJSONDataToFile(file, jsonObject);
         log.debug("Saved: {}", file.getAbsolutePath());
         refreshFileLoaded(file.getAbsolutePath());
-        Recents.saveRecentFile(file.getAbsolutePath());
-        Recents.refreshDir(DirType.LAST_SAVED, file.getParent());
+        RecentFileUtils.saveRecentFile(file.getAbsolutePath());
+        RecentFileUtils.refreshDirLocation(DirType.LAST_SAVED, file.getParent());
         entrySetupTab.resetEdited();
         openFile(file);
     }
@@ -110,8 +111,8 @@ public class Controller {
         entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getInt(FieldType.DELAY.getId()));
         entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean(FieldType.SEQUENTIAL.getId()));
         entrySetupTab.getExecutionName().setText(jsonData.getString(FieldType.EXECUTION_NAME.getId()));
-        Recents.saveRecentFile(fileToLoad.getAbsolutePath());
-        Recents.refreshDir(DirType.LAST_LOADED, fileToLoad.getParent());
+        RecentFileUtils.saveRecentFile(fileToLoad.getAbsolutePath());
+        RecentFileUtils.refreshDirLocation(DirType.LAST_LOADED, fileToLoad.getParent());
         refreshFileLoaded(fileToLoad.getAbsolutePath());
         log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
         this.mainTabPane.getSelectionModel().select(TabIndices.ENTRIES.ordinal());
@@ -155,16 +156,19 @@ public class Controller {
         if (getExecutionsTab().isSelected() && keyEvent.isControlDown()) {
             TabPane executionsTabPane = executionsTab.getExecutionsTabPane();
             if (keyEvent.isShiftDown()) {
-                if (keyCode.equals(KeyCode.COMMA)) {
-                    executionsTabPane.getSelectionModel().selectFirst();
-                } else if (keyCode.equals(KeyCode.PERIOD)) {
-                    executionsTabPane.getSelectionModel().selectLast();
+                Node node = executionsTabPane.getSelectionModel().getSelectedItem().getContent();
+                if(node instanceof TabPane tabPane){
+                    if (keyCode.equals(KeyCode.PERIOD)) {
+                        tabPane.getSelectionModel().selectNext();
+                    } else if (keyCode.equals(KeyCode.COMMA)) {
+                        tabPane.getSelectionModel().selectPrevious();
+                    }
                 }
             } else {
-                if (keyCode.equals(KeyCode.COMMA)) {
-                    executionsTabPane.getSelectionModel().selectPrevious();
-                } else if (keyCode.equals(KeyCode.PERIOD)) {
+                if (keyCode.equals(KeyCode.PERIOD)) {
                     executionsTabPane.getSelectionModel().selectNext();
+                } else if (keyCode.equals(KeyCode.COMMA)) {
+                    executionsTabPane.getSelectionModel().selectPrevious();
                 }
             }
         }

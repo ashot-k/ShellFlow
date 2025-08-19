@@ -62,12 +62,12 @@ public class ShellFlow extends Application {
             fxmlLoader.load();
 
             Controller controller = fxmlLoader.getController();
-            controller.init();
             Parent root = fxmlLoader.getRoot();
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
             scene.getStylesheets().add(styleSheet);
             root.getStyleClass().add(getThemeFromConfig().isDark() ? "dark" : "light");
             primaryStage.setScene(scene);
+            controller.init();
             primaryStage.getIcons().add(new Image("icon.png"));
             primaryStage.setTitle(WINDOW_TITLE);
             primaryStage.setResizable(RESIZABLE);

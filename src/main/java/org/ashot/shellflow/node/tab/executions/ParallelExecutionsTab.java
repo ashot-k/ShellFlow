@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.tab.executions;
 
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
@@ -14,6 +15,11 @@ public class ParallelExecutionsTab extends Tab {
                 if (tab instanceof ExecutionTab executionTab) {
                     executionTab.shutDownTerminal();
                 }
+            }
+        });
+        parallelExecutionTabPane.getTabs().addListener((ListChangeListener<Tab>) c -> {
+            if(c.next() && c.getList().isEmpty()){
+                this.getTabPane().getTabs().remove(this);
             }
         });
     }

@@ -19,25 +19,38 @@ public class AlertPopup extends Alert{
     }
 
     public AlertPopup(String title, String header, String msg, boolean criticalError) {
+        this(title, header, msg, null, criticalError);
+    }
+
+    public AlertPopup(String title, String header, String msg, String expendableText, boolean criticalError) {
         super(AlertType.ERROR);
         if(criticalError){
             setupCriticalErrorAlert();
         }
-        setupAlertPopup(title, header, msg);
+        setupAlertPopup(title, header, msg, expendableText);
     }
 
     public AlertPopup(String title, String header, String msg, AlertType alertType) {
-        super(alertType);
-        setupAlertPopup(title, header, msg);
+        this(title, header, msg, null, alertType);
     }
 
-    private void setupAlertPopup(String title, String header, String msg){
+    public AlertPopup(String title, String header, String msg, String expendableText, AlertType alertType) {
+        super(alertType);
+        setupAlertPopup(title, header, msg, expendableText);
+    }
+
+    private void setupAlertPopup(String title, String header, String msg, String expendableText){
         getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet(), ShellFlow.getUserAgentStylesheet());
         setTitle(title);
         setHeaderText(header);
         setContentText(msg);
 
-        TextArea textArea = new TextArea(msg);
+        TextArea textArea = new TextArea();
+        if(expendableText != null){
+            textArea.setText(expendableText);
+        }else{
+            textArea.setText(msg);
+        }
         textArea.setWrapText(true);
         textArea.setEditable(false);
         textArea.setMaxWidth(MAX_VALUE);
