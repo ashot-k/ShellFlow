@@ -8,7 +8,7 @@ public enum ConfigProperty {
     THEME("theme", ShellFlow.getSelectedThemeOption().getValue()),
     OPTIMIZED_MODE("optimized-mode", "true"),
     TERMINAL_FONT_FAMILY("terminal-font-family", "Cascadia Mono"),
-    TERMINAL_FONT_SIZE("terminal-font-size", "16"),;
+    TERMINAL_FONT_SIZE("terminal-font-size", "14"),;
 
     private final String propertyName;
     private final String defaultPropertyValue;

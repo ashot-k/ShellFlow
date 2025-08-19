@@ -9,6 +9,8 @@ public class ParallelExecutionsTab extends Tab {
 
     public ParallelExecutionsTab() {
         this.parallelExecutionTabPane = new TabPane();
+        parallelExecutionTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+        parallelExecutionTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
         setContent(parallelExecutionTabPane);
         setOnClosed(_ -> {
             for (Tab tab : parallelExecutionTabPane.getTabs()) {
