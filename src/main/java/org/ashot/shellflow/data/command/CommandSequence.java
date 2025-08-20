@@ -41,9 +41,6 @@ public class CommandSequence {
     }
 
     private String formattedName(String name) {
-        if (!name.isBlank()) {
-            name = name.replace(" ", "-");
-        }
         return name;
     }
 

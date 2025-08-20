@@ -11,7 +11,8 @@
 
     <properties>
         <maven.compiler.release>24</maven.compiler.release>
-        <output.artifact>${project.name}</output.artifact>
+        <output.artifact.name>${project.name}-${project.version}</output.artifact.name>
+        <output.dir>${project.basedir}/output</output.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>24.0.2</javafx.version>
         <jeditermfx.version>1.2.0-SNAPSHOT</jeditermfx.version>
@@ -158,17 +159,18 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.basedir}/output</directory>
+                            <directory>${output.dir}</directory>
                             <includes>
                                 <!--delete app image folder-->
-                                <include>${output.artifact}-${project.version}/**</include>
+                                <include>${output.artifact.name}/**</include>
                                 <!--delete installer-->
-                                <include>${output.artifact}-${project.version}.exe</include>
+                                <include>${output.artifact.name}.exe</include>
                             </includes>
                         </fileset>
                     </filesets>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
@@ -189,28 +191,100 @@
                     </javaOptions>
                     <icon>${project.basedir}/src/main/resources/icon.ico</icon>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>windows</id>
-                        <configuration>
-                            <name>${output.artifact}</name>
-                            <winDirChooser>true</winDirChooser>
-                            <winShortcut>true</winShortcut>
-                            <winMenu>true</winMenu>
-                            <winShortcutPrompt>true</winShortcutPrompt>
-                            <winUpgradeUuid>4b728778-c894-4fd0-84f2-16165f90f951</winUpgradeUuid>
-                            <type>EXE</type>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>app-image</id>
-                        <configuration>
-                            <name>${output.artifact}-${project.version}</name>
-                            <type>APP_IMAGE</type>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
+
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>build-windows-installer</id>
+            <activation>
+                <property>
+                    <name>type</name>
+                    <value>windows-installer</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>windows-build</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <configuration>
+                                    <winDirChooser>true</winDirChooser>
+                                    <winShortcut>true</winShortcut>
+                                    <winMenu>true</winMenu>
+                                    <winShortcutPrompt>true</winShortcutPrompt>
+                                    <winUpgradeUuid>4b728778-c894-4fd0-84f2-16165f90f951</winUpgradeUuid>
+                                    <type>EXE</type>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-app-image</id>
+            <activation>
+                <property>
+                    <name>type</name>
+                    <value>build</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jpackage</goal>
+                                </goals>
+                                <id>app-image</id>
+                                <configuration>
+                                    <name>${output.artifact.name}</name>
+                                    <type>APP_IMAGE</type>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${output.dir}/${output.artifact.name}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>/</directory>
+                                            <includes>
+                                                <include>config.properties</include>
+                                                <include>settings/**</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
