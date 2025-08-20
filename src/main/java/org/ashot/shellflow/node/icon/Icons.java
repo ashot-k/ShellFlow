@@ -8,6 +8,7 @@ import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import static org.ashot.shellflow.utils.IconUtils.setHoverToBrighter;
+import static org.ashot.shellflow.utils.IconUtils.setHoverToColor;
 
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
@@ -24,8 +25,8 @@ public class Icons {
     public static Glyph getCloseButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.TIMES_CIRCLE);
         icon.size(size);
-        icon.color(Color.INDIANRED);
-        setHoverToBrighter(icon, Color.INDIANRED);
+        icon.color(Color.LIGHTCORAL);
+        setHoverToColor(icon, Color.LIGHTCORAL, Color.INDIANRED);
         return decorateGlyph(icon);
     }
 

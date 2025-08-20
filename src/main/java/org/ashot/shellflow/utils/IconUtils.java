@@ -36,6 +36,21 @@ public class IconUtils {
         });
     }
 
+    public static void setHoverToColor(Glyph icon, Color from, Color to){
+        icon.parentProperty().addListener((_, _, p) -> {
+            if (p != null) {
+                p.hoverProperty().addListener((_, _, newValue) -> {
+                    if (Boolean.TRUE.equals(newValue)) {
+                        icon.color(to);
+                    } else {
+                        icon.color(from);
+                    }
+                });
+
+            }
+        });
+    }
+
     public static void setHoverToDarker(Glyph icon, Color off) {
         icon.parentProperty().addListener((_, _, p) -> {
             if (p != null) {

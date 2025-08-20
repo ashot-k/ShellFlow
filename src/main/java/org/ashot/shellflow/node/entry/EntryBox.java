@@ -1,6 +1,8 @@
 package org.ashot.shellflow.node.entry;
 
+import atlantafx.base.controls.Spacer;
 import atlantafx.base.controls.ToggleSwitch;
+import atlantafx.base.theme.Tweaks;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -8,8 +10,11 @@ import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import org.ashot.shellflow.data.Entry;
+import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.entry.button.DeleteEntryButton;
 import org.ashot.shellflow.node.entry.button.EnableEntryBoxSwitch;
@@ -23,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class EntryBox extends VBox {
+public class EntryBox extends TitledPane {
     private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
 
     private static final double NAME_FIELD_WIDTH = 150;
@@ -31,7 +36,7 @@ public class EntryBox extends VBox {
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
     private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
     public static final double MAX_WIDTH = 480;
-    private static final List<String> styleClasses = List.of("bordered-container");
+    private static final List<String> styleClasses = List.of("default-container", Tweaks.ALT_ICON);
 
     private final NameField nameField;
     private final PathField pathField;
@@ -40,6 +45,7 @@ public class EntryBox extends VBox {
     private final ToggleSwitch enabledToggle;
     private final Button executeButton;
     private final Button deleteEntry;
+    private final Text title;
 
     private Entry entry;
     private boolean edited = false;
@@ -63,13 +69,10 @@ public class EntryBox extends VBox {
         wslToggle = new WslOption("WSL", entry.isWsl());
         wslToggle.setAlignment(Pos.CENTER_RIGHT);
         pathField.setWsl(wslToggle.isSelected());
-        wslToggle.selectedProperty().addListener((_, _, value) -> {
-            pathField.setWsl(value);
-        });
+
 
         enabledToggle = new EnableEntryBoxSwitch("", entry.isEnabled());
         enabledToggle.setLabelPosition(HorizontalDirection.LEFT);
-        enabledToggle.setPadding(new Insets(0, 0, 8, 0));
 
         deleteEntry = new DeleteEntryButton();
 
@@ -87,18 +90,13 @@ public class EntryBox extends VBox {
         HBox.setHgrow(executeButton, Priority.ALWAYS);
 
         GridPane entryGrid = new GridPane();
-        entryGrid.addRow(0, deleteEntry, enabledToggle);
-        GridPane.setConstraints(deleteEntry, 0, 0, 2, 1, HPos.LEFT, VPos.TOP);
-        GridPane.setConstraints(enabledToggle, 2, 0, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
-
-        entryGrid.addRow(1, labeledNameField, labeledPathField);
-        GridPane.setConstraints(labeledNameField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(labeledPathField, 1, 1, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
-
-        entryGrid.addRow(2, labeledCommandField, wslToggle, executeButtonContainer);
-        GridPane.setConstraints(labeledCommandField, 0, 2, 2, 2, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
-        GridPane.setConstraints(wslToggle, 2, 2, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(executeButtonContainer, 2, 3, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
+        entryGrid.addRow(0, labeledNameField, labeledPathField);
+        GridPane.setConstraints(labeledNameField, 0, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(labeledPathField, 1, 0, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        entryGrid.addRow(1, labeledCommandField, wslToggle, executeButtonContainer);
+        GridPane.setConstraints(labeledCommandField, 0, 1, 2, 2, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
+        GridPane.setConstraints(wslToggle, 2, 1, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(executeButtonContainer, 2, 2, 1, 1, HPos.RIGHT, VPos.TOP, Priority.NEVER, Priority.NEVER);
 
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setHgrow(Priority.NEVER);
@@ -110,21 +108,35 @@ public class EntryBox extends VBox {
 
         entryGrid.setHgap(8);
         entryGrid.setVgap(5);
+        setContent(entryGrid);
 
-        setupEditingTracking();
+        Spacer spacer = new Spacer(150);
+        title = new Text();
+        title.setFont(Fonts.title());
+        HBox header = new HBox(25, enabledToggle, title, spacer, deleteEntry);
+        header.setAlignment(Pos.CENTER);
 
-        getChildren().add(entryGrid);
         getStyleClass().addAll(styleClasses);
         setMaxWidth(MAX_WIDTH);
-        setMaxHeight(200);
+        setGraphic(header);
+        setPadding(Insets.EMPTY);
 
+        setupInitialState();
+        setupEventListeners();
+    }
+
+    private void setupInitialState(){
+        refreshTitleText(nameField.getText());
         toggleEntryBox(entry.isEnabled());
-        enabledToggle.selectedProperty().addListener((e, _, value) -> {
-            toggleEntryBox(value);
-        });
+        setExpanded(true);
+    }
+
+    private void refreshTitleText(String text){
+        title.setText(text.isBlank() ? "Unnamed Entry" : text);
     }
 
     private void toggleEntryBox(boolean enable){
+        title.setDisable(!enable);
         executeButton.setDisable(!enable);
         nameField.setDisable(!enable);
         pathField.setDisable(!enable);
@@ -137,12 +149,25 @@ public class EntryBox extends VBox {
         }
     }
 
-    private void setupEditingTracking(){
+    private void setupEditingTrackingEventListeners(){
         addEditedListenerForTextProperties(nameField.textProperty(), entry.getName());
         addEditedListenerForTextProperties(pathField.textProperty(), entry.getPath());
         addEditedListenerForTextProperties(commandField.textProperty(), entry.getCommand());
         addEditedListenerForCheckbox(wslToggle.selectedProperty(), entry.isWsl());
         addEditedListenerForCheckbox(enabledToggle.selectedProperty(), entry.isEnabled());
+    }
+
+    private void setupEventListeners(){
+        enabledToggle.selectedProperty().addListener((e, _, value) -> {
+            toggleEntryBox(value);
+        });
+        nameField.textProperty().addListener((_, _, newText) -> {
+            refreshTitleText(newText);
+        });
+        wslToggle.selectedProperty().addListener((_, _, value) -> {
+            pathField.setWsl(value);
+        });
+        setupEditingTrackingEventListeners();
     }
 
     private void addEditedListenerForTextProperties(StringProperty stringProperty, String originalValue){

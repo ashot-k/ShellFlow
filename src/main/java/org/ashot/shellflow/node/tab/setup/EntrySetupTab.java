@@ -1,9 +1,7 @@
 package org.ashot.shellflow.node.tab.setup;
 
-import atlantafx.base.controls.Spacer;
 import atlantafx.base.util.Animations;
 import javafx.collections.ListChangeListener;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -24,7 +22,6 @@ import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.Animator;
-import org.ashot.shellflow.utils.DebugUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

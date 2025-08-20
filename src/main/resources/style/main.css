@@ -95,6 +95,16 @@
     -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
 }
 
+.dark default-container{
+    -fx-background-color: -fx-base-background;
+    -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 4, 0.0, 0, 1);
+}
+
+.light default-container{
+    -fx-background-color: -fx-base-background;
+    -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
+}
+
 .dark .bordered-container:hover{
     -fx-background-color: -fx-hover-background;
 }
