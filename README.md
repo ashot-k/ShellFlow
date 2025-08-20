@@ -5,11 +5,11 @@ JavaFX 24
 ### Build
 The application can be built using the following command:
 
-`mvn clean package jpackage:jpackage@app-image `
+`mvn clean package -P build-app-image`
 
 An application installer (for windows) can be made by running: 
 
-`mvn clean package jpackage:jpackage@windows `
+`mvn clean package -P build-windows-installer`
 
 These will create a new build of the application inside `${project.basedir}/output`
 
