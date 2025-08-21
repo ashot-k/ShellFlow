@@ -9,10 +9,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.message.ToolTipMessages;
@@ -23,6 +23,7 @@ import org.ashot.shellflow.node.entry.button.WslOption;
 import org.ashot.shellflow.node.entry.field.CommandTextArea;
 import org.ashot.shellflow.node.entry.field.NameField;
 import org.ashot.shellflow.node.entry.field.PathField;
+import org.ashot.shellflow.utils.NodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class EntryBox extends TitledPane {
     private static final double PATH_FIELD_WIDTH = 300;
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
     private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
-    public static final double MAX_WIDTH = 480;
+    public static final double MAX_WIDTH = 450;
     private static final List<String> styleClasses = List.of("default-container", Tweaks.ALT_ICON);
 
     private final NameField nameField;
@@ -45,7 +46,7 @@ public class EntryBox extends TitledPane {
     private final ToggleSwitch enabledToggle;
     private final Button executeButton;
     private final Button deleteEntry;
-    private final Text title;
+    private final Label title;
 
     private Entry entry;
     private boolean edited = false;
@@ -110,16 +111,19 @@ public class EntryBox extends TitledPane {
         entryGrid.setVgap(5);
         setContent(entryGrid);
 
-        Spacer spacer = new Spacer(150);
-        title = new Text();
+        title = new Label();
         title.setFont(Fonts.title());
-        HBox header = new HBox(25, enabledToggle, title, spacer, deleteEntry);
-        header.setAlignment(Pos.CENTER);
+        title.setEllipsisString("...");
+        title.setMaxWidth(280);
 
-        getStyleClass().addAll(styleClasses);
-        setMaxWidth(MAX_WIDTH);
-        setGraphic(header);
+        HBox header = new HBox(15, enabledToggle, title, new Spacer(), deleteEntry);
+        header.setAlignment(Pos.CENTER);
+        NodeUtils.setWidths(header, 400);
+
         setPadding(Insets.EMPTY);
+        setMaxWidth(MAX_WIDTH);
+        getStyleClass().addAll(styleClasses);
+        setGraphic(header);
 
         setupInitialState();
         setupEventListeners();
