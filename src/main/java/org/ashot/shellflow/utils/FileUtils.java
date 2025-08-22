@@ -13,7 +13,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 import static java.nio.file.Files.createFile;
@@ -65,7 +64,7 @@ public class FileUtils {
             fileChooser.setInitialDirectory(new File(initialDir));
         }
         if (saveMode) {
-            fileChooser.setInitialFileName(Arrays.stream(Controller.getCurrentlyLoadedFileLocation().split("\\\\")).toList().getLast());
+            fileChooser.setInitialFileName(Controller.getCurrentFile());
             fileChooser.setTitle("Choose file destination");
             return fileChooser.showSaveDialog(null);
         } else {

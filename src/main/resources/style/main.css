@@ -19,7 +19,7 @@
     -fx-shadow-color: rgba(60, 65, 70, 0.5);
 }
 
-.terminal-toolBar{
+.floating-toolBar{
     -fx-background-color: -color-bg-default;
     -fx-background-radius: 8;
     -fx-border-color: rgba(255, 255, 255, 0.1);

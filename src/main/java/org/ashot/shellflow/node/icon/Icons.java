@@ -46,6 +46,14 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getToggleToolbarIcon(int size, boolean show){
+        Glyph icon = fontAwesome.create(show ? FontAwesome.Glyph.ANGLE_DOUBLE_RIGHT: FontAwesome.Glyph.ANGLE_DOUBLE_LEFT);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
     public static Glyph getAddButtonIcon(int size) {
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.PLUS_CIRCLE);
         icon.size(size);
@@ -173,6 +181,22 @@ public class Icons {
 
     public static Glyph getFontSelectionMenuIcon(double size){
         Glyph icon = fontAwesome.create(FontAwesome.Glyph.FONT);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getExpandAllEntriesIcon(double size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TOGGLE_DOWN);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getCollapseAllEntriesIcon(double size){
+        Glyph icon = fontAwesome.create(FontAwesome.Glyph.TOGGLE_UP);
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);

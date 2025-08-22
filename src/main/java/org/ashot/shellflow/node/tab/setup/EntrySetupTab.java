@@ -19,6 +19,7 @@ import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.node.entry.EntryBox;
+import org.ashot.shellflow.node.utility.EntrySetupToolBar;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.Animator;
@@ -35,6 +36,7 @@ public class EntrySetupTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(EntrySetupTab.class);
     private final FlowPane entriesContainer;
     private final SidePanel sidePanel;
+    private final EntrySetupToolBar entrySetupToolBar;
     private final EntryInfoBar entryInfoBar;
     private final int entriesContainerGap = 15;
 
@@ -59,8 +61,7 @@ public class EntrySetupTab extends Tab {
         entriesContainerWrapper.setAlignment(Pos.TOP_LEFT);
         scrollPane.setContent(entriesContainerWrapper);
 
-        sidePanel = new SidePanel(_ -> executeAll(), _ -> stopAll(), _ -> addEntryBox(), _ -> clearEntryBoxes());
-        sidePanel.setMaxWidth(300);
+        sidePanel = new SidePanel(_ -> stopAll(), _ -> addEntryBox());
 
         Region spacer = new Region();
         Region spacer2 = new Region();
@@ -74,19 +75,36 @@ public class EntrySetupTab extends Tab {
         VBox.setVgrow(sidePanel, Priority.ALWAYS);
         pane.setAlignment(Pos.CENTER);
 
-        addEntryListChangeListener(_ -> sidePanel.getExecuteAllButton().setDisable(getEntryBoxes().isEmpty()));
-        addEntryListChangeListener(_ -> sidePanel.getClearAllEntriesButton().setDisable(getEntryBoxes().isEmpty()));
 
-        HBox content = new HBox();
-        content.setFillHeight(true);
-        content.setPadding(new Insets(10));
-        content.setAlignment(Pos.TOP_CENTER);
-        content.getChildren().add(pane);
+        HBox entryList = new HBox();
+        entryList.setFillHeight(true);
+        entryList.setPadding(new Insets(10));
+        entryList.setAlignment(Pos.TOP_CENTER);
+        entryList.getChildren().add(pane);
 
-        setContent(content);
+
+        entrySetupToolBar = setupToolBar();
+        StackPane contentWrapper = new StackPane(entryList, entrySetupToolBar);
+
+
+        setContent(contentWrapper);
         setClosable(false);
         setText("Entry Setup");
         log.debug("EntrySetupTab initialized");
+    }
+
+    private EntrySetupToolBar setupToolBar(){
+        EntrySetupToolBar entrySetupToolBar = new EntrySetupToolBar();
+        StackPane.setAlignment(entrySetupToolBar, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(entrySetupToolBar, new Insets(0, 25, 20, 0));
+        entrySetupToolBar.getExpandAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(true)));
+        entrySetupToolBar.getCollapseAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(false)));
+        entrySetupToolBar.getClearAllEntriesButton().setOnAction(_-> clearEntryBoxes());
+        entrySetupToolBar.getExecuteAllButton().setOnAction(_-> executeAll());
+
+        addEntryListChangeListener(_ -> entrySetupToolBar.getExecuteAllButton().setDisable(getEntryBoxes().isEmpty()));
+        addEntryListChangeListener(_ -> entrySetupToolBar.getClearAllEntriesButton().setDisable(getEntryBoxes().isEmpty()));
+        return entrySetupToolBar;
     }
 
     public void addEntryBox() {
@@ -199,8 +217,8 @@ public class EntrySetupTab extends Tab {
         entriesContainer.getChildren().addListener(changeListener);
     }
 
-    public ToggleButton getSequentialOption() {
-        return sidePanel.getSequentialOption();
+    public CheckBox getSequentialOption() {
+        return entrySetupToolBar.getSequenceOption();
     }
 
     public TextField getExecutionName() {

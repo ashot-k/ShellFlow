@@ -17,7 +17,7 @@ public class SaveMenuItem extends MenuItem {
         setText("Save");
         setGraphic(Icons.getSaveIcon(MENU_ITEM_ICON_SIZE));
         setOnAction(_ -> {
-            File currentFile = FileUtils.createFileAndDirs(Controller.getCurrentlyLoadedFileLocation());
+            File currentFile = FileUtils.createFileAndDirs(Controller.getCurrentFileAbsolutePath());
             if (currentFile == null) {
                 File savedFile = chooseFile(true);
                 if (savedFile != null) {

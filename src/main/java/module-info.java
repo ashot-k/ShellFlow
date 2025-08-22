@@ -11,6 +11,7 @@ module org.ashot.shellflow {
     requires com.techsenger.jeditermfx.core;
     requires pty4j;
     requires org.jetbrains.annotations;
+    requires java.desktop;
 
     exports org.ashot.shellflow;
     exports org.ashot.shellflow.exception;
@@ -30,4 +31,5 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
     exports org.ashot.shellflow.data.execution;
     exports org.ashot.shellflow.data.command;
+    opens org.ashot.shellflow.node.utility to javafx.base;
 }

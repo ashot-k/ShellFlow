@@ -40,4 +40,12 @@ public class ToolTipMessages {
     public static String clearOutput() {
         return "Clear console";
     }
+
+    public static String expandAllEntries() {
+        return "Expand all entries";
+    }
+
+    public static String collapseAllEntries() {
+        return "Collapse all entries";
+    }
 }

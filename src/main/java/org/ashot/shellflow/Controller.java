@@ -45,14 +45,15 @@ public class Controller {
     private PresetSetupTab presetSetupTab;
     private ExecutionsTab executionsTab;
     private ProfilerTab profilerTab;
-    private static String currentlyLoadedFileLocation;
+    private static String currentFile;
+    private static String currentFileAbsolutePath;
 
     public void init(){
         ControllerRegistry.register("main", this);
         sceneContainer.getChildren().addFirst(new MainMenuBar(this::openFile, this::writeEntriesToFile));
         setupTabs();
         if (openMostRecentFile(this::openFile) == null) {
-            currentlyLoadedFileLocation = null;
+            currentFile = null;
         }
         mainModal.getStyleClass().add("modal");
     }
@@ -135,17 +136,26 @@ public class Controller {
     }
 
     public void refreshFileLoaded(String path) {
-        currentlyLoadedFileLocation = path;
-        entrySetupTab.setFileLoadedText(path);
+        currentFileAbsolutePath = path;
+        String formattedPath = "";
+        String delimiter = checkIfWindows() ? "\\\\" : "/";
+        String[] splitPath = path.split(delimiter);
+        formattedPath = splitPath[splitPath.length -1];
+        currentFile = formattedPath;
+        entrySetupTab.setFileLoadedText(currentFile);
     }
 
     private static void resetFileLoaded() {
-        currentlyLoadedFileLocation = "";
+        currentFileAbsolutePath = "";
     }
 
-    public static String getCurrentlyLoadedFileLocation() {
-        if (new File(currentlyLoadedFileLocation).exists()) {
-            return currentlyLoadedFileLocation;
+    public static String getCurrentFile() {
+        return currentFile;
+    }
+
+    public static String getCurrentFileAbsolutePath() {
+        if (new File(currentFileAbsolutePath).exists()) {
+            return currentFileAbsolutePath;
         }
         resetFileLoaded();
         return "";
