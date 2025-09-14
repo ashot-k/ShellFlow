@@ -25,6 +25,11 @@ public class ToolTipMessages {
         return "Attempt a graceful termination by sending a SIGINT to the current process";
     }
 
+    public static String delayPerCommand() {
+        return "Delay per entry executed";
+    }
+
+
     public static String find(){
         return "Open the find component";
     }

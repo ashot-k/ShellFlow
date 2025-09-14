@@ -4,6 +4,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.ConfigProperty;
+import org.ashot.shellflow.registry.ControllerRegistry;
 
 import static org.ashot.shellflow.ShellFlow.getConfig;
 import static org.ashot.shellflow.utils.Animator.*;
@@ -25,6 +26,7 @@ public class PerformanceSettingMenuItem extends MenuItem {
             }else {
                 setFrameRateForSpin(DEFAULT_FRAME_RATE);
             }
+            ControllerRegistry.getMainController().toggleOptimizeAnimationsAndUI(newValue);
         });
         checkBox.setSelected(getConfig().getOptimizedMode());
     }

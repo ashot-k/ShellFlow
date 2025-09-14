@@ -35,9 +35,6 @@ public class EntryMapper {
     }
 
     public static Command entryToCommand(Entry entry, boolean persistent) {
-        if(!entry.isEnabled()){
-            return null;
-        }
         String name = entry.getName();
         String command = entry.getCommand();
         String path = entry.getPath();
@@ -53,9 +50,12 @@ public class EntryMapper {
     public static List<Command> buildCommands(List<Entry> entries) {
         List<Command> commands = new ArrayList<>();
         for (Entry entry : entries) {
+            if(!entry.isEnabled()){
+                continue;
+            }
             Command cmd = EntryMapper.entryToCommand(entry, false);
             if (cmd == null) {
-                continue;
+                return null;
             }
             commands.add(cmd);
         }
@@ -76,7 +76,6 @@ public class EntryMapper {
                 errorPopup.show();
             }
         });
-        throw new RuntimeException("Execution cannot begin due to invalid entry: " + e.getMessage());
     }
 
 }

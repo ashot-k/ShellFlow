@@ -21,6 +21,7 @@ import org.ashot.shellflow.utils.Animator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class ShellFlow extends Application {
@@ -42,7 +43,6 @@ public class ShellFlow extends Application {
 
     @Override
     public void start(Stage stage) {
-        try {
             primaryStage = stage;
             config = new DefaultConfig();
             loadAdditionalFonts();
@@ -59,8 +59,14 @@ public class ShellFlow extends Application {
             }
 
             FXMLLoader fxmlLoader = new FXMLLoader(url);
-            fxmlLoader.load();
-
+            try {
+                fxmlLoader.load();
+            } catch (IOException e) {
+                log.error(e.getClass().getName());
+                log.error(e.getMessage());
+                log.error(e.getCause().getMessage());
+                stop();
+            }
             Controller controller = fxmlLoader.getController();
             Parent root = fxmlLoader.getRoot();
             Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
@@ -82,12 +88,6 @@ public class ShellFlow extends Application {
             log.debug("Loaded CSS: {}", styleSheet);
             log.debug("Loaded Theme: {}", selectedTheme);
             log.debug("Is main stage Resizable: {}", RESIZABLE);
-        } catch (Exception e) {
-            log.error(e.getClass().getName());
-            log.error(e.getMessage());
-            log.error(e.getCause().getMessage());
-            stop();
-        }
     }
 
     @Override
@@ -122,7 +122,7 @@ public class ShellFlow extends Application {
                 Animator.fadeIn(root).play();
             });
             fadeOutTransition.play();
-        }else{
+        } else {
             Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
         }
     }

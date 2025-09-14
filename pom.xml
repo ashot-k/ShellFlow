@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.6.14</version>
+    <version>0.7.0</version>
     <name>shellflow</name>
 
     <properties>
@@ -17,6 +17,7 @@
         <javafx.version>24.0.2</javafx.version>
         <jeditermfx.version>1.2.0-SNAPSHOT</jeditermfx.version>
         <atlantafx.themes.version>2.1.0</atlantafx.themes.version>
+        <fxtrayicon.version>4.2.3</fxtrayicon.version>
         <controlsfx.version>11.2.2</controlsfx.version>
         <logback.version>1.5.18</logback.version>
         <json.version>20240303</json.version>
@@ -56,14 +57,6 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
-        <!--
-                todo consider adding
-                <dependency>
-                    <groupId>com.techsenger.tabpanepro</groupId>
-                    <artifactId>tabpanepro-core</artifactId>
-                    <version>${tabpanepro.version}</version>
-                </dependency>
-        -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
@@ -86,6 +79,19 @@
             <artifactId>richtextfx</artifactId>
             <version>0.11.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.dustinredmond.fxtrayicon</groupId>
+            <artifactId>FXTrayIcon</artifactId>
+            <version>${fxtrayicon.version}</version>
+        </dependency>
+        <!--
+                todo consider adding
+                <dependency>
+                    <groupId>com.techsenger.tabpanepro</groupId>
+                    <artifactId>tabpanepro-core</artifactId>
+                    <version>${tabpanepro.version}</version>
+                </dependency>
+        -->
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>

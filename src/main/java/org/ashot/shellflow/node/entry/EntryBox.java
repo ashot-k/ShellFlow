@@ -2,17 +2,16 @@ package org.ashot.shellflow.node.entry;
 
 import atlantafx.base.controls.Spacer;
 import atlantafx.base.controls.ToggleSwitch;
+import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.message.ToolTipMessages;
@@ -37,7 +36,7 @@ public class EntryBox extends TitledPane {
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
     private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
     public static final double MAX_WIDTH = 450;
-    private static final List<String> styleClasses = List.of("default-container", Tweaks.ALT_ICON);
+    private static final List<String> styleClasses = List.of("default-container", Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
 
     private final NameField nameField;
     private final PathField pathField;
@@ -109,7 +108,6 @@ public class EntryBox extends TitledPane {
 
         entryGrid.setHgap(8);
         entryGrid.setVgap(5);
-        setContent(entryGrid);
 
         title = new Label();
         title.setFont(Fonts.title());
@@ -118,15 +116,24 @@ public class EntryBox extends TitledPane {
 
         HBox header = new HBox(15, enabledToggle, title, new Spacer(), deleteEntry);
         header.setAlignment(Pos.CENTER);
+        header.setPadding(new Insets(2));
         NodeUtils.setWidths(header, 400);
 
-        setPadding(Insets.EMPTY);
         setMaxWidth(MAX_WIDTH);
-        getStyleClass().addAll(styleClasses);
         setGraphic(header);
+
+        Separator separator = new Separator();
+        separator.setPadding(new Insets(0, 0, 10, 0));
+        var content = new VBox(0, separator, entryGrid);
+        content.setFillWidth(true);
+        content.setPadding(new Insets(2));
+
+        setContent(content);
+        setAnimated(!ShellFlow.getConfig().getOptimizedMode());
 
         setupInitialState();
         setupEventListeners();
+        getStyleClass().addAll(styleClasses);
     }
 
     private void setupInitialState(){

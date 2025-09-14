@@ -12,14 +12,17 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.node.entry.EntryBox;
-import org.ashot.shellflow.node.utility.EntrySetupToolBar;
+import org.ashot.shellflow.node.toolbar.EntrySetupToolBar;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.Animator;
@@ -34,7 +37,7 @@ import static org.ashot.shellflow.mapper.EntryMapper.*;
 
 public class EntrySetupTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(EntrySetupTab.class);
-    private final FlowPane entriesContainer;
+    private final FlowPane entryListContainer;
     private final SidePanel sidePanel;
     private final EntrySetupToolBar entrySetupToolBar;
     private final EntryInfoBar entryInfoBar;
@@ -43,50 +46,37 @@ public class EntrySetupTab extends Tab {
     private int dragSourceIndex = -1;
 
     public EntrySetupTab() {
-        entriesContainer = new FlowPane();
-        entriesContainer.setPadding(new Insets(10, 15, 0, 15));
-        entriesContainer.setHgap(entriesContainerGap);
-        entriesContainer.setVgap(entriesContainerGap);
-        entriesContainer.setRowValignment(VPos.TOP);
-        entriesContainer.setAlignment(Pos.TOP_CENTER);
+        entryListContainer = new FlowPane();
+        entryListContainer.setPadding(new Insets(10, 15, 0, 15));
+        entryListContainer.setHgap(entriesContainerGap);
+        entryListContainer.setVgap(entriesContainerGap);
+        entryListContainer.setRowValignment(VPos.TOP);
+        entryListContainer.setAlignment(Pos.TOP_CENTER);
 
-        HBox.setHgrow(entriesContainer, Priority.ALWAYS);
+        ScrollPane entryListScrollPane = new ScrollPane();
+        entryListScrollPane.setFitToWidth(true);
+        entryListScrollPane.setFitToHeight(true);
+        entryListScrollPane.setContent(entryListContainer);
+        VBox entryListWrapper = new VBox(entryListScrollPane);
+        VBox.setVgrow(entryListWrapper, Priority.ALWAYS);
+        entryListWrapper.getStyleClass().add("bordered-container-no-hover");
 
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
+        sidePanel = new SidePanel();
         entryInfoBar = new EntryInfoBar();
-        VBox entriesContainerWrapper = new VBox(entryInfoBar, entriesContainer);
-        entriesContainerWrapper.getStyleClass().add("bordered-container-no-hover");
-        entriesContainerWrapper.setAlignment(Pos.TOP_LEFT);
-        scrollPane.setContent(entriesContainerWrapper);
-
-        sidePanel = new SidePanel(_ -> stopAll(), _ -> addEntryBox());
-
-        Region spacer = new Region();
-        Region spacer2 = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox.setHgrow(spacer2, Priority.ALWAYS);
-
-        HBox pane = new HBox(5, sidePanel, scrollPane);
-        HBox.setHgrow(scrollPane, Priority.ALWAYS);
-        HBox.setHgrow(sidePanel, Priority.ALWAYS);
-        HBox.setHgrow(pane, Priority.ALWAYS);
-        VBox.setVgrow(sidePanel, Priority.ALWAYS);
-        pane.setAlignment(Pos.CENTER);
-
-
-        HBox entryList = new HBox();
-        entryList.setFillHeight(true);
-        entryList.setPadding(new Insets(10));
-        entryList.setAlignment(Pos.TOP_CENTER);
-        entryList.getChildren().add(pane);
-
-
         entrySetupToolBar = setupToolBar();
-        StackPane contentWrapper = new StackPane(entryList, entrySetupToolBar);
 
+        VBox entriesSection = new VBox();
+        entriesSection.setFillWidth(true);
+        entriesSection.setPadding(new Insets(10));
+        entriesSection.setAlignment(Pos.TOP_CENTER);
+        entriesSection.setSpacing(5);
+        entriesSection.getChildren().addAll(entryInfoBar, entryListWrapper, entrySetupToolBar);
 
+        HBox.setHgrow(entriesSection, Priority.ALWAYS);
+        HBox.setHgrow(sidePanel, Priority.ALWAYS);
+
+//        HBox contentWrapper = new HBox(sidePanel, entriesSection);
+        HBox contentWrapper = new HBox(entriesSection);
         setContent(contentWrapper);
         setClosable(false);
         setText("Entry Setup");
@@ -95,12 +85,12 @@ public class EntrySetupTab extends Tab {
 
     private EntrySetupToolBar setupToolBar(){
         EntrySetupToolBar entrySetupToolBar = new EntrySetupToolBar();
-        StackPane.setAlignment(entrySetupToolBar, Pos.BOTTOM_RIGHT);
-        StackPane.setMargin(entrySetupToolBar, new Insets(0, 25, 20, 0));
+        entrySetupToolBar.setAlignment(Pos.BOTTOM_CENTER);
         entrySetupToolBar.getExpandAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(true)));
         entrySetupToolBar.getCollapseAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(false)));
         entrySetupToolBar.getClearAllEntriesButton().setOnAction(_-> clearEntryBoxes());
         entrySetupToolBar.getExecuteAllButton().setOnAction(_-> executeAll());
+        entrySetupToolBar.getAddEntryButton().setOnAction(_ -> addEntryBox());
 
         addEntryListChangeListener(_ -> entrySetupToolBar.getExecuteAllButton().setDisable(getEntryBoxes().isEmpty()));
         addEntryListChangeListener(_ -> entrySetupToolBar.getClearAllEntriesButton().setDisable(getEntryBoxes().isEmpty()));
@@ -122,19 +112,19 @@ public class EntrySetupTab extends Tab {
         });
         setupDragging(entryBox);
         Animator.fadeInBeforeAdditionToList(entryBox);
-        entriesContainer.getChildren().add(entryBox);
+        entryListContainer.getChildren().add(entryBox);
     }
 
-    public void resetEdited(){
+    public void refreshEdited(){
         log.debug("Reset edited state for all entries");
-        entriesContainer.getChildren().stream()
+        entryListContainer.getChildren().stream()
                 .filter(e -> e instanceof EntryBox)
                 .map(e -> (EntryBox) e).forEach(EntryBox::refreshEdited);
     }
 
     private void setupDragging(EntryBox entryBox){
         entryBox.setOnDragDetected(e ->{
-            dragSourceIndex = entriesContainer.getChildren().indexOf(entryBox);
+            dragSourceIndex = entryListContainer.getChildren().indexOf(entryBox);
             Dragboard dragboard = entryBox.startDragAndDrop(TransferMode.MOVE);
             SnapshotParameters snapshotParameters = new SnapshotParameters();
             snapshotParameters.setFill(Color.TRANSPARENT);
@@ -146,16 +136,16 @@ public class EntrySetupTab extends Tab {
             e.consume();
         });
         entryBox.setOnDragOver(e ->{
-            if(dragSourceIndex != -1 && entryBox != entriesContainer.getChildren().get(dragSourceIndex)){
+            if(dragSourceIndex != -1 && entryBox != entryListContainer.getChildren().get(dragSourceIndex)){
                 e.acceptTransferModes(TransferMode.MOVE);
             }
             e.consume();
         });
         entryBox.setOnDragDropped(e -> {
-            int dropIndex = entriesContainer.getChildren().indexOf(entryBox);
+            int dropIndex = entryListContainer.getChildren().indexOf(entryBox);
             if (dragSourceIndex != -1) {
-                var node = entriesContainer.getChildren().remove(dragSourceIndex);
-                entriesContainer.getChildren().add(dropIndex, node);
+                var node = entryListContainer.getChildren().remove(dragSourceIndex);
+                entryListContainer.getChildren().add(dropIndex, node);
             }
             dragSourceIndex = -1;
             e.setDropCompleted(true);
@@ -169,16 +159,16 @@ public class EntrySetupTab extends Tab {
     }
 
     public void removeEntryBox(EntryBox entryBox) {
-        Animator.removeFromListAndFadeOut(entryBox, entriesContainer);
+        Animator.removeFromListAndFadeOut(entryBox, entryListContainer);
     }
 
     public void clearEntryBoxes() {
-        entriesContainer.getChildren().clear();
+        entryListContainer.getChildren().clear();
     }
 
     public List<EntryBox> getEntryBoxes() {
         List<EntryBox> entryBoxes = new ArrayList<>();
-        for (Node node : entriesContainer.getChildren()) {
+        for (Node node : entryListContainer.getChildren()) {
             if (node instanceof EntryBox entryBox) {
                 entryBoxes.add(entryBox);
             }
@@ -188,7 +178,7 @@ public class EntrySetupTab extends Tab {
 
     public List<Entry> getEntries() {
         List<Entry> entries = new ArrayList<>();
-        for (Node node : entriesContainer.getChildren()) {
+        for (Node node : entryListContainer.getChildren()) {
             if (node instanceof EntryBox entryBox) {
                 entries.add(entryBoxToEntry(entryBox));
             }
@@ -214,7 +204,7 @@ public class EntrySetupTab extends Tab {
     }
 
     public void addEntryListChangeListener(ListChangeListener<Node> changeListener) {
-        entriesContainer.getChildren().addListener(changeListener);
+        entryListContainer.getChildren().addListener(changeListener);
     }
 
     public CheckBox getSequentialOption() {
@@ -222,18 +212,15 @@ public class EntrySetupTab extends Tab {
     }
 
     public TextField getExecutionName() {
-        return sidePanel.getExecutionNameField();
+        return entrySetupToolBar.getExecutionNameField();
     }
 
-    public Slider getDelayPerCmdSlider() {
-        return sidePanel.getDelayPerCmdSlider();
-    }
-    public Button getCloseAllButton() {
-        return sidePanel.getCloseAllButton();
+    public Spinner<Integer> getDelayPerCmdSlider() {
+        return entrySetupToolBar.getDelayPerCmd();
     }
 
     public int getDelayPerCmd(){
-        return (int) sidePanel.getDelayPerCmdSlider().getValue();
+        return getDelayPerCmdSlider().getValue();
     }
 
     public EntryInfoBar getEntryInfoBar() {

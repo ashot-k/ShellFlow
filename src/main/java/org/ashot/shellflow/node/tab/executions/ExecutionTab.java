@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.tab.executions;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,7 +13,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.command.Command;
-import org.ashot.shellflow.node.utility.TerminalToolBar;
+import org.ashot.shellflow.data.constant.ExecutionState;
+import org.ashot.shellflow.node.toolbar.TerminalToolBar;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.slf4j.Logger;
@@ -22,16 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javafx.application.Platform.runLater;
+import static org.ashot.shellflow.data.constant.ExecutionState.*;
 
 public class ExecutionTab extends Tab {
     private static final Logger logger = LoggerFactory.getLogger(ExecutionTab.class);
     private String commandDisplayName;
     private ShellFlowTerminalWidget terminal;
     private final VBox terminalWrapper = new VBox();
-    private boolean inProgress = false;
-    private boolean finished = false;
-    private boolean failed = false;
-    private boolean canceled = false;
+    private final SimpleObjectProperty<ExecutionState> state = new SimpleObjectProperty<>();
     private final StackPane stackPane = new StackPane();
 
     private ExecutionTab(OutputTabBuilder outputTabBuilder) {
@@ -81,9 +81,9 @@ public class ExecutionTab extends Tab {
     }
 
     public void startTerminal() {
-        if (getTerminal() != null && getTerminal().getTtyConnector() != null) {
-            this.getTerminal().start();
+        if (getTerminal() != null && getTerminal().getTtyConnector() != null && getTerminal().canOpenSession()) {
             runLater(()->{
+                this.getTerminal().start();
                 this.terminal.createToolBar();
                 TerminalToolBar terminalToolBar = this.terminal.getTerminalToolBar();
                 this.stackPane.getChildren().add(terminalToolBar);
@@ -144,36 +144,41 @@ public class ExecutionTab extends Tab {
         });
     }
 
+    public SimpleObjectProperty<ExecutionState> stateProperty() {
+        return state;
+    }
+
     public boolean isInProgress() {
-        return inProgress;
+        return state.get().equals(IN_PROGRESS);
     }
 
     public boolean isFinished() {
-        return finished;
+        return state.get().equals(FINISHED);
     }
 
     public boolean isCanceled() {
-        return canceled;
+        return state.get().equals(CANCELED);
     }
 
     public boolean isFailed() {
-        return failed;
+        return state.get().equals(FAILURE);
     }
 
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
+    public void cancel() {
+        shutDownTerminal();
+        state.setValue(CANCELED);
     }
 
-    public void setInProgress(boolean inProgress) {
-        this.inProgress = inProgress;
+    public void setInProgress() {
+        state.setValue(IN_PROGRESS);
     }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
+    public void setFinished() {
+        state.setValue(FINISHED);
     }
 
-    public void setFailed(boolean failed) {
-        this.failed = failed;
+    public void setFailed() {
+        state.setValue(FAILURE);
     }
 
     public static class OutputTabBuilder {
@@ -185,9 +190,6 @@ public class ExecutionTab extends Tab {
         private String commandDisplayName;
         private boolean disabled = false;
         private boolean closable = true;
-
-        public OutputTabBuilder() {
-        }
 
         public OutputTabBuilder(ShellFlowTerminalWidget terminal) {
             this.terminal = terminal;

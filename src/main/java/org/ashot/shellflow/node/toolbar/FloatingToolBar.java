@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.utility;
+package org.ashot.shellflow.node.toolbar;
 
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;

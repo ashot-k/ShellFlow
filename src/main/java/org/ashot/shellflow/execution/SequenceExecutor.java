@@ -7,9 +7,10 @@ import javafx.scene.control.TabPane;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
+import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.mapper.EntryMapper;
-import org.ashot.shellflow.node.notification.Notification;
+import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.node.tab.executions.SequenceExecutionsTab;
 import org.slf4j.Logger;
@@ -35,6 +36,9 @@ public class SequenceExecutor extends CommandExecutor {
         //todo add logs
         new Thread(() -> {
             List<Command> commandList = EntryMapper.buildCommands(entries);
+            if(commandList == null){
+                return;
+            }
             CommandSequence commandSequence = new CommandSequence(commandList, seqName);
 
             SequenceExecutionsTab sequenceTab = new SequenceExecutionsTab(commandSequence);
@@ -47,11 +51,17 @@ public class SequenceExecutor extends CommandExecutor {
                 Command currentCommand = commandList.get(i);
                 ExecutionTab tab = executionTabs.get(i);
                 int exitValue = proceedToNextInSequence(sequenceTab, currentCommand, tab, i, commandList.size(), commandSequence.getSequenceName());
-                boolean proceed = handleProcessInSequenceFinished(sequenceTab, tab, exitValue);
-                if(proceed){
+                boolean shouldProceed = handleProcessInSequenceFinished(sequenceTab, tab, exitValue);
+                if(shouldProceed){
                     sequenceTabPane.getSelectionModel().select(i != commandList.size() ? i + 1 : i);
                 }
                 else{
+                    System.out.println("tab canceled: " + tab.isCanceled());
+                    if(tab.isCanceled()) {
+                        return;
+                    }
+                    String failMessage = sequentialFailNotificationMessage(sequenceTab.getText(), tab.getText());
+                    handleSequenceFailed(sequenceTab, failMessage);
                     return;
                 }
             }
@@ -80,14 +90,12 @@ public class SequenceExecutor extends CommandExecutor {
         if (exitValue == 0) {
             tab.setClosable(false);
             handleProcessFinished(tab);
-        } else if (exitValue > 0) {
+            return true;
+        } else {
             tab.setClosable(false);
             setFailed(tab);
-            String failMessage = sequentialFailNotificationMessage(sequenceTab.getText(), tab.getText());
-            handleSequenceFailed(sequenceTab, failMessage);
             return false;
         }
-        return true;
     }
 
 
@@ -106,19 +114,17 @@ public class SequenceExecutor extends CommandExecutor {
 
     private void handleSequenceFailed(SequenceExecutionsTab sequenceHolder, String failMessage) {
         setFailed(sequenceHolder);
-        Notification.display(
+        ShellFlowTray.displayNotification(
                 ExecutionState.FAILURE.getValue(),
                 failMessage,
-                null,
                 NotificationType.EXECUTION_FAILURE);
     }
 
     private void handleSequenceFinished(SequenceExecutionsTab sequenceTab){
         setFinished(sequenceTab);
-        Notification.display(
+        ShellFlowTray.displayNotification(
                 ExecutionState.FINISHED.getValue(),
                 sequentialFinishedNotificationMessage(sequenceTab.getText()),
-                null,
                 NotificationType.SUCCESS);
     }
 

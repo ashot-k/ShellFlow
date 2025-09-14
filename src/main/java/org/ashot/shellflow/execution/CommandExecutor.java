@@ -4,15 +4,15 @@ import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.command.Command;
+import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.mapper.EntryMapper;
-import org.ashot.shellflow.node.notification.Notification;
+import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.node.tab.executions.ParallelExecutionsTab;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
-import org.ashot.shellflow.utils.TabUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,15 +62,24 @@ public class CommandExecutor {
     public void execute(ExecutionTab tab, Command command, long delay){
         new Thread(() -> {
             try {
+                Thread current = Thread.currentThread();
+                tab.stateProperty().addListener((_, _, state) -> {
+                    if(state.equals(ExecutionState.CANCELED)){
+                        System.out.println("interrupted thread: " + command.getRawArguments());
+                        current.interrupt();
+                    }
+                });
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
                 log.error(e.getMessage());
-                new AlertPopup("Execution startup Error", null, e.getMessage(), false).show();
+                return;
             }
             PtyProcessBuilder processBuilder = buildProcess(command);
             PtyProcess process = startProcess(tab, processBuilder);
             runLater(()-> tab.checkTabName(command, process));
-            waitForProcess(process);
+            if (waitForProcess(process) == -1){
+                return;
+            }
             handleProcessExit(tab, process);
         }).start();
     }
@@ -100,7 +109,6 @@ public class CommandExecutor {
             return process.exitValue();
         } catch (InterruptedException e) {
             log.error(e.getMessage());
-            new AlertPopup("Execution Interrupted", null, e.getMessage(), false).show();
         }
         return -1;
     }
@@ -116,9 +124,12 @@ public class CommandExecutor {
     public void executeAll(List<Entry> entries, String executionName, int delayPerCmd) {
         List<Command> commandList = new ArrayList<>();
         for (Entry entry: entries) {
+            if(!entry.isEnabled()){
+                continue;
+            }
             Command cmd = EntryMapper.entryToCommand(entry, false);
             if(cmd == null){
-                continue;
+                return;
             }
             commandList.add(cmd);
         }
@@ -148,19 +159,17 @@ public class CommandExecutor {
     }
 
     public void handleProcessFinished(ExecutionTab tab){
-        Notification.display(
-                TabUtils.ExecutionState.FINISHED.getValue(),
+        ShellFlowTray.displayNotification(
+                ExecutionState.FINISHED.getValue(),
                 finishedNotificationMessage(tab.getText()),
-                null,
                 NotificationType.SUCCESS);
         setFinished(tab);
     }
 
     public void handleProcessFailed(ExecutionTab tab, int exitValue){
-        Notification.display(
-                TabUtils.ExecutionState.FAILURE.getValue(),
+        ShellFlowTray.displayNotification(
+                ExecutionState.FAILURE.getValue(),
                 failNotificationMessage(tab.getText(), exitValue),
-                null,
                 NotificationType.EXECUTION_FAILURE);
         setFailed(tab);
     }

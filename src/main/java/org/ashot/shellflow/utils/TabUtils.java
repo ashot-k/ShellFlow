@@ -13,20 +13,6 @@ public class TabUtils {
 
     private static final int tabIconSize = 18;
 
-    public enum ExecutionState {
-        IN_PROGRESS("In progress"), FINISHED("Finished"), FAILURE("Failure");
-
-        private final String value;
-
-        ExecutionState(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
     public static void setInProgress(Tab tab) {
         Platform.runLater(() -> {
             tab.setGraphic(Icons.getExecutionInProgressIcon(tabIconSize));
@@ -34,7 +20,7 @@ public class TabUtils {
             tab.setClosable(true);
         });
         if (tab instanceof ExecutionTab executionTab) {
-            executionTab.setInProgress(true);
+            executionTab.setInProgress();
         }
     }
 
@@ -46,8 +32,7 @@ public class TabUtils {
             Animator.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
-            executionTab.setInProgress(false);
-            executionTab.setFailed(true);
+            executionTab.setFailed();
         }
     }
 
@@ -59,8 +44,7 @@ public class TabUtils {
             Animator.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
-            executionTab.setInProgress(false);
-            executionTab.setFinished(true);
+            executionTab.setFinished();
         }
     }
 
@@ -73,8 +57,7 @@ public class TabUtils {
             Animator.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
-            executionTab.setInProgress(false);
-            executionTab.setCanceled(true);
+            executionTab.cancel();
         }
     }
 

@@ -18,7 +18,7 @@ public class SequenceExecutionsTab extends Tab {
         setOnClosed(_ -> {
             for (Tab tab : sequenceExecutionTabPane.getTabs()) {
                 if (tab instanceof ExecutionTab executionTab) {
-                    executionTab.shutDownTerminal();
+                    executionTab.cancel();
                 }
             }
         });

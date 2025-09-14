@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.utility;
+package org.ashot.shellflow.node.toolbar;
 
 import atlantafx.base.controls.ModalPane;
 import javafx.scene.Node;

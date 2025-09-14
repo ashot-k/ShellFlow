@@ -15,7 +15,7 @@ public class ParallelExecutionsTab extends Tab {
         setOnClosed(_ -> {
             for (Tab tab : parallelExecutionTabPane.getTabs()) {
                 if (tab instanceof ExecutionTab executionTab) {
-                    executionTab.shutDownTerminal();
+                    executionTab.cancel();
                 }
             }
         });

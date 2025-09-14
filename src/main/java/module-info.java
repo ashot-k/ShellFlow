@@ -12,6 +12,7 @@ module org.ashot.shellflow {
     requires pty4j;
     requires org.jetbrains.annotations;
     requires java.desktop;
+    requires com.dustinredmond.fxtrayicon;
 
     exports org.ashot.shellflow;
     exports org.ashot.shellflow.exception;
@@ -31,5 +32,5 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
     exports org.ashot.shellflow.data.execution;
     exports org.ashot.shellflow.data.command;
-    opens org.ashot.shellflow.node.utility to javafx.base;
+    opens org.ashot.shellflow.node.toolbar to javafx.base;
 }

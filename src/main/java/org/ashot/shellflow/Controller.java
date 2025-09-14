@@ -1,10 +1,8 @@
 package org.ashot.shellflow;
 
 import atlantafx.base.controls.ModalPane;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -14,6 +12,7 @@ import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.TabIndices;
 import org.ashot.shellflow.node.menu.MainMenuBar;
+import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
 import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
 import org.ashot.shellflow.node.tab.profiler.ProfilerTab;
@@ -56,6 +55,8 @@ public class Controller {
             currentFile = null;
         }
         mainModal.getStyleClass().add("modal");
+
+        ShellFlowTray.init();
     }
 
     private void setupTabs() {
@@ -68,16 +69,13 @@ public class Controller {
         mainTabPane.getTabs().add(TabIndices.EXECUTIONS.ordinal() - 1, executionsTab);
 
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
-        executionsTab.getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
-            entrySetupTab.getCloseAllButton().setDisable(executionsTab.getExecutionsTabPane().getTabs().isEmpty());
-        });
         sceneContainer.getScene().setOnKeyPressed(this::handleUserInput);
     }
 
     private void writeEntriesToFile(File file) {
         log.debug("Saving file: {}", file.getAbsolutePath());
         JSONObject jsonObject = createSaveJSONObject(entrySetupTab.getEntries(),
-                (int) entrySetupTab.getDelayPerCmdSlider().getValue(),
+                entrySetupTab.getDelayPerCmdSlider().getValue(),
                 entrySetupTab.getSequentialOption().isSelected(),
                 entrySetupTab.getExecutionName().getText());
         log.debug("Saving: {}", jsonObject.toString(1));
@@ -86,8 +84,14 @@ public class Controller {
         refreshFileLoaded(file.getAbsolutePath());
         RecentFileUtils.saveRecentFile(file.getAbsolutePath());
         RecentFileUtils.refreshDirLocation(DirType.LAST_SAVED, file.getParent());
-        entrySetupTab.resetEdited();
+        entrySetupTab.refreshEdited();
         openFile(file);
+    }
+
+    public void toggleOptimizeAnimationsAndUI(boolean optimized){
+        if(entrySetupTab != null) {
+            entrySetupTab.getEntryBoxes().forEach(e -> e.setAnimated(!optimized));
+        }
     }
 
     private void openFile(File fileToLoad) {
@@ -109,7 +113,7 @@ public class Controller {
                 entrySetupTab.addEntryBox(new Entry(name, path, cmd, Boolean.parseBoolean(wsl), Boolean.parseBoolean(enabled)));
             }
         }
-        entrySetupTab.getDelayPerCmdSlider().setValue(jsonData.getInt(FieldType.DELAY.getId()));
+        entrySetupTab.getDelayPerCmdSlider().getValueFactory().setValue(jsonData.getInt(FieldType.DELAY.getId()));
         entrySetupTab.getSequentialOption().setSelected(jsonData.getBoolean(FieldType.SEQUENTIAL.getId()));
         entrySetupTab.getExecutionName().setText(jsonData.getString(FieldType.EXECUTION_NAME.getId()));
         RecentFileUtils.saveRecentFile(fileToLoad.getAbsolutePath());
