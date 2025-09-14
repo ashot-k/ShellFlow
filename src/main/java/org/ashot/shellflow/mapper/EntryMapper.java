@@ -5,7 +5,9 @@ import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.exception.InvalidPathException;
 import org.ashot.shellflow.node.entry.EntryBox;
+import org.ashot.shellflow.node.entry.variable.VariableEntry;
 import org.ashot.shellflow.node.popup.AlertPopup;
+import org.ashot.shellflow.registry.ControllerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,12 @@ public class EntryMapper {
         String command = entry.getCommand();
         String path = entry.getPath();
         boolean wsl = entry.isWsl();
+
+        for (VariableEntry variableEntry : ControllerRegistry.getMainController().getEntrySetupTab().getVariableEntries()){
+            command = command.replace("${" + variableEntry.getNameFieldValue() + "}", variableEntry.getValueFieldValue());
+            path = path.replace("${" + variableEntry.getNameFieldValue() + "}", variableEntry.getValueFieldValue());
+        }
+
         try {
             return new Command(name, path, command, wsl, persistent);
         } catch (InvalidCommandException | InvalidPathException e) {
@@ -46,6 +54,7 @@ public class EntryMapper {
         }
         return null;
     }
+
 
     public static List<Command> buildCommands(List<Entry> entries) {
         List<Command> commands = new ArrayList<>();

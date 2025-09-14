@@ -5,6 +5,7 @@
 
 .dark {
     -fx-base-background: rgba(0, 0, 0, 0.1);
+    -fx-solid-background: -color-bg-default;
     -fx-edited-background: rgba(106, 90, 205, 0.1);
     -fx-disabled-background: rgba(10, 10, 10, 0.25);
     -fx-hover-background: rgba(0, 0, 0, 0.15);
@@ -13,6 +14,7 @@
 
 .light{
     -fx-base-background: rgba(250, 252, 255, 1.0);
+    -fx-solid-background: rgba(250, 252, 255, 1.0);
     -fx-edited-background: rgba(106, 90, 205, 0.15);
     -fx-disabled-background: rgba(250, 252, 255, 0.9);
     -fx-hover-background: rgba(242, 250, 255, 1.0);
@@ -93,6 +95,20 @@
 .light .bordered-container {
     -fx-background-color: -fx-base-background;
     -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
+}
+
+.dark .solid-bg-container {
+    -fx-background-color: -fx-solid-background;
+    -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 12, 0.0, 0, 1);
+}
+
+.light .solid-bg-container {
+    -fx-background-color: -fx-solid-background;
+    -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
+}
+.invalid-field{
+  -fx-text-box-border: red;
+  -fx-focus-color: red;
 }
 
 .dark default-container{

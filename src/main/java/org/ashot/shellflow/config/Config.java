@@ -6,6 +6,7 @@ import org.ashot.shellflow.data.constant.ConfigProperty;
 public interface Config {
     String getPresetConfigLocation();
     String getRecentsDirsConfigLocation();
+    String getVariablesConfigLocation();
     String getTheme();
     Font getTerminalFontFamily();
     double getTerminalFontSize();

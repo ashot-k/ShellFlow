@@ -95,7 +95,7 @@ public class PresetSetupTab extends Tab {
         );
     }
 
-    private static void setupFromFile() {
+    private void setupFromFile() {
         File file = new File(ShellFlow.getConfig().getPresetConfigLocation());
         if (file.exists()) {
             loadExisting(file);
@@ -104,7 +104,7 @@ public class PresetSetupTab extends Tab {
         }
     }
 
-    private static void saveToFile() {
+    private void saveToFile() {
         File file = new File(SettingsFilePaths.PRESETS.getValue());
         JSONObject jsonObject = new JSONObject();
         JSONArray commands = new JSONArray();
@@ -242,13 +242,13 @@ public class PresetSetupTab extends Tab {
         return title;
     }
 
-    private static Button addRowButton(TableView<Preset> tableView) {
+    private Button addRowButton(TableView<Preset> tableView) {
         Button addRowButton = new Button("Add");
         addRowButton.setOnAction(_ -> tableView.getItems().add(new Preset()));
         return addRowButton;
     }
 
-    private static Button removeEntry(TableView<Preset> tableView, PresetType presetType) {
+    private Button removeEntry(TableView<Preset> tableView, PresetType presetType) {
         Button removeRowButton = new Button("Remove");
         removeRowButton.setDisable(true);
         removeRowButton.setOnAction(_ -> {
@@ -264,7 +264,7 @@ public class PresetSetupTab extends Tab {
         return removeRowButton;
     }
 
-    private static Button saveButton() {
+    private Button saveButton() {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(_ -> saveToFile());
         saveButton.setPrefWidth(150);

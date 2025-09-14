@@ -52,6 +52,12 @@ public class DefaultConfig implements Config {
     }
 
     @Override
+    public String getVariablesConfigLocation() {
+        ConfigProperty property = ConfigProperty.VARIABLES_FILE;
+        return getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
+    }
+
+    @Override
     public String getTheme() {
         ConfigProperty property = ConfigProperty.THEME;
         String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
@@ -95,7 +101,7 @@ public class DefaultConfig implements Config {
         try (FileOutputStream out = new FileOutputStream(pathToPropertiesFile.toFile())) {
             properties.store(out, "THIS FILE IS MANAGED BY THE APPLICATION, EDIT BEFORE STARTUP");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 }

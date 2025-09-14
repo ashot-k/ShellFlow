@@ -87,9 +87,10 @@ public class RecentFileUtils {
     }
 
     private static JSONObject getRecents() {
+        File file = null;
         try {
             JSONObject jsonObject = null;
-            File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
+            file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
             if (file.exists()) {
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);
@@ -100,7 +101,8 @@ public class RecentFileUtils {
             }
             return jsonObject;
         } catch (IOException e) {
-            runLater(()-> new AlertPopup("Could not get recent files", null, e.getMessage(), false).show());
+            File finalFile = file;
+            runLater(()-> new AlertPopup("Could not get recent files", null, e.getMessage() + ", " + finalFile.getAbsolutePath(), false).show());
         }
         return null;
     }

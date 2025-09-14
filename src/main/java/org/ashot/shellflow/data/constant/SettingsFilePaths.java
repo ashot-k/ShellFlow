@@ -2,6 +2,7 @@ package org.ashot.shellflow.data.constant;
 
 public enum SettingsFilePaths {
     PRESETS("presets.json"),
+    VARIABLES("variables.json"),
     RECENTS_DIR("recent_dirs.json");
 
     private final String value;

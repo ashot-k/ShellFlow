@@ -12,16 +12,14 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
 import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.node.entry.EntryBox;
+import org.ashot.shellflow.node.entry.variable.VariableEntry;
 import org.ashot.shellflow.node.toolbar.EntrySetupToolBar;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
@@ -75,9 +73,10 @@ public class EntrySetupTab extends Tab {
         HBox.setHgrow(entriesSection, Priority.ALWAYS);
         HBox.setHgrow(sidePanel, Priority.ALWAYS);
 
-//        HBox contentWrapper = new HBox(sidePanel, entriesSection);
         HBox contentWrapper = new HBox(entriesSection);
-        setContent(contentWrapper);
+        StackPane stackPane = new StackPane(contentWrapper, sidePanel);
+        StackPane.setAlignment(sidePanel, Pos.CENTER_LEFT);
+        setContent(stackPane);
         setClosable(false);
         setText("Entry Setup");
         log.debug("EntrySetupTab initialized");
@@ -85,7 +84,6 @@ public class EntrySetupTab extends Tab {
 
     private EntrySetupToolBar setupToolBar(){
         EntrySetupToolBar entrySetupToolBar = new EntrySetupToolBar();
-        entrySetupToolBar.setAlignment(Pos.BOTTOM_CENTER);
         entrySetupToolBar.getExpandAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(true)));
         entrySetupToolBar.getCollapseAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(false)));
         entrySetupToolBar.getClearAllEntriesButton().setOnAction(_-> clearEntryBoxes());
@@ -229,5 +227,9 @@ public class EntrySetupTab extends Tab {
 
     public void setFileLoadedText(String text){
         getEntryInfoBar().setFileLoadedText(text);
+    }
+
+    public List<VariableEntry> getVariableEntries(){
+        return sidePanel.getVariableEntries();
     }
 }

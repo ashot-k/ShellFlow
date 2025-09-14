@@ -134,6 +134,7 @@ public class EntryBox extends TitledPane {
         setupInitialState();
         setupEventListeners();
         getStyleClass().addAll(styleClasses);
+        setInvalid(commandField, commandField.getText().isBlank());
     }
 
     private void setupInitialState(){
@@ -160,6 +161,10 @@ public class EntryBox extends TitledPane {
         }
     }
 
+    private void setInvalid(TextInputControl textField, boolean invalid){
+        textField.pseudoClassStateChanged(Styles.STATE_DANGER, invalid);
+    }
+
     private void setupEditingTrackingEventListeners(){
         addEditedListenerForTextProperties(nameField.textProperty(), entry.getName());
         addEditedListenerForTextProperties(pathField.textProperty(), entry.getPath());
@@ -178,6 +183,10 @@ public class EntryBox extends TitledPane {
         wslToggle.selectedProperty().addListener((_, _, value) -> {
             pathField.setWsl(value);
         });
+        commandField.textProperty().addListener((_, _, value) -> {
+            setInvalid(commandField, value.isBlank());
+        });
+
         setupEditingTrackingEventListeners();
     }
 
@@ -212,6 +221,11 @@ public class EntryBox extends TitledPane {
         }
         edited = true;
     }
+
+    public boolean isEdited() {
+        return edited;
+    }
+
     public void refreshEdited(){
         setUnedited();
     }
@@ -270,4 +284,5 @@ public class EntryBox extends TitledPane {
     public void setEntry(Entry entry) {
         this.entry = entry;
     }
+
 }

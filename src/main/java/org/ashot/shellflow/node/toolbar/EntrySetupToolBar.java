@@ -56,8 +56,8 @@ public class EntrySetupToolBar extends HBox {
         delayPerCmdText.setFont(Fonts.detailText());
         delayPerCmd.setTooltip(new Tooltip(ToolTipMessages.delayPerCommand()));
 
-        VBox executeOptions = new VBox(5, sequenceOption, executeAllButton);
-        executeOptions.setAlignment(Pos.BOTTOM_LEFT);
+        VBox runOptions = new VBox(5, sequenceOption, executeAllButton);
+        runOptions.setAlignment(Pos.BOTTOM_LEFT);
         VBox labeledDelayPerCmd = new VBox(5, delayPerCmdText, delayPerCmd);
         labeledDelayPerCmd.setAlignment(Pos.BOTTOM_LEFT);
 
@@ -67,11 +67,12 @@ public class EntrySetupToolBar extends HBox {
         VBox labeledExecutionNameField = new VBox(5, executionNameText, executionName);
         labeledExecutionNameField.setAlignment(Pos.BOTTOM_LEFT);
 
-        List<Node> nodes = List.of(addEntryButton, collapseAllButton, expandAllButton, clearAllEntriesButton, labeledDelayPerCmd, labeledExecutionNameField, executeOptions);
+        List<Node> nodes = List.of(addEntryButton, collapseAllButton, expandAllButton, clearAllEntriesButton, labeledDelayPerCmd, labeledExecutionNameField, runOptions);
 
         getChildren().addAll(nodes);
         setSpacing(10);
         setPadding(new Insets(5));
+        setAlignment(Pos.BOTTOM_RIGHT);
         getStyleClass().add("bordered-container");
     }
 

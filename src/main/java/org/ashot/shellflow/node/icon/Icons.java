@@ -203,4 +203,12 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getSidePanelToggle(double size, boolean toggled){
+        Glyph icon = fontAwesome.create(toggled ? CHEVRON_LEFT : CHEVRON_RIGHT);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
 }

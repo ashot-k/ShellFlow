@@ -24,8 +24,7 @@ public class ShellFlowTray {
 
     public static void displayNotification(String title, String message, NotificationType type) {
         switch (type){
-            case INFO -> trayIcon.showInfoMessage(title, message);
-            case SUCCESS -> trayIcon.showMessage(title, message);
+            case INFO, SUCCESS -> trayIcon.showInfoMessage(title, message);
             case ERROR, EXECUTION_FAILURE -> trayIcon.showErrorMessage(title, message);
         }
     }
