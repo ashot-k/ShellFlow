@@ -1,10 +1,7 @@
 package org.ashot.shellflow.utils;
 
-import javafx.scene.control.Button;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
-import org.ashot.shellflow.data.constant.Fonts;
-import org.ashot.shellflow.node.icon.Icons;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -52,14 +49,6 @@ public class Utils {
         return multiplier * delayPerCmd * 1000;
     }
 
-    public static String getTerminalArgument() {
-        return System.getenv("TERM").equalsIgnoreCase("gnome-terminal") ? "--" : "-e";
-    }
-
-    public static String getSystemOS() {
-        return System.getProperty(osProperty).toLowerCase();
-    }
-
     public static boolean checkIfWindows() {
         return System.getProperty(osProperty).toLowerCase().contains("windows");
     }
@@ -67,18 +56,5 @@ public class Utils {
     public static boolean checkIfLinux() {
         return System.getProperty(osProperty).toLowerCase().contains("linux");
     }
-
-
-    public static void setupOSInfo(Button osInfo) {
-        String os = System.getProperty(osProperty);
-        if (os.toLowerCase().contains("linux")) {
-            osInfo.setGraphic(Icons.getLinuxIcon(18));
-        } else if (os.toLowerCase().contains("windows")) {
-            osInfo.setGraphic(Icons.getWindowsIcon(18));
-        }
-        osInfo.setText(System.getProperty(osProperty) + " " + System.getProperty("os.version"));
-        osInfo.setFont(Fonts.subTitle());;
-    }
-
 }
 

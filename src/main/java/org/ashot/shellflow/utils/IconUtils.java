@@ -5,7 +5,8 @@ import org.controlsfx.glyphfont.Glyph;
 
 public class IconUtils {
 
-    private IconUtils(){}
+    private IconUtils() {
+    }
 
     public static void setHoveredColor(Glyph icon, Color off, Color hoveredColor) {
         icon.parentProperty().addListener((_, _, p) -> {
@@ -36,7 +37,7 @@ public class IconUtils {
         });
     }
 
-    public static void setHoverToColor(Glyph icon, Color from, Color to){
+    public static void setHoverToColor(Glyph icon, Color from, Color to) {
         icon.parentProperty().addListener((_, _, p) -> {
             if (p != null) {
                 p.hoverProperty().addListener((_, _, newValue) -> {

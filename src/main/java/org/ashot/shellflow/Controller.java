@@ -14,7 +14,6 @@ import org.ashot.shellflow.data.constant.TabIndices;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
-import org.ashot.shellflow.node.tab.preset.PresetSetupTab;
 import org.ashot.shellflow.node.tab.profiler.ProfilerTab;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
@@ -41,13 +40,12 @@ public class Controller {
     private TabPane mainTabPane;
 
     private EntrySetupTab entrySetupTab;
-    private PresetSetupTab presetSetupTab;
     private ExecutionsTab executionsTab;
     private ProfilerTab profilerTab;
     private static String currentFile;
     private static String currentFileAbsolutePath;
 
-    public void init(){
+    public void init() {
         ControllerRegistry.register("main", this);
         sceneContainer.getChildren().addFirst(new MainMenuBar(this::openFile, this::writeEntriesToFile));
         setupTabs();
@@ -61,11 +59,9 @@ public class Controller {
 
     private void setupTabs() {
         entrySetupTab = new EntrySetupTab();
-//        presetSetupTab = new PresetSetupTab();
         executionsTab = new ExecutionsTab();
 //        profilerTab = new ProfilerTab();
         mainTabPane.getTabs().add(TabIndices.ENTRIES.ordinal(), entrySetupTab);
-//        mainTabPane.getTabs().add(TabIndices.PRESET_TAB.ordinal(), presetSetupTab);
         mainTabPane.getTabs().add(TabIndices.EXECUTIONS.ordinal() - 1, executionsTab);
 
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
@@ -88,8 +84,8 @@ public class Controller {
         openFile(file);
     }
 
-    public void toggleOptimizeAnimationsAndUI(boolean optimized){
-        if(entrySetupTab != null) {
+    public void toggleOptimizeAnimationsAndUI(boolean optimized) {
+        if (entrySetupTab != null) {
             entrySetupTab.getEntryBoxes().forEach(e -> e.setAnimated(!optimized));
         }
     }
@@ -103,7 +99,7 @@ public class Controller {
         log.debug("Loading: {}", jsonData.toString(1));
         JSONArray jsonArray = jsonData.getJSONArray("entries");
         entrySetupTab.clearEntryBoxes();
-        for (Object object: jsonArray) {
+        for (Object object : jsonArray) {
             if (object instanceof JSONObject entryJSON) {
                 String name = getOrDefault(entryJSON.opt(FieldType.NAME.getId()), FieldType.NAME);
                 String path = getOrDefault(entryJSON.opt(FieldType.PATH.getId()), FieldType.PATH);
@@ -131,10 +127,6 @@ public class Controller {
         return entrySetupTab;
     }
 
-    public PresetSetupTab getPresetSetupTab() {
-        return presetSetupTab;
-    }
-
     public ProfilerTab getProfilerTab() {
         return profilerTab;
     }
@@ -144,7 +136,7 @@ public class Controller {
         String formattedPath = "";
         String delimiter = checkIfWindows() ? "\\\\" : "/";
         String[] splitPath = path.split(delimiter);
-        formattedPath = splitPath[splitPath.length -1];
+        formattedPath = splitPath[splitPath.length - 1];
         currentFile = formattedPath;
         entrySetupTab.setFileLoadedText(currentFile);
     }
@@ -171,7 +163,7 @@ public class Controller {
             TabPane executionsTabPane = executionsTab.getExecutionsTabPane();
             if (keyEvent.isShiftDown()) {
                 Node node = executionsTabPane.getSelectionModel().getSelectedItem().getContent();
-                if(node instanceof TabPane tabPane){
+                if (node instanceof TabPane tabPane) {
                     if (keyCode.equals(KeyCode.PERIOD)) {
                         tabPane.getSelectionModel().selectNext();
                     } else if (keyCode.equals(KeyCode.COMMA)) {

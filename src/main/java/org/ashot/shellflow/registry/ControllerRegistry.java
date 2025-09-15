@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ControllerRegistry {
-    private ControllerRegistry(){}
+    private ControllerRegistry() {
+    }
+
     private static final Map<String, Object> controllers = new HashMap<>();
 
     public static void register(String key, Object controller) {

@@ -6,7 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.ashot.shellflow.utils.Animator;
+import org.ashot.shellflow.utils.Animations;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class FloatingToolBar extends VBox {
     private boolean isAutoHide = false;
     private HBox buttonsBar;
 
-    public FloatingToolBar(){
+    public FloatingToolBar() {
         setMaxHeight(50);
         setFillWidth(false);
         setSpacing(5);
@@ -24,54 +24,54 @@ public class FloatingToolBar extends VBox {
         buttonsBar = new HBox();
         buttonsBar.setAlignment(Pos.BOTTOM_CENTER);
         buttonsBar.setSpacing(10);
-        setPadding(new Insets(10, 8, 10 ,8));
+        setPadding(new Insets(10, 8, 10, 8));
         getChildren().addAll(buttonsBar);
-        getStyleClass().addAll( "floating-toolBar");
+        getStyleClass().addAll("floating-toolBar");
     }
 
-    protected void setContent(Node... node){
+    protected void setContent(Node... node) {
         buttonsBar.getChildren().setAll(node);
     }
 
-    protected void setContent(List<Node> nodes){
+    protected void setContent(List<Node> nodes) {
         buttonsBar.getChildren().setAll(nodes);
     }
 
-    protected void autoHiding(){
-        if(!isAutoHide) {
+    protected void autoHiding() {
+        if (!isAutoHide) {
             setOpacity(INITIAL_OPACITY);
             hoverProperty().addListener((_, _, hovering) -> animateHover(hovering));
         }
         isAutoHide = true;
     }
 
-    protected void autoHiding(double initialOpacity){
-        if(!isAutoHide) {
+    protected void autoHiding(double initialOpacity) {
+        if (!isAutoHide) {
             setOpacity(initialOpacity);
             hoverProperty().addListener((_, _, hovering) -> animateHover(hovering, initialOpacity));
         }
         isAutoHide = true;
     }
 
-    private void animateHover(boolean hovering){
-        Timeline fadeIn = Animator.fade(this, INITIAL_OPACITY, 1);
-        Timeline fadeOut = Animator.fade(this, 1, INITIAL_OPACITY);
-        if(hovering) {
+    private void animateHover(boolean hovering) {
+        Timeline fadeIn = Animations.fade(this, INITIAL_OPACITY, 1);
+        Timeline fadeOut = Animations.fade(this, 1, INITIAL_OPACITY);
+        if (hovering) {
             fadeIn.play();
             fadeOut.stop();
-        }else {
+        } else {
             fadeIn.stop();
             fadeOut.play();
         }
     }
 
-    private void animateHover(boolean hovering, double initialOpacity){
-        Timeline fadeIn = Animator.fade(this, initialOpacity, 1);
-        Timeline fadeOut = Animator.fade(this, 1, initialOpacity);
-        if(hovering) {
+    private void animateHover(boolean hovering, double initialOpacity) {
+        Timeline fadeIn = Animations.fade(this, initialOpacity, 1);
+        Timeline fadeOut = Animations.fade(this, 1, initialOpacity);
+        if (hovering) {
             fadeIn.play();
             fadeOut.stop();
-        }else {
+        } else {
             fadeIn.stop();
             fadeOut.play();
         }

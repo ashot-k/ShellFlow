@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_ICON_SIZE;
+import static org.ashot.shellflow.data.constant.IconSizeDefaults.DEFAULT_ICON_SIZE;
 import static org.ashot.shellflow.data.constant.SettingsFilePaths.VARIABLES;
 
 
@@ -45,11 +45,11 @@ public class SidePanel extends VBox {
 
 
     public SidePanel() {
-        toggleButton = new Button("", Icons.getSidePanelToggle(DEFAULT_BUTTON_ICON_SIZE, expanded));
+        toggleButton = new Button("", Icons.getSidePanelToggle(DEFAULT_ICON_SIZE.getSize(), expanded));
         toggleButton.setPadding(Insets.EMPTY);
         toggleButton.setBackground(Background.EMPTY);
 
-        toggleButton.setOnAction(_->{
+        toggleButton.setOnAction(_ -> {
             expanded = !expanded;
             toggleSidePanel(expanded);
         });
@@ -78,8 +78,8 @@ public class SidePanel extends VBox {
         scrollPane.setMaxWidth(EXPANDED_WIDTH - 30);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
-        addVariableButton = new Button("", Icons.getAddButtonIcon(DEFAULT_BUTTON_ICON_SIZE));
-        addVariableButton.setOnAction(_-> addVariableEntry());
+        addVariableButton = new Button("", Icons.getAddButtonIcon(DEFAULT_ICON_SIZE.getSize()));
+        addVariableButton.setOnAction(_ -> addVariableEntry());
         Button saveAll = saveButton();
         HBox variableOptions = new HBox(5, saveAll, addVariableButton);
         variableOptions.setAlignment(Pos.TOP_RIGHT);
@@ -99,30 +99,29 @@ public class SidePanel extends VBox {
         getStyleClass().addAll("solid-bg-container");
         toggleSidePanel(false);
 
-        File file = new File(ShellFlow.getConfig().getVariablesConfigLocation());
         setupFromFile();
     }
 
-    private void removeVariableEntry(VariableEntry variableEntry){
+    private void removeVariableEntry(VariableEntry variableEntry) {
         variableSetup.getChildren().remove(variableEntry);
     }
 
-    private void addVariableEntry(){
-        addVariableEntry("","");
+    private void addVariableEntry() {
+        addVariableEntry("", "");
     }
 
-    private void addVariableEntry(String name, String value){
+    private void addVariableEntry(String name, String value) {
         VariableEntry variableEntry = new VariableEntry(name, value);
-        variableEntry.setOnRemove(_-> removeVariableEntry(variableEntry));
+        variableEntry.setOnRemove(_ -> removeVariableEntry(variableEntry));
         variableSetup.getChildren().add(variableEntry);
     }
 
-    public List<VariableEntry> getVariableEntries(){
-        return variableSetup.getChildren().stream().filter(e -> e instanceof VariableEntry).map(e ->(VariableEntry) e).toList();
+    public List<VariableEntry> getVariableEntries() {
+        return variableSetup.getChildren().stream().filter(e -> e instanceof VariableEntry).map(e -> (VariableEntry) e).toList();
     }
 
-    private void toggleSidePanel(boolean expanded){
-        if(expanded){
+    private void toggleSidePanel(boolean expanded) {
+        if (expanded) {
             animation.stop();
             animation.getKeyFrames().setAll(
                     new KeyFrame(Duration.ZERO, new KeyValue(maxWidthProperty(), COLLAPSED_WIDTH)),
@@ -132,23 +131,22 @@ public class SidePanel extends VBox {
             if (!stackPane.getChildren().contains(variableSetupContainer)) {
                 stackPane.getChildren().addFirst(variableSetupContainer);
             }
-        }
-        else{
+        } else {
             animation.stop();
             setMaxWidth(COLLAPSED_WIDTH);
             stackPane.getChildren().remove(variableSetupContainer);
         }
-        toggleButton.setGraphic(Icons.getSidePanelToggle(DEFAULT_BUTTON_ICON_SIZE, expanded));
+        toggleButton.setGraphic(Icons.getSidePanelToggle(DEFAULT_ICON_SIZE.getSize(), expanded));
     }
 
 
-    private void createNewVariablesFile(File file){
+    private void createNewVariablesFile(File file) {
         try {
             if (!file.createNewFile()) {
                 return;
             }
             JSONObject jsonObject = new JSONObject();
-            JSONArray variables= new JSONArray();
+            JSONArray variables = new JSONArray();
             jsonObject.put("variables", variables);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
@@ -168,7 +166,7 @@ public class SidePanel extends VBox {
     }
 
     private void setupFromFile() {
-        File file = new File(ShellFlow.getConfig().getVariablesConfigLocation());
+        File file = new File(ShellFlow.getConfig().variablesConfigLocation());
         if (file.exists()) {
             loadExisting(file);
         } else {
@@ -177,7 +175,7 @@ public class SidePanel extends VBox {
     }
 
     private void saveToFile() {
-        File file = new File(VARIABLES.getValue());
+        File file = new File(VARIABLES.getPath());
         JSONObject jsonObject = new JSONObject();
         JSONArray variables = new JSONArray();
         for (VariableEntry variable : getVariableEntries()) {

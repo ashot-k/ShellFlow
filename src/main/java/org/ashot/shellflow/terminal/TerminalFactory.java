@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 public class TerminalFactory {
 
-    public static @NotNull ShellFlowTerminalWidget createTerminalWidget(){
+    public static @NotNull ShellFlowTerminalWidget createTerminalWidget() {
         ShellFlowTerminalWidget widget = new ShellFlowTerminalWidget(new ThemedSettingsProvider());
         widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
         return widget;

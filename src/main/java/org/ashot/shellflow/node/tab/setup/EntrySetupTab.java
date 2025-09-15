@@ -1,6 +1,5 @@
 package org.ashot.shellflow.node.tab.setup;
 
-import atlantafx.base.util.Animations;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,7 +22,7 @@ import org.ashot.shellflow.node.entry.variable.VariableEntry;
 import org.ashot.shellflow.node.toolbar.EntrySetupToolBar;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
-import org.ashot.shellflow.utils.Animator;
+import org.ashot.shellflow.utils.Animations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,12 +81,12 @@ public class EntrySetupTab extends Tab {
         log.debug("EntrySetupTab initialized");
     }
 
-    private EntrySetupToolBar setupToolBar(){
+    private EntrySetupToolBar setupToolBar() {
         EntrySetupToolBar entrySetupToolBar = new EntrySetupToolBar();
-        entrySetupToolBar.getExpandAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(true)));
-        entrySetupToolBar.getCollapseAllButton().setOnAction(_-> getEntryBoxes().forEach(e-> e.setExpanded(false)));
-        entrySetupToolBar.getClearAllEntriesButton().setOnAction(_-> clearEntryBoxes());
-        entrySetupToolBar.getExecuteAllButton().setOnAction(_-> executeAll());
+        entrySetupToolBar.getExpandAllButton().setOnAction(_ -> getEntryBoxes().forEach(e -> e.setExpanded(true)));
+        entrySetupToolBar.getCollapseAllButton().setOnAction(_ -> getEntryBoxes().forEach(e -> e.setExpanded(false)));
+        entrySetupToolBar.getClearAllEntriesButton().setOnAction(_ -> clearEntryBoxes());
+        entrySetupToolBar.getExecuteAllButton().setOnAction(_ -> executeAll());
         entrySetupToolBar.getAddEntryButton().setOnAction(_ -> addEntryBox());
 
         addEntryListChangeListener(_ -> entrySetupToolBar.getExecuteAllButton().setDisable(getEntryBoxes().isEmpty()));
@@ -105,23 +104,23 @@ public class EntrySetupTab extends Tab {
         EntryBox entryBox = entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.setOnExecuteButtonAction(_ -> {
-            Animations.shakeY(entryBox.getExecuteButton(), 1.5).play();
+            atlantafx.base.util.Animations.shakeY(entryBox.getExecuteButton(), 1.5).play();
             new CommandExecutor().execute(entryToCommand(entryBoxToEntry(entryBox), false));
         });
         setupDragging(entryBox);
-        Animator.fadeInBeforeAdditionToList(entryBox);
+        Animations.fadeInBeforeAdditionToList(entryBox);
         entryListContainer.getChildren().add(entryBox);
     }
 
-    public void refreshEdited(){
+    public void refreshEdited() {
         log.debug("Reset edited state for all entries");
         entryListContainer.getChildren().stream()
                 .filter(e -> e instanceof EntryBox)
                 .map(e -> (EntryBox) e).forEach(EntryBox::refreshEdited);
     }
 
-    private void setupDragging(EntryBox entryBox){
-        entryBox.setOnDragDetected(e ->{
+    private void setupDragging(EntryBox entryBox) {
+        entryBox.setOnDragDetected(e -> {
             dragSourceIndex = entryListContainer.getChildren().indexOf(entryBox);
             Dragboard dragboard = entryBox.startDragAndDrop(TransferMode.MOVE);
             SnapshotParameters snapshotParameters = new SnapshotParameters();
@@ -133,8 +132,8 @@ public class EntrySetupTab extends Tab {
             dragboard.setDragView(entryBox.snapshot(snapshotParameters, new WritableImage((int) entryBox.getWidth(), (int) entryBox.getHeight())));
             e.consume();
         });
-        entryBox.setOnDragOver(e ->{
-            if(dragSourceIndex != -1 && entryBox != entryListContainer.getChildren().get(dragSourceIndex)){
+        entryBox.setOnDragOver(e -> {
+            if (dragSourceIndex != -1 && entryBox != entryListContainer.getChildren().get(dragSourceIndex)) {
                 e.acceptTransferModes(TransferMode.MOVE);
             }
             e.consume();
@@ -157,7 +156,7 @@ public class EntrySetupTab extends Tab {
     }
 
     public void removeEntryBox(EntryBox entryBox) {
-        Animator.removeFromListAndFadeOut(entryBox, entryListContainer);
+        Animations.removeFromListAndFadeOut(entryBox, entryListContainer);
     }
 
     public void clearEntryBoxes() {
@@ -185,13 +184,15 @@ public class EntrySetupTab extends Tab {
     }
 
     public void executeAll() {
-        log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
-        if(getSequentialOption().isSelected()){
-            new SequenceExecutor().executeSequence(getEntries(), getExecutionName().getText());
+        new Thread(() -> {
+            log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
+            if (getSequentialOption().isSelected()) {
+                new SequenceExecutor().executeSequence(getEntries(), getExecutionName().getText());
+            } else {
+                new CommandExecutor().executeAll(getEntries(), getExecutionName().getText(), getDelayPerCmd());
+            }
         }
-        else {
-            new CommandExecutor().executeAll(getEntries(), getExecutionName().getText(), getDelayPerCmd());
-        }
+        ).start();
     }
 
     public void stopAll() {
@@ -217,7 +218,7 @@ public class EntrySetupTab extends Tab {
         return entrySetupToolBar.getDelayPerCmd();
     }
 
-    public int getDelayPerCmd(){
+    public int getDelayPerCmd() {
         return getDelayPerCmdSlider().getValue();
     }
 
@@ -225,11 +226,11 @@ public class EntrySetupTab extends Tab {
         return entryInfoBar;
     }
 
-    public void setFileLoadedText(String text){
+    public void setFileLoadedText(String text) {
         getEntryInfoBar().setFileLoadedText(text);
     }
 
-    public List<VariableEntry> getVariableEntries(){
+    public List<VariableEntry> getVariableEntries() {
         return sidePanel.getVariableEntries();
     }
 }

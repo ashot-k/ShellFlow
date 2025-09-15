@@ -7,13 +7,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.ashot.shellflow.Controller;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_ICON_SIZE;
 
 public class ExecutionsTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(ExecutionsTab.class);
@@ -33,9 +33,9 @@ public class ExecutionsTab extends Tab {
             MenuItem menuItem = new MenuItem("Close All");
             menuItem.setDisable(true);
             menuItem.setOnAction(_ -> stopAll());
-            menuItem.setGraphic(Icons.getCloseButtonIcon(DEFAULT_BUTTON_ICON_SIZE));
+            menuItem.setGraphic(Icons.getCloseButtonIcon(IconSizeDefaults.CLOSE_ICON_SIZE.getSize()));
             setupContextMenu(menuItem);
-            getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _-> {
+            getExecutionsTabPane().getTabs().addListener((ListChangeListener<Tab>) _ -> {
                 boolean isEmpty = executionsTabPane.getTabs().isEmpty();
                 setDisable(isEmpty);
                 menuItem.setDisable(isEmpty);
@@ -46,7 +46,8 @@ public class ExecutionsTab extends Tab {
         });
 
     }
-    private void setupContextMenu(MenuItem... menuItems){
+
+    private void setupContextMenu(MenuItem... menuItems) {
         setContextMenu(new ContextMenu(menuItems));
     }
 

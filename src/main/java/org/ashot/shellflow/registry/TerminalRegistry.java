@@ -9,7 +9,8 @@ import java.util.Map;
 public class TerminalRegistry {
     private static final Map<String, TtyConnector> ttyConnectors = new HashMap<>();
 
-    private TerminalRegistry(){}
+    private TerminalRegistry() {
+    }
 
     public static void register(String key, TtyConnector process) {
         ttyConnectors.put(key, process);
@@ -27,8 +28,8 @@ public class TerminalRegistry {
         ttyConnectors.values().forEach(TerminalRegistry::stopTerminal);
     }
 
-    public static void stopTerminal(TtyConnector ttyConnector){
-        new Thread(()->{
+    public static void stopTerminal(TtyConnector ttyConnector) {
+        new Thread(() -> {
             try {
                 ttyConnector.write("\u0003");
                 ttyConnector.waitFor();

@@ -29,7 +29,6 @@ public class MonitoringTtyConnector extends ProcessTtyConnector {
     //todo fix, this method prevents the terminal from expanding horizontally for some reason
     @Override
     public int read(char[] buf, int offset, int length) throws IOException {
-
         int n = delegate.read(buf, offset, length);
         if (n > 0) {
             String output = new String(buf, offset, n);

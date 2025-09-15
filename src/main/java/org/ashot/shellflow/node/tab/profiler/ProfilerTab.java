@@ -39,11 +39,11 @@ public class ProfilerTab extends Tab {
                     }
                 } else if (executionDescriptor instanceof SequenceExecution sequenceExecution) {
                     updateTitle(sequenceExecution.getCommandSequence().getSequenceName());
-                    while (sequenceExecution.getCommandSequence().getCurrentStep() <= sequenceExecution.getCommandSequence().getSteps()){
+                    while (sequenceExecution.getCommandSequence().getCurrentStep() <= sequenceExecution.getCommandSequence().getSteps()) {
                         CommandSequence commandSequence = sequenceExecution.getCommandSequence();
                         updateMessage(commandSequence.getCommandList().get(commandSequence.getCurrentStep()).getName() + " (" + commandSequence.getCurrentStep() + "/" + commandSequence.getSteps() + ")");
                         updateProgress(commandSequence.getCurrentStep(), commandSequence.getSteps());
-                        if(sequenceExecution.getCurrentProcess() != null) {
+                        if (sequenceExecution.getCurrentProcess() != null) {
                             sequenceExecution.getCurrentProcess().waitFor();
                             if (sequenceExecution.getCurrentProcess().exitValue() != 0) {
                                 updateMessage("Failed at step: " + sequenceExecution.getCommandSequence().getCurrentStep());

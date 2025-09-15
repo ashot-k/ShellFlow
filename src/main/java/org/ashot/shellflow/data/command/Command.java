@@ -24,7 +24,7 @@ public class Command {
     private final String rawArguments;
     private String argumentsString = "";
 
-    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidPathException{
+    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidPathException {
         rawArguments = arguments;
         validateArguments(arguments);
         this.persistent = persistent;
@@ -65,6 +65,11 @@ public class Command {
     }
 
     private void validateWslPath() throws InvalidPathException {
+/*
+        if (!wslPathExists(path)) {
+            throw new InvalidPathException("invalid path", path);
+        }
+*/
         log.debug("Checking WSL Path: {}", path);
         path = path.isBlank() ? "/" : path;
         log.debug("Checked WSL Path: {}", path);

@@ -15,7 +15,7 @@ import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.message.ToolTipMessages;
-import org.ashot.shellflow.node.entry.button.DeleteEntryButton;
+import org.ashot.shellflow.node.entry.button.CloseButton;
 import org.ashot.shellflow.node.entry.button.EnableEntryBoxSwitch;
 import org.ashot.shellflow.node.entry.button.ExecuteEntryButton;
 import org.ashot.shellflow.node.entry.button.WslOption;
@@ -74,7 +74,7 @@ public class EntryBox extends TitledPane {
         enabledToggle = new EnableEntryBoxSwitch("", entry.isEnabled());
         enabledToggle.setLabelPosition(HorizontalDirection.LEFT);
 
-        deleteEntry = new DeleteEntryButton();
+        deleteEntry = new CloseButton();
 
         VBox labeledNameField = new LabeledTextInput("Name", nameField);
         VBox labeledPathField = new LabeledTextInput("Path", pathField);
@@ -104,7 +104,7 @@ public class EntryBox extends TitledPane {
         col2.setHgrow(Priority.ALWAYS);
         ColumnConstraints col3 = new ColumnConstraints();
         col3.setHgrow(Priority.SOMETIMES);
-        entryGrid.getColumnConstraints().addAll(col1, col2 ,col3);
+        entryGrid.getColumnConstraints().addAll(col1, col2, col3);
 
         entryGrid.setHgap(8);
         entryGrid.setVgap(5);
@@ -129,7 +129,7 @@ public class EntryBox extends TitledPane {
         content.setPadding(new Insets(2));
 
         setContent(content);
-        setAnimated(!ShellFlow.getConfig().getOptimizedMode());
+        setAnimated(!ShellFlow.getConfig().optimizedMode());
 
         setupInitialState();
         setupEventListeners();
@@ -137,35 +137,35 @@ public class EntryBox extends TitledPane {
         setInvalid(commandField, commandField.getText().isBlank());
     }
 
-    private void setupInitialState(){
+    private void setupInitialState() {
         refreshTitleText(nameField.getText());
         toggleEntryBox(entry.isEnabled());
         setExpanded(true);
     }
 
-    private void refreshTitleText(String text){
+    private void refreshTitleText(String text) {
         title.setText(text.isBlank() ? "Unnamed Entry" : text);
     }
 
-    private void toggleEntryBox(boolean enable){
+    private void toggleEntryBox(boolean enable) {
         title.setDisable(!enable);
         executeButton.setDisable(!enable);
         nameField.setDisable(!enable);
         pathField.setDisable(!enable);
         commandField.setDisable(!enable);
         wslToggle.setDisable(!enable);
-        if(enable){
+        if (enable) {
             getStyleClass().remove("disabled-entry");
-        } else{
+        } else {
             getStyleClass().add("disabled-entry");
         }
     }
 
-    private void setInvalid(TextInputControl textField, boolean invalid){
+    private void setInvalid(TextInputControl textField, boolean invalid) {
         textField.pseudoClassStateChanged(Styles.STATE_DANGER, invalid);
     }
 
-    private void setupEditingTrackingEventListeners(){
+    private void setupEditingTrackingEventListeners() {
         addEditedListenerForTextProperties(nameField.textProperty(), entry.getName());
         addEditedListenerForTextProperties(pathField.textProperty(), entry.getPath());
         addEditedListenerForTextProperties(commandField.textProperty(), entry.getCommand());
@@ -173,7 +173,7 @@ public class EntryBox extends TitledPane {
         addEditedListenerForCheckbox(enabledToggle.selectedProperty(), entry.isEnabled());
     }
 
-    private void setupEventListeners(){
+    private void setupEventListeners() {
         enabledToggle.selectedProperty().addListener((e, _, value) -> {
             toggleEntryBox(value);
         });
@@ -186,37 +186,36 @@ public class EntryBox extends TitledPane {
         commandField.textProperty().addListener((_, _, value) -> {
             setInvalid(commandField, value.isBlank());
         });
-
         setupEditingTrackingEventListeners();
     }
 
-    private void addEditedListenerForTextProperties(StringProperty stringProperty, String originalValue){
+    private void addEditedListenerForTextProperties(StringProperty stringProperty, String persistedValue) {
         stringProperty.addListener((_, _, newValue) -> {
-            if(newValue.equals(originalValue) && checkAllFieldsEdited()){
+            if (newValue.equals(persistedValue) && checkAllFieldsEdited()) {
                 setUnedited();
-            }else{
+            } else {
                 setEdited();
             }
         });
     }
 
-    private void addEditedListenerForCheckbox(BooleanProperty booleanProperty, boolean originalValue){
+    private void addEditedListenerForCheckbox(BooleanProperty booleanProperty, boolean persistedValue) {
         booleanProperty.addListener((_, _, newValue) -> {
-            if(newValue.equals(originalValue) && checkAllFieldsEdited()){
+            if (newValue.equals(persistedValue) && checkAllFieldsEdited()) {
                 setUnedited();
-            }else{
+            } else {
                 setEdited();
             }
         });
     }
 
-    private void setUnedited(){
+    private void setUnedited() {
         getStyleClass().remove("edited-field");
         edited = false;
     }
 
-    private void setEdited(){
-        if(!getStyleClass().contains("edited-field")) {
+    private void setEdited() {
+        if (!getStyleClass().contains("edited-field")) {
             getStyleClass().add("edited-field");
         }
         edited = true;
@@ -226,22 +225,22 @@ public class EntryBox extends TitledPane {
         return edited;
     }
 
-    public void refreshEdited(){
+    public void refreshEdited() {
         setUnedited();
     }
 
-    private boolean checkAllFieldsEdited(){
+    private boolean checkAllFieldsEdited() {
         return nameField.getText().equals(entry.getName())
                 && pathField.getText().equals(entry.getPath())
                 && commandField.getText().equals(entry.getCommand())
                 && wslToggle.isSelected() == entry.isWsl();
     }
 
-    public void setOnDeleteButtonAction(EventHandler<ActionEvent> action){
+    public void setOnDeleteButtonAction(EventHandler<ActionEvent> action) {
         this.deleteEntry.setOnAction(action);
     }
 
-    public void setOnExecuteButtonAction(EventHandler<ActionEvent> action){
+    public void setOnExecuteButtonAction(EventHandler<ActionEvent> action) {
         this.executeButton.setOnAction(action);
     }
 

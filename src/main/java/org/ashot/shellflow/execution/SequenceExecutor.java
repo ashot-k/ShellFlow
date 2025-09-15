@@ -29,14 +29,14 @@ import static org.ashot.shellflow.utils.TabUtils.*;
 
 public class SequenceExecutor extends CommandExecutor {
 
-    private final Logger logger = LoggerFactory.getLogger(SequenceExecutor.class);
+    private final Logger log = LoggerFactory.getLogger(SequenceExecutor.class);
 
     public void executeSequence(List<Entry> entries, String seqName) {
         //todo add thread to a list, track tab closure to terminate the thread
         //todo add logs
         new Thread(() -> {
             List<Command> commandList = EntryMapper.buildCommands(entries);
-            if(commandList == null){
+            if (commandList == null) {
                 return;
             }
             CommandSequence commandSequence = new CommandSequence(commandList, seqName);
@@ -51,13 +51,11 @@ public class SequenceExecutor extends CommandExecutor {
                 Command currentCommand = commandList.get(i);
                 ExecutionTab tab = executionTabs.get(i);
                 int exitValue = proceedToNextInSequence(sequenceTab, currentCommand, tab, i, commandList.size(), commandSequence.getSequenceName());
-                boolean shouldProceed = handleProcessInSequenceFinished(sequenceTab, tab, exitValue);
-                if(shouldProceed){
+                boolean shouldProceed = handleProcessInSequenceFinished(tab, exitValue);
+                if (shouldProceed) {
                     sequenceTabPane.getSelectionModel().select(i != commandList.size() ? i + 1 : i);
-                }
-                else{
-                    System.out.println("tab canceled: " + tab.isCanceled());
-                    if(tab.isCanceled()) {
+                } else {
+                    if (tab.isCanceled()) {
                         return;
                     }
                     String failMessage = sequentialFailNotificationMessage(sequenceTab.getText(), tab.getText());
@@ -69,9 +67,9 @@ public class SequenceExecutor extends CommandExecutor {
         }).start();
     }
 
-    private int proceedToNextInSequence(SequenceExecutionsTab sequenceTab, Command command, ExecutionTab tab, int idx, int totalInSequence, String sequenceName){
+    private int proceedToNextInSequence(SequenceExecutionsTab sequenceTab, Command command, ExecutionTab tab, int idx, int totalInSequence, String sequenceName) {
         PtyProcessBuilder processBuilder = buildProcess(command);
-        PtyProcess process  = startProcess(tab, processBuilder);
+        PtyProcess process = startProcess(tab, processBuilder);
         runLater(() -> {
             String validatedSequenceName = sequenceName.isBlank() ? "Sequence" : sequenceName;
             String currentTabName = command.isNameSet() ? command.getName() : "Process - " + process.pid();
@@ -83,13 +81,13 @@ public class SequenceExecutor extends CommandExecutor {
         return waitForProcess(process);
     }
 
-    private boolean handleProcessInSequenceFinished(SequenceExecutionsTab sequenceTab,  ExecutionTab tab, int exitValue){
+    private boolean handleProcessInSequenceFinished(ExecutionTab tab, int exitValue) {
         if (tab.isCanceled()) {
             return false;
         }
         if (exitValue == 0) {
             tab.setClosable(false);
-            handleProcessFinished(tab);
+            handleProcessFinished(tab, false);
             return true;
         } else {
             tab.setClosable(false);
@@ -120,7 +118,7 @@ public class SequenceExecutor extends CommandExecutor {
                 NotificationType.EXECUTION_FAILURE);
     }
 
-    private void handleSequenceFinished(SequenceExecutionsTab sequenceTab){
+    private void handleSequenceFinished(SequenceExecutionsTab sequenceTab) {
         setFinished(sequenceTab);
         ShellFlowTray.displayNotification(
                 ExecutionState.FINISHED.getValue(),

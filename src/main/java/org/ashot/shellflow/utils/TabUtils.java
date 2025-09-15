@@ -29,7 +29,7 @@ public class TabUtils {
             Glyph icon = Icons.getExecutionErrorIcon(tabIconSize);
             tab.setGraphic(icon);
             tab.setDisable(false);
-            Animator.rotateInAndWobble(icon);
+            Animations.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
             executionTab.setFailed();
@@ -41,7 +41,7 @@ public class TabUtils {
             Glyph icon = Icons.getExecutionFinishedIcon(tabIconSize);
             tab.setGraphic(icon);
             tab.setDisable(false);
-            Animator.rotateInAndWobble(icon);
+            Animations.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
             executionTab.setFinished();
@@ -54,7 +54,7 @@ public class TabUtils {
             tab.setGraphic(icon);
             tab.setDisable(false);
             tab.setClosable(true);
-            Animator.rotateInAndWobble(icon);
+            Animations.rotateInAndWobble(icon);
         });
         if (tab instanceof ExecutionTab executionTab) {
             executionTab.cancel();
@@ -63,23 +63,11 @@ public class TabUtils {
 
     public static void addToExecutions(Tab tab) {
         if (tab == null) throw new RuntimeException("Tab added to executions is null");
-        Controller controller = ControllerRegistry.get("main", Controller.class);
+        Controller controller = ControllerRegistry.getMainController();
         Platform.runLater(() -> {
             ExecutionsTab executionsTab = controller.getExecutionsTab();
             executionsTab.getExecutionsTabPane().getTabs().add(tab);
             executionsTab.getExecutionsTabPane().getSelectionModel().select(tab);
         });
     }
-
-/*
-    public static void addToProfiler(ExecutionDescriptor executionDescriptor) {
-        if (executionDescriptor == null) throw new RuntimeException("Execution Descriptor is null");
-        Controller controller = ControllerRegistry.get("main", Controller.class);
-        Platform.runLater(() -> {
-            ProfilerTab profilerTab = controller.getProfilerTab();
-            profilerTab.monitorExecution(executionDescriptor);
-        });
-    }
-*/
-
 }

@@ -1,7 +1,8 @@
 package org.ashot.shellflow.exception;
 
-public class InvalidPathException extends Exception{
-    String path;
+public class InvalidPathException extends Exception {
+    private String path = "";
+
     public InvalidPathException(String message, String path) {
         super(message);
         this.path = path;

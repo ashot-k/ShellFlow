@@ -14,9 +14,9 @@ import static org.ashot.shellflow.data.constant.MenuItemDefaults.MENU_ITEM_ICON_
 import static org.ashot.shellflow.utils.RecentFileUtils.getRecentFiles;
 
 public class OpenRecentMenu extends Menu {
+    private static final Logger log = LoggerFactory.getLogger(OpenRecentMenu.class);
 
     private static final int MAX_ENTRIES = 15;
-    private static final Logger log = LoggerFactory.getLogger(OpenRecentMenu.class);
     private final Consumer<File> open;
 
     public OpenRecentMenu(Consumer<File> open, Menu parentMenu) {
@@ -32,13 +32,13 @@ public class OpenRecentMenu extends Menu {
         for (Object s : recentFiles.toList().stream().limit(MAX_ENTRIES).toList()) {
             String recentFile = s.toString();
             MenuItem m = createRecentMenuItemOption(recentFile);
-            if(m != null) {
+            if (m != null) {
                 getItems().add(m);
             }
         }
     }
 
-    private MenuItem createRecentMenuItemOption(String recentFile){
+    private MenuItem createRecentMenuItemOption(String recentFile) {
         MenuItem m = new MenuItem(recentFile);
         m.setOnAction(_ -> {
             File file = new File(recentFile);
@@ -46,7 +46,7 @@ public class OpenRecentMenu extends Menu {
                 open.accept(file);
             }
         });
-        if(!new File(recentFile).exists()){
+        if (!new File(recentFile).exists()) {
             return null;
         }
         return m;

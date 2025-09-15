@@ -7,13 +7,13 @@ import javafx.scene.layout.Background;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.icon.Icons;
 
-import static org.ashot.shellflow.data.constant.ButtonDefaults.PATH_BROWSE_BUTTON_SIZE;
+import static org.ashot.shellflow.data.constant.IconSizeDefaults.PATH_BROWSE_ICON_SIZE;
 
 
-public class BrowsePath extends Button {
+public class BrowsePathButton extends Button {
 
-    public BrowsePath(Runnable onAction){
-        setGraphic(Icons.getBrowseIcon(PATH_BROWSE_BUTTON_SIZE));
+    public BrowsePathButton(Runnable onAction) {
+        setGraphic(Icons.getBrowseIcon(PATH_BROWSE_ICON_SIZE.getSize()));
         setOnAction(_ -> onAction.run());
         setTooltip(new Tooltip(ToolTipMessages.pathBrowse()));
         setCursor(Cursor.HAND);

@@ -21,24 +21,23 @@ import static javafx.application.Platform.runLater;
 public class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
 
-    private FileUtils(){}
+    private FileUtils() {
+    }
 
-    public static File createFileAndDirs(String pathString){
-        if(pathString == null) return null;
+    public static File createFileAndDirs(String pathString) {
+        if (pathString == null) return null;
         Path path = Path.of(pathString);
         File createdFile = null;
-        if(Files.exists(path)){
-            if(Files.isDirectory(path)){
+        if (Files.exists(path)) {
+            if (Files.isDirectory(path)) {
                 log.error("Could not create file: {} destination exists but it is a directory", pathString);
                 return null;
-            }
-            else{
+            } else {
                 return new File(path.toUri());
             }
-        }
-        else{
+        } else {
             try {
-                if(createRequiredDirs(path.getParent()).isDirectory()){
+                if (path.getParent() != null && createRequiredDirs(path.getParent()).isDirectory()) {
                     createdFile = createFile(path).toFile();
                 }
             } catch (IOException e) {
@@ -53,14 +52,14 @@ public class FileUtils {
     }
 
     public static File chooseFile(boolean save) {
-        return FileUtils.chooseFile(save, save ? RecentFileUtils.getLastSavedFolderLocation(): RecentFileUtils.getLastLoadedFolderLocation());
+        return FileUtils.chooseFile(save, save ? RecentFileUtils.getLastSavedFolderLocation() : RecentFileUtils.getLastLoadedFolderLocation());
     }
 
     private static File chooseFile(boolean saveMode, String initialDir) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extensions = new FileChooser.ExtensionFilter("JSON File", "*.json");
         fileChooser.getExtensionFilters().addAll(extensions);
-        if(new File(initialDir).exists()) {
+        if (new File(initialDir).exists()) {
             fileChooser.setInitialDirectory(new File(initialDir));
         }
         if (saveMode) {
@@ -74,16 +73,14 @@ public class FileUtils {
     }
 
     public static boolean writeJSONDataToFile(File fileToSave, JSONObject data) {
-        try {
-            FileWriter f = new FileWriter(fileToSave);
-            data.write(f, 1, 1);
-            f.close();
+        try (FileWriter fileWriter = new FileWriter(fileToSave)) {
+            data.write(fileWriter, 1, 1);
             return true;
         } catch (IOException e) {
-            runLater(()-> new AlertPopup(
+            runLater(() -> new AlertPopup(
                     "Error",
                     null,
-                    "Could not save data to file: " + fileToSave.getAbsolutePath() + "\n" +  (e.getMessage() != null ? e.getMessage() : ""),
+                    "Could not save data to file: " + fileToSave.getAbsolutePath() + "\n" + (e.getMessage() != null ? e.getMessage() : ""),
                     "Data:\n" + data.toString(1),
                     false)
                     .show());

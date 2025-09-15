@@ -21,13 +21,14 @@ public class EntryMapper {
     private static final Logger log = LoggerFactory.getLogger(EntryMapper.class);
     private static AlertPopup errorPopup = new AlertPopup(AlertType.ERROR);
 
-    private EntryMapper(){}
+    private EntryMapper() {
+    }
 
-    public static EntryBox entryToEntryBox(Entry entry){
+    public static EntryBox entryToEntryBox(Entry entry) {
         return new EntryBox(entry);
     }
 
-    public static Entry entryBoxToEntry(EntryBox entryBox){
+    public static Entry entryBoxToEntry(EntryBox entryBox) {
         return new Entry(
                 entryBox.getNameField().getText(),
                 entryBox.getPathField().getText(),
@@ -42,7 +43,7 @@ public class EntryMapper {
         String path = entry.getPath();
         boolean wsl = entry.isWsl();
 
-        for (VariableEntry variableEntry : ControllerRegistry.getMainController().getEntrySetupTab().getVariableEntries()){
+        for (VariableEntry variableEntry : ControllerRegistry.getMainController().getEntrySetupTab().getVariableEntries()) {
             command = command.replace("${" + variableEntry.getNameFieldValue() + "}", variableEntry.getValueFieldValue());
             path = path.replace("${" + variableEntry.getNameFieldValue() + "}", variableEntry.getValueFieldValue());
         }
@@ -59,7 +60,7 @@ public class EntryMapper {
     public static List<Command> buildCommands(List<Entry> entries) {
         List<Command> commands = new ArrayList<>();
         for (Entry entry : entries) {
-            if(!entry.isEnabled()){
+            if (!entry.isEnabled()) {
                 continue;
             }
             Command cmd = EntryMapper.entryToCommand(entry, false);
@@ -75,10 +76,9 @@ public class EntryMapper {
         runLater(() -> {
             if (!errorPopup.isShowing()) {
                 String msg = "";
-                if(e instanceof InvalidPathException invalidPathException){
-                    msg = invalidPathException.getPath();
-                }
-                else {
+                if (e instanceof InvalidPathException invalidPathException) {
+                    msg = invalidPathException.getMessage() + ", path:" + invalidPathException.getPath();
+                } else {
                     msg = e.getMessage();
                 }
                 errorPopup = new AlertPopup("Execution construction error", null, msg, false);

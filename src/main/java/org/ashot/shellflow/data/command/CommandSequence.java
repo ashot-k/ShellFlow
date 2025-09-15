@@ -5,7 +5,6 @@ import java.util.List;
 public class CommandSequence {
 
     private List<Command> commandList;
-    private int delayPerCommand;
     private String sequenceName;
     private int steps;
     private int currentStep = 0;
@@ -20,24 +19,8 @@ public class CommandSequence {
         return commandList;
     }
 
-    public void setCommandList(List<Command> commandList) {
-        this.commandList = commandList;
-    }
-
-    public int getDelayPerCommand() {
-        return delayPerCommand;
-    }
-
-    public void setDelayPerCommand(int delayPerCommand) {
-        this.delayPerCommand = delayPerCommand;
-    }
-
     public String getSequenceName() {
         return sequenceName;
-    }
-
-    public void setSequenceName(String sequenceName) {
-        this.sequenceName = sequenceName;
     }
 
     private String formattedName(String name) {
@@ -59,8 +42,9 @@ public class CommandSequence {
     public int getCurrentStep() {
         return currentStep;
     }
-    public void incrementCurrentStep(){
-        if(currentStep < steps){
+
+    public void incrementCurrentStep() {
+        if (currentStep < steps) {
             currentStep++;
         }
     }

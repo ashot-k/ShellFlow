@@ -5,22 +5,19 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.node.entry.LabeledTextInput;
-import org.ashot.shellflow.node.icon.Icons;
-
-import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_ICON_SIZE;
+import org.ashot.shellflow.node.entry.button.CloseButton;
 
 
 public class VariableEntry extends HBox {
-    private TextField nameField;
-    private TextField valueField;
-    private Button removeButton;
+    private final TextField nameField;
+    private final TextField valueField;
+    private final Button removeButton;
 
-    public VariableEntry(String name, String value){
+    public VariableEntry(String name, String value) {
         this();
         nameField.setText(name);
         valueField.setText(value);
@@ -30,27 +27,27 @@ public class VariableEntry extends HBox {
         super();
         nameField = new TextField();
         valueField = new TextField();
+        removeButton = new CloseButton();
 
-        removeButton= new Button("", Icons.getCloseButtonIcon(DEFAULT_BUTTON_ICON_SIZE));
-        removeButton.setBackground(Background.EMPTY);
-
-        VBox labeledNameField = new LabeledTextInput("Name",  nameField);
+        VBox labeledNameField = new LabeledTextInput("Name", nameField);
         HBox.setHgrow(labeledNameField, Priority.ALWAYS);
-        VBox labeledValueField = new LabeledTextInput("Value",  valueField);
+        VBox labeledValueField = new LabeledTextInput("Value", valueField);
         HBox.setHgrow(labeledValueField, Priority.ALWAYS);
 
         setSpacing(5);
-        setAlignment(Pos.TOP_CENTER);
+        setAlignment(Pos.BASELINE_CENTER);
         getChildren().addAll(removeButton, labeledNameField, labeledValueField);
     }
-    public void setOnRemove(EventHandler<ActionEvent> event){
+
+    public void setOnRemove(EventHandler<ActionEvent> event) {
         removeButton.setOnAction(event);
     }
 
-    public String getNameFieldValue(){
+    public String getNameFieldValue() {
         return nameField.getText();
     }
-    public String getValueFieldValue(){
+
+    public String getValueFieldValue() {
         return valueField.getText();
     }
 

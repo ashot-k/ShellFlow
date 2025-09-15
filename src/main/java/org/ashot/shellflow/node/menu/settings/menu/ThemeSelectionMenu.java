@@ -12,7 +12,7 @@ import static org.ashot.shellflow.data.constant.MenuItemDefaults.MENU_ITEM_ICON_
 public class ThemeSelectionMenu extends Menu {
     public ThemeSelectionMenu() {
         ToggleGroup toggleGroup = new ToggleGroup();
-        for (ThemeOption themeOption : ThemeOption.values()){
+        for (ThemeOption themeOption : ThemeOption.values()) {
             RadioMenuItem themeOptionMenuItem = new RadioMenuItem(themeOption.getValue());
             themeOptionMenuItem.setOnAction(_ -> ShellFlow.setTheme(themeOption));
             themeOptionMenuItem.setToggleGroup(toggleGroup);

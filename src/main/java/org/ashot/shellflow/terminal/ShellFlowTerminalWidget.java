@@ -19,14 +19,14 @@ public class ShellFlowTerminalWidget extends JediTermFxWidget {
         });
     }
 
-    public void createToolBar(){
+    public void createToolBar() {
         terminalToolBar = new TerminalToolBar(this);
     }
 
-    public void toggleFind(){
-        if(super.isShowingFind()) {
+    public void toggleFind() {
+        if (super.isShowingFind()) {
             super.hideFindComponent();
-        }else{
+        } else {
             super.showFindComponent();
         }
     }

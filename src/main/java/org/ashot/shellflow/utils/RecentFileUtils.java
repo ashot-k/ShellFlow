@@ -24,11 +24,11 @@ public class RecentFileUtils {
 
     public static void loadRecentFolders() {
         JSONObject dirs = getRecents();
-        if(dirs == null){
+        if (dirs == null) {
             return;
         }
-        lastSavedFolderLocation = (String) dirs.get(DirType.LAST_SAVED.name());
-        lastLoadedFolderLocation = (String) dirs.get(DirType.LAST_LOADED.name());
+        lastSavedFolderLocation = (String) dirs.get(DirType.LAST_SAVED.getName());
+        lastLoadedFolderLocation = (String) dirs.get(DirType.LAST_LOADED.getName());
     }
 
     public static String getLastSavedFolderLocation() {
@@ -45,7 +45,7 @@ public class RecentFileUtils {
         File mostRecentFile = null;
         JSONObject recents = getRecents();
         if (recents != null && !recents.isEmpty()) {
-            String path = recents.getJSONArray(DirType.RECENT.name()).optString(0);
+            String path = recents.getJSONArray(DirType.RECENT.getName()).optString(0);
             if (path != null && !path.isBlank()) {
                 mostRecentFile = new File(path);
                 loadFromFile.accept(mostRecentFile);
@@ -58,12 +58,12 @@ public class RecentFileUtils {
         if (newDirLocation == null) return;
         JSONObject jsonObject;
         try {
-            File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
+            File file = new File(ShellFlow.getConfig().recentDirsConfigLocation());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
-            jsonObject.put(dirType.name(), newDirLocation);
+            jsonObject.put(dirType.getName(), newDirLocation);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            runLater(()-> new AlertPopup("Could not refresh recent dirs", null, e.getMessage(), false).show());
+            runLater(() -> new AlertPopup("Could not refresh recent dirs", null, e.getMessage(), false).show());
         }
     }
 
@@ -71,18 +71,18 @@ public class RecentFileUtils {
         if (path == null) return;
         JSONObject jsonObject = null;
         try {
-            File file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
+            File file = new File(ShellFlow.getConfig().recentDirsConfigLocation());
             jsonObject = new JSONObject(Files.readString(file.toPath()));
-            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.name());
+            JSONArray recents = (JSONArray) jsonObject.get(DirType.RECENT.getName());
             List<Object> list = recents.toList();
             list.removeIf(element -> element.toString().equals(path));
             list.addFirst(path);
             recents.clear();
             recents.putAll(list);
-            jsonObject.put(DirType.RECENT.name(), recents);
+            jsonObject.put(DirType.RECENT.getName(), recents);
             FileUtils.writeJSONDataToFile(file, jsonObject);
         } catch (IOException e) {
-            runLater(()-> new AlertPopup("Could not save file to recents", null, e.getMessage(), false).show());
+            runLater(() -> new AlertPopup("Could not save file to recents", null, e.getMessage(), false).show());
         }
     }
 
@@ -90,40 +90,40 @@ public class RecentFileUtils {
         File file = null;
         try {
             JSONObject jsonObject = null;
-            file = new File(ShellFlow.getConfig().getRecentsDirsConfigLocation());
+            file = new File(ShellFlow.getConfig().recentDirsConfigLocation());
             if (file.exists()) {
                 String jsonContent = Files.readString(file.toPath());
                 jsonObject = new JSONObject(jsonContent);
             } else if (file.createNewFile()) {
-                log.info("Could not find {}, creating new file at the same location", ShellFlow.getConfig().getRecentsDirsConfigLocation());
+                log.info("Could not find {}, creating new file at the same location", ShellFlow.getConfig().recentDirsConfigLocation());
                 jsonObject = createDefaultRecentFilesJSON();
                 FileUtils.writeJSONDataToFile(file, jsonObject);
             }
             return jsonObject;
         } catch (IOException e) {
             File finalFile = file;
-            runLater(()-> new AlertPopup("Could not get recent files", null, e.getMessage() + ", " + finalFile.getAbsolutePath(), false).show());
+            runLater(() -> new AlertPopup("Could not get recent files", null, e.getMessage() + ", " + finalFile.getAbsolutePath(), false).show());
         }
         return null;
     }
 
-    private static JSONObject createDefaultRecentFilesJSON(){
+    private static JSONObject createDefaultRecentFilesJSON() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(DirType.LAST_LOADED.name(), ".");
-        jsonObject.put(DirType.LAST_SAVED.name(), ".");
-        jsonObject.put(DirType.RECENT.name(), new JSONArray());
+        jsonObject.put(DirType.LAST_LOADED.getName(), ".");
+        jsonObject.put(DirType.LAST_SAVED.getName(), ".");
+        jsonObject.put(DirType.RECENT.getName(), new JSONArray());
         return jsonObject;
     }
 
-    public static JSONArray getRecentFiles(){
+    public static JSONArray getRecentFiles() {
         JSONObject recents = getRecents();
-        if(recents == null) {
+        if (recents == null) {
             log.debug("No recent folders found");
             return new JSONArray();
-        }else if (recents.getJSONArray(DirType.RECENT.name()) == null){
+        } else if (recents.getJSONArray(DirType.RECENT.getName()) == null) {
             log.debug("No recent files found");
             return new JSONArray();
         }
-        return recents.getJSONArray(DirType.RECENT.name());
+        return recents.getJSONArray(DirType.RECENT.getName());
     }
 }

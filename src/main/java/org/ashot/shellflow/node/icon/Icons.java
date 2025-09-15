@@ -1,7 +1,7 @@
 package org.ashot.shellflow.node.icon;
 
 import javafx.scene.paint.Color;
-import org.ashot.shellflow.utils.Animator;
+import org.ashot.shellflow.utils.Animations;
 import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -14,7 +14,8 @@ public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
     private static final Color preferredColor = Color.SLATEBLUE;
 
-    private Icons(){}
+    private Icons() {
+    }
 
     private static Glyph decorateGlyph(Glyph icon) {
         icon.getStyleClass().add("icon");
@@ -46,8 +47,8 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getToggleToolbarIcon(int size, boolean show){
-        Glyph icon = fontAwesome.create(show ? ANGLE_DOUBLE_RIGHT: ANGLE_DOUBLE_LEFT);
+    public static Glyph getToggleToolbarIcon(int size, boolean show) {
+        Glyph icon = fontAwesome.create(show ? ANGLE_DOUBLE_RIGHT : ANGLE_DOUBLE_LEFT);
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
@@ -154,7 +155,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(SPINNER);
         icon.size(size);
         icon.color(preferredColor);
-        Animator.spinIcon(icon);
+        Animations.spinIcon(icon);
         return icon;
     }
 
@@ -179,7 +180,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getFontSelectionMenuIcon(double size){
+    public static Glyph getFontSelectionMenuIcon(double size) {
         Glyph icon = fontAwesome.create(FONT);
         icon.size(size);
         icon.color(preferredColor);
@@ -187,7 +188,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getExpandAllEntriesIcon(double size){
+    public static Glyph getExpandAllEntriesIcon(double size) {
         Glyph icon = fontAwesome.create(TOGGLE_DOWN);
         icon.size(size);
         icon.color(preferredColor);
@@ -195,7 +196,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getCollapseAllEntriesIcon(double size){
+    public static Glyph getCollapseAllEntriesIcon(double size) {
         Glyph icon = fontAwesome.create(TOGGLE_UP);
         icon.size(size);
         icon.color(preferredColor);
@@ -203,7 +204,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getSidePanelToggle(double size, boolean toggled){
+    public static Glyph getSidePanelToggle(double size, boolean toggled) {
         Glyph icon = fontAwesome.create(toggled ? CHEVRON_LEFT : CHEVRON_RIGHT);
         icon.size(size);
         icon.color(preferredColor);

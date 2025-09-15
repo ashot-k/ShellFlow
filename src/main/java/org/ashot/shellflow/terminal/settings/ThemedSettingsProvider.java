@@ -16,25 +16,23 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
     private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(240, 240, 240);
     private static final TerminalColor DEFAULT_LIGHT_MODE_FOREGROUND = new TerminalColor(16, 17, 23);
 
-    private static String fontFamily = ShellFlow.getConfig().getTerminalFontFamily().getFamily();
-    private static double fontSize = ShellFlow.getConfig().getTerminalFontSize();
+    private static String fontFamily = ShellFlow.getConfig().terminalFontFamily().getFamily();
+    private static double fontSize = ShellFlow.getConfig().terminalFontSize();
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {
-        if(ShellFlow.getSelectedThemeOption().isDark()) {
+        if (ShellFlow.getSelectedThemeOption().isDark()) {
             return DEFAULT_DARK_MODE_BACKGROUND;
-        }
-        else{
+        } else {
             return DEFAULT_LIGHT_MODE_BACKGROUND;
         }
     }
 
     @Override
     public @NotNull TerminalColor getDefaultForeground() {
-        if(ShellFlow.getSelectedThemeOption().isDark()){
+        if (ShellFlow.getSelectedThemeOption().isDark()) {
             return DEFAULT_DARK_MODE_FOREGROUND;
-        }
-        else{
+        } else {
             return DEFAULT_LIGHT_MODE_FOREGROUND;
         }
     }
@@ -57,7 +55,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
         ThemedSettingsProvider.fontFamily = fontFamily;
     }
 
-    public static void updateFont(String fontFamily, double fontSize){
+    public static void updateFont(String fontFamily, double fontSize) {
         setFontFamily(fontFamily);
         setFontSize(fontSize);
     }

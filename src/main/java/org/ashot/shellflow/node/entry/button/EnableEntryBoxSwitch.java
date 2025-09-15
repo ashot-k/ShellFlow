@@ -7,7 +7,7 @@ import javafx.scene.layout.HBox;
 import org.ashot.shellflow.data.constant.FieldType;
 
 public class EnableEntryBoxSwitch extends ToggleSwitch {
-    public EnableEntryBoxSwitch(String text, boolean initialSelection){
+    public EnableEntryBoxSwitch(String text, boolean initialSelection) {
         setText(text);
         setId(FieldType.ENABLED.getId());
         setSelected(initialSelection);

@@ -7,27 +7,27 @@ import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.registry.ControllerRegistry;
 
 import static org.ashot.shellflow.ShellFlow.getConfig;
-import static org.ashot.shellflow.utils.Animator.*;
+import static org.ashot.shellflow.utils.Animations.*;
 
 public class PerformanceSettingMenuItem extends MenuItem {
 
-    public PerformanceSettingMenuItem(){
+    public PerformanceSettingMenuItem() {
         CheckBox checkBox = new CheckBox();
         setText("Optimized Animations");
         setGraphic(checkBox);
-        this.setOnAction(_ ->{
+        this.setOnAction(_ -> {
             checkBox.setSelected(!checkBox.isSelected());
             ShellFlow.getConfig().saveProperty(ConfigProperty.OPTIMIZED_MODE, String.valueOf(checkBox.isSelected()));
         });
         checkBox.setMouseTransparent(true);
         checkBox.selectedProperty().addListener((_, _, newValue) -> {
-            if(newValue){
+            if (newValue) {
                 setFrameRateForSpin(PERFORMANCE_OPTIMIZATION_FRAME_RATE);
-            }else {
+            } else {
                 setFrameRateForSpin(DEFAULT_FRAME_RATE);
             }
             ControllerRegistry.getMainController().toggleOptimizeAnimationsAndUI(newValue);
         });
-        checkBox.setSelected(getConfig().getOptimizedMode());
+        checkBox.setSelected(getConfig().optimizedMode());
     }
 }

@@ -2,7 +2,7 @@ package org.ashot.shellflow.data.execution;
 
 import org.ashot.shellflow.data.command.CommandSequence;
 
-public class SequenceExecution implements ExecutionDescriptor{
+public class SequenceExecution implements ExecutionDescriptor {
     private CommandSequence commandSequence;
     private Process currentProcess;
 

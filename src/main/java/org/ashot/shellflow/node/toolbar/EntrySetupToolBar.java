@@ -7,12 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.constant.Fonts;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.icon.Icons;
 
 import java.util.List;
 
-import static org.ashot.shellflow.data.constant.ButtonDefaults.DEFAULT_BUTTON_ICON_SIZE;
 
 public class EntrySetupToolBar extends HBox {
     private final Button expandAllButton;
@@ -24,26 +24,26 @@ public class EntrySetupToolBar extends HBox {
     private final CheckBox sequenceOption;
     private final TextField executionName;
 
-    public EntrySetupToolBar(){
+    public EntrySetupToolBar() {
         super();
-        expandAllButton = new Button("", Icons.getExpandAllEntriesIcon(DEFAULT_BUTTON_ICON_SIZE));
+        expandAllButton = new Button("", Icons.getExpandAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         expandAllButton.setTooltip(new Tooltip(ToolTipMessages.expandAllEntries()));
 
-        collapseAllButton = new Button("", Icons.getCollapseAllEntriesIcon(DEFAULT_BUTTON_ICON_SIZE));
+        collapseAllButton = new Button("", Icons.getCollapseAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         collapseAllButton.setTooltip(new Tooltip(ToolTipMessages.collapseAllEntries()));
 
-        clearAllEntriesButton = new Button("Clear", Icons.getClearIcon(DEFAULT_BUTTON_ICON_SIZE));
+        clearAllEntriesButton = new Button("Clear", Icons.getClearIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         clearAllEntriesButton.setContentDisplay(ContentDisplay.RIGHT);
         clearAllEntriesButton.setFont(Fonts.buttonText());
 
-        addEntryButton = new Button("", Icons.getAddButtonIcon(DEFAULT_BUTTON_ICON_SIZE));
+        addEntryButton = new Button("", Icons.getAddButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         addEntryButton.setContentDisplay(ContentDisplay.RIGHT);
 
         delayPerCmd = new Spinner<>(0, 50, 0, 5);
         delayPerCmd.setMaxWidth(70);
         delayPerCmd.setPromptText("Delay per command");
 
-        executeAllButton = new Button("Execute All", Icons.getExecuteAllButtonIcon(DEFAULT_BUTTON_ICON_SIZE));
+        executeAllButton = new Button("Execute All", Icons.getExecuteAllButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         executeAllButton.setContentDisplay(ContentDisplay.RIGHT);
         executeAllButton.setFont(Fonts.buttonText());
 

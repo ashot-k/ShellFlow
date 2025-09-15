@@ -6,15 +6,15 @@ import org.ashot.shellflow.ShellFlow;
 
 public class Fonts {
 
-    private static Font getApplicationFont(){
+    private static Font getApplicationFont() {
         Font font = ShellFlow.getApplicationFont();
-        if(font == null){
+        if (font == null) {
             font = Font.getDefault();
         }
         return font;
     }
 
-    private static String getFontFamily(){
+    private static String getFontFamily() {
         return getApplicationFont().getFamily();
     }
 
@@ -22,26 +22,27 @@ public class Fonts {
         return Font.font(getFontFamily(), FontWeight.BOLD, 16);
     }
 
-    public static Font subTitle(){
+    public static Font subTitle() {
         return Font.font(getFontFamily(), FontWeight.BOLD, 14);
     }
 
-    public static Font buttonText(){
+    public static Font buttonText() {
         return Font.font(getFontFamily(), FontWeight.NORMAL, 12);
     }
 
-    public static Font detailText(){
+    public static Font detailText() {
         return Font.font(getFontFamily(), FontWeight.NORMAL, 12);
     }
 
-    public static Font fileLabelText(){
+    public static Font fileLabelText() {
         return Font.font(getFontFamily(), FontWeight.EXTRA_BOLD, 14);
     }
 
-    public static Font fieldLabel(){
+    public static Font fieldLabel() {
         return Font.font(getFontFamily(), FontWeight.NORMAL, 10);
     }
-    public static Font fieldText(){
+
+    public static Font fieldText() {
         return Font.font(getFontFamily(), FontWeight.NORMAL, 12);
     }
 }

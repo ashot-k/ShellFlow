@@ -7,7 +7,8 @@ import java.util.HashMap;
 
 public class ProcessUtils {
 
-    private ProcessUtils(){}
+    private ProcessUtils() {
+    }
 
     public static PtyProcessBuilder buildProcess(Command command) {
         HashMap<String, String> environment = new HashMap<>(System.getenv());

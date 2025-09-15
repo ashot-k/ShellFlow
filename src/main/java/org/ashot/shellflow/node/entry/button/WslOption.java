@@ -12,6 +12,7 @@ import org.ashot.shellflow.data.message.ToolTipMessages;
 
 public class WslOption extends HBox {
     private final CheckBox checkBox;
+
     public WslOption(String text, boolean initialSelection) {
         checkBox = new CheckBox();
         checkBox.setId(FieldType.WSL.getId());
@@ -26,10 +27,11 @@ public class WslOption extends HBox {
         getChildren().addAll(label, checkBox);
     }
 
-    public BooleanProperty selectedProperty(){
+    public BooleanProperty selectedProperty() {
         return checkBox.selectedProperty();
     }
-    public boolean isSelected(){
+
+    public boolean isSelected() {
         return checkBox.isSelected();
     }
 }

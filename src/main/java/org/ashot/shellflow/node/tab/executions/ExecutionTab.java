@@ -52,7 +52,7 @@ public class ExecutionTab extends Tab {
         this.setContent(stackPane);
     }
 
-    public void checkTabName(Command command, Process process){
+    public void checkTabName(Command command, Process process) {
         setText(command.isNameSet() ? command.getName() : "Process - " + process.pid());
     }
 
@@ -82,7 +82,7 @@ public class ExecutionTab extends Tab {
 
     public void startTerminal() {
         if (getTerminal() != null && getTerminal().getTtyConnector() != null && getTerminal().canOpenSession()) {
-            runLater(()->{
+            runLater(() -> {
                 this.getTerminal().start();
                 this.terminal.createToolBar();
                 TerminalToolBar terminalToolBar = this.terminal.getTerminalToolBar();
@@ -123,7 +123,7 @@ public class ExecutionTab extends Tab {
 
     public void setTerminal(ShellFlowTerminalWidget terminal) {
         this.terminal = terminal;
-        if(terminal != null) {
+        if (terminal != null) {
             setOnClose(null);
             runLater(() -> {
                 terminalWrapper.getChildren().add(terminal.getPane());
@@ -132,13 +132,13 @@ public class ExecutionTab extends Tab {
         }
     }
 
-    public void setOnClose(EventHandler<Event> event){
-        this.setOnCloseRequest(closeEvent->{
-            if(event != null) {
+    public void setOnClose(EventHandler<Event> event) {
+        this.setOnCloseRequest(closeEvent -> {
+            if (event != null) {
                 event.handle(closeEvent);
                 return;
             }
-            if(!closeEvent.isConsumed()) {
+            if (!closeEvent.isConsumed()) {
                 this.terminal.close();
             }
         });

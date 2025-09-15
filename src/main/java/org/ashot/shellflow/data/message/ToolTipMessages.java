@@ -17,11 +17,11 @@ public class ToolTipMessages {
         return "Browse";
     }
 
-    public static String wsl(){
+    public static String wsl() {
         return "Will run inside WSL\nIn addition the path browser will attempt to translate windows paths to valid WSL paths";
     }
 
-    public static String stopProcess(){
+    public static String stopProcess() {
         return "Attempt a graceful termination by sending a SIGINT to the current process";
     }
 
@@ -30,11 +30,11 @@ public class ToolTipMessages {
     }
 
 
-    public static String find(){
+    public static String find() {
         return "Open the find component";
     }
 
-    public static String font(){
+    public static String font() {
         return "Edit terminal font";
     }
 

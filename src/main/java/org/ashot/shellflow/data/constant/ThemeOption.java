@@ -21,18 +21,18 @@ public enum ThemeOption {
         this.isDark = isDark;
     }
 
-    public static ThemeOption getByValue(String value){
-        for (ThemeOption option : ThemeOption.values()){
-            if(option.getValue().equalsIgnoreCase(value)){
+    public static ThemeOption getByValue(String value) {
+        for (ThemeOption option : ThemeOption.values()) {
+            if (option.getValue().equalsIgnoreCase(value)) {
                 return option;
             }
         }
         return null;
     }
 
-    public static boolean valueExists(String value){
-        for (ThemeOption option : ThemeOption.values()){
-            if(option.getValue().equalsIgnoreCase(value)){
+    public static boolean valueExists(String value) {
+        for (ThemeOption option : ThemeOption.values()) {
+            if (option.getValue().equalsIgnoreCase(value)) {
                 return true;
             }
         }
@@ -47,7 +47,7 @@ public enum ThemeOption {
         return theme;
     }
 
-    public boolean isDark(){
+    public boolean isDark() {
         return isDark;
     }
 }

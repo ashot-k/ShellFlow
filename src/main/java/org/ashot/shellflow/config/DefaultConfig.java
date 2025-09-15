@@ -14,24 +14,22 @@ import java.util.Properties;
 
 import static org.ashot.shellflow.node.popup.AlertPopup.DEFAULT_CRITICAL_ERROR_TITLE;
 
-public class DefaultConfig implements Config {
+public class DefaultConfig implements ShellFlowConfig {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
-    private static final Properties properties = new Properties();
-    private static final String PROPERTIES_FILE_NAME = "config.properties";
-    private static final Path pathToPropertiesFile = Path.of(PROPERTIES_FILE_NAME);
-    private static final String PROPERTIES_FILE_NOT_FOUND_FULL = "Error while loading properties: \n" + "Could not find: " + pathToPropertiesFile.toAbsolutePath();
+    private static final Path pathToPropertiesFile = Path.of("application.properties");
+    private static final String PROPERTIES_FILE_NOT_FOUND_MSG = "Error while loading properties: \n" + "Could not find: " + pathToPropertiesFile.toAbsolutePath();
+    private final Properties properties = new Properties();
 
     public DefaultConfig() {
-        try {
-            File propertiesFile = new File(pathToPropertiesFile.toUri());
-            if(!propertiesFile.exists()){
-                Platform.runLater(()-> new AlertPopup(
-                        DEFAULT_CRITICAL_ERROR_TITLE,
-                        null,
-                        PROPERTIES_FILE_NOT_FOUND_FULL,
-                        true).show());
-            }
-            InputStream inputStream = new FileInputStream(propertiesFile);
+        File propertiesFile = new File(pathToPropertiesFile.toUri());
+        if (!propertiesFile.exists()) {
+            Platform.runLater(() -> new AlertPopup(
+                    DEFAULT_CRITICAL_ERROR_TITLE,
+                    null,
+                    PROPERTIES_FILE_NOT_FOUND_MSG,
+                    true).show());
+        }
+        try (InputStream inputStream = new FileInputStream(propertiesFile)) {
             properties.load(inputStream);
             log.info("Loaded configuration from: {}", propertiesFile.getAbsolutePath());
         } catch (IOException | NullPointerException e) {
@@ -40,47 +38,41 @@ public class DefaultConfig implements Config {
     }
 
     @Override
-    public String getPresetConfigLocation() {
-        ConfigProperty property = ConfigProperty.PRESETS_FILE;
-        return getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
-    }
-
-    @Override
-    public String getRecentsDirsConfigLocation() {
+    public String recentDirsConfigLocation() {
         ConfigProperty property = ConfigProperty.RECENT_DIRS_FILE;
         return getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
     }
 
     @Override
-    public String getVariablesConfigLocation() {
+    public String variablesConfigLocation() {
         ConfigProperty property = ConfigProperty.VARIABLES_FILE;
         return getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
     }
 
     @Override
-    public String getTheme() {
+    public String theme() {
         ConfigProperty property = ConfigProperty.THEME;
         String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
-        if(!ThemeOption.valueExists(value)){
+        if (!ThemeOption.valueExists(value)) {
             return property.getDefaultPropertyValue();
         }
         return value;
     }
 
     @Override
-    public Font getTerminalFontFamily() {
+    public Font terminalFontFamily() {
         ConfigProperty property = ConfigProperty.TERMINAL_FONT_FAMILY;
         return Font.font(getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue()));
     }
 
     @Override
-    public double getTerminalFontSize() {
+    public double terminalFontSize() {
         ConfigProperty property = ConfigProperty.TERMINAL_FONT_SIZE;
         return Double.parseDouble(getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue()));
     }
 
     @Override
-    public boolean getOptimizedMode() {
+    public boolean optimizedMode() {
         ConfigProperty property = ConfigProperty.OPTIMIZED_MODE;
         String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
         return Boolean.parseBoolean(value);
@@ -96,7 +88,7 @@ public class DefaultConfig implements Config {
     }
 
     @Override
-    public void saveProperty(ConfigProperty property, String value){
+    public void saveProperty(ConfigProperty property, String value) {
         properties.setProperty(property.getPropertyName(), value);
         try (FileOutputStream out = new FileOutputStream(pathToPropertiesFile.toFile())) {
             properties.store(out, "THIS FILE IS MANAGED BY THE APPLICATION, EDIT BEFORE STARTUP");

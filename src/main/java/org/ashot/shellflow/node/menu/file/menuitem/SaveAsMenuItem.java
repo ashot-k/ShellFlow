@@ -15,7 +15,7 @@ public class SaveAsMenuItem extends MenuItem {
     public SaveAsMenuItem(Consumer<File> writeEntriesToFile) {
         setText("Save as");
         setGraphic(Icons.getSaveAsIcon(MENU_ITEM_ICON_SIZE));
-        setOnAction(_ ->{
+        setOnAction(_ -> {
             loadRecentFolders();
             File savedFile = chooseFile(true);
             if (savedFile != null) {

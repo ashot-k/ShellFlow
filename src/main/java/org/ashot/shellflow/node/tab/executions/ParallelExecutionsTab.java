@@ -20,7 +20,7 @@ public class ParallelExecutionsTab extends Tab {
             }
         });
         parallelExecutionTabPane.getTabs().addListener((ListChangeListener<Tab>) c -> {
-            if(c.next() && c.getList().isEmpty()){
+            if (c.next() && c.getList().isEmpty()) {
                 this.getTabPane().getTabs().remove(this);
             }
         });
@@ -30,7 +30,7 @@ public class ParallelExecutionsTab extends Tab {
         return parallelExecutionTabPane;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         setText(name.isBlank() ? "Execution - " + ((int) (Math.random() * 100)) : name);
     }
 }

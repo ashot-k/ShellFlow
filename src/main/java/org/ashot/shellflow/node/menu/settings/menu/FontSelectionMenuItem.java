@@ -13,10 +13,10 @@ public class FontSelectionMenuItem extends MenuItem {
     private FontSelectionDialog fontSelectionDialog;
     private final ModalPane modal;
 
-    public FontSelectionMenuItem(){
+    public FontSelectionMenuItem() {
         modal = ControllerRegistry.getMainController().getMainModal();
-        setOnAction(_-> {
-            if(fontSelectionDialog == null) {
+        setOnAction(_ -> {
+            if (fontSelectionDialog == null) {
                 fontSelectionDialog = new FontSelectionDialog(() -> modal.hide(true));
             }
             showFontModal();
@@ -25,7 +25,7 @@ public class FontSelectionMenuItem extends MenuItem {
         setGraphic(Icons.getFontSelectionMenuIcon(MENU_ITEM_ICON_SIZE));
     }
 
-    public void showFontModal(){
+    public void showFontModal() {
         modal.show(fontSelectionDialog);
     }
 

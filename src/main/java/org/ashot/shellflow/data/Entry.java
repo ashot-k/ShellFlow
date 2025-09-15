@@ -18,10 +18,7 @@ public class Entry {
     }
 
     public Entry(String name, String path, String command, boolean wsl) {
-        this.name = name;
-        this.path = path;
-        this.command = command;
-        this.wsl = wsl;
+        this(name, path, command, wsl, true);
     }
 
     public Entry(String name, String path, String command, boolean wsl, boolean enabled) {
@@ -33,6 +30,9 @@ public class Entry {
     }
 
     public static JSONArray createEntryJSONArray(List<Entry> entries) {
+        if (entries == null) {
+            return new JSONArray();
+        }
         JSONArray jsonArray = new JSONArray();
         for (Entry entry : entries) {
             JSONObject jsonObject = new JSONObject();
@@ -54,10 +54,6 @@ public class Entry {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getPath() {
         return path;
     }
@@ -70,23 +66,11 @@ public class Entry {
         return command;
     }
 
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
     public boolean isWsl() {
         return wsl;
     }
 
-    public void setWsl(boolean wsl) {
-        this.wsl = wsl;
-    }
-
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 }

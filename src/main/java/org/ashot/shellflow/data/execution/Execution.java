@@ -2,7 +2,7 @@ package org.ashot.shellflow.data.execution;
 
 import org.ashot.shellflow.data.command.Command;
 
-public class Execution implements ExecutionDescriptor{
+public class Execution implements ExecutionDescriptor {
     private Process process;
     private Command command;
 

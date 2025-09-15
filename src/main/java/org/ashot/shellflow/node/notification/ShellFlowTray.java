@@ -9,13 +9,14 @@ import org.ashot.shellflow.registry.ControllerRegistry;
 public class ShellFlowTray {
     private static FXTrayIcon trayIcon;
 
-    private ShellFlowTray(){}
+    private ShellFlowTray() {
+    }
 
-    public static void init(){
+    public static void init() {
         trayIcon = new FXTrayIcon(ShellFlow.getPrimaryStage(), ShellFlow.class.getResource("/icon.png"));
         trayIcon.isMenuShowing();
         MenuItem menuItem = new MenuItem("Stop All executions");
-        menuItem.setOnAction(_-> ControllerRegistry.getMainController().getExecutionsTab().stopAll());
+        menuItem.setOnAction(_ -> ControllerRegistry.getMainController().getExecutionsTab().stopAll());
         trayIcon.addMenuItem(menuItem);
         trayIcon.addSeparator();
         trayIcon.addExitItem("Exit");
@@ -23,7 +24,7 @@ public class ShellFlowTray {
     }
 
     public static void displayNotification(String title, String message, NotificationType type) {
-        switch (type){
+        switch (type) {
             case INFO, SUCCESS -> trayIcon.showInfoMessage(title, message);
             case ERROR, EXECUTION_FAILURE -> trayIcon.showErrorMessage(title, message);
         }

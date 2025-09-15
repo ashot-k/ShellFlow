@@ -9,11 +9,11 @@ import org.ashot.shellflow.ShellFlow;
 
 import static java.lang.Double.MAX_VALUE;
 
-public class AlertPopup extends Alert{
+public class AlertPopup extends Alert {
 
     public static final String DEFAULT_CRITICAL_ERROR_TITLE = "Critical Error";
 
-    public AlertPopup(AlertType alertType){
+    public AlertPopup(AlertType alertType) {
         super(alertType);
         getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet());
     }
@@ -24,7 +24,7 @@ public class AlertPopup extends Alert{
 
     public AlertPopup(String title, String header, String msg, String expendableText, boolean criticalError) {
         super(AlertType.ERROR);
-        if(criticalError){
+        if (criticalError) {
             setupCriticalErrorAlert();
         }
         setupAlertPopup(title, header, msg, expendableText);
@@ -39,16 +39,16 @@ public class AlertPopup extends Alert{
         setupAlertPopup(title, header, msg, expendableText);
     }
 
-    private void setupAlertPopup(String title, String header, String msg, String expendableText){
+    private void setupAlertPopup(String title, String header, String msg, String expendableText) {
         getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet(), ShellFlow.getUserAgentStylesheet());
         setTitle(title);
         setHeaderText(header);
         setContentText(msg);
 
         TextArea textArea = new TextArea();
-        if(expendableText != null){
+        if (expendableText != null) {
             textArea.setText(expendableText);
-        }else{
+        } else {
             textArea.setText(msg);
         }
         textArea.setWrapText(true);
@@ -63,8 +63,8 @@ public class AlertPopup extends Alert{
         initOwner(ShellFlow.getPrimaryStage().getScene().getWindow());
     }
 
-    private void setupCriticalErrorAlert(){
-        setOnCloseRequest(_->{
+    private void setupCriticalErrorAlert() {
+        setOnCloseRequest(_ -> {
             close();
             ShellFlow.getPrimaryStage().close();
             Platform.exit();
