@@ -280,7 +280,7 @@
                                         <resource>
                                             <directory>/</directory>
                                             <includes>
-                                                <include>config.properties</include>
+                                                <include>application.properties</include>
                                                 <include>settings/**</include>
                                             </includes>
                                         </resource>
