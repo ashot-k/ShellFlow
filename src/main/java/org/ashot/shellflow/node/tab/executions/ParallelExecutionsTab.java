@@ -3,8 +3,12 @@ package org.ashot.shellflow.node.tab.executions;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import org.ashot.shellflow.utils.TabUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParallelExecutionsTab extends Tab {
+    private static final Logger log = LoggerFactory.getLogger(ParallelExecutionsTab.class);
     private final TabPane parallelExecutionTabPane;
 
     public ParallelExecutionsTab() {
@@ -15,7 +19,8 @@ public class ParallelExecutionsTab extends Tab {
         setOnClosed(_ -> {
             for (Tab tab : parallelExecutionTabPane.getTabs()) {
                 if (tab instanceof ExecutionTab executionTab) {
-                    executionTab.cancel();
+                    TabUtils.setCancelled(executionTab);
+                    executionTab.shutDownTerminal();
                 }
             }
         });

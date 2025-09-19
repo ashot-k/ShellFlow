@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.execution.CommandExecutor;
+import org.ashot.shellflow.execution.ExecutionTask;
 import org.ashot.shellflow.execution.SequenceExecutor;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.node.entry.variable.VariableEntry;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.mapper.EntryMapper.*;
 
 public class EntrySetupTab extends Tab {
@@ -105,7 +107,8 @@ public class EntrySetupTab extends Tab {
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.setOnExecuteButtonAction(_ -> {
             atlantafx.base.util.Animations.shakeY(entryBox.getExecuteButton(), 1.5).play();
-            new CommandExecutor().execute(entryToCommand(entryBoxToEntry(entryBox), false));
+            ExecutionTask executionTask = new CommandExecutor().execute(entryToCommand(entryBoxToEntry(entryBox), false));
+            new Thread(executionTask).start();
         });
         setupDragging(entryBox);
         Animations.fadeInBeforeAdditionToList(entryBox);
@@ -184,15 +187,15 @@ public class EntrySetupTab extends Tab {
     }
 
     public void executeAll() {
-        new Thread(() -> {
-            log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
+        log.debug("Executing all entries, sequence: {}", getSequentialOption().isSelected());
+        runLater(()->{
             if (getSequentialOption().isSelected()) {
                 new SequenceExecutor().executeSequence(getEntries(), getExecutionName().getText());
             } else {
                 new CommandExecutor().executeAll(getEntries(), getExecutionName().getText(), getDelayPerCmd());
             }
-        }
-        ).start();
+
+        });
     }
 
     public void stopAll() {

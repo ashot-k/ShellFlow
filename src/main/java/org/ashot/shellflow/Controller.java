@@ -14,7 +14,6 @@ import org.ashot.shellflow.data.constant.TabIndices;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
-import org.ashot.shellflow.node.tab.profiler.ProfilerTab;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.utils.FileUtils;
@@ -41,7 +40,6 @@ public class Controller {
 
     private EntrySetupTab entrySetupTab;
     private ExecutionsTab executionsTab;
-    private ProfilerTab profilerTab;
     private static String currentFile;
     private static String currentFileAbsolutePath;
 
@@ -60,9 +58,8 @@ public class Controller {
     private void setupTabs() {
         entrySetupTab = new EntrySetupTab();
         executionsTab = new ExecutionsTab();
-//        profilerTab = new ProfilerTab();
         mainTabPane.getTabs().add(TabIndices.ENTRIES.ordinal(), entrySetupTab);
-        mainTabPane.getTabs().add(TabIndices.EXECUTIONS.ordinal() - 1, executionsTab);
+        mainTabPane.getTabs().add(TabIndices.EXECUTIONS.ordinal(), executionsTab);
 
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
         sceneContainer.getScene().setOnKeyPressed(this::handleUserInput);
@@ -125,10 +122,6 @@ public class Controller {
 
     public EntrySetupTab getEntrySetupTab() {
         return entrySetupTab;
-    }
-
-    public ProfilerTab getProfilerTab() {
-        return profilerTab;
     }
 
     public void refreshFileLoaded(String path) {

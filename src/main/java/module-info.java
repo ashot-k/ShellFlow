@@ -14,6 +14,8 @@ module org.ashot.shellflow {
     requires java.desktop;
     requires com.dustinredmond.fxtrayicon;
     requires javafx.graphics;
+    requires javafx.controls;
+    requires javafx.base;
 
     exports org.ashot.shellflow;
     exports org.ashot.shellflow.exception;
@@ -27,10 +29,12 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.node.icon to javafx.base;
     exports org.ashot.shellflow.data;
     opens org.ashot.shellflow.data.message to javafx.fxml;
-    opens org.ashot.shellflow.node.tab.profiler to javafx.base;
     opens org.ashot.shellflow.node.tab.executions to javafx.base;
     opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
-    exports org.ashot.shellflow.data.execution;
     exports org.ashot.shellflow.data.command;
     opens org.ashot.shellflow.node.toolbar to javafx.base;
+    exports org.ashot.shellflow.execution;
+    exports org.ashot.shellflow.data.constant;
+    exports org.ashot.shellflow.config;
+    exports org.ashot.shellflow.node.tab.executions;
 }

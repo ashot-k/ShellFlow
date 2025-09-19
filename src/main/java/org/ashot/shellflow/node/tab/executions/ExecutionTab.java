@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -17,22 +16,22 @@ import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.node.toolbar.TerminalToolBar;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
+import org.ashot.shellflow.utils.TabUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.constant.ExecutionState.*;
 
 public class ExecutionTab extends Tab {
-    private static final Logger logger = LoggerFactory.getLogger(ExecutionTab.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecutionTab.class);
     private String commandDisplayName;
     private ShellFlowTerminalWidget terminal;
     private final VBox terminalWrapper = new VBox();
     private final SimpleObjectProperty<ExecutionState> state = new SimpleObjectProperty<>();
     private final StackPane stackPane = new StackPane();
+    private Process process;
 
     private ExecutionTab(OutputTabBuilder outputTabBuilder) {
         this.commandDisplayName = outputTabBuilder.commandDisplayName;
@@ -92,29 +91,12 @@ public class ExecutionTab extends Tab {
             });
         }
     }
-
-    public static List<ExecutionTab> getOutputTabsFromTabPane(TabPane tabPane) {
-        List<ExecutionTab> tabs = new ArrayList<>();
-        for (Tab tab : tabPane.getTabs()) {
-            if (tab instanceof ExecutionTab executionTab) {
-                tabs.add(executionTab);
-            } else if (tab instanceof SequenceExecutionsTab sequenceTab) {
-                tabs.addAll(sequenceTab.getSequentialExecutionTabPaneTabs());
-            }
-        }
-        return tabs;
-    }
-
     public void setCommandDisplayName(String commandDisplayName) {
         this.commandDisplayName = commandDisplayName;
     }
 
     public String getCommandDisplayName() {
         return commandDisplayName;
-    }
-
-    public void closeTerminal() {
-        this.terminal.close();
     }
 
     public ShellFlowTerminalWidget getTerminal() {
@@ -129,6 +111,15 @@ public class ExecutionTab extends Tab {
                 terminalWrapper.getChildren().add(terminal.getPane());
                 VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
             });
+        }
+    }
+
+    public void updateState(ExecutionState state, boolean sequence){
+        switch (state) {
+            case IN_PROGRESS -> TabUtils.setInProgress(this, sequence);
+            case INTERNAL_FAILURE, FAILURE -> TabUtils.setFailed(this, sequence);
+            case FINISHED -> TabUtils.setFinished(this, sequence);
+            case CANCELLED -> TabUtils.setCancelled(this, sequence);
         }
     }
 
@@ -157,16 +148,15 @@ public class ExecutionTab extends Tab {
     }
 
     public boolean isCanceled() {
-        return state.get().equals(CANCELED);
+        return state.get().equals(CANCELLED);
     }
 
     public boolean isFailed() {
         return state.get().equals(FAILURE);
     }
 
-    public void cancel() {
-        shutDownTerminal();
-        state.setValue(CANCELED);
+    public void setCancelled() {
+        state.setValue(CANCELLED);
     }
 
     public void setInProgress() {
@@ -179,6 +169,14 @@ public class ExecutionTab extends Tab {
 
     public void setFailed() {
         state.setValue(FAILURE);
+    }
+
+    public Process getProcess() {
+        return process;
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
     public static class OutputTabBuilder {

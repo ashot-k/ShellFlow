@@ -16,12 +16,12 @@ import static org.ashot.shellflow.node.popup.AlertPopup.DEFAULT_CRITICAL_ERROR_T
 
 public class DefaultConfig implements ShellFlowConfig {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
-    private static final Path pathToPropertiesFile = Path.of("application.properties");
-    private static final String PROPERTIES_FILE_NOT_FOUND_MSG = "Error while loading properties: \n" + "Could not find: " + pathToPropertiesFile.toAbsolutePath();
+    private static final Path PATH_TO_PROPERTIES_FILE = Path.of("application.properties");
+    private static final String PROPERTIES_FILE_NOT_FOUND_MSG = "Error while loading properties: \n" + "Could not find: " + PATH_TO_PROPERTIES_FILE.toAbsolutePath();
     private final Properties properties = new Properties();
 
     public DefaultConfig() {
-        File propertiesFile = new File(pathToPropertiesFile.toUri());
+        File propertiesFile = new File(PATH_TO_PROPERTIES_FILE.toUri());
         if (!propertiesFile.exists()) {
             Platform.runLater(() -> new AlertPopup(
                     DEFAULT_CRITICAL_ERROR_TITLE,
@@ -90,7 +90,7 @@ public class DefaultConfig implements ShellFlowConfig {
     @Override
     public void saveProperty(ConfigProperty property, String value) {
         properties.setProperty(property.getPropertyName(), value);
-        try (FileOutputStream out = new FileOutputStream(pathToPropertiesFile.toFile())) {
+        try (FileOutputStream out = new FileOutputStream(PATH_TO_PROPERTIES_FILE.toFile())) {
             properties.store(out, "THIS FILE IS MANAGED BY THE APPLICATION, EDIT BEFORE STARTUP");
         } catch (IOException e) {
             log.error(e.getMessage());

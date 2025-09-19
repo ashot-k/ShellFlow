@@ -34,7 +34,7 @@ public class ShellFlow extends Application {
     private static ThemeOption selectedTheme = ThemeOption.DARK_MODE;
     private static Font applicationFont;
     private static Stage primaryStage;
-    private static ShellFlowConfig shellFlowConfig;
+    private static final ShellFlowConfig shellFlowConfig = new DefaultConfig();
 
     public static void main(String[] args) {
         handleJVMArgs(args);
@@ -44,10 +44,10 @@ public class ShellFlow extends Application {
     @Override
     public void start(Stage stage) {
         primaryStage = stage;
-        shellFlowConfig = new DefaultConfig();
         setTheme(getThemeFromConfig());
         loadAdditionalFonts();
-        applicationFont = Font.font("Cascadia Mono");
+//        applicationFont = Font.font("Cascadia Mono");
+        applicationFont = Font.getDefault();
         URL url = ShellFlow.class.getResource("/fxml/shellflow-main.fxml");
         String styleSheet = ShellFlow.class.getResource("/style/main.css").toExternalForm();
         if (url == null) {

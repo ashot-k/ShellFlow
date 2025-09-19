@@ -173,7 +173,7 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getExecutionCanceledIcon(double size) {
+    public static Glyph getExecutionCancelledIcon(double size) {
         Glyph icon = fontAwesome.create(MINUS);
         icon.size(size);
         icon.color(Color.INDIANRED);
