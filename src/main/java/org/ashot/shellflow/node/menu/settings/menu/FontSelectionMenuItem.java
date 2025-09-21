@@ -2,19 +2,18 @@ package org.ashot.shellflow.node.menu.settings.menu;
 
 import atlantafx.base.controls.ModalPane;
 import javafx.scene.control.MenuItem;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.modal.FontSelectionDialog;
-import org.ashot.shellflow.registry.ControllerRegistry;
 
-import static org.ashot.shellflow.data.constant.MenuItemDefaults.MENU_ITEM_ICON_SIZE;
 
 public class FontSelectionMenuItem extends MenuItem {
 
     private FontSelectionDialog fontSelectionDialog;
     private final ModalPane modal;
 
-    public FontSelectionMenuItem() {
-        modal = ControllerRegistry.getMainController().getMainModal();
+    public FontSelectionMenuItem(ModalPane modalPane) {
+        modal = modalPane;
         setOnAction(_ -> {
             if (fontSelectionDialog == null) {
                 fontSelectionDialog = new FontSelectionDialog(() -> modal.hide(true));
@@ -22,7 +21,7 @@ public class FontSelectionMenuItem extends MenuItem {
             showFontModal();
         });
         setText("Font...");
-        setGraphic(Icons.getFontSelectionMenuIcon(MENU_ITEM_ICON_SIZE));
+        setGraphic(Icons.getFontSelectionMenuIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
     }
 
     public void showFontModal() {

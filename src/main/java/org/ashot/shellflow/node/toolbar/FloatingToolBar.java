@@ -12,9 +12,9 @@ import java.util.List;
 
 
 public class FloatingToolBar extends VBox {
-    protected final static double INITIAL_OPACITY = 0.30;
+    protected static final double INITIAL_OPACITY = 0.20;
     private boolean isAutoHide = false;
-    private HBox buttonsBar;
+    private final HBox buttonsBar;
 
     public FloatingToolBar() {
         setMaxHeight(50);
@@ -38,11 +38,7 @@ public class FloatingToolBar extends VBox {
     }
 
     protected void autoHiding() {
-        if (!isAutoHide) {
-            setOpacity(INITIAL_OPACITY);
-            hoverProperty().addListener((_, _, hovering) -> animateHover(hovering));
-        }
-        isAutoHide = true;
+        autoHiding(INITIAL_OPACITY);
     }
 
     protected void autoHiding(double initialOpacity) {

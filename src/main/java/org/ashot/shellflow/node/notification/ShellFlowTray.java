@@ -3,8 +3,8 @@ package org.ashot.shellflow.node.notification;
 import com.dustinredmond.fxtrayicon.FXTrayIcon;
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.ShellFlow;
+import org.ashot.shellflow.controller.ExecutionManagementController;
 import org.ashot.shellflow.data.constant.NotificationType;
-import org.ashot.shellflow.registry.ControllerRegistry;
 
 public class ShellFlowTray {
     private static FXTrayIcon trayIcon;
@@ -12,11 +12,11 @@ public class ShellFlowTray {
     private ShellFlowTray() {
     }
 
-    public static void init() {
+    public static void init(ExecutionManagementController executionManagementController) {
         trayIcon = new FXTrayIcon(ShellFlow.getPrimaryStage(), ShellFlow.class.getResource("/icon.png"));
         trayIcon.isMenuShowing();
         MenuItem menuItem = new MenuItem("Stop All executions");
-        menuItem.setOnAction(_ -> ControllerRegistry.getMainController().getExecutionsTab().stopAll());
+        menuItem.setOnAction(_ -> executionManagementController.getView().stopAll());
         trayIcon.addMenuItem(menuItem);
         trayIcon.addSeparator();
         trayIcon.addExitItem("Exit");

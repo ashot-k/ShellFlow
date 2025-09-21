@@ -1,6 +1,9 @@
 .root {
     -color-accent-emphasis: rgba(106, 90, 205, 1.0); /* slateblue */
+    -color-accent-muted: rgba(106, 90, 205, 1.0); /* slateblue */
     -color-accent-6: rgba(106, 90, 205, 1.0); /* slateblue */
+    -color-danger-emphasis: #F08080;
+    -color-danger-fg: #F08080;
 }
 
 .dark {
@@ -13,11 +16,11 @@
 }
 
 .light{
-    -fx-base-background: rgba(250, 252, 255, 1.0);
-    -fx-solid-background: rgba(250, 252, 255, 1.0);
+    -fx-base-background: rgba(255, 255, 255, 1.0);
+    -fx-solid-background: rgba(255, 255, 255, 1.0);
     -fx-edited-background: rgba(106, 90, 205, 0.15);
     -fx-disabled-background: rgba(250, 252, 255, 0.9);
-    -fx-hover-background: rgba(242, 250, 255, 1.0);
+    -fx-hover-background: rgba(245, 248, 254, 1.0);
     -fx-shadow-color: rgba(60, 65, 70, 0.5);
 }
 

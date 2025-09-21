@@ -4,10 +4,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
 import org.ashot.shellflow.ShellFlow;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.node.icon.Icons;
 
-import static org.ashot.shellflow.data.constant.MenuItemDefaults.MENU_ITEM_ICON_SIZE;
 
 public class ThemeSelectionMenu extends Menu {
     public ThemeSelectionMenu() {
@@ -20,6 +20,6 @@ public class ThemeSelectionMenu extends Menu {
             getItems().add(themeOptionMenuItem);
         }
         setText("Theme");
-        setGraphic(Icons.getThemeSettingIcon(MENU_ITEM_ICON_SIZE));
+        setGraphic(Icons.getThemeSettingIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
     }
 }

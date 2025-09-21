@@ -1,4 +1,4 @@
-package org.ashot.shellflow.data;
+package org.ashot.shellflow.data.entry;
 
 import org.ashot.shellflow.data.constant.FieldType;
 import org.json.JSONArray;
@@ -14,7 +14,8 @@ public class Entry {
     private boolean enabled = true;
     private boolean wsl = false;
 
-    public Entry() {}
+    public Entry() {
+    }
 
     public Entry(String name, String path, String command, boolean wsl) {
         this(name, path, command, wsl, true);

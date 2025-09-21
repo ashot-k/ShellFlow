@@ -1,6 +1,6 @@
 package org.ashot.shellflow.registry;
 
-import org.ashot.shellflow.Controller;
+import org.ashot.shellflow.controller.Controller;
 
 import java.util.HashMap;
 import java.util.Map;

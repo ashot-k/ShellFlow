@@ -1,33 +1,26 @@
 package org.ashot.shellflow.node.menu.settings.menuitem;
 
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.MenuItem;
+import javafx.beans.property.BooleanProperty;
+import javafx.scene.control.CheckMenuItem;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.ConfigProperty;
-import org.ashot.shellflow.registry.ControllerRegistry;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
+import org.ashot.shellflow.node.icon.Icons;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.ashot.shellflow.ShellFlow.getConfig;
-import static org.ashot.shellflow.utils.Animations.*;
 
-public class PerformanceSettingMenuItem extends MenuItem {
+public class PerformanceSettingMenuItem extends CheckMenuItem {
+    private static final Logger log = LoggerFactory.getLogger(PerformanceSettingMenuItem.class);
 
     public PerformanceSettingMenuItem() {
-        CheckBox checkBox = new CheckBox();
         setText("Optimized Animations");
-        setGraphic(checkBox);
-        this.setOnAction(_ -> {
-            checkBox.setSelected(!checkBox.isSelected());
-            ShellFlow.getConfig().saveProperty(ConfigProperty.OPTIMIZED_MODE, String.valueOf(checkBox.isSelected()));
-        });
-        checkBox.setMouseTransparent(true);
-        checkBox.selectedProperty().addListener((_, _, newValue) -> {
-            if (newValue) {
-                setFrameRateForSpin(PERFORMANCE_OPTIMIZATION_FRAME_RATE);
-            } else {
-                setFrameRateForSpin(DEFAULT_FRAME_RATE);
-            }
-            ControllerRegistry.getMainController().toggleOptimizeAnimationsAndUI(newValue);
-        });
-        checkBox.setSelected(getConfig().optimizedMode());
+        setGraphic(Icons.getPerformanceOptionIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
+        setOnAction(_ -> ShellFlow.getConfig().saveProperty(ConfigProperty.OPTIMIZED_MODE, String.valueOf(isSelected())));
+        setSelected(ShellFlow.getConfig().optimizedMode());
+    }
+
+    public BooleanProperty performanceModePropertyProperty() {
+        return selectedProperty();
     }
 }

@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
@@ -21,6 +20,8 @@ public class RecentFileUtils {
 
     private static String lastSavedFolderLocation;
     private static String lastLoadedFolderLocation;
+
+    private RecentFileUtils(){}
 
     public static void loadRecentFolders() {
         JSONObject dirs = getRecents();
@@ -41,14 +42,13 @@ public class RecentFileUtils {
         return lastLoadedFolderLocation;
     }
 
-    public static File loadMostRecentFile(Consumer<File> loadFromFile) {
+    public static File loadMostRecentFile() {
         File mostRecentFile = null;
         JSONObject recents = getRecents();
         if (recents != null && !recents.isEmpty()) {
             String path = recents.getJSONArray(DirType.RECENT.getName()).optString(0);
             if (path != null && !path.isBlank()) {
                 mostRecentFile = new File(path);
-                loadFromFile.accept(mostRecentFile);
             }
         }
         return mostRecentFile;

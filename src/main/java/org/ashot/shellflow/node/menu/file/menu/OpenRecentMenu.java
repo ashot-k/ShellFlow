@@ -2,6 +2,7 @@ package org.ashot.shellflow.node.menu.file.menu;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.icon.Icons;
 import org.json.JSONArray;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.function.Consumer;
 
-import static org.ashot.shellflow.data.constant.MenuItemDefaults.MENU_ITEM_ICON_SIZE;
 import static org.ashot.shellflow.utils.RecentFileUtils.getRecentFiles;
 
 public class OpenRecentMenu extends Menu {
@@ -22,7 +22,7 @@ public class OpenRecentMenu extends Menu {
     public OpenRecentMenu(Consumer<File> open, Menu parentMenu) {
         this.open = open;
         setText("Open Recent");
-        setGraphic(Icons.getOpenRecentIcon(MENU_ITEM_ICON_SIZE));
+        setGraphic(Icons.getOpenRecentIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
         parentMenu.setOnShowing(_ -> refreshRecentFiles());
     }
 

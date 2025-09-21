@@ -2,11 +2,15 @@ package org.ashot.shellflow.utils;
 
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +18,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Animations {
 
-    public static int DEFAULT_FRAME_RATE = 60;
-    public static int PERFORMANCE_OPTIMIZATION_FRAME_RATE = 5;
-    public static Duration DEFAULT_FADE_ANIMATION_DURATION = Duration.millis((double) 250 * 3 / 4);
-    public static Duration DEFAULT_THEME_CHANGE_ANIMATION_DURATION = Duration.millis(250);
-    public static Duration DEFAULT_ROTATE_IN_AND_WOBBLE_DURATION = Duration.millis(500);
-    private static int frameRate = 60;
+    private static final Logger log = LoggerFactory.getLogger(Animations.class);
+    private static final int DEFAULT_FRAME_RATE = 60;
+    private static final int PERFORMANCE_OPTIMIZATION_FRAME_RATE = 5;
+    private static final Duration DEFAULT_FADE_ANIMATION_DURATION = Duration.millis((double) 250 * 3 / 4);
+    private static final Duration DEFAULT_THEME_CHANGE_ANIMATION_DURATION = Duration.millis(250);
+    private static final Duration DEFAULT_ROTATE_IN_AND_WOBBLE_DURATION = Duration.millis(500);
     private static final List<Timeline> timelineList = new ArrayList<>();
     private static final List<Node> nodes = new ArrayList<>();
+    public static final BooleanProperty performanceMode = new SimpleBooleanProperty();
+
+    static {
+        performanceMode.addListener((_, _, _) -> refreshAnimations());
+    }
 
     private Animations() {
     }
@@ -46,17 +55,17 @@ public class Animations {
         );
     }
 
-    public static Timeline fade(Node node, double initial, double end, Duration duration) {
+    public static Timeline fade(Node node, double from, double to, Duration duration) {
         return new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), initial, Interpolator.EASE_IN)),
-                new KeyFrame(duration, new KeyValue(node.opacityProperty(), end, Interpolator.EASE_IN))
+                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), from, Interpolator.EASE_IN)),
+                new KeyFrame(duration, new KeyValue(node.opacityProperty(), to, Interpolator.EASE_IN))
         );
     }
 
-    public static Timeline fade(Node node, double initial, double end) {
+    public static Timeline fade(Node node, double from, double to) {
         return new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), initial, Interpolator.EASE_IN)),
-                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(node.opacityProperty(), end, Interpolator.EASE_IN))
+                new KeyFrame(Duration.ZERO, new KeyValue(node.opacityProperty(), from, Interpolator.EASE_IN)),
+                new KeyFrame(DEFAULT_THEME_CHANGE_ANIMATION_DURATION, new KeyValue(node.opacityProperty(), to, Interpolator.EASE_IN))
         );
     }
 
@@ -71,9 +80,9 @@ public class Animations {
         });
     }
 
-    public static void removeFromListAndFadeOut(Node node, Pane container) {
+    public static void removeFromListAndFadeOut(Region node, ObservableList<?> observableList) {
         Timeline t = atlantafx.base.util.Animations.fadeOut(node, DEFAULT_FADE_ANIMATION_DURATION);
-        t.setOnFinished(_ -> container.getChildren().remove(node));
+        t.setOnFinished(_ -> observableList.remove(node));
         t.play();
     }
 
@@ -88,7 +97,7 @@ public class Animations {
         icon.setCacheHint(CacheHint.ROTATE);
         List<KeyFrame> keyFrames = new ArrayList<>();
         int duration = 2;
-        for (double i = 0; i < duration; i = i + stepForFrameRate(duration, frameRate)) {
+        for (double i = 0; i < duration; i = i + stepForFrameRate(duration, getFrameRate())) {
             if (i == 0) {
                 keyFrames.add(new KeyFrame(Duration.seconds(i), new KeyValue(icon.rotateProperty(), i, Interpolator.DISCRETE)));
             } else {
@@ -105,12 +114,15 @@ public class Animations {
         timelineList.add(timeline);
     }
 
+    private static int getFrameRate() {
+        return performanceMode.get() ? PERFORMANCE_OPTIMIZATION_FRAME_RATE : DEFAULT_FRAME_RATE;
+    }
+
     private static double stepForFrameRate(double duration, int frameRate) {
         return duration / frameRate;
     }
 
-    public static void setFrameRateForSpin(int frameRate) {
-        Animations.frameRate = frameRate;
+    public static void refreshAnimations() {
         refreshSpinAnimations();
     }
 
@@ -125,4 +137,6 @@ public class Animations {
             }
         });
     }
+
+
 }

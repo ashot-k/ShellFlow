@@ -1,27 +1,26 @@
 package org.ashot.shellflow.utils;
 
-import javafx.scene.control.Tab;
-import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.tab.executions.ExecutionTab;
-import org.ashot.shellflow.node.tab.executions.ExecutionsTab;
-import org.ashot.shellflow.registry.ControllerRegistry;
 import org.controlsfx.glyphfont.Glyph;
 
 public class TabUtils {
 
     public static final int TAB_ICON_SIZE = 18;
 
-    public static void setInProgress(ExecutionTab tab){
+    public static void setInProgress(ExecutionTab tab) {
         setInProgress(tab, false);
     }
-    public static void setFailed(ExecutionTab tab){
+
+    public static void setFailed(ExecutionTab tab) {
         setFailed(tab, false);
     }
-    public static void setCancelled(ExecutionTab tab){
+
+    public static void setCancelled(ExecutionTab tab) {
         setCancelled(tab, false);
     }
-    public static void setFinished(ExecutionTab tab){
+
+    public static void setFinished(ExecutionTab tab) {
         setFinished(tab, false);
     }
 
@@ -60,11 +59,5 @@ public class TabUtils {
         tab.setCancelled();
     }
 
-    public static void addToExecutions(Tab tab) {
-        if (tab == null) throw new RuntimeException("Tab added to executions is null");
-        Controller controller = ControllerRegistry.getMainController();
-        ExecutionsTab executionsTab = controller.getExecutionsTab();
-        executionsTab.getExecutionsTabPane().getTabs().add(tab);
-        executionsTab.getExecutionsTabPane().getSelectionModel().select(tab);
-    }
+
 }

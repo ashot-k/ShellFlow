@@ -6,10 +6,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +17,7 @@ public class ExecutionsTab extends Tab {
     private static final Logger log = LoggerFactory.getLogger(ExecutionsTab.class);
 
     private final TabPane executionsTabPane;
-    private final String name = "Executions";
+    private static final String TAB_NAME = "Executions";
 
     public ExecutionsTab() {
         this.executionsTabPane = new TabPane();
@@ -28,7 +26,7 @@ public class ExecutionsTab extends Tab {
         Platform.runLater(() -> {
             setClosable(false);
             setContent(executionsTabPane);
-            setText(name);
+            setText(TAB_NAME);
             setDisable(true);
             MenuItem menuItem = new MenuItem("Close All");
             menuItem.setDisable(true);
@@ -53,9 +51,8 @@ public class ExecutionsTab extends Tab {
 
     public void stopAll() {
         log.debug("Stopping all processes / terminals");
-        Controller controller = ControllerRegistry.getMainController();
         TerminalRegistry.stopAllTerminals();
-        controller.getExecutionsTab().getExecutionsTabPane().getTabs().clear();
+        getExecutionsTabPane().getTabs().clear();
     }
 
     public TabPane getExecutionsTabPane() {

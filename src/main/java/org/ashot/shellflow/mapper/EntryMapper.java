@@ -1,13 +1,15 @@
 package org.ashot.shellflow.mapper;
 
-import org.ashot.shellflow.data.Entry;
+import org.ashot.shellflow.controller.VariableManagementController;
 import org.ashot.shellflow.data.command.Command;
+import org.ashot.shellflow.data.command.CommandSequence;
+import org.ashot.shellflow.data.entry.Entry;
+import org.ashot.shellflow.exception.ExecutionAbortedException;
 import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.exception.InvalidPathException;
 import org.ashot.shellflow.node.entry.EntryBox;
-import org.ashot.shellflow.node.entry.variable.VariableEntry;
+import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.node.popup.AlertPopup;
-import org.ashot.shellflow.registry.ControllerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,15 +22,17 @@ import static javafx.scene.control.Alert.AlertType;
 public class EntryMapper {
     private static final Logger log = LoggerFactory.getLogger(EntryMapper.class);
     private static AlertPopup errorPopup = new AlertPopup(AlertType.ERROR);
+    private VariableManagementController variableManagementController;
 
-    private EntryMapper() {
+    public EntryMapper(VariableManagementController variableManagementController) {
+        this.variableManagementController = variableManagementController;
     }
 
-    public static EntryBox entryToEntryBox(Entry entry) {
+    public EntryBox entryToEntryBox(Entry entry) {
         return new EntryBox(entry);
     }
 
-    public static Entry entryBoxToEntry(EntryBox entryBox) {
+    public Entry entryBoxToEntry(EntryBox entryBox) {
         return new Entry(
                 entryBox.getNameField().getText(),
                 entryBox.getPathField().getText(),
@@ -37,42 +41,47 @@ public class EntryMapper {
                 entryBox.getEnabledToggle().isSelected());
     }
 
-    public static Command entryToCommand(Entry entry, boolean persistent) {
+    public Command entryToCommand(Entry entry, boolean persistent) {
         String name = entry.getName();
         String command = entry.getCommand();
         String path = entry.getPath();
         boolean wsl = entry.isWsl();
-
-        for (VariableEntry variableEntry : ControllerRegistry.getMainController().getEntrySetupTab().getVariableEntries()) {
-            command = command.replace("${" + variableEntry.getNameFieldValue() + "}", variableEntry.getValueFieldValue());
-            path = path.replace("${" + variableEntry.getNameFieldValue() + "}", variableEntry.getValueFieldValue());
+        for (VariableEntry variableEntry : variableManagementController.getVariables()) {
+            if (variableEntry.isEnabled()) {
+                command = command.replace("${" + variableEntry.getName() + "}", variableEntry.getValue());
+                path = path.replace("${" + variableEntry.getName() + "}", variableEntry.getValue());
+            } else {
+                command = command.replace("${" + variableEntry.getName() + "}", "");
+                path = path.replace("${" + variableEntry.getName() + "}", "");
+            }
         }
 
         try {
             return new Command(name, path, command, wsl, persistent);
         } catch (InvalidCommandException | InvalidPathException e) {
-            handleError(e);
+            handleError(entry, e);
+            throw new ExecutionAbortedException("Entry failed validation");
         }
-        return null;
     }
 
-
-    public static List<Command> buildCommands(List<Entry> entries) {
-        List<Command> commands = new ArrayList<>();
+    public List<Command> buildCommands(List<Entry> entries) {
+        List<Command> commandList = new ArrayList<>();
         for (Entry entry : entries) {
             if (!entry.isEnabled()) {
                 continue;
             }
-            Command cmd = EntryMapper.entryToCommand(entry, false);
-            if (cmd == null) {
-                return null;
-            }
-            commands.add(cmd);
+            Command cmd = entryToCommand(entry, false);
+            commandList.add(cmd);
         }
-        return commands;
+        return commandList;
     }
 
-    private static void handleError(Exception e) {
+    public CommandSequence buildSequence(List<Entry> entries, String seqName) {
+        List<Command> commandList = buildCommands(entries);
+        return new CommandSequence(commandList, seqName);
+    }
+
+    private void handleError(Entry entry, Exception e) {
         runLater(() -> {
             if (!errorPopup.isShowing()) {
                 String msg = "";
@@ -81,6 +90,7 @@ public class EntryMapper {
                 } else {
                     msg = e.getMessage();
                 }
+                log.error("Entry failed validation, name: {}, path: {}, command: {}, skipping execution", entry.getName(), entry.getPath(), entry.getCommand());
                 errorPopup = new AlertPopup("Execution construction error", null, msg, false);
                 errorPopup.show();
             }

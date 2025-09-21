@@ -2,24 +2,23 @@ package org.ashot.shellflow.node.tab.executions;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.utils.Animations;
 import org.controlsfx.glyphfont.Glyph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static org.ashot.shellflow.data.constant.SequenceExecutionState.EXECUTION_IN_SEQUENCE_FINISHED;
 import static org.ashot.shellflow.utils.TabUtils.TAB_ICON_SIZE;
 
 public class SequenceExecutionsTab extends Tab {
+    private final Logger log = LoggerFactory.getLogger(SequenceExecutionsTab.class);
     private final TabPane sequenceExecutionTabPane;
-    private final CommandSequence commandSequence;
 
-    public SequenceExecutionsTab(CommandSequence commandSequence) {
-        super(commandSequence.getSequenceName());
-        this.commandSequence = commandSequence;
+    public SequenceExecutionsTab(String text) {
+        super(text);
         this.sequenceExecutionTabPane = new TabPane();
         setContent(sequenceExecutionTabPane);
         setOnClosed(_ -> {
@@ -32,18 +31,15 @@ public class SequenceExecutionsTab extends Tab {
     }
 
     public List<ExecutionTab> getTabsInSequence() {
-        return sequenceExecutionTabPane.getTabs().stream().filter(e -> e instanceof ExecutionTab).map(o -> (ExecutionTab) o).toList();
+        return sequenceExecutionTabPane.getTabs().stream().filter(ExecutionTab.class::isInstance).map(o -> (ExecutionTab) o).toList();
     }
 
     public TabPane getSequenceTabPane() {
         return sequenceExecutionTabPane;
     }
 
-    public CommandSequence getCommandSequence() {
-        return commandSequence;
-    }
-
-    public SequenceExecutionState updateState(SequenceExecutionState state){
+    public SequenceExecutionState updateState(SequenceExecutionState state) {
+        log.debug("Sequence: {}, updated state: {}", getText(), state);
         switch (state) {
             case FINISHED -> setFinished();
             case FAILURE, INTERNAL_FAILURE -> setFailed();

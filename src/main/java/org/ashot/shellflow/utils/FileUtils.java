@@ -1,7 +1,6 @@
 package org.ashot.shellflow.utils;
 
 import javafx.stage.FileChooser;
-import org.ashot.shellflow.Controller;
 import org.ashot.shellflow.data.constant.DirType;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.json.JSONObject;
@@ -13,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Consumer;
 
 import static java.nio.file.Files.createFile;
 import static javafx.application.Platform.runLater;
@@ -63,7 +61,7 @@ public class FileUtils {
             fileChooser.setInitialDirectory(new File(initialDir));
         }
         if (saveMode) {
-            fileChooser.setInitialFileName(Controller.getCurrentFile());
+//            fileChooser.setInitialFileName(Controller.getCurrentFile());
             fileChooser.setTitle("Choose file destination");
             return fileChooser.showSaveDialog(null);
         } else {
@@ -88,8 +86,8 @@ public class FileUtils {
         return false;
     }
 
-    public static File openMostRecentFile(Consumer<File> loadFromFile) {
-        File file = RecentFileUtils.loadMostRecentFile(loadFromFile);
+    public static File getMostRecentlyOpenedFile() {
+        File file = RecentFileUtils.loadMostRecentFile();
         if (file != null) {
             RecentFileUtils.refreshDirLocation(DirType.LAST_LOADED, file.getParent());
         }

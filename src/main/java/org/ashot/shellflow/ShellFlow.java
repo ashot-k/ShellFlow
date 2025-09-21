@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.ashot.shellflow.config.DefaultConfig;
 import org.ashot.shellflow.config.ShellFlowConfig;
+import org.ashot.shellflow.controller.Controller;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.registry.TerminalRegistry;
@@ -30,6 +31,8 @@ public class ShellFlow extends Application {
     public static final int SIZE_X = 1500;
     public static final int SIZE_Y = 750;
     public static final String WINDOW_TITLE = "ShellFlow";
+    private static final String LIGHT_CLASS = "light";
+    private static final String DARK_CLASS = "dark";
     private static final boolean RESIZABLE = true;
     private static ThemeOption selectedTheme = ThemeOption.DARK_MODE;
     private static Font applicationFont;
@@ -42,44 +45,41 @@ public class ShellFlow extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
-        primaryStage = stage;
-        setTheme(getThemeFromConfig());
-        loadAdditionalFonts();
-//        applicationFont = Font.font("Cascadia Mono");
-        applicationFont = Font.getDefault();
-        URL url = ShellFlow.class.getResource("/fxml/shellflow-main.fxml");
-        String styleSheet = ShellFlow.class.getResource("/style/main.css").toExternalForm();
-        if (url == null) {
-            throw new IllegalStateException("Could not load FXML");
-        }
-        if (styleSheet == null) {
-            throw new IllegalStateException("Could not load css stylesheet");
-        }
-        FXMLLoader fxmlLoader = new FXMLLoader(url);
+    public void start(Stage stage) throws IOException {
         try {
+            primaryStage = stage;
+            setTheme(getThemeFromConfig());
+            loadAdditionalFonts();
+//        applicationFont = Font.font("Cascadia Mono");
+            applicationFont = Font.getDefault();
+            URL url = ShellFlow.class.getResource("/fxml/shellflow-main.fxml");
+            String styleSheet = ShellFlow.class.getResource("/style/main.css").toExternalForm();
+            if (url == null) {
+                throw new IllegalStateException("Could not load FXML");
+            }
+            if (styleSheet == null) {
+                throw new IllegalStateException("Could not load css stylesheet");
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(url);
             fxmlLoader.load();
-        } catch (IOException e) {
-            log.error(e.getClass().getName());
-            log.error(e.getMessage());
-            log.error(e.getCause().getMessage());
-            stop();
+            Controller controller = fxmlLoader.getController();
+            Parent root = fxmlLoader.getRoot();
+            Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
+            scene.getStylesheets().add(styleSheet);
+            root.getStyleClass().add(getThemeFromConfig().isDark() ? DARK_CLASS : LIGHT_CLASS);
+            primaryStage.setScene(scene);
+            controller.init();
+            configurePrimaryStage(primaryStage);
+            log.info("JavaFX Version: {}", System.getProperty("javafx.runtime.version"));
+            log.info("Java Version: {}", System.getProperty("java.version"));
+            log.debug("Loaded FXML: {}", url);
+            log.debug("Loaded CSS: {}", styleSheet);
+            log.debug("Loaded Theme: {}", selectedTheme);
+            log.debug("Resizable: {}", RESIZABLE);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Controller controller = fxmlLoader.getController();
-        Parent root = fxmlLoader.getRoot();
-        Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
-        scene.getStylesheets().add(styleSheet);
-        root.getStyleClass().add(getThemeFromConfig().isDark() ? "dark" : "light");
-        primaryStage.setScene(scene);
-        controller.init();
-        configurePrimaryStage(primaryStage);
-        log.info("JavaFX Version: {}", System.getProperty("javafx.runtime.version"));
-        log.info("Java Version: {}", System.getProperty("java.version"));
-        log.debug("Loaded FXML: {}", url);
-        log.debug("Loaded CSS: {}", styleSheet);
-        log.debug("Loaded Theme: {}", selectedTheme);
-        log.debug("Is main stage Resizable: {}", RESIZABLE);
-        primaryStage.show();
     }
 
     @Override
@@ -118,8 +118,8 @@ public class ShellFlow extends Application {
             Timeline fadeOutTransition = Animations.fadeOut(root);
             fadeOutTransition.setOnFinished(_ -> {
                 root.getChildren().remove(imageView);
-                root.getStyleClass().removeAll("dark", "light");
-                root.getStyleClass().add(selectedTheme.isDark() ? "dark" : "light");
+                root.getStyleClass().removeAll(DARK_CLASS, LIGHT_CLASS);
+                root.getStyleClass().add(selectedTheme.isDark() ? DARK_CLASS : LIGHT_CLASS);
                 getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
                 Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
                 Animations.fadeIn(root).play();

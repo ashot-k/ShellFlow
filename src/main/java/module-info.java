@@ -27,7 +27,6 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.utils;
     opens org.ashot.shellflow.data.constant to javafx.base;
     opens org.ashot.shellflow.node.icon to javafx.base;
-    exports org.ashot.shellflow.data;
     opens org.ashot.shellflow.data.message to javafx.fxml;
     opens org.ashot.shellflow.node.tab.executions to javafx.base;
     opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
@@ -36,5 +35,12 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.execution;
     exports org.ashot.shellflow.data.constant;
     exports org.ashot.shellflow.config;
+    exports org.ashot.shellflow.mapper;
+    exports org.ashot.shellflow.node.entry;
     exports org.ashot.shellflow.node.tab.executions;
+    exports org.ashot.shellflow.data.entry;
+    exports org.ashot.shellflow.controller;
+    opens org.ashot.shellflow.controller to javafx.fxml;
+    exports org.ashot.shellflow.execution.task;
+    exports org.ashot.shellflow.execution.task.factory;
 }

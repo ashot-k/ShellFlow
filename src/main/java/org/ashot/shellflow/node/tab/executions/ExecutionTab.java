@@ -20,7 +20,6 @@ import org.ashot.shellflow.utils.TabUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.constant.ExecutionState.*;
 
@@ -87,10 +86,11 @@ public class ExecutionTab extends Tab {
                 TerminalToolBar terminalToolBar = this.terminal.getTerminalToolBar();
                 this.stackPane.getChildren().add(terminalToolBar);
                 StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
-                StackPane.setMargin(terminalToolBar, new Insets(0, 25, 20, 0));
+                StackPane.setMargin(terminalToolBar, new Insets(0, 25, 15, 0));
             });
         }
     }
+
     public void setCommandDisplayName(String commandDisplayName) {
         this.commandDisplayName = commandDisplayName;
     }
@@ -114,7 +114,8 @@ public class ExecutionTab extends Tab {
         }
     }
 
-    public void updateState(ExecutionState state, boolean sequence){
+    public void updateState(ExecutionState state, boolean sequence) {
+        log.debug("Execution: {} ({}), updated state: {}", getText(), getCommandDisplayName(), state);
         switch (state) {
             case IN_PROGRESS -> TabUtils.setInProgress(this, sequence);
             case INTERNAL_FAILURE, FAILURE -> TabUtils.setFailed(this, sequence);

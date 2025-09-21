@@ -212,4 +212,19 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getPerformanceOptionIcon(double size) {
+        Glyph icon = fontAwesome.create(GEAR);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getEnabledEntryToggleIcon(double size, boolean toggled) {
+        Glyph icon = fontAwesome.create(toggled ? TOGGLE_ON : TOGGLE_OFF);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
 }

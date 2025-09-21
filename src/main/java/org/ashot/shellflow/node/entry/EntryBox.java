@@ -1,19 +1,20 @@
 package org.ashot.shellflow.node.entry;
 
 import atlantafx.base.controls.Spacer;
-import atlantafx.base.controls.ToggleSwitch;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.*;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import org.ashot.shellflow.ShellFlow;
-import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.Fonts;
+import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.entry.button.CloseButton;
 import org.ashot.shellflow.node.entry.button.EnableEntryBoxSwitch;
@@ -31,18 +32,21 @@ import java.util.List;
 public class EntryBox extends TitledPane {
     private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
 
-    private static final double NAME_FIELD_WIDTH = 150;
+    private static final double NAME_FIELD_WIDTH = 125;
     private static final double PATH_FIELD_WIDTH = 300;
-    private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH + 10;
+    private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH;
+    private static final double MAX_WIDTH = COMMAND_FIELD_WIDTH;
+    private static final double HEADER_WIDTH = MAX_WIDTH - 43;
+
     private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
-    public static final double MAX_WIDTH = 450;
-    private static final List<String> styleClasses = List.of("default-container", Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
+    private static final List<String> STYLE_CLASSES = List.of("default-container", Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
+    private static final String EDITED_FIELD_STYLE_CLASS = "edited-field";
 
     private final NameField nameField;
     private final PathField pathField;
     private final CommandTextArea commandField;
     private final WslOption wslToggle;
-    private final ToggleSwitch enabledToggle;
+    private final ToggleButton enabledToggle;
     private final Button executeButton;
     private final Button deleteEntry;
     private final Label title;
@@ -68,12 +72,9 @@ public class EntryBox extends TitledPane {
 
         wslToggle = new WslOption("WSL", entry.isWsl());
         wslToggle.setAlignment(Pos.CENTER_RIGHT);
-        pathField.setWsl(wslToggle.isSelected());
-
+        pathField.wslProperty().bind(wslToggle.selectedProperty());
 
         enabledToggle = new EnableEntryBoxSwitch("", entry.isEnabled());
-        enabledToggle.setLabelPosition(HorizontalDirection.LEFT);
-
         deleteEntry = new CloseButton();
 
         VBox labeledNameField = new LabeledTextInput("Name", nameField);
@@ -84,10 +85,10 @@ public class EntryBox extends TitledPane {
         executeButton.setPrefHeight(34);
         executeButton.setMinHeight(34);
         executeButton.setMaxWidth(80);
+        HBox.setHgrow(executeButton, Priority.ALWAYS);
         HBox executeButtonContainer = new HBox(executeButton);
         executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
         executeButtonContainer.setPrefWidth(60);
-        HBox.setHgrow(executeButton, Priority.ALWAYS);
 
         GridPane entryGrid = new GridPane();
         entryGrid.addRow(0, labeledNameField, labeledPathField);
@@ -116,24 +117,22 @@ public class EntryBox extends TitledPane {
 
         HBox header = new HBox(15, enabledToggle, title, new Spacer(), deleteEntry);
         header.setAlignment(Pos.CENTER);
-        header.setPadding(new Insets(2));
-        NodeUtils.setWidths(header, 400);
+        header.setPadding(new Insets(1));
+        NodeUtils.setWidths(header, HEADER_WIDTH);
 
-        setMaxWidth(MAX_WIDTH);
+        NodeUtils.setWidths(this, MAX_WIDTH);
+
         setGraphic(header);
 
-        Separator separator = new Separator();
-        separator.setPadding(new Insets(0, 0, 10, 0));
-        var content = new VBox(0, separator, entryGrid);
+        VBox content = new VBox(0, entryGrid);
         content.setFillWidth(true);
         content.setPadding(new Insets(2));
 
         setContent(content);
-        setAnimated(!ShellFlow.getConfig().optimizedMode());
 
         setupInitialState();
         setupEventListeners();
-        getStyleClass().addAll(styleClasses);
+        getStyleClass().addAll(STYLE_CLASSES);
         setInvalid(commandField, commandField.getText().isBlank());
     }
 
@@ -161,7 +160,7 @@ public class EntryBox extends TitledPane {
         }
     }
 
-    private void setInvalid(TextInputControl textField, boolean invalid) {
+    public static void setInvalid(TextInputControl textField, boolean invalid) {
         textField.pseudoClassStateChanged(Styles.STATE_DANGER, invalid);
     }
 
@@ -174,18 +173,9 @@ public class EntryBox extends TitledPane {
     }
 
     private void setupEventListeners() {
-        enabledToggle.selectedProperty().addListener((e, _, value) -> {
-            toggleEntryBox(value);
-        });
-        nameField.textProperty().addListener((_, _, newText) -> {
-            refreshTitleText(newText);
-        });
-        wslToggle.selectedProperty().addListener((_, _, value) -> {
-            pathField.setWsl(value);
-        });
-        commandField.textProperty().addListener((_, _, value) -> {
-            setInvalid(commandField, value.isBlank());
-        });
+        enabledToggle.selectedProperty().addListener((_, _, value) -> toggleEntryBox(value));
+        nameField.textProperty().addListener((_, _, newText) -> refreshTitleText(newText));
+        commandField.textProperty().addListener((_, _, value) -> setInvalid(commandField, value.isBlank()));
         setupEditingTrackingEventListeners();
     }
 
@@ -210,13 +200,13 @@ public class EntryBox extends TitledPane {
     }
 
     private void setUnedited() {
-        getStyleClass().remove("edited-field");
+        getStyleClass().remove(EDITED_FIELD_STYLE_CLASS);
         edited = false;
     }
 
     private void setEdited() {
-        if (!getStyleClass().contains("edited-field")) {
-            getStyleClass().add("edited-field");
+        if (!getStyleClass().contains(EDITED_FIELD_STYLE_CLASS)) {
+            getStyleClass().add(EDITED_FIELD_STYLE_CLASS);
         }
         edited = true;
     }
@@ -244,10 +234,6 @@ public class EntryBox extends TitledPane {
         this.executeButton.setOnAction(action);
     }
 
-    public static List<EntryBox> getEntriesFromPane(Pane ownerPane) {
-        return ownerPane.getChildren().stream().filter(EntryBox.class::isInstance).map(e -> (EntryBox) e).toList();
-    }
-
     public TextInputControl getNameField() {
         return nameField;
     }
@@ -272,7 +258,7 @@ public class EntryBox extends TitledPane {
         return executeButton;
     }
 
-    public ToggleSwitch getEnabledToggle() {
+    public ToggleButton getEnabledToggle() {
         return enabledToggle;
     }
 

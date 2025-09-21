@@ -1,4 +1,4 @@
-package org.ashot.shellflow.execution;
+package org.ashot.shellflow.execution.task;
 
 import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
@@ -13,24 +13,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 import static javafx.application.Platform.runLater;
-import static org.ashot.shellflow.node.tab.executions.ExecutionTab.constructTabFromCommand;
 import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
-import static org.ashot.shellflow.utils.TabUtils.addToExecutions;
 
-public class ExecutionTask extends Task<ExecutionState> {
-    private final Logger log = LoggerFactory.getLogger(ExecutionTask.class);
-    private ExecutionTab executionTab;
+public class SingularExecutionTask extends Task<ExecutionState> implements ExecutionTask {
+    private final Logger log = LoggerFactory.getLogger(SingularExecutionTask.class);
+    private final ExecutionTab executionTab;
     private final Command command;
     private final long delay;
 
-    public ExecutionTask(ExecutionTab executionTab, Command command) {
+    public SingularExecutionTask(ExecutionTab executionTab, Command command) {
         this(executionTab, command, 0);
     }
 
-    public ExecutionTask(ExecutionTab executionTab, Command command, long delay) {
+    public SingularExecutionTask(ExecutionTab executionTab, Command command, long delay) {
         super();
         this.executionTab = executionTab;
         this.command = command;
@@ -39,11 +36,10 @@ public class ExecutionTask extends Task<ExecutionState> {
 
     @Override
     protected ExecutionState call() throws Exception {
-        initializeExecutionTab();
         try {
-            if(isCancelled()) return ExecutionState.CANCELLED;
+            if (isCancelled()) return ExecutionState.CANCELLED;
             setupCancellationHandler(executionTab);
-            if(isCancelled()) return ExecutionState.CANCELLED;
+            if (isCancelled()) return ExecutionState.CANCELLED;
             Thread.sleep(delay);
             PtyProcess process = startProcess(executionTab, buildProcess(command));
             if (process == null) return ExecutionState.INTERNAL_FAILURE;
@@ -52,7 +48,7 @@ public class ExecutionTask extends Task<ExecutionState> {
             updateValue(ExecutionState.IN_PROGRESS);
             int exitValue = waitForProcess(process);
 
-            if(isCancelled()) {
+            if (isCancelled()) {
                 log.debug("Destroying process: {} ({}), forcibly due to cancellation of Execution Task", executionTab.getText(), executionTab.getCommandDisplayName());
                 process.destroyForcibly();
                 return ExecutionState.CANCELLED;
@@ -65,30 +61,11 @@ public class ExecutionTask extends Task<ExecutionState> {
     }
 
     private ExecutionState handleProcessExit(int exitValue) {
-        if (exitValue == 0) {
-            return ExecutionState.FINISHED;
-        } else if (exitValue == -1) {
-            return ExecutionState.CANCELLED;
-        } else {
-            return ExecutionState.FAILURE;
-        }
-    }
-
-    private void initializeExecutionTab() {
-        CountDownLatch latch = new CountDownLatch(1);
-        if (executionTab == null) {
-            runLater(() -> {
-                executionTab = constructTabFromCommand(command);
-                addToExecutions(executionTab);
-                latch.countDown();
-            });
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                log.error(e.getMessage());
-                cancel();
-            }
-        }
+        return switch (exitValue) {
+            case 0 -> ExecutionState.FINISHED;
+            case -1 -> ExecutionState.CANCELLED;
+            default -> ExecutionState.FAILURE;
+        };
     }
 
     private void setupCancellationHandler(ExecutionTab tab) {

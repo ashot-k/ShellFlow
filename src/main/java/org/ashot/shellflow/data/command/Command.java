@@ -25,9 +25,9 @@ public class Command {
     private String argumentsString = "";
 
     public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidPathException {
-        rawArguments = arguments;
-        validateArguments(arguments);
+        this.rawArguments = arguments;
         this.persistent = persistent;
+        validateArguments(arguments);
         if (persistent) {
             constructCommandPersistentSession(name, path, arguments, wsl);
         } else {
@@ -48,13 +48,12 @@ public class Command {
         this.wsl = wsl;
         this.path = path;
         if (wsl) {
-            validateWslPath();
             arguments = adjustWslArguments(arguments);
         } else {
             validatePath();
         }
         prefixForOperatingEnvironment();
-        argumentsString = arguments;
+        this.argumentsString = arguments;
         this.argumentList.add(arguments);
         this.name = formatName(name);
         log.info("Created command: { name: {}, path: {}, arguments: {}, WSL: {} }", this.name, this.path, arguments, this.wsl);
@@ -64,45 +63,23 @@ public class Command {
         return "cd " + path + " && " + arguments;
     }
 
-    private void validateWslPath() throws InvalidPathException {
-/*
-        if (!wslPathExists(path)) {
-            throw new InvalidPathException("invalid path", path);
-        }
-*/
-        log.debug("Checking WSL Path: {}", path);
-        path = path.isBlank() ? "/" : path;
-        log.debug("Checked WSL Path: {}", path);
-    }
-
-/*
-    public static boolean wslPathExists(String wslPath) {
-        try {
-            ProcessBuilder builder = new ProcessBuilder("wsl", "test", "-e", wslPath);
-            Process process = builder.start();
-            int exitCode = process.waitFor();
-            return exitCode == 0;
-        } catch (IOException | InterruptedException e) {
-            log.error(e.getMessage());
-            return false;
-        }
-    }
-*/
 
     private void validatePath() throws InvalidPathException {
-        log.debug("Checking Path: {}", path);
-        path = path.isBlank() ? "/" : path;
-        path = path.replace("~", System.getProperty("user.home"));
-        File f = new File(path);
+        String pathStr;
+        if (path.isBlank()) {
+            pathStr = "/";
+        } else {
+            pathStr = path.replace("~", System.getProperty("user.home"));
+        }
+        File f = new File(pathStr);
         if (!f.exists() || !f.isDirectory()) {
             throw new InvalidPathException(ExceptionMessages.INVALID_PATH, path);
         }
-        log.debug("Checked Path: {}", path);
     }
 
     private void validateArguments(String arguments) throws InvalidCommandException {
         if (arguments == null || arguments.isBlank()) {
-            log.error("Invalid Arguments: {}", arguments);
+            log.error("Arguments are blank");
             throw new InvalidCommandException(ExceptionMessages.INVALID_ARGUMENTS);
         }
     }

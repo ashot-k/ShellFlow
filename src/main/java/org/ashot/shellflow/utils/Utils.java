@@ -1,8 +1,6 @@
 package org.ashot.shellflow.utils;
 
-import org.ashot.shellflow.data.Entry;
 import org.ashot.shellflow.data.constant.FieldType;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,22 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 public class Utils {
-
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
-    private static String osProperty = "os.name";
+    private static final String OS_NAME_PROPERTY = "os.name";
 
-    public static JSONObject createSaveJSONObject(List<Entry> entries, int delayPerCmd, boolean seqOption, String executionName) {
-        JSONArray entriesArray = Entry.createEntryJSONArray(entries);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(FieldType.ENTRIES.getId(), entriesArray);
-        jsonObject.put(FieldType.DELAY.getId(), delayPerCmd);
-        jsonObject.put(FieldType.SEQUENTIAL.getId(), seqOption);
-        jsonObject.put(FieldType.EXECUTION_NAME.getId(), executionName);
-        return jsonObject;
-    }
+    private Utils(){}
+
 
     public static String getOrDefault(Object jsonValue, FieldType type) {
         if (jsonValue == null) {
@@ -39,9 +28,9 @@ public class Utils {
             String jsonContent = Files.readString(file.toPath());
             return new JSONObject(jsonContent);
         } catch (IOException e) {
-            log.error("File could not be found: {}", file);
+            log.error("File could not be found: {}, \n {}", file, e.getMessage());
         }
-        return null;
+        return new JSONObject();
     }
 
     public static int calculateDelay(int multiplier, int delayPerCmd) {
@@ -50,11 +39,11 @@ public class Utils {
     }
 
     public static boolean checkIfWindows() {
-        return System.getProperty(osProperty).toLowerCase().contains("windows");
+        return System.getProperty(OS_NAME_PROPERTY).toLowerCase().contains("windows");
     }
 
     public static boolean checkIfLinux() {
-        return System.getProperty(osProperty).toLowerCase().contains("linux");
+        return System.getProperty(OS_NAME_PROPERTY).toLowerCase().contains("linux");
     }
 }
 

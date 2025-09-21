@@ -13,7 +13,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
     private static final TerminalColor DEFAULT_DARK_MODE_BACKGROUND = new TerminalColor(0, 0, 0);
     private static final TerminalColor DEFAULT_DARK_MODE_FOREGROUND = new TerminalColor(255, 255, 255);
 
-    private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(240, 240, 240);
+    private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(255, 255, 255);
     private static final TerminalColor DEFAULT_LIGHT_MODE_FOREGROUND = new TerminalColor(16, 17, 23);
 
     private static String fontFamily = ShellFlow.getConfig().terminalFontFamily().getFamily();
