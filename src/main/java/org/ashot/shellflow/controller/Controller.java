@@ -14,6 +14,7 @@ import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.registry.ControllerRegistry;
+import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import org.ashot.shellflow.utils.Animations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ public class Controller {
         entryManagementController.optimizationModeProperty().bind(optimizationMode);
         Animations.performanceMode.bind(optimizationMode);
         variableManagementController.animatedProperty().bind(optimizationMode.not());
+        ThemedSettingsProvider.optimizationModeProperty().bind(optimizationMode);
     }
 
     private void handleUserInput(KeyEvent keyEvent) {

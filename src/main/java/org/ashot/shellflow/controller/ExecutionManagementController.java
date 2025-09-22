@@ -149,8 +149,14 @@ public class ExecutionManagementController {
     private void handleSequenceState(SequenceExecutionTaskState taskState, SequenceExecutionsTab sequenceExecutionsTab) {
         SequenceExecutionState sequenceState = taskState.getSequenceState();
         sequenceExecutionsTab.updateState(sequenceState);
-        if (sequenceState.equals(EXECUTION_IN_SEQUENCE_FINISHED) && taskState.getCurrentStep() < taskState.getTotalSteps()) {
-            sequenceExecutionsTab.getSequenceTabPane().getSelectionModel().select(taskState.getCurrentStep());
+        switch (sequenceState){
+            case FINISHED -> displayNotification(taskState.getSequenceState().getValue(), finishedNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.SUCCESS);
+            case FAILURE -> displayNotification(taskState.getSequenceState().getValue(), finishedNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.EXECUTION_FAILURE);
+            case EXECUTION_IN_SEQUENCE_FINISHED ->{
+                if (taskState.getCurrentStep() < taskState.getTotalSteps()) {
+                    sequenceExecutionsTab.getSequenceTabPane().getSelectionModel().select(taskState.getCurrentStep());
+                }
+            }
         }
     }
 }

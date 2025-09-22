@@ -18,7 +18,7 @@ public class SequenceExecutionsTab extends Tab {
     private final TabPane sequenceExecutionTabPane;
 
     public SequenceExecutionsTab(String text) {
-        super(text);
+        super(text.isEmpty() ? "Sequence - Unknown" : text);
         this.sequenceExecutionTabPane = new TabPane();
         setContent(sequenceExecutionTabPane);
         setOnClosed(_ -> {

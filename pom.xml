@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.7.1</version>
+    <version>0.7.2</version>
     <name>shellflow</name>
 
     <properties>
@@ -15,7 +15,7 @@
         <output.dir>${project.basedir}/output</output.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>24.0.2</javafx.version>
-        <jeditermfx.version>1.2.0-SNAPSHOT</jeditermfx.version>
+        <jeditermfx.version>1.2.1</jeditermfx.version>
         <atlantafx.themes.version>2.1.0</atlantafx.themes.version>
         <fxtrayicon.version>4.2.3</fxtrayicon.version>
         <controlsfx.version>11.2.2</controlsfx.version>
@@ -98,12 +98,12 @@
             <version>${controlsfx.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.techsenger.jeditermfx</groupId>
+            <groupId>org.ashot</groupId>
             <artifactId>jeditermfx-core</artifactId>
             <version>${jeditermfx.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.techsenger.jeditermfx</groupId>
+            <groupId>org.ashot</groupId>
             <artifactId>jeditermfx-ui</artifactId>
             <version>${jeditermfx.version}</version>
         </dependency>

@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 public class TerminalFactory {
-
+    //  todo utilize this, to save logs in OS FS, widget.getTerminalTextBuffer().addHistoryBufferListener();
     public static @NotNull ShellFlowTerminalWidget createTerminalWidget() {
         ShellFlowTerminalWidget widget = new ShellFlowTerminalWidget(new ThemedSettingsProvider());
         widget.addHyperlinkFilter(new DefaultHyperlinkFilter());
