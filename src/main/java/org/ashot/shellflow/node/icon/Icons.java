@@ -47,32 +47,8 @@ public class Icons {
         return icon;
     }
 
-    public static Glyph getToggleToolbarIcon(int size, boolean show) {
-        Glyph icon = fontAwesome.create(show ? ANGLE_DOUBLE_RIGHT : ANGLE_DOUBLE_LEFT);
-        icon.size(size);
-        icon.color(preferredColor);
-        setHoverToBrighter(icon, preferredColor);
-        return icon;
-    }
-
     public static Glyph getAddButtonIcon(int size) {
         Glyph icon = fontAwesome.create(PLUS);
-        icon.size(size);
-        icon.color(preferredColor);
-        setHoverToBrighter(icon, preferredColor);
-        return icon;
-    }
-
-    public static Glyph getLinuxIcon(int size) {
-        Glyph icon = fontAwesome.create(LINUX);
-        icon.size(size);
-        icon.color(preferredColor);
-        setHoverToBrighter(icon, preferredColor);
-        return icon;
-    }
-
-    public static Glyph getWindowsIcon(int size) {
-        Glyph icon = fontAwesome.create(WINDOWS);
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
@@ -119,6 +95,13 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getErrorIcon(int size) {
+        Glyph icon = fontAwesome.create(EXCLAMATION_CIRCLE);
+        icon.size(size);
+        icon.color(Color.INDIANRED);
+        return icon;
+    }
+
     public static Glyph getBrowseIcon(double size) {
         Glyph icon = fontAwesome.create(SEARCH);
         icon.size(size);
@@ -132,22 +115,6 @@ public class Icons {
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
-        return icon;
-    }
-
-    public static Glyph getErrorNotifIcon(double size) {
-        Glyph icon = fontAwesome.create(TIMES_CIRCLE);
-        icon.size(size);
-        icon.setFontSize(size);
-        icon.setStyle("-fx-fill: indianred !important;-fx-text-fill: indianred !important; -fx-font-size: " + size + "px");
-        return icon;
-    }
-
-    public static Glyph getInfoNotifIcon(double size) {
-        Glyph icon = fontAwesome.create(INFO_CIRCLE);
-        icon.size(size);
-        icon.setFontSize(size);
-        icon.setStyle("-fx-padding: 0; -fx-fill: white !important;-fx-text-fill: white !important; -fx-font-size: " + size + "px");
         return icon;
     }
 

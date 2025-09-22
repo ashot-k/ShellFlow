@@ -15,13 +15,8 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.utils.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 import static org.ashot.shellflow.data.constant.IconSizeDefaults.DEFAULT_ICON_SIZE;
 

@@ -5,6 +5,7 @@ public enum IconSizeDefaults {
     EXECUTE_ICON_SIZE(22),
     CLOSE_ICON_SIZE(22),
     MENU_ITEM_SIZE(18),
+    ENTRY_VALIDATION_MESSAGE_ICON(18),
     PATH_BROWSE_ICON_SIZE(DEFAULT_ICON_SIZE.getSize());
 
     private final int size;

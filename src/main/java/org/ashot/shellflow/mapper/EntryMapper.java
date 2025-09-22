@@ -8,8 +8,8 @@ import org.ashot.shellflow.exception.ExecutionAbortedException;
 import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.exception.InvalidPathException;
 import org.ashot.shellflow.node.entry.EntryBox;
-import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.node.popup.AlertPopup;
+import org.ashot.shellflow.node.variable.VariableEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

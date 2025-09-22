@@ -1,5 +1,6 @@
 package org.ashot.shellflow.controller;
 
+import atlantafx.base.theme.Styles;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -13,15 +14,18 @@ import javafx.scene.paint.Color;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.DirType;
+import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.entry.Execution;
 import org.ashot.shellflow.execution.task.SequenceExecutionTask;
 import org.ashot.shellflow.execution.task.SingularExecutionTask;
 import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.entry.EntryBox;
+import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.tab.setup.EntrySetupTab;
 import org.ashot.shellflow.node.toolbar.EntrySetupToolBar;
+import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.peristence.ExecutionRepository;
 import org.ashot.shellflow.utils.Animations;
 import org.ashot.shellflow.utils.RecentFileUtils;
@@ -32,8 +36,12 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.utils.Utils.checkIfWindows;
@@ -50,11 +58,13 @@ public class EntryManagementController {
     private final StringProperty currentFileAbsolutePath = new SimpleStringProperty();
     private final BooleanProperty optimizationMode = new SimpleBooleanProperty();
     private final ExecutionManagementController executionManagement;
+    private final VariableManagementController variableManagement;
 
     public EntryManagementController(ExecutionManagementController executionManagement, VariableManagementController variableController, EntryMapper entryMapper, File init) {
         this.view = new EntrySetupTab();
         this.repository = new ExecutionRepository();
         this.executionManagement = executionManagement;
+        this.variableManagement = variableController;
         this.entryMapper = entryMapper;
         view.setSidePanel(variableController.getView(), Pos.CENTER_LEFT);
         setupBindings();
@@ -78,7 +88,7 @@ public class EntryManagementController {
             }
         });
         view.getEntryInfoBar().hoverProperty().addListener((_, _, hovering) ->
-            view.getFileLoadedText().setText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()))
+                view.getFileLoadedText().setText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()))
         );
         view.getFileLoadedText().setOnMouseClicked(this::handleEntryInfoTextClick);
     }
@@ -122,7 +132,70 @@ public class EntryManagementController {
         setupDragging(entryBox);
         Animations.fadeInBeforeAdditionToList(entryBox);
         entryBox.animatedProperty().bind(optimizationMode.not());
+        setupEntryBoxEvents(entryBox);
         entryBoxes.add(entryBox);
+    }
+
+    private void setupEntryBoxEvents(EntryBox entryBox) {
+        entryBox.getCommandField().focusedProperty().addListener((_, _, focused) -> {
+                if(!focused) {
+                    handleVariableValidation(entryBox);
+                }
+        });
+        entryBox.getPathField().focusedProperty().addListener((_, _, focused) -> {
+                if(!focused) {
+                    handleVariableValidation(entryBox);
+                }
+        });
+        variableManagement.changedProperty().addListener((_, _, _) -> entryBoxes.forEach(this::handleVariableValidation));
+        handleVariableValidation(entryBox);
+    }
+
+    private void handleVariableValidation(EntryBox entryBox) {
+        List<String> commandFieldVariableValidationErrors = validateFieldForVariables(entryBox.getCommandField().getText());
+        List<String> pathFieldVariableValidationErrors = validateFieldForVariables(entryBox.getPathField().getText());
+        if(commandFieldVariableValidationErrors.isEmpty() && pathFieldVariableValidationErrors.isEmpty()){
+            entryBox.hidePrompt();
+        }
+        else if(commandFieldVariableValidationErrors.isEmpty()){
+            showPromptForErrors("Path", entryBox, pathFieldVariableValidationErrors);
+        }
+        else if(pathFieldVariableValidationErrors.isEmpty()){
+            showPromptForErrors("Command", entryBox, commandFieldVariableValidationErrors);
+        }
+        else{
+            List<String> errors = Stream.of(commandFieldVariableValidationErrors, pathFieldVariableValidationErrors).flatMap(Collection::stream).toList();
+            showPromptForErrors("Command and Path", entryBox, errors);
+        }
+    }
+
+    public void showPromptForErrors(String fieldName, EntryBox entryBox, List<String> errors) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(fieldName).append(" ").append("contains unknown variables: ");
+        for (String error : errors) {
+            stringBuilder.append(error).append(" ");
+        }
+        entryBox.showPromptMessageToField(null, stringBuilder.toString(), Styles.DANGER, Icons.getErrorIcon(IconSizeDefaults.ENTRY_VALIDATION_MESSAGE_ICON.getSize()));
+    }
+
+    public List<String> validateFieldForVariables(String fieldValue) {
+        List<String> errors = new ArrayList<>();
+        Pattern pattern = Pattern.compile("\\$\\{([^}]+)\\}");
+        Matcher matcher = pattern.matcher(fieldValue);
+        while (matcher.find()) {
+            boolean found = false;
+            String occurrence = matcher.group(1);
+            for (VariableEntry variableEntry : variableManagement.getVariables()) {
+                if (variableEntry.getName().equals(occurrence)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                errors.add(occurrence);
+            }
+        }
+        return errors;
     }
 
     public void removeEntryBox(EntryBox entryBox) {
@@ -191,6 +264,7 @@ public class EntryManagementController {
     public void refreshEdited() {
         log.debug("Reset edited state for all entries");
         entryBoxes.forEach(EntryBox::refreshEdited);
+        entryBoxes.forEach(this::handleVariableValidation);
     }
 
     private void refreshFileLoaded(String path) {
@@ -253,7 +327,6 @@ public class EntryManagementController {
             dragSourceIndex = -1;
             e.consume();
         });
-
     }
 
     public int getDelayPerCmd() {

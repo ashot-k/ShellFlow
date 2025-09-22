@@ -1,11 +1,12 @@
 package org.ashot.shellflow.controller;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.node.tab.setup.VariableSetupSidePanel;
+import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.peristence.VariableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class VariableManagementController {
     private final VariableRepository variableRepository;
     //todo replace with TableView
     private final ObservableList<VariableEntry> variableList = FXCollections.observableArrayList();
+    private final BooleanProperty saved = new SimpleBooleanProperty();
 
     public VariableManagementController(File init) {
         view = new VariableSetupSidePanel();
@@ -39,7 +41,10 @@ public class VariableManagementController {
     }
 
     private void setupEvents() {
-        view.getSaveAllButton().setOnAction(_ -> variableRepository.saveToFile(variableList));
+        view.getSaveAllButton().setOnAction(_ -> {
+            variableRepository.saveToFile(variableList);
+            saved.set(!saved.get());
+        });
         view.getAddVariableButton().setOnAction(_ -> addVariableEntry());
     }
 
@@ -79,5 +84,9 @@ public class VariableManagementController {
 
     public VariableSetupSidePanel getView() {
         return view;
+    }
+
+    public BooleanProperty changedProperty() {
+        return saved;
     }
 }

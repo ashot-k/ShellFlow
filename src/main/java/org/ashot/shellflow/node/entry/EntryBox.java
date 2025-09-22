@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.entry;
 
+import atlantafx.base.controls.Message;
 import atlantafx.base.controls.Spacer;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
@@ -11,6 +12,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.ashot.shellflow.data.constant.Fonts;
@@ -50,6 +52,9 @@ public class EntryBox extends TitledPane {
     private final Button executeButton;
     private final Button deleteEntry;
     private final Label title;
+    private final VBox content;
+
+    private final Message promptMessage;
 
     private Entry entry;
     private boolean edited = false;
@@ -89,6 +94,9 @@ public class EntryBox extends TitledPane {
         HBox executeButtonContainer = new HBox(executeButton);
         executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
         executeButtonContainer.setPrefWidth(60);
+        promptMessage = new Message();
+        promptMessage.setVisible(false);
+        VBox.setMargin(promptMessage, new Insets(5, 0, 0,0));
 
         GridPane entryGrid = new GridPane();
         entryGrid.addRow(0, labeledNameField, labeledPathField);
@@ -124,7 +132,7 @@ public class EntryBox extends TitledPane {
 
         setGraphic(header);
 
-        VBox content = new VBox(0, entryGrid);
+        content = new VBox(0, entryGrid);
         content.setFillWidth(true);
         content.setPadding(new Insets(2));
 
@@ -270,4 +278,18 @@ public class EntryBox extends TitledPane {
         this.entry = entry;
     }
 
+    public void showPromptMessageToField(String title, String message, String style, Node icon){
+        content.getChildren().remove(promptMessage);
+        promptMessage.setTitle(title);
+        promptMessage.setDescription(message);
+        promptMessage.getStyleClass().add(style);
+        content.getChildren().add(promptMessage);
+        promptMessage.setVisible(true);
+        promptMessage.setGraphic(icon);
+    }
+
+    public void hidePrompt(){
+        content.getChildren().remove(promptMessage);
+        promptMessage.setVisible(false);
+    }
 }

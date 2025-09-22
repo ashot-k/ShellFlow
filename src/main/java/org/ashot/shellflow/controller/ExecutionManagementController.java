@@ -26,7 +26,6 @@ import java.util.List;
 
 import static org.ashot.shellflow.data.constant.ExecutionState.FAILURE;
 import static org.ashot.shellflow.data.constant.ExecutionState.FINISHED;
-import static org.ashot.shellflow.data.constant.SequenceExecutionState.EXECUTION_IN_SEQUENCE_FINISHED;
 import static org.ashot.shellflow.data.message.NotificationMessages.failNotificationMessage;
 import static org.ashot.shellflow.data.message.NotificationMessages.finishedNotificationMessage;
 import static org.ashot.shellflow.node.notification.ShellFlowTray.displayNotification;
