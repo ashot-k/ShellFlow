@@ -36,6 +36,6 @@ public class ParallelExecutionsTab extends Tab {
     }
 
     public void setName(String name) {
-        setText(name.isBlank() ? "Execution - " + ((int) (Math.random() * 100)) : name);
+        setText(name.isBlank() ? "Execution - Unknown" : name);
     }
 }

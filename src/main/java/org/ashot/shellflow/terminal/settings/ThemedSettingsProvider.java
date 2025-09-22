@@ -66,7 +66,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public int maxRefreshRate() {
-        return isOptimizationMode() ? 30 : 60;
+        return isOptimizationMode() ? 30 : 50;
     }
 
     private static void setFontSize(double fontSize) {
