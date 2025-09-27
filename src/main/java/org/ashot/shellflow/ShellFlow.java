@@ -8,10 +8,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.ashot.shellflow.config.DefaultConfig;
 import org.ashot.shellflow.config.ShellFlowConfig;
 import org.ashot.shellflow.controller.Controller;
@@ -63,12 +65,18 @@ public class ShellFlow extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(url);
             fxmlLoader.load();
             Controller controller = fxmlLoader.getController();
-            Parent root = fxmlLoader.getRoot();
-            Scene scene = new Scene(root, SIZE_X, SIZE_Y, Color.BLACK);
+
+            Parent baseRoot = fxmlLoader.getRoot();
+            Scene scene = new Scene(baseRoot, SIZE_X, SIZE_Y, Color.BLACK);
+            scene.setFill(selectedTheme.isDark() ? Color.BLACK: Color.WHITE);
             scene.getStylesheets().add(styleSheet);
+            BorderPane root = new BorderPane();
+            root.setTop(controller.init());
+            root.setCenter(baseRoot);
+            scene.setRoot(root);
             root.getStyleClass().add(getThemeFromConfig().isDark() ? DARK_CLASS : LIGHT_CLASS);
             primaryStage.setScene(scene);
-            controller.init();
+            primaryStage.initStyle(StageStyle.EXTENDED);
             configurePrimaryStage(primaryStage);
             log.info("JavaFX Version: {}", System.getProperty("javafx.runtime.version"));
             log.info("Java Version: {}", System.getProperty("java.version"));
@@ -123,6 +131,7 @@ public class ShellFlow extends Application {
                 getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
                 Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
                 Animations.fadeIn(root).play();
+                getPrimaryStage().getScene().setFill(selectedTheme.isDark() ? Color.BLACK: Color.WHITE);
             });
             fadeOutTransition.play();
         } else {

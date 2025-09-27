@@ -6,6 +6,10 @@
     -color-danger-fg: #F08080;
 }
 
+.menu-bar{
+    -fx-background-color: transparent !important;
+}
+
 .dark {
     -fx-base-background: rgba(0, 0, 0, 0.1);
     -fx-solid-background: -color-bg-default;

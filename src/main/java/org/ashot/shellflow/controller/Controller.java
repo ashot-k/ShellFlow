@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HeaderBar;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.TabIndices;
@@ -41,13 +42,18 @@ public class Controller {
     private VariableManagementController variableManagementController;
     private BooleanProperty optimizationMode;
 
-    public void init() {
-        ControllerRegistry.register("main", this);
+    public HeaderBar init() {
         setupTabs();
         setupMenuBar();
         mainModal.getStyleClass().add("modal");
         ShellFlowTray.init(executionManagementController);
         handlePerformanceMode();
+        return createHeader();
+    }
+
+    private HeaderBar createHeader(){
+        HeaderBar.setDragType(mainMenuBar, DRAGGABLE_SUBTREE);
+        return new HeaderBar(null, mainMenuBar, null);
     }
 
     private void setupMenuBar() {
