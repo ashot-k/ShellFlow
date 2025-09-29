@@ -14,7 +14,6 @@ import org.ashot.shellflow.data.constant.TabIndices;
 import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.ShellFlowTray;
-import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import org.ashot.shellflow.utils.Animations;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import static javafx.scene.layout.HeaderDragType.DRAGGABLE_SUBTREE;
 import static org.ashot.shellflow.utils.FileUtils.getMostRecentlyOpenedFile;
 
 
@@ -59,7 +59,6 @@ public class Controller {
     private void setupMenuBar() {
         mainMenuBar = new MainMenuBar(file -> entryManagementController.load(file), file -> entryManagementController.save(file), entryManagementController.getCurrentFileAbsolutePathProperty(), mainModal);
         optimizationMode = mainMenuBar.getSettingsMenu().getPerformanceSettingMenuItem().performanceModePropertyProperty();
-        sceneContainer.getChildren().addFirst(mainMenuBar);
     }
 
     private void setupTabs() {
@@ -74,9 +73,9 @@ public class Controller {
 
     private void handlePerformanceMode() {
         entryManagementController.optimizationModeProperty().bind(optimizationMode);
-        Animations.performanceMode.bind(optimizationMode);
         variableManagementController.animatedProperty().bind(optimizationMode.not());
         ThemedSettingsProvider.optimizationModeProperty().bind(optimizationMode);
+        Animations.performanceMode.bind(optimizationMode);
     }
 
     private void handleUserInput(KeyEvent keyEvent) {

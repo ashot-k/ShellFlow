@@ -1,20 +1,17 @@
 package org.ashot.shellflow.node.toolbar;
 
-import atlantafx.base.controls.ModalPane;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.node.modal.FontSelectionDialog;
-import org.ashot.shellflow.registry.ControllerRegistry;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 
 import static org.ashot.shellflow.data.constant.IconSizeDefaults.DEFAULT_ICON_SIZE;
 
 public class TerminalToolBar extends FloatingToolBar {
-    private ShellFlowTerminalWidget terminalWidget;
+    private final ShellFlowTerminalWidget terminalWidget;
 
     public TerminalToolBar(ShellFlowTerminalWidget termFxWidget) {
         super();
@@ -31,15 +28,9 @@ public class TerminalToolBar extends FloatingToolBar {
         findButton.setOnAction(_ -> terminalWidget.toggleFind());
         findButton.setTooltip(new Tooltip(ToolTipMessages.find()));
 
-        Button fontEditButton = new Button("", Icons.getFontSelectionMenuIcon(DEFAULT_ICON_SIZE.getSize()));
-        fontEditButton.setOnAction(_ -> {
-            ModalPane modal = ControllerRegistry.getMainController().getMainModal();
-            ControllerRegistry.getMainController().getMainModal().show(new FontSelectionDialog(() -> modal.hide(true)));
-        });
-
         disableWhenProcessFinishes(stopProcessButton);
-        setContent(clearConsoleButton, fontEditButton, stopProcessButton, findButton);
-        setMaxWidth(220);
+        setContent(clearConsoleButton, stopProcessButton, findButton);
+        setMaxWidth(170);
         getStyleClass().addAll("terminal-toolBar");
         autoHiding();
     }
