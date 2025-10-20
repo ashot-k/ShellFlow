@@ -5,7 +5,8 @@ public enum ExecutionState {
     FINISHED("Finished"),
     FAILURE("Failure"),
     INTERNAL_FAILURE("Internal Failure"),
-    CANCELLED("Cancelled");
+    CANCELLED("Cancelled"),
+    ;
 
     private final String value;
 

@@ -3,7 +3,6 @@ package org.ashot.shellflow.peristence;
 import org.ashot.shellflow.data.constant.VariableField;
 import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.utils.FileUtils;
-import org.ashot.shellflow.utils.Utils;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,12 +36,12 @@ public class VariableRepository {
     }
 
     public List<VariableEntry> loadExisting(File file) {
-        if(!file.exists()){
+        if (!file.exists()) {
             createNewVariablesFile(file);
             return List.of();
         }
 
-        JSONObject jsonObject = Utils.createJSONObject(file);
+        JSONObject jsonObject = FileUtils.createJSONObjectFromFIle(file);
         JSONArray variables = jsonObject.getJSONArray("variables");
         if (variables == null) {
             log.error("Variables JSONArray is null");

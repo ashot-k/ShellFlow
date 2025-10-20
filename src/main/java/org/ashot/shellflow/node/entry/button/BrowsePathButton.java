@@ -15,7 +15,7 @@ public class BrowsePathButton extends Button {
     public BrowsePathButton(Runnable onAction) {
         setGraphic(Icons.getBrowseIcon(PATH_BROWSE_ICON_SIZE.getSize()));
         setOnAction(_ -> onAction.run());
-        setTooltip(new Tooltip(ToolTipMessages.pathBrowse()));
+        setTooltip(new Tooltip(ToolTipMessages.PATH_BROWSE));
         setCursor(Cursor.HAND);
         setBackground(Background.EMPTY);
     }

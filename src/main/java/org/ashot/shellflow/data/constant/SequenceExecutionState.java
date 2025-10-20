@@ -6,7 +6,8 @@ public enum SequenceExecutionState {
     FAILURE("Failure"),
     INTERNAL_FAILURE("Internal Failure"),
     CANCELLED("Cancelled"),
-    EXECUTION_IN_SEQUENCE_FINISHED("Execution in sequence finished");
+    EXECUTION_IN_SEQUENCE_FINISHED("Execution in sequence finished"),
+    ;
 
     private final String value;
 

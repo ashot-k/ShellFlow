@@ -13,6 +13,6 @@ public class ExecuteEntryButton extends Button {
     public ExecuteEntryButton() {
         setGraphic(Icons.getExecuteButtonIcon(EXECUTE_ICON_SIZE.getSize()));
         setPadding(Insets.EMPTY);
-        setTooltip(new Tooltip(ToolTipMessages.execute()));
+        setTooltip(new Tooltip(ToolTipMessages.EXECUTE_BUTTON));
     }
 }

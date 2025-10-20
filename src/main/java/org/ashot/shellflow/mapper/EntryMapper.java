@@ -22,7 +22,7 @@ import static javafx.scene.control.Alert.AlertType;
 public class EntryMapper {
     private static final Logger log = LoggerFactory.getLogger(EntryMapper.class);
     private static AlertPopup errorPopup = new AlertPopup(AlertType.ERROR);
-    private VariableManagementController variableManagementController;
+    private final VariableManagementController variableManagementController;
 
     public EntryMapper(VariableManagementController variableManagementController) {
         this.variableManagementController = variableManagementController;

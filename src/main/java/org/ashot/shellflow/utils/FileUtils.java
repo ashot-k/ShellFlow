@@ -93,4 +93,14 @@ public class FileUtils {
         }
         return file;
     }
+
+    public static JSONObject createJSONObjectFromFIle(File file) {
+        try {
+            String jsonContent = Files.readString(file.toPath());
+            return new JSONObject(jsonContent);
+        } catch (IOException e) {
+            log.error("File could not be found: {}, \n {}", file, e.getMessage());
+        }
+        return new JSONObject();
+    }
 }

@@ -12,7 +12,7 @@ import org.ashot.shellflow.utils.Utils;
 import java.io.File;
 
 public class PathField extends CustomTextField {
-    private BooleanProperty wsl = new SimpleBooleanProperty();
+    private final BooleanProperty wsl = new SimpleBooleanProperty();
 
     public PathField(String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
         FieldUtils.setupField(this, FieldType.PATH, text, promptText, toolTip, width, height, styleClass);

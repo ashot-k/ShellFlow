@@ -9,7 +9,8 @@ public enum ThemeOption {
     NORD_LIGHT("Nord Light", new NordLight(), false),
     CUPERTINO_DARK("Cupertino Dark", new CupertinoDark(), true),
     CUPERTINO_LIGHT("Cupertino Light", new CupertinoLight(), false),
-    DRACULA("Dracula", new Dracula(), true);
+    DRACULA("Dracula", new Dracula(), true),
+    ;
 
     private final String value;
     private final Theme theme;

@@ -9,14 +9,14 @@ public class Execution {
     private int delay;
     private boolean sequence;
 
+    public Execution() {
+    }
+
     public Execution(List<Entry> entries, String name, int delay, boolean sequence) {
         this.entries = entries;
         this.name = name;
         this.delay = delay;
         this.sequence = sequence;
-    }
-
-    public Execution() {
     }
 
     public List<Entry> getEntries() {

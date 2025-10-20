@@ -23,7 +23,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     private static String fontFamily = ShellFlow.getConfig().terminalFontFamily().getFamily();
     private static double fontSize = ShellFlow.getConfig().terminalFontSize();
-    private static BooleanProperty optimizationMode = new SimpleBooleanProperty();
+    private static final BooleanProperty optimizationMode = new SimpleBooleanProperty();
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {

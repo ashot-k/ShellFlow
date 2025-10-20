@@ -182,7 +182,7 @@ public class ExecutionTab extends Tab {
 
     public static class OutputTabBuilder {
 
-        private ShellFlowTerminalWidget terminal;
+        private final ShellFlowTerminalWidget terminal;
 
         private String tabName;
         private final Tooltip tooltip = new Tooltip();

@@ -2,7 +2,8 @@ package org.ashot.shellflow.data.constant;
 
 public enum SettingsFilePaths {
     VARIABLES("variables.json"),
-    RECENTS_DIR("recent_dirs.json");
+    RECENTS_DIR("recent_dirs.json"),
+    ;
 
     private final String path;
     private static final String SETTINGS_FOLDER = "settings";
@@ -15,7 +16,4 @@ public enum SettingsFilePaths {
         return SETTINGS_FOLDER + "/" + path;
     }
 
-    public static String getSettingsFolder() {
-        return SETTINGS_FOLDER;
-    }
 }

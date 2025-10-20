@@ -10,20 +10,20 @@ import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 
-public class WslOption extends HBox {
+public class WSLToggleBox extends HBox {
     private final CheckBox checkBox;
 
-    public WslOption(String text, boolean initialSelection) {
+    public WSLToggleBox(String text, boolean initialSelection) {
         checkBox = new CheckBox();
         checkBox.setId(FieldType.WSL.getId());
         checkBox.setSelected(initialSelection);
-        checkBox.setTooltip(new Tooltip(ToolTipMessages.wsl()));
+        checkBox.setTooltip(new Tooltip(ToolTipMessages.WSL_OPTION));
         Label label = new Label(text);
         label.setLabelFor(checkBox);
         label.setFont(Fonts.fieldLabel());
         setFillHeight(false);
-        setAlignment(Pos.CENTER_RIGHT);
-        setSpacing(5);
+        setSpacing(2.5);
+        setAlignment(Pos.CENTER);
         getChildren().addAll(label, checkBox);
     }
 

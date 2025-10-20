@@ -1,7 +1,6 @@
 package org.ashot.shellflow;
 
 import org.ashot.shellflow.utils.FileUtils;
-import org.ashot.shellflow.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +36,7 @@ class UtilsTest {
 
     @Test
     void createEntryJSONArrayConstructsCorrectObjectFromFile() {
-        JSONObject object = Utils.createJSONObject(new File("src/test/resources/test_1.json"));
+        JSONObject object = FileUtils.createJSONObjectFromFIle(new File("src/test/resources/test_1.json"));
         JSONArray entries = (JSONArray) object.get("entries");
         Assertions.assertAll(
                 () -> assertNotNull(entries),

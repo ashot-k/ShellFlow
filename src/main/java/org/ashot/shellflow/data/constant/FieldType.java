@@ -9,7 +9,8 @@ public enum FieldType {
     ENABLED("enabled", "true"),
     EXECUTION_NAME("executionName", ""),
     SEQUENTIAL("sequential", "false"),
-    DELAY("delay", "0");
+    DELAY("delay", "0"),
+    ;
 
     private final String id;
     private final String defaultValue;

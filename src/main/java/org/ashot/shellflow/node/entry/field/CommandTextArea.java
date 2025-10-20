@@ -36,6 +36,5 @@ public class CommandTextArea extends TextArea {
                 timeline.get().stop();
             }
         });
-
     }
 }

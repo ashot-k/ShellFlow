@@ -51,7 +51,7 @@ public class Controller {
         return createHeader();
     }
 
-    private HeaderBar createHeader(){
+    private HeaderBar createHeader() {
         HeaderBar.setDragType(mainMenuBar, DRAGGABLE_SUBTREE);
         return new HeaderBar(null, mainMenuBar, null);
     }
@@ -99,9 +99,5 @@ public class Controller {
                 }
             }
         }
-    }
-
-    public ModalPane getMainModal() {
-        return mainModal;
     }
 }

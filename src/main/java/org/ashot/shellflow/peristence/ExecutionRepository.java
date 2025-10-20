@@ -4,7 +4,6 @@ import org.ashot.shellflow.data.constant.FieldType;
 import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.entry.Execution;
 import org.ashot.shellflow.utils.FileUtils;
-import org.ashot.shellflow.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ public class ExecutionRepository {
 
     public Execution openFile(File fileToLoad) {
         log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
-        JSONObject jsonData = Utils.createJSONObject(fileToLoad);
+        JSONObject jsonData = FileUtils.createJSONObjectFromFIle(fileToLoad);
         if (jsonData.isEmpty()) {
             return null;
         }

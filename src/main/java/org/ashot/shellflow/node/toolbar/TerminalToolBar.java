@@ -18,15 +18,15 @@ public class TerminalToolBar extends FloatingToolBar {
         this.terminalWidget = termFxWidget;
         Button clearConsoleButton = new Button("", Icons.getClearIcon(DEFAULT_ICON_SIZE.getSize()));
         clearConsoleButton.setOnAction(_ -> terminalWidget.getTerminalPanel().clearBuffer());
-        clearConsoleButton.setTooltip(new Tooltip(ToolTipMessages.clearOutput()));
+        clearConsoleButton.setTooltip(new Tooltip(ToolTipMessages.CLEAR_OUTPUT_BUTTON));
 
         Button stopProcessButton = new Button("", Icons.getCloseButtonIcon(DEFAULT_ICON_SIZE.getSize()));
         stopProcessButton.setOnAction(_ -> TerminalRegistry.stopTerminal(terminalWidget.getTtyConnector()));
-        stopProcessButton.setTooltip(new Tooltip(ToolTipMessages.stopProcess()));
+        stopProcessButton.setTooltip(new Tooltip(ToolTipMessages.STOP_PROCESS_BUTTON));
 
         Button findButton = new Button("", Icons.getBrowseIcon(DEFAULT_ICON_SIZE.getSize()));
         findButton.setOnAction(_ -> terminalWidget.toggleFind());
-        findButton.setTooltip(new Tooltip(ToolTipMessages.find()));
+        findButton.setTooltip(new Tooltip(ToolTipMessages.FIND_BUTTON));
 
         disableWhenProcessFinishes(stopProcessButton);
         setContent(clearConsoleButton, stopProcessButton, findButton);

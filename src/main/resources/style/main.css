@@ -6,6 +6,13 @@
     -color-danger-fg: #F08080;
 }
 
+.titled-pane > .title > .arrow-button > .arrow{
+   -fx-pref-width: 0 !important;
+   -fx-min-width: 0 !important;
+   -fx-max-width: 0 !important;
+   -fx-opacity: 0;
+}
+
 .menu-bar{
     -fx-background-color: transparent !important;
 }

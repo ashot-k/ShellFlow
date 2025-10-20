@@ -27,10 +27,10 @@ public class EntrySetupToolBar extends HBox {
     public EntrySetupToolBar() {
         super();
         expandAllButton = new Button("", Icons.getExpandAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
-        expandAllButton.setTooltip(new Tooltip(ToolTipMessages.expandAllEntries()));
+        expandAllButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
 
         collapseAllButton = new Button("", Icons.getCollapseAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
-        collapseAllButton.setTooltip(new Tooltip(ToolTipMessages.collapseAllEntries()));
+        collapseAllButton.setTooltip(new Tooltip(ToolTipMessages.COLLAPSE_ALL_ENTRIES_BUTTON));
 
         clearAllEntriesButton = new Button("Clear", Icons.getClearIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         clearAllEntriesButton.setContentDisplay(ContentDisplay.RIGHT);
@@ -54,7 +54,7 @@ public class EntrySetupToolBar extends HBox {
         sequenceOption.setFont(Fonts.detailText());
         Label delayPerCmdText = new Label("Delay");
         delayPerCmdText.setFont(Fonts.detailText());
-        delayPerCmd.setTooltip(new Tooltip(ToolTipMessages.delayPerCommand()));
+        delayPerCmd.setTooltip(new Tooltip(ToolTipMessages.DELAY_PER_COMMAND_SLIDER));
 
         VBox runOptions = new VBox(5, sequenceOption, executeAllButton);
         runOptions.setAlignment(Pos.BOTTOM_LEFT);

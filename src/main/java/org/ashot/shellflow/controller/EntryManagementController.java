@@ -52,6 +52,7 @@ public class EntryManagementController {
     private final ExecutionRepository repository;
     private final EntryMapper entryMapper;
     private final ObservableList<EntryBox> entryBoxes = FXCollections.observableArrayList();
+    private final EntrySetupToolBar toolBar;
     private final IntegerProperty delay = new SimpleIntegerProperty();
     private final BooleanProperty sequenceOption = new SimpleBooleanProperty();
     private final StringProperty executionName = new SimpleStringProperty();
@@ -66,13 +67,13 @@ public class EntryManagementController {
         this.executionManagement = executionManagement;
         this.variableManagement = variableController;
         this.entryMapper = entryMapper;
+        this.toolBar = this.view.getEntrySetupToolBar();
         view.setSidePanel(variableController.getView(), Pos.CENTER_LEFT);
-        setupBindings();
-        setupToolBar(view.getEntrySetupToolBar());
+        setupEvents();
         load(init);
     }
 
-    private void setupBindings() {
+    private void setupEvents() {
         view.getDelayPerCmdSpinner().valueProperty().addListener((_, _, newVal) -> delay.set(newVal));
         delay.addListener((_, _, newVal) -> view.getDelayPerCmdSpinner().getValueFactory().setValue(newVal.intValue()));
         sequenceOption.bindBidirectional(view.getSequenceOptionCheckBox().selectedProperty());
@@ -91,6 +92,13 @@ public class EntryManagementController {
                 view.getFileLoadedText().setText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()))
         );
         view.getFileLoadedText().setOnMouseClicked(this::handleEntryInfoTextClick);
+        toolBar.getExpandAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(true)));
+        toolBar.getCollapseAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(false)));
+        toolBar.getClearAllEntriesButton().setOnAction(_ -> clearEntryBoxes());
+        toolBar.getExecuteAllButton().setOnAction(_ -> executeAll());
+        toolBar.getAddEntryButton().setOnAction(_ -> addEntryBox());
+        addEntryBoxChangeListener(_ -> toolBar.getExecuteAllButton().setDisable(entryBoxes.isEmpty()));
+        addEntryBoxChangeListener(_ -> toolBar.getClearAllEntriesButton().setDisable(entryBoxes.isEmpty()));
     }
 
     private void handleEntryInfoTextClick(MouseEvent e) {
@@ -138,14 +146,14 @@ public class EntryManagementController {
 
     private void setupEntryBoxEvents(EntryBox entryBox) {
         entryBox.getCommandField().focusedProperty().addListener((_, _, focused) -> {
-                if(!focused) {
-                    handleVariableValidation(entryBox);
-                }
+            if (!focused) {
+                handleVariableValidation(entryBox);
+            }
         });
         entryBox.getPathField().focusedProperty().addListener((_, _, focused) -> {
-                if(!focused) {
-                    handleVariableValidation(entryBox);
-                }
+            if (!focused) {
+                handleVariableValidation(entryBox);
+            }
         });
         variableManagement.changedProperty().addListener((_, _, _) -> entryBoxes.forEach(this::handleVariableValidation));
         handleVariableValidation(entryBox);
@@ -154,16 +162,13 @@ public class EntryManagementController {
     private void handleVariableValidation(EntryBox entryBox) {
         List<String> commandFieldVariableValidationErrors = validateFieldForVariables(entryBox.getCommandField().getText());
         List<String> pathFieldVariableValidationErrors = validateFieldForVariables(entryBox.getPathField().getText());
-        if(commandFieldVariableValidationErrors.isEmpty() && pathFieldVariableValidationErrors.isEmpty()){
+        if (commandFieldVariableValidationErrors.isEmpty() && pathFieldVariableValidationErrors.isEmpty()) {
             entryBox.hidePrompt();
-        }
-        else if(commandFieldVariableValidationErrors.isEmpty()){
+        } else if (commandFieldVariableValidationErrors.isEmpty()) {
             showPromptForErrors("Path", entryBox, pathFieldVariableValidationErrors);
-        }
-        else if(pathFieldVariableValidationErrors.isEmpty()){
+        } else if (pathFieldVariableValidationErrors.isEmpty()) {
             showPromptForErrors("Command", entryBox, commandFieldVariableValidationErrors);
-        }
-        else{
+        } else {
             List<String> errors = Stream.of(commandFieldVariableValidationErrors, pathFieldVariableValidationErrors).flatMap(Collection::stream).toList();
             showPromptForErrors("Command and Path", entryBox, errors);
         }
@@ -204,16 +209,6 @@ public class EntryManagementController {
 
     private void clearEntryBoxes() {
         entryBoxes.clear();
-    }
-
-    private void setupToolBar(EntrySetupToolBar entrySetupToolBar) {
-        entrySetupToolBar.getExpandAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(true)));
-        entrySetupToolBar.getCollapseAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(false)));
-        entrySetupToolBar.getClearAllEntriesButton().setOnAction(_ -> clearEntryBoxes());
-        entrySetupToolBar.getExecuteAllButton().setOnAction(_ -> executeAll());
-        entrySetupToolBar.getAddEntryButton().setOnAction(_ -> addEntryBox());
-        addEntryBoxChangeListener(_ -> entrySetupToolBar.getExecuteAllButton().setDisable(entryBoxes.isEmpty()));
-        addEntryBoxChangeListener(_ -> entrySetupToolBar.getClearAllEntriesButton().setDisable(entryBoxes.isEmpty()));
     }
 
     public void addEntryBoxChangeListener(ListChangeListener<Node> changeListener) {

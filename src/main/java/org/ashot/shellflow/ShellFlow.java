@@ -41,7 +41,7 @@ public class ShellFlow extends Application {
     private static Stage primaryStage;
     private static final ShellFlowConfig shellFlowConfig = new DefaultConfig();
 
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         handleJVMArgs(args);
         launch();
     }
@@ -68,7 +68,7 @@ public class ShellFlow extends Application {
 
             Parent baseRoot = fxmlLoader.getRoot();
             Scene scene = new Scene(baseRoot, SIZE_X, SIZE_Y, Color.BLACK);
-            scene.setFill(selectedTheme.isDark() ? Color.BLACK: Color.WHITE);
+            scene.setFill(selectedTheme.isDark() ? Color.BLACK : Color.WHITE);
             scene.getStylesheets().add(styleSheet);
             BorderPane root = new BorderPane();
             root.setTop(controller.init());
@@ -131,7 +131,7 @@ public class ShellFlow extends Application {
                 getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
                 Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
                 Animations.fadeIn(root).play();
-                getPrimaryStage().getScene().setFill(selectedTheme.isDark() ? Color.BLACK: Color.WHITE);
+                getPrimaryStage().getScene().setFill(selectedTheme.isDark() ? Color.BLACK : Color.WHITE);
             });
             fadeOutTransition.play();
         } else {

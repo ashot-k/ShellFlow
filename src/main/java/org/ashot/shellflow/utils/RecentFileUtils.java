@@ -21,7 +21,8 @@ public class RecentFileUtils {
     private static String lastSavedFolderLocation;
     private static String lastLoadedFolderLocation;
 
-    private RecentFileUtils(){}
+    private RecentFileUtils() {
+    }
 
     public static void loadRecentFolders() {
         JSONObject dirs = getRecents();
