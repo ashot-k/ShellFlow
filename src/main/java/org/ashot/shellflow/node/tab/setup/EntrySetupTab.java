@@ -22,7 +22,7 @@ public class EntrySetupTab extends Tab {
         entryInfoBar = new EntryInfoBar();
         entrySetupToolBar = new EntrySetupToolBar();
         entryListContainer = new FlowPane();
-        entryListContainer.setPadding(new Insets(10, 15, 0, 15));
+        entryListContainer.setPadding(new Insets(10, 5, 0, 5));
         entryListContainer.setHgap(15);
         entryListContainer.setVgap(15);
         entryListContainer.setRowValignment(VPos.TOP);

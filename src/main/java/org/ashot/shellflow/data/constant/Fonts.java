@@ -45,4 +45,8 @@ public class Fonts {
     public static Font fieldText() {
         return Font.font(getFontFamily(), FontWeight.NORMAL, 12);
     }
+
+    public static Font wslOptionText() {
+        return Font.font(getFontFamily(), FontWeight.BOLD, 10);
+    }
 }

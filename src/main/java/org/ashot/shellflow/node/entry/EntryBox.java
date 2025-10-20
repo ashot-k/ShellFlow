@@ -34,12 +34,12 @@ import java.util.List;
 public class EntryBox extends TitledPane {
     private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
 
-    private static final double NAME_FIELD_WIDTH = 125;
-    private static final double PATH_FIELD_WIDTH = 300;
+    private static final double NAME_FIELD_WIDTH = 250;
+    private static final double PATH_FIELD_WIDTH = 400;
     private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH;
     private static final double MAX_WIDTH = COMMAND_FIELD_WIDTH;
 
-    private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.5;
+    private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.1;
     private static final List<String> STYLE_CLASSES = List.of("default-container", Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
     private static final String EDITED_FIELD_STYLE_CLASS = "edited-field";
 
@@ -71,7 +71,7 @@ public class EntryBox extends TitledPane {
         );
         commandField = new CommandTextArea(
                 entry.getCommand(), null, ToolTipMessages.COMMAND_FIELD,
-                COMMAND_FIELD_WIDTH, COMMAND_FIELD_HEIGHT, "command-field"
+                null, COMMAND_FIELD_HEIGHT, "command-field"
         );
 
         wslToggle = new WSLToggleBox("WSL", entry.isWsl());
@@ -99,7 +99,7 @@ public class EntryBox extends TitledPane {
         GridPane entryGrid = new GridPane();
         entryGrid.addRow(0, labeledNameField, labeledPathField);
         GridPane.setConstraints(labeledNameField, 0, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(labeledPathField, 1, 0, 2, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        GridPane.setConstraints(labeledPathField, 1, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
         entryGrid.addRow(1, labeledCommandField);
 
         GridPane.setConstraints(labeledCommandField, 0, 1, 2, 2, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
@@ -142,7 +142,7 @@ public class EntryBox extends TitledPane {
     private void setupInitialState() {
         refreshTitleText(nameField.getText());
         toggleEntryBox(entry.isEnabled());
-        setExpanded(true);
+        setExpanded(false);
     }
 
     private void refreshTitleText(String text) {

@@ -85,19 +85,19 @@ public class Controller {
             if (keyEvent.isShiftDown()) {
                 Node node = executionsTabPane.getSelectionModel().getSelectedItem().getContent();
                 if (node instanceof TabPane tabPane) {
-                    if (keyCode.equals(KeyCode.PERIOD)) {
-                        tabPane.getSelectionModel().selectNext();
-                    } else if (keyCode.equals(KeyCode.COMMA)) {
-                        tabPane.getSelectionModel().selectPrevious();
-                    }
+                    moveToAdjacentTab(keyCode, tabPane);
                 }
             } else {
-                if (keyCode.equals(KeyCode.PERIOD)) {
-                    executionsTabPane.getSelectionModel().selectNext();
-                } else if (keyCode.equals(KeyCode.COMMA)) {
-                    executionsTabPane.getSelectionModel().selectPrevious();
-                }
+                moveToAdjacentTab(keyCode, executionsTabPane);
             }
+        }
+    }
+
+    private void moveToAdjacentTab(KeyCode keyCode, TabPane tabPane) {
+        if (keyCode.equals(KeyCode.PERIOD)) {
+            tabPane.getSelectionModel().selectNext();
+        } else if (keyCode.equals(KeyCode.COMMA)) {
+            tabPane.getSelectionModel().selectPrevious();
         }
     }
 }
