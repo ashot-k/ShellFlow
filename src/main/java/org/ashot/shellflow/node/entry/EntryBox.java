@@ -84,14 +84,6 @@ public class EntryBox extends TitledPane {
         VBox labeledPathField = new LabeledTextInput("Path", pathField);
         VBox labeledCommandField = new LabeledTextInput("Command(s)", commandField);
 
-        executeButton = new ExecuteEntryButton();
-        executeButton.setPrefHeight(34);
-        executeButton.setMinHeight(34);
-        executeButton.setMaxWidth(80);
-        executeButton.setBackground(Background.EMPTY);
-        HBox.setHgrow(executeButton, Priority.ALWAYS);
-        HBox executeButtonContainer = new HBox(executeButton);
-        executeButtonContainer.setAlignment(Pos.TOP_RIGHT);
         promptMessage = new Message();
         promptMessage.setVisible(false);
         VBox.setMargin(promptMessage, new Insets(5, 0, 0, 0));
@@ -118,11 +110,20 @@ public class EntryBox extends TitledPane {
         title = new Label();
         title.setFont(Fonts.title());
         title.setEllipsisString("...");
-        title.setMaxWidth(225);
+        title.setMaxWidth(MAX_WIDTH * 0.75);
 
-        HBox header = new HBox(10, deleteEntry, enabledToggle, title, new Spacer(), wslToggle, executeButtonContainer);
+        executeButton = new ExecuteEntryButton();
+
+        HBox stateButtonsContainer = new HBox(10, deleteEntry, enabledToggle);
+        stateButtonsContainer.setAlignment(Pos.CENTER_LEFT);
+        stateButtonsContainer.setMinWidth(MAX_WIDTH * 0.08);
+        HBox executionButtonsContainer = new HBox(10, wslToggle, executeButton);
+        executionButtonsContainer.setAlignment(Pos.CENTER_RIGHT);
+        executionButtonsContainer.setMinWidth(MAX_WIDTH * 0.12);
+
+        HBox header = new HBox(10, stateButtonsContainer, title, new Spacer(), executionButtonsContainer);
         header.setAlignment(Pos.CENTER);
-        header.setPadding(new Insets(2));
+        header.setPadding(new Insets(1, 10, 1, 1));
         NodeUtils.setWidths(this, MAX_WIDTH);
 
         setGraphic(header);

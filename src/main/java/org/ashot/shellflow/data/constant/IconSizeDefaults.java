@@ -1,8 +1,8 @@
 package org.ashot.shellflow.data.constant;
 
 public enum IconSizeDefaults {
-    DEFAULT_ICON_SIZE(18),
-    EXECUTE_ICON_SIZE(28),
+    DEFAULT_ICON_SIZE(16),
+    EXECUTE_ICON_SIZE(26),
     CLOSE_ICON_SIZE(22),
     MENU_ITEM_SIZE(18),
     ENTRY_VALIDATION_MESSAGE_ICON(18),

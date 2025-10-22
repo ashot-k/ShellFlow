@@ -1,6 +1,5 @@
 package org.ashot.shellflow.node.entry.button;
 
-import atlantafx.base.theme.Styles;
 import javafx.geometry.Pos;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
@@ -16,6 +15,9 @@ public class WSLToggleBox extends ToggleButton{
         setTooltip(new Tooltip(ToolTipMessages.WSL_OPTION));
         setText(text);
         setFont(Fonts.wslOptionText());
+        setPrefHeight(30);
+        setMinHeight(30);
+        setMaxHeight(30);
         setAlignment(Pos.CENTER);
     }
 }
