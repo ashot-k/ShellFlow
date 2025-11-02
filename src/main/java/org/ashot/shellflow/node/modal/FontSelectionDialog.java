@@ -30,8 +30,8 @@ public class FontSelectionDialog extends VBox {
     );
     private static final ShellFlowConfig shellFlowConfig = ShellFlow.getConfig();
 
-    public static SimpleObjectProperty<Font> selectedFont = new SimpleObjectProperty<>(shellFlowConfig.terminalFontFamily());
-    public static SimpleDoubleProperty selectedSize = new SimpleDoubleProperty(shellFlowConfig.terminalFontSize());
+    public static final SimpleObjectProperty<Font> selectedFont = new SimpleObjectProperty<>(shellFlowConfig.terminalFontFamily());
+    public static final SimpleDoubleProperty selectedSize = new SimpleDoubleProperty(shellFlowConfig.terminalFontSize());
     private final ComboBox<Double> fontSizeComboBox = new ComboBox<>();
     private final ListView<Text> list = new ListView<>();
 

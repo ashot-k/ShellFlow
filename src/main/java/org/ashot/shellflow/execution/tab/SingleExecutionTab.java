@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.tab.executions;
+package org.ashot.shellflow.execution.tab;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
@@ -10,21 +10,21 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.node.toolbar.TerminalToolBar;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.ashot.shellflow.utils.TabUtils;
+import org.ashot.shellflow.utils.ThemeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.constant.ExecutionState.*;
 
-public class ExecutionTab extends Tab {
-    private static final Logger log = LoggerFactory.getLogger(ExecutionTab.class);
+public class SingleExecutionTab extends Tab {
+    private static final Logger log = LoggerFactory.getLogger(SingleExecutionTab.class);
     private String commandDisplayName;
     private ShellFlowTerminalWidget terminal;
     private final VBox terminalWrapper = new VBox();
@@ -32,7 +32,7 @@ public class ExecutionTab extends Tab {
     private final StackPane stackPane = new StackPane();
     private Process process;
 
-    private ExecutionTab(OutputTabBuilder outputTabBuilder) {
+    private SingleExecutionTab(OutputTabBuilder outputTabBuilder) {
         this.commandDisplayName = outputTabBuilder.commandDisplayName;
         this.setTooltip(outputTabBuilder.tooltip);
         this.setText(outputTabBuilder.tabName);
@@ -45,7 +45,7 @@ public class ExecutionTab extends Tab {
     public void setupOutputTab() {
         this.terminalWrapper.setFillWidth(true);
         this.terminalWrapper.setPadding(new Insets(5));
-        this.terminalWrapper.getStyleClass().addAll(ShellFlow.getSelectedThemeOption().isDark() ? "dark" : "light", "terminal-wrapper");
+        this.terminalWrapper.getStyleClass().addAll(ThemeHandler.getSelectedTheme().isDark() ? "dark" : "light", "terminal-wrapper");
         this.stackPane.getChildren().add(terminalWrapper);
         this.setContent(stackPane);
     }
@@ -54,7 +54,7 @@ public class ExecutionTab extends Tab {
         setText(command.isNameSet() ? command.getName() : "Process - " + process.pid());
     }
 
-    public static ExecutionTab constructTabFromCommand(Command command) {
+    public static SingleExecutionTab constructTabFromCommand(Command command) {
         return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
                 .setTabName(command.isNameSet() ? command.getName() : "")
                 .setCommandDisplayName(command.getArgumentsString())
@@ -62,7 +62,7 @@ public class ExecutionTab extends Tab {
                 .build();
     }
 
-    public static ExecutionTab constructSequencePartOutputTab(Command command) {
+    public static SingleExecutionTab constructSequencePartOutputTab(Command command) {
         return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
                 .setTabName(command.getName())
                 .setTooltip(command.getArgumentsString())
@@ -117,7 +117,7 @@ public class ExecutionTab extends Tab {
     public void updateState(ExecutionState state, boolean sequence) {
         log.debug("Execution: {} ({}), updated state: {}", getText(), getCommandDisplayName(), state);
         switch (state) {
-            case IN_PROGRESS -> TabUtils.setInProgress(this, sequence);
+            case IN_PROGRESS -> TabUtils.setInProgress(this);
             case INTERNAL_FAILURE, FAILURE -> TabUtils.setFailed(this, sequence);
             case FINISHED -> TabUtils.setFinished(this, sequence);
             case CANCELLED -> TabUtils.setCancelled(this, sequence);
@@ -219,8 +219,8 @@ public class ExecutionTab extends Tab {
             return this;
         }
 
-        public ExecutionTab build() {
-            return new ExecutionTab(this);
+        public SingleExecutionTab build() {
+            return new SingleExecutionTab(this);
         }
     }
 }

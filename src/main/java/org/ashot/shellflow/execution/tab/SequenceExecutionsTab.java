@@ -1,10 +1,10 @@
-package org.ashot.shellflow.node.tab.executions;
+package org.ashot.shellflow.execution.tab;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.utils.Animations;
+import org.ashot.shellflow.utils.GUIAnimations;
 import org.controlsfx.glyphfont.Glyph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +23,15 @@ public class SequenceExecutionsTab extends Tab {
         setContent(sequenceExecutionTabPane);
         setOnClosed(_ -> {
             for (Tab tab : sequenceExecutionTabPane.getTabs()) {
-                if (tab instanceof ExecutionTab executionTab) {
-                    executionTab.shutDownTerminal();
+                if (tab instanceof SingleExecutionTab singleExecutionTab) {
+                    singleExecutionTab.shutDownTerminal();
                 }
             }
         });
     }
 
-    public List<ExecutionTab> getTabsInSequence() {
-        return sequenceExecutionTabPane.getTabs().stream().filter(ExecutionTab.class::isInstance).map(o -> (ExecutionTab) o).toList();
+    public List<SingleExecutionTab> getTabsInSequence() {
+        return sequenceExecutionTabPane.getTabs().stream().filter(SingleExecutionTab.class::isInstance).map(o -> (SingleExecutionTab) o).toList();
     }
 
     public TabPane getSequenceTabPane() {
@@ -41,10 +41,11 @@ public class SequenceExecutionsTab extends Tab {
     public SequenceExecutionState updateState(SequenceExecutionState state) {
         log.debug("Sequence: {}, updated state: {}", getText(), state);
         switch (state) {
-            case FINISHED -> setFinished();
+            case FINISHED, EXECUTION_IN_SEQUENCE_FINISHED -> setFinished();
             case FAILURE, INTERNAL_FAILURE -> setFailed();
             case CANCELLED -> setCancelled();
             case IN_PROGRESS -> setInProgress();
+            default -> throw new IllegalStateException("Unexpected value: " + state);
         }
         return state;
     }
@@ -53,27 +54,27 @@ public class SequenceExecutionsTab extends Tab {
         Glyph icon = Icons.getExecutionInProgressIcon(TAB_ICON_SIZE);
         setGraphic(icon);
         setDisable(false);
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
     }
 
     public void setFailed() {
         Glyph icon = Icons.getExecutionErrorIcon(TAB_ICON_SIZE);
         setGraphic(icon);
         setDisable(false);
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
     }
 
     public void setFinished() {
         Glyph icon = Icons.getExecutionFinishedIcon(TAB_ICON_SIZE);
         setGraphic(icon);
         setDisable(false);
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
     }
 
     public void setCancelled() {
         Glyph icon = Icons.getExecutionCancelledIcon(TAB_ICON_SIZE);
         setGraphic(icon);
         setDisable(false);
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
     }
 }

@@ -6,12 +6,9 @@ import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.icon.Icons;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class PerformanceSettingMenuItem extends CheckMenuItem {
-    private static final Logger log = LoggerFactory.getLogger(PerformanceSettingMenuItem.class);
 
     public PerformanceSettingMenuItem() {
         setText("Optimized Animations");

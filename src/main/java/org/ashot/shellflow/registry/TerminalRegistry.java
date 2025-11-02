@@ -1,6 +1,7 @@
 package org.ashot.shellflow.registry;
 
 import com.techsenger.jeditermfx.core.TtyConnector;
+import org.ashot.shellflow.node.popup.AlertPopup;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,7 +35,8 @@ public class TerminalRegistry {
                 ttyConnector.write("\u0003");
                 ttyConnector.waitFor();
             } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                new AlertPopup("Termination Error", "Could not termiate process: " + e.getMessage(), false);
             }
         }).start();
     }

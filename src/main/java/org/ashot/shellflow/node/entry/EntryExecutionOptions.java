@@ -1,8 +1,6 @@
-package org.ashot.shellflow.node.toolbar;
+package org.ashot.shellflow.node.entry;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -11,10 +9,7 @@ import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.icon.Icons;
 
-import java.util.List;
-
-
-public class EntrySetupToolBar extends HBox {
+public class EntryExecutionOptions extends HBox {
     private final Button expandAllButton;
     private final Button collapseAllButton;
     private final Button clearAllEntriesButton;
@@ -24,8 +19,7 @@ public class EntrySetupToolBar extends HBox {
     private final CheckBox sequenceOption;
     private final TextField executionName;
 
-    public EntrySetupToolBar() {
-        super();
+    public EntryExecutionOptions() {
         expandAllButton = new Button("", Icons.getExpandAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         expandAllButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
 
@@ -42,38 +36,39 @@ public class EntrySetupToolBar extends HBox {
         delayPerCmd = new Spinner<>(0, 50, 0, 5);
         delayPerCmd.setMaxWidth(70);
         delayPerCmd.setPromptText("Delay per command");
+        delayPerCmd.setTooltip(new Tooltip(ToolTipMessages.DELAY_PER_COMMAND_SLIDER));
 
         executeAllButton = new Button("Execute All", Icons.getExecuteAllButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         executeAllButton.setContentDisplay(ContentDisplay.RIGHT);
         executeAllButton.setFont(Fonts.buttonText());
 
-        sequenceOption = new CheckBox();
         Label sequenceOptionText = new Label(" Sequence");
         sequenceOptionText.setFont(Fonts.detailText());
+
+        sequenceOption = new CheckBox();
         sequenceOption.setGraphic(sequenceOptionText);
         sequenceOption.setFont(Fonts.detailText());
+
         Label delayPerCmdText = new Label("Delay");
         delayPerCmdText.setFont(Fonts.detailText());
-        delayPerCmd.setTooltip(new Tooltip(ToolTipMessages.DELAY_PER_COMMAND_SLIDER));
 
         VBox runOptions = new VBox(5, sequenceOption, executeAllButton);
         runOptions.setAlignment(Pos.BOTTOM_LEFT);
+
         VBox labeledDelayPerCmd = new VBox(5, delayPerCmdText, delayPerCmd);
         labeledDelayPerCmd.setAlignment(Pos.BOTTOM_LEFT);
 
         Label executionNameText = new Label("Execution name");
         executionNameText.setFont(Fonts.detailText());
+
         executionName = new TextField();
+
         VBox labeledExecutionNameField = new VBox(5, executionNameText, executionName);
         labeledExecutionNameField.setAlignment(Pos.BOTTOM_LEFT);
 
-        List<Node> nodes = List.of(addEntryButton, collapseAllButton, expandAllButton, clearAllEntriesButton, labeledDelayPerCmd, labeledExecutionNameField, runOptions);
-
-        getChildren().addAll(nodes);
-        setSpacing(10);
-        setPadding(new Insets(5));
         setAlignment(Pos.BOTTOM_RIGHT);
-        getStyleClass().add("bordered-container");
+        setSpacing(10);
+        getChildren().addAll(addEntryButton, collapseAllButton, expandAllButton, clearAllEntriesButton, labeledDelayPerCmd, labeledExecutionNameField, runOptions);
     }
 
     public Button getExpandAllButton() {
@@ -92,7 +87,7 @@ public class EntrySetupToolBar extends HBox {
         return executeAllButton;
     }
 
-    public CheckBox getSequenceOption() {
+    public CheckBox getSequenceOptionCheckbox() {
         return sequenceOption;
     }
 
@@ -100,11 +95,12 @@ public class EntrySetupToolBar extends HBox {
         return addEntryButton;
     }
 
-    public Spinner<Integer> getDelayPerCmd() {
+    public Spinner<Integer> getDelayPerCmdSpinner() {
         return delayPerCmd;
     }
 
     public TextField getExecutionNameField() {
         return executionName;
     }
+
 }

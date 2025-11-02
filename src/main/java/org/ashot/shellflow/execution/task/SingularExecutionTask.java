@@ -5,8 +5,9 @@ import com.pty4j.PtyProcessBuilder;
 import javafx.concurrent.Task;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.ExecutionState;
+import org.ashot.shellflow.exception.ExecutionStartupException;
+import org.ashot.shellflow.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.node.popup.AlertPopup;
-import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.slf4j.Logger;
@@ -19,17 +20,17 @@ import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
 
 public class SingularExecutionTask extends Task<ExecutionState> implements ExecutionTask {
     private final Logger log = LoggerFactory.getLogger(SingularExecutionTask.class);
-    private final ExecutionTab executionTab;
+    private final SingleExecutionTab singleExecutionTab;
     private final Command command;
     private final long delay;
 
-    public SingularExecutionTask(ExecutionTab executionTab, Command command) {
-        this(executionTab, command, 0);
+    public SingularExecutionTask(SingleExecutionTab singleExecutionTab, Command command) {
+        this(singleExecutionTab, command, 0);
     }
 
-    public SingularExecutionTask(ExecutionTab executionTab, Command command, long delay) {
+    public SingularExecutionTask(SingleExecutionTab singleExecutionTab, Command command, long delay) {
         super();
-        this.executionTab = executionTab;
+        this.singleExecutionTab = singleExecutionTab;
         this.command = command;
         this.delay = delay;
     }
@@ -37,26 +38,33 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
     @Override
     protected ExecutionState call() throws Exception {
         try {
-            if (isCancelled()) return ExecutionState.CANCELLED;
-            setupCancellationHandler(executionTab);
-            if (isCancelled()) return ExecutionState.CANCELLED;
+            setupCancellationHandler(singleExecutionTab);
+            if (isCancelled()) {
+                return ExecutionState.CANCELLED;
+            }
             Thread.sleep(delay);
-            PtyProcess process = startProcess(executionTab, buildProcess(command));
-            if (process == null) return ExecutionState.INTERNAL_FAILURE;
-            runLater(() -> executionTab.checkTabName(command, process));
-            executionTab.setProcess(process);
+            PtyProcess process = startProcess(singleExecutionTab, buildProcess(command));
+            if (process == null) {
+                return ExecutionState.INTERNAL_FAILURE;
+            }
+            runLater(() -> singleExecutionTab.checkTabName(command, process));
+            singleExecutionTab.setProcess(process);
             updateValue(ExecutionState.IN_PROGRESS);
             int exitValue = waitForProcess(process);
 
             if (isCancelled()) {
-                log.debug("Destroying process: {} ({}), forcibly due to cancellation of Execution Task", executionTab.getText(), executionTab.getCommandDisplayName());
+                log.debug("Destroying process: {} ({}), forcibly due to cancellation of Execution Task", singleExecutionTab.getText(), singleExecutionTab.getCommandDisplayName());
                 process.destroyForcibly();
                 return ExecutionState.CANCELLED;
             }
             return handleProcessExit(exitValue);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             log.warn("Interrupted execution of command: {}, with args: {}, with error: {}", command.getName(), command.getRawArguments(), e.getMessage());
             return ExecutionState.CANCELLED;
+        } catch (ExecutionStartupException e) {
+            log.error(e.getMessage());
+            return ExecutionState.INTERNAL_FAILURE;
         }
     }
 
@@ -68,7 +76,7 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         };
     }
 
-    private void setupCancellationHandler(ExecutionTab tab) {
+    private void setupCancellationHandler(SingleExecutionTab tab) {
         Thread current = Thread.currentThread();
         tab.stateProperty().addListener((_, _, state) -> {
             if (state.equals(ExecutionState.CANCELLED)) {
@@ -77,19 +85,18 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         });
     }
 
-    protected PtyProcess startProcess(ExecutionTab tab, PtyProcessBuilder processBuilder) {
+    protected PtyProcess startProcess(SingleExecutionTab tab, PtyProcessBuilder processBuilder) {
         try {
             PtyProcess process = processBuilder.start();
             runLater(() -> attachTerminal(tab, process));
             return process;
         } catch (IOException e) {
-            log.error(e.getMessage());
             new AlertPopup("Execution startup Error", null, e.getMessage(), false).show();
+            throw new ExecutionStartupException("Execution could not start: " + e.getMessage());
         }
-        return null;
     }
 
-    private void attachTerminal(ExecutionTab tab, PtyProcess process) {
+    private void attachTerminal(SingleExecutionTab tab, PtyProcess process) {
         tab.getTerminal().setTtyConnector(TerminalFactory.createTtyConnector(process));
         TerminalRegistry.register(String.valueOf(process.pid()), tab.getTerminal().getTtyConnector());
         tab.startTerminal();
@@ -112,7 +119,7 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         return process.exitValue();
     }
 
-    public ExecutionTab getExecutionTab() {
-        return executionTab;
+    public SingleExecutionTab getExecutionTab() {
+        return singleExecutionTab;
     }
 }

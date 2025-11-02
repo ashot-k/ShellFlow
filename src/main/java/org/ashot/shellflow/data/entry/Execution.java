@@ -50,4 +50,14 @@ public class Execution {
     public void setSequence(boolean sequence) {
         this.sequence = sequence;
     }
+
+    @Override
+    public String toString() {
+        return "Execution{" +
+                "entries=" + entries +
+                ", name='" + name + '\'' +
+                ", delay=" + delay +
+                ", sequence=" + sequence +
+                '}';
+    }
 }

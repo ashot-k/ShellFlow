@@ -6,26 +6,29 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.7.4</version>
+    <version>0.7.8</version>
     <name>shellflow</name>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <output.artifact.name>${project.name}-${project.version}</output.artifact.name>
         <output.dir>${project.basedir}/output</output.dir>
+        <javafx.version>${maven.compiler.release}</javafx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javafx.version>25</javafx.version>
+        <!-- core dependencies -->
         <jeditermfx.version>1.2.1</jeditermfx.version>
         <atlantafx.themes.version>2.1.0</atlantafx.themes.version>
         <fxtrayicon.version>4.2.3</fxtrayicon.version>
         <controlsfx.version>11.2.2</controlsfx.version>
         <richtextfx.version>0.11.5</richtextfx.version>
-        <logback.version>1.5.18</logback.version>
+        <!-- general -->
         <json.version>20240303</json.version>
+        <logback.version>1.5.18</logback.version>
+        <!-- test dependencies-->
         <junit.version>5.10.2</junit.version>
         <testfx.version>4.0.18</testfx.version>
         <mockito.version>5.16.1</mockito.version>
-
+        <!-- maven plugins -->
         <maven.clean.pluginn.version>3.4.0</maven.clean.pluginn.version>
         <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
         <jpackage.plugin.version>1.6.4</jpackage.plugin.version>
@@ -198,7 +201,8 @@
                     <javaOptions>
                         <javaOption>--enable-preview</javaOption>
                         <javaOption>-Djavafx.enablePreview=true</javaOption>
-                        <javaOption>-Dfile.encoding=UTF-8</javaOption>
+                        <javaOption>--enable-native-access=ALL-UNNAMED</javaOption>
+                        <javaOption>--enable-native-access=javafx.graphics</javaOption>
                     </javaOptions>
                     <icon>${project.basedir}/src/main/resources/icon.ico</icon>
                 </configuration>

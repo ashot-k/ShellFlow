@@ -3,14 +3,14 @@ package org.ashot.shellflow.node.entry.button;
 import javafx.geometry.Pos;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import org.ashot.shellflow.data.constant.FieldType;
+import org.ashot.shellflow.data.constant.JSONField;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 
-public class WSLToggleBox extends ToggleButton{
+public class WSLBoxToggle extends ToggleButton {
 
-    public WSLToggleBox(String text, boolean initialSelection) {
-        setId(FieldType.WSL.getId());
+    public WSLBoxToggle(String text, boolean initialSelection) {
+        setId(JSONField.WSL.getFieldKey());
         setSelected(initialSelection);
         setTooltip(new Tooltip(ToolTipMessages.WSL_OPTION));
         setText(text);

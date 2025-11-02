@@ -19,34 +19,25 @@ import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.entry.button.CloseButton;
-import org.ashot.shellflow.node.entry.button.EnableEntryBoxSwitch;
+import org.ashot.shellflow.node.entry.button.EnableEntryBoxToggle;
 import org.ashot.shellflow.node.entry.button.ExecuteEntryButton;
-import org.ashot.shellflow.node.entry.button.WSLToggleBox;
+import org.ashot.shellflow.node.entry.button.WSLBoxToggle;
 import org.ashot.shellflow.node.entry.field.CommandTextArea;
+import org.ashot.shellflow.node.entry.field.LabeledTextInput;
 import org.ashot.shellflow.node.entry.field.NameField;
 import org.ashot.shellflow.node.entry.field.PathField;
 import org.ashot.shellflow.utils.NodeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class EntryBox extends TitledPane {
-    private static final Logger log = LoggerFactory.getLogger(EntryBox.class);
-
-    private static final double NAME_FIELD_WIDTH = 250;
-    private static final double PATH_FIELD_WIDTH = 400;
-    private static final double COMMAND_FIELD_WIDTH = NAME_FIELD_WIDTH + PATH_FIELD_WIDTH;
-    private static final double MAX_WIDTH = COMMAND_FIELD_WIDTH;
-
-    private static final double COMMAND_FIELD_HEIGHT = CommandTextArea.DEFAULT_TEXT_AREA_HEIGHT * 1.1;
     private static final List<String> STYLE_CLASSES = List.of("default-container", Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
     private static final String EDITED_FIELD_STYLE_CLASS = "edited-field";
-
+    public static final double MAX_WIDTH = 400;
     private final NameField nameField;
     private final PathField pathField;
     private final CommandTextArea commandField;
-    private final WSLToggleBox wslToggle;
+    private final WSLBoxToggle wslToggle;
     private final ToggleButton enabledToggle;
     private final Button executeButton;
     private final Button deleteEntry;
@@ -63,21 +54,21 @@ public class EntryBox extends TitledPane {
 
         nameField = new NameField(
                 entry.getName(), null,
-                ToolTipMessages.NAME_FIELD, NAME_FIELD_WIDTH, null, "name-field"
+                ToolTipMessages.NAME_FIELD, null, null, "name-field"
         );
         pathField = new PathField(
                 entry.getPath(), null, ToolTipMessages.PATH_FIELD,
-                PATH_FIELD_WIDTH, null, "path-field"
+                null, null, "path-field"
         );
         commandField = new CommandTextArea(
                 entry.getCommand(), null, ToolTipMessages.COMMAND_FIELD,
-                null, COMMAND_FIELD_HEIGHT, "command-field"
+                null, null, "command-field"
         );
 
-        wslToggle = new WSLToggleBox("WSL", entry.isWsl());
+        wslToggle = new WSLBoxToggle("WSL", entry.isWsl());
         pathField.wslProperty().bind(wslToggle.selectedProperty());
 
-        enabledToggle = new EnableEntryBoxSwitch("", entry.isEnabled());
+        enabledToggle = new EnableEntryBoxToggle("", entry.isEnabled());
         deleteEntry = new CloseButton();
 
         VBox labeledNameField = new LabeledTextInput("Name", nameField);
@@ -89,28 +80,28 @@ public class EntryBox extends TitledPane {
         VBox.setMargin(promptMessage, new Insets(5, 0, 0, 0));
 
         GridPane entryGrid = new GridPane();
-        entryGrid.addRow(0, labeledNameField, labeledPathField);
-        GridPane.setConstraints(labeledNameField, 0, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.NEVER, Priority.NEVER);
-        GridPane.setConstraints(labeledPathField, 1, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
-        entryGrid.addRow(1, labeledCommandField);
-
-        GridPane.setConstraints(labeledCommandField, 0, 1, 2, 2, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.ALWAYS);
+        entryGrid.addRow(0, labeledNameField);
+        entryGrid.addRow(1, labeledPathField);
+        entryGrid.addRow(2, labeledCommandField);
+        GridPane.setConstraints(labeledNameField, 0, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        GridPane.setConstraints(labeledPathField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
+        GridPane.setConstraints(labeledCommandField, 0, 2, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
 
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setHgrow(Priority.NEVER);
+        col1.setHgrow(Priority.ALWAYS);
         ColumnConstraints col2 = new ColumnConstraints();
         col2.setHgrow(Priority.ALWAYS);
         ColumnConstraints col3 = new ColumnConstraints();
-        col3.setHgrow(Priority.SOMETIMES);
+        col3.setHgrow(Priority.ALWAYS);
         entryGrid.getColumnConstraints().addAll(col1, col2, col3);
 
         entryGrid.setHgap(8);
         entryGrid.setVgap(5);
 
         title = new Label();
-        title.setFont(Fonts.title());
+        title.setFont(Fonts.nameFieldDisplay());
         title.setEllipsisString("...");
-        title.setMaxWidth(MAX_WIDTH * 0.75);
+        title.setMaxWidth(MAX_WIDTH * 0.45);
 
         executeButton = new ExecuteEntryButton();
 
@@ -130,7 +121,7 @@ public class EntryBox extends TitledPane {
 
         content = new VBox(0, entryGrid);
         content.setFillWidth(true);
-        content.setPadding(new Insets(2));
+        content.setPadding(new Insets(1));
 
         setContent(content);
 
@@ -250,7 +241,7 @@ public class EntryBox extends TitledPane {
         return commandField;
     }
 
-    public WSLToggleBox getWslToggle() {
+    public WSLBoxToggle getWslToggle() {
         return wslToggle;
     }
 

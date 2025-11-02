@@ -1,7 +1,7 @@
 package org.ashot.shellflow.node.icon;
 
 import javafx.scene.paint.Color;
-import org.ashot.shellflow.utils.Animations;
+import org.ashot.shellflow.utils.GUIAnimations;
 import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -122,7 +122,7 @@ public class Icons {
         Glyph icon = fontAwesome.create(SPINNER);
         icon.size(size);
         icon.color(preferredColor);
-        Animations.spinIcon(icon);
+        GUIAnimations.spinIcon(icon);
         return icon;
     }
 

@@ -11,12 +11,8 @@ public class ShellFlowTerminalWidget extends JediTermFxWidget {
 
     public ShellFlowTerminalWidget(@NotNull SettingsProvider settingsProvider) {
         super(settingsProvider);
-        FontSelectionDialog.selectedSize.addListener((_, _, _) -> {
-            getTerminalPanel().reinitFontAndResize();
-        });
-        FontSelectionDialog.selectedFont.addListener((_, _, _) -> {
-            getTerminalPanel().reinitFontAndResize();
-        });
+        FontSelectionDialog.selectedSize.addListener((_, _, _) -> getTerminalPanel().reinitFontAndResize());
+        FontSelectionDialog.selectedFont.addListener((_, _, _) -> getTerminalPanel().reinitFontAndResize());
     }
 
     public void createToolBar() {

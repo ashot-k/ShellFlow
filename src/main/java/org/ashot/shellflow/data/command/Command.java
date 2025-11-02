@@ -2,9 +2,8 @@ package org.ashot.shellflow.data.command;
 
 import org.ashot.shellflow.data.message.ExceptionMessages;
 import org.ashot.shellflow.exception.InvalidCommandException;
-import org.ashot.shellflow.exception.InvalidPathException;
+import org.ashot.shellflow.exception.InvalidEntryPathException;
 import org.ashot.shellflow.utils.Utils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ public class Command {
     private final String rawArguments;
     private String argumentsString = "";
 
-    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidPathException {
+    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidEntryPathException {
         this.rawArguments = arguments;
         this.persistent = persistent;
         validateArguments(arguments);
@@ -35,7 +34,7 @@ public class Command {
         }
     }
 
-    private void constructCommandPersistentSession(String name, String path, String arguments, boolean wsl) throws InvalidPathException {
+    private void constructCommandPersistentSession(String name, String path, String arguments, boolean wsl) throws InvalidEntryPathException {
         if (Utils.checkIfLinux() || wsl) {
             arguments += "; exec $SHELL";
         } else if (Utils.checkIfWindows()) {
@@ -44,7 +43,7 @@ public class Command {
         constructCommand(name, path, arguments, wsl);
     }
 
-    private void constructCommand(String name, String path, String arguments, boolean wsl) throws InvalidPathException {
+    private void constructCommand(String name, String path, String arguments, boolean wsl) throws InvalidEntryPathException {
         this.wsl = wsl;
         this.path = path;
         if (wsl) {
@@ -64,7 +63,7 @@ public class Command {
     }
 
 
-    private void validatePath() throws InvalidPathException {
+    private void validatePath() throws InvalidEntryPathException {
         String pathStr;
         if (path.isBlank()) {
             pathStr = "/";
@@ -73,7 +72,7 @@ public class Command {
         }
         File f = new File(pathStr);
         if (!f.exists() || !f.isDirectory()) {
-            throw new InvalidPathException(ExceptionMessages.INVALID_PATH, path);
+            throw new InvalidEntryPathException(ExceptionMessages.INVALID_PATH, path);
         }
     }
 
@@ -124,7 +123,7 @@ public class Command {
         return path;
     }
 
-    public @NotNull String[] getArgumentList() {
+    public String[] getArgumentList() {
         return argumentList.toArray(String[]::new);
     }
 

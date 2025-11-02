@@ -1,11 +1,9 @@
 package org.ashot.shellflow.data.constant;
 
-import org.ashot.shellflow.ShellFlow;
-
 public enum ConfigProperty {
     RECENT_DIRS_FILE("recent-dirs-file", SettingsFilePaths.RECENTS_DIR.getPath()),
     VARIABLES_FILE("variables-file", SettingsFilePaths.VARIABLES.getPath()),
-    THEME("theme", ShellFlow.getSelectedThemeOption().getValue()),
+    THEME("theme", ThemeOption.DARK_MODE.getValue()),
     OPTIMIZED_MODE("optimized-mode", "true"),
     TERMINAL_FONT_FAMILY("terminal-font-family", "Cascadia Mono"),
     TERMINAL_FONT_SIZE("terminal-font-size", "14"),

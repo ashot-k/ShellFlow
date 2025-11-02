@@ -17,6 +17,10 @@ public class NotificationMessages {
         return commandName + " has failed with exit code: " + exitCode + ".";
     }
 
+    public static String failNotificationMessage(String commandName) {
+        return commandName + " has failed";
+    }
+
     public static String finishedNotificationMessage(String commandName) {
         return commandName + " has finished" + ".";
     }

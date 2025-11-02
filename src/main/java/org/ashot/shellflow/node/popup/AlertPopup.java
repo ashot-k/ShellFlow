@@ -1,6 +1,5 @@
 package org.ashot.shellflow.node.popup;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
@@ -11,56 +10,55 @@ import static java.lang.Double.MAX_VALUE;
 
 public class AlertPopup extends Alert {
 
-    public static final String DEFAULT_CRITICAL_ERROR_TITLE = "Critical Error";
-
-    public AlertPopup(AlertType alertType) {
-        super(alertType);
-        getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet());
-    }
-
-    public AlertPopup(String title, String header, String msg, boolean criticalError) {
-        this(title, header, msg, null, criticalError);
-    }
-
-    public AlertPopup(String title, String header, String msg, String expendableText, boolean criticalError) {
+    public AlertPopup(String title, String msg, boolean criticalError) {
         super(AlertType.ERROR);
         if (criticalError) {
             setupCriticalErrorAlert();
         }
-        setupAlertPopup(title, header, msg, expendableText);
+        setupAlertPopup(title, msg, null);
     }
 
-    public AlertPopup(String title, String header, String msg, AlertType alertType) {
-        this(title, header, msg, null, alertType);
-    }
-
-    public AlertPopup(String title, String header, String msg, String expendableText, AlertType alertType) {
-        super(alertType);
-        setupAlertPopup(title, header, msg, expendableText);
-    }
-
-    private void setupAlertPopup(String title, String header, String msg, String expendableText) {
-        getDialogPane().getScene().getStylesheets().addAll(Application.getUserAgentStylesheet(), ShellFlow.getUserAgentStylesheet());
-        setTitle(title);
-        setHeaderText(header);
-        setContentText(msg);
-
-        TextArea textArea = new TextArea();
-        if (expendableText != null) {
-            textArea.setText(expendableText);
-        } else {
-            textArea.setText(msg);
+    public AlertPopup(String title, String msg, String expendableText, boolean criticalError) {
+        super(AlertType.ERROR);
+        if (criticalError) {
+            setupCriticalErrorAlert();
         }
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-        textArea.setMaxWidth(MAX_VALUE);
-        textArea.setMaxHeight(MAX_VALUE);
+        setupAlertPopup(title, msg, expendableText);
+    }
 
-        VBox content = new VBox(textArea);
-        getDialogPane().setExpandableContent(content);
+    public AlertPopup(String title, String msg, AlertType alertType) {
+        this(title, msg, null, alertType);
+    }
 
+    public AlertPopup(String title, String msg, String expendableText, AlertType alertType) {
+        super(alertType);
+        setupAlertPopup(title, msg, expendableText);
+    }
+
+    private void setupAlertPopup(String title, String msg, String expendableText) {
+        if (title != null) {
+            setTitle(title);
+        }
+        if (msg != null) {
+            setContentText(msg);
+        }
+        if (expendableText != null) {
+            setExpandableText(expendableText);
+        }
+
+        setHeaderText(null);
+        setStyle();
+        if (ShellFlow.getPrimaryStage() != null && ShellFlow.getPrimaryStage().getScene() != null) {
+            initOwner(ShellFlow.getPrimaryStage().getScene().getWindow());
+        } else {
+            initOwner(null);
+        }
+    }
+
+    private void setStyle() {
         setWidth(500);
-        initOwner(ShellFlow.getPrimaryStage().getScene().getWindow());
+        setHeight(200);
+        setResizable(true);
     }
 
     private void setupCriticalErrorAlert() {
@@ -69,6 +67,18 @@ public class AlertPopup extends Alert {
             ShellFlow.getPrimaryStage().close();
             Platform.exit();
         });
+    }
+
+    public void setExpandableText(String text) {
+        TextArea textArea = new TextArea();
+        textArea.setText(text);
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setMaxWidth(MAX_VALUE);
+        textArea.setMaxHeight(MAX_VALUE);
+        VBox content = new VBox(textArea);
+        getDialogPane().setExpandableContent(content);
+        getDialogPane().setExpanded(false);
     }
 
 }

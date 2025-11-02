@@ -6,10 +6,7 @@ import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
-import org.ashot.shellflow.execution.SequenceExecutionTaskState;
-import org.ashot.shellflow.node.tab.executions.ExecutionTab;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ashot.shellflow.execution.tab.SingleExecutionTab;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -18,14 +15,13 @@ import static org.ashot.shellflow.data.constant.SequenceExecutionState.EXECUTION
 import static org.ashot.shellflow.data.constant.SequenceExecutionState.FINISHED;
 
 public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> implements ExecutionTask {
-    private final Logger log = LoggerFactory.getLogger(SequenceExecutionTask.class);
 
     private final CommandSequence commandSequence;
-    private final List<ExecutionTab> tabsInSequence;
+    private final List<SingleExecutionTab> tabsInSequence;
     private SingularExecutionTask currentExecution;
     private SequenceExecutionTaskState sequenceState;
 
-    public SequenceExecutionTask(CommandSequence commandSequence, List<ExecutionTab> sequenceTabs) {
+    public SequenceExecutionTask(CommandSequence commandSequence, List<SingleExecutionTab> sequenceTabs) {
         this.commandSequence = commandSequence;
         this.tabsInSequence = sequenceTabs;
     }
@@ -34,7 +30,7 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
     protected SequenceExecutionTaskState call() throws Exception {
         for (int i = 0; i < commandSequence.commandList().size(); i++) {
             Command currentCommand = commandSequence.commandList().get(i);
-            ExecutionTab tab = tabsInSequence.get(i);
+            SingleExecutionTab tab = tabsInSequence.get(i);
             CountDownLatch taskLatch = new CountDownLatch(1);
             currentExecution = new SingularExecutionTask(tab, currentCommand);
             int finalI = i;
@@ -58,7 +54,6 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
                 sequenceState.getTotalSteps());
     }
 
-
     private boolean sequenceShouldContinue() {
         switch (sequenceState.getSequenceState()) {
             case INTERNAL_FAILURE, FAILURE, CANCELLED -> {
@@ -70,8 +65,8 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
         }
     }
 
-    private void handleSequencePartExecutionState(ExecutionState state, ExecutionTab executionTab, CountDownLatch taskLatch) {
-        executionTab.updateState(state, true);
+    private void handleSequencePartExecutionState(ExecutionState state, SingleExecutionTab singleExecutionTab, CountDownLatch taskLatch) {
+        singleExecutionTab.updateState(state, true);
         if (!state.equals(ExecutionState.IN_PROGRESS)) {
             taskLatch.countDown();
         }
@@ -92,7 +87,6 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
             case IN_PROGRESS ->
                     sequenceState = new SequenceExecutionTaskState(executionTaskState, SequenceExecutionState.IN_PROGRESS, currentStep, totalSteps);
         }
-        updateValue(sequenceState);
         return sequenceState;
     }
 }

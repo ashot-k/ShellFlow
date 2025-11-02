@@ -1,18 +1,15 @@
 package org.ashot.shellflow.config;
 
-import javafx.application.Platform;
 import javafx.scene.text.Font;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
-import org.ashot.shellflow.node.popup.AlertPopup;
+import org.ashot.shellflow.exception.CriticalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Properties;
-
-import static org.ashot.shellflow.node.popup.AlertPopup.DEFAULT_CRITICAL_ERROR_TITLE;
 
 public class DefaultConfig implements ShellFlowConfig {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
@@ -23,17 +20,13 @@ public class DefaultConfig implements ShellFlowConfig {
     public DefaultConfig() {
         File propertiesFile = new File(PATH_TO_PROPERTIES_FILE.toUri());
         if (!propertiesFile.exists()) {
-            Platform.runLater(() -> new AlertPopup(
-                    DEFAULT_CRITICAL_ERROR_TITLE,
-                    null,
-                    PROPERTIES_FILE_NOT_FOUND_MSG,
-                    true).show());
+            throw new CriticalException(PROPERTIES_FILE_NOT_FOUND_MSG);
         }
         try (InputStream inputStream = new FileInputStream(propertiesFile)) {
             properties.load(inputStream);
             log.info("Loaded configuration from: {}", propertiesFile.getAbsolutePath());
         } catch (IOException | NullPointerException e) {
-            log.error("Error loading configuration: {}", e.getMessage());
+            throw new CriticalException(e.getMessage());
         }
     }
 

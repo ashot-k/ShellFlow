@@ -28,7 +28,7 @@ public enum ThemeOption {
                 return option;
             }
         }
-        return null;
+        throw new IllegalArgumentException("Theme does not exist for value: " + value);
     }
 
     public static boolean valueExists(String value) {

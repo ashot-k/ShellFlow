@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.function.Consumer;
 
 import static org.ashot.shellflow.utils.FileUtils.chooseFile;
-import static org.ashot.shellflow.utils.RecentFileUtils.loadRecentFolders;
+import static org.ashot.shellflow.utils.RecentFileUtils.refreshRecentDirectories;
 
 public class SaveAsMenuItem extends MenuItem {
 
@@ -16,7 +16,7 @@ public class SaveAsMenuItem extends MenuItem {
         setText("Save as");
         setGraphic(Icons.getSaveAsIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
         setOnAction(_ -> {
-            loadRecentFolders();
+            refreshRecentDirectories();
             File savedFile = chooseFile(true);
             if (savedFile != null) {
                 if (!savedFile.getAbsolutePath().endsWith(".json")) {

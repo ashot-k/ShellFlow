@@ -1,61 +1,59 @@
 package org.ashot.shellflow.utils;
 
+import org.ashot.shellflow.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.node.tab.executions.ExecutionTab;
 import org.controlsfx.glyphfont.Glyph;
 
 public class TabUtils {
-
     public static final int TAB_ICON_SIZE = 18;
 
-    public static void setInProgress(ExecutionTab tab) {
-        setInProgress(tab, false);
+    private TabUtils() {
     }
 
-    public static void setFailed(ExecutionTab tab) {
+    public static void setFailed(SingleExecutionTab tab) {
         setFailed(tab, false);
     }
 
-    public static void setCancelled(ExecutionTab tab) {
+    public static void setCancelled(SingleExecutionTab tab) {
         setCancelled(tab, false);
     }
 
-    public static void setFinished(ExecutionTab tab) {
+    public static void setFinished(SingleExecutionTab tab) {
         setFinished(tab, false);
     }
 
-    public static void setInProgress(ExecutionTab tab, boolean sequence) {
+    public static void setInProgress(SingleExecutionTab tab) {
         tab.setGraphic(Icons.getExecutionInProgressIcon(TAB_ICON_SIZE));
         tab.setDisable(false);
         tab.setClosable(true);
         tab.setInProgress();
     }
 
-    public static void setFailed(ExecutionTab tab, boolean sequence) {
+    public static void setFailed(SingleExecutionTab tab, boolean sequence) {
         Glyph icon = Icons.getExecutionErrorIcon(TAB_ICON_SIZE);
         tab.setGraphic(icon);
         tab.setDisable(false);
         tab.setClosable(!sequence);
         tab.setFailed();
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
     }
 
 
-    public static void setFinished(ExecutionTab tab, boolean sequence) {
+    public static void setFinished(SingleExecutionTab tab, boolean sequence) {
         Glyph icon = Icons.getExecutionFinishedIcon(TAB_ICON_SIZE);
         tab.setGraphic(icon);
         tab.setClosable(!sequence);
         tab.setDisable(false);
         tab.setFinished();
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
     }
 
-    public static void setCancelled(ExecutionTab tab, boolean sequence) {
+    public static void setCancelled(SingleExecutionTab tab, boolean sequence) {
         Glyph icon = Icons.getExecutionCancelledIcon(TAB_ICON_SIZE);
         tab.setGraphic(icon);
         tab.setDisable(false);
         tab.setClosable(!sequence);
-        Animations.rotateInAndWobble(icon);
+        GUIAnimations.rotateInAndWobble(icon);
         tab.setCancelled();
     }
 

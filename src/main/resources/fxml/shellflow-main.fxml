@@ -12,5 +12,5 @@
             </VBox>
         </StackPane>
     </VBox>
-    <ModalPane fx:id="mainModal" alignment="CENTER"/>
+    <ModalPane fx:id="mainModal" alignment="CENTER" styleClass="modal"/>
 </StackPane>

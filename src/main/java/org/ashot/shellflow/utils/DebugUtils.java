@@ -8,14 +8,14 @@ import javafx.scene.paint.Color;
 import java.util.Arrays;
 
 public class DebugUtils {
-    private DebugUtils(){}
+    private DebugUtils() {
+    }
 
     public static void addBorder(Node... node) {
         Arrays.stream(node).toList().forEach(e -> {
-            if(e instanceof Pane pane){
+            if (e instanceof Pane pane) {
                 addBorderToPane(pane);
-            }
-            else if (e instanceof Control control){
+            } else if (e instanceof Control control) {
                 addBorderToControl(control);
             }
         });

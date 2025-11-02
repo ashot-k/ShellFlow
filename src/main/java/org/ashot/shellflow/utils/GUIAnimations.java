@@ -9,16 +9,12 @@ import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Animations {
-
-    private static final Logger log = LoggerFactory.getLogger(Animations.class);
+public class GUIAnimations {
     private static final int DEFAULT_FRAME_RATE = 60;
     private static final int PERFORMANCE_OPTIMIZATION_FRAME_RATE = 5;
     private static final Duration DEFAULT_FADE_ANIMATION_DURATION = Duration.millis((double) 250 * 3 / 4);
@@ -32,7 +28,7 @@ public class Animations {
         performanceMode.addListener((_, _, _) -> refreshAnimations());
     }
 
-    private Animations() {
+    private GUIAnimations() {
     }
 
     public static Timeline animateHeightChange(Region node, double heightGoal, Duration duration) {
@@ -74,10 +70,14 @@ public class Animations {
         AtomicBoolean finished = new AtomicBoolean(false);
         node.boundsInLocalProperty().addListener((_, _, newValue) -> {
             if ((newValue.getMaxX() > 0 && newValue.getMaxY() > 0) && !finished.get()) {
-                atlantafx.base.util.Animations.fadeIn(node, Animations.DEFAULT_FADE_ANIMATION_DURATION).play();
+                atlantafx.base.util.Animations.fadeIn(node, GUIAnimations.DEFAULT_FADE_ANIMATION_DURATION).play();
                 finished.set(true);
             }
         });
+    }
+
+    public static Timeline shakeY(Node node, double offset) {
+        return atlantafx.base.util.Animations.shakeY(node, offset);
     }
 
     public static void removeFromListAndFadeOut(Region node, ObservableList<?> observableList) {

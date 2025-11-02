@@ -1,4 +1,4 @@
-package org.ashot.shellflow.execution;
+package org.ashot.shellflow.execution.task;
 
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;

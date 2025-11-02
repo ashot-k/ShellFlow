@@ -6,7 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.ashot.shellflow.utils.Animations;
+import org.ashot.shellflow.utils.GUIAnimations;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class FloatingToolBar extends VBox {
         buttonsBar = new HBox();
         buttonsBar.setAlignment(Pos.BOTTOM_CENTER);
         buttonsBar.setSpacing(10);
-        setPadding(new Insets(10, 8, 10, 8));
+        setPadding(new Insets(5, 4, 5, 4));
         getChildren().addAll(buttonsBar);
         getStyleClass().addAll("floating-toolBar");
     }
@@ -49,21 +49,9 @@ public class FloatingToolBar extends VBox {
         isAutoHide = true;
     }
 
-    private void animateHover(boolean hovering) {
-        Timeline fadeIn = Animations.fade(this, INITIAL_OPACITY, 1);
-        Timeline fadeOut = Animations.fade(this, 1, INITIAL_OPACITY);
-        if (hovering) {
-            fadeIn.play();
-            fadeOut.stop();
-        } else {
-            fadeIn.stop();
-            fadeOut.play();
-        }
-    }
-
     private void animateHover(boolean hovering, double initialOpacity) {
-        Timeline fadeIn = Animations.fade(this, initialOpacity, 1);
-        Timeline fadeOut = Animations.fade(this, 1, initialOpacity);
+        Timeline fadeIn = GUIAnimations.fade(this, initialOpacity, 1);
+        Timeline fadeOut = GUIAnimations.fade(this, 1, initialOpacity);
         if (hovering) {
             fadeIn.play();
             fadeOut.stop();

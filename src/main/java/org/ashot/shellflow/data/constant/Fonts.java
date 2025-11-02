@@ -5,6 +5,9 @@ import javafx.scene.text.FontWeight;
 import org.ashot.shellflow.ShellFlow;
 
 public class Fonts {
+    private Fonts() {
+
+    }
 
     private static Font getApplicationFont() {
         Font font = ShellFlow.getApplicationFont();
@@ -22,6 +25,10 @@ public class Fonts {
         return Font.font(getFontFamily(), FontWeight.BOLD, 16);
     }
 
+    public static Font nameFieldDisplay() {
+        return Font.font(getFontFamily(), FontWeight.BOLD, 14);
+    }
+
     public static Font subTitle() {
         return Font.font(getFontFamily(), FontWeight.BOLD, 14);
     }
@@ -35,7 +42,7 @@ public class Fonts {
     }
 
     public static Font fileLabelText() {
-        return Font.font(getFontFamily(), FontWeight.EXTRA_BOLD, 14);
+        return Font.font(getFontFamily(), FontWeight.BOLD, 12);
     }
 
     public static Font fieldLabel() {
@@ -44,6 +51,10 @@ public class Fonts {
 
     public static Font fieldText() {
         return Font.font(getFontFamily(), FontWeight.NORMAL, 12);
+    }
+
+    public static Font smallFieldText() {
+        return Font.font(getFontFamily(), FontWeight.NORMAL, 11.5);
     }
 
     public static Font wslOptionText() {

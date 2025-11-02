@@ -1,5 +1,6 @@
 package org.ashot.shellflow;
 
+import org.ashot.shellflow.exception.CouldNotReadFromFileException;
 import org.ashot.shellflow.utils.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ class UtilsTest {
     }
 
     @Test
-    void createEntryJSONArrayConstructsCorrectObjectFromFile() {
+    void createEntryJSONArrayConstructsCorrectObjectFromFile() throws CouldNotReadFromFileException {
         JSONObject object = FileUtils.createJSONObjectFromFIle(new File("src/test/resources/test_1.json"));
         JSONArray entries = (JSONArray) object.get("entries");
         Assertions.assertAll(

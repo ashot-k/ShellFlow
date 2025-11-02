@@ -28,19 +28,22 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.data.constant to javafx.base;
     opens org.ashot.shellflow.node.icon to javafx.base;
     opens org.ashot.shellflow.data.message to javafx.fxml;
-    opens org.ashot.shellflow.node.tab.executions to javafx.base;
     opens org.ashot.shellflow.utils to javafx.base, javafx.fxml;
     exports org.ashot.shellflow.data.command;
     opens org.ashot.shellflow.node.toolbar to javafx.base;
-    exports org.ashot.shellflow.execution;
     exports org.ashot.shellflow.data.constant;
     exports org.ashot.shellflow.config;
     exports org.ashot.shellflow.mapper;
     exports org.ashot.shellflow.node.entry;
-    exports org.ashot.shellflow.node.tab.executions;
     exports org.ashot.shellflow.data.entry;
     exports org.ashot.shellflow.controller;
     opens org.ashot.shellflow.controller to javafx.fxml;
     exports org.ashot.shellflow.execution.task;
     exports org.ashot.shellflow.execution.task.factory;
+    opens org.ashot.shellflow.node.entry to javafx.base;
+    exports org.ashot.shellflow.node.entry.field;
+    opens org.ashot.shellflow.node.entry.field to javafx.base;
+    opens org.ashot.shellflow.execution.task to javafx.base;
+    exports org.ashot.shellflow.execution.tab;
+    opens org.ashot.shellflow.execution.tab to javafx.base;
 }

@@ -7,6 +7,7 @@ import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.node.icon.Icons;
+import org.ashot.shellflow.utils.ThemeHandler;
 
 
 public class ThemeSelectionMenu extends Menu {
@@ -14,9 +15,9 @@ public class ThemeSelectionMenu extends Menu {
         ToggleGroup toggleGroup = new ToggleGroup();
         for (ThemeOption themeOption : ThemeOption.values()) {
             RadioMenuItem themeOptionMenuItem = new RadioMenuItem(themeOption.getValue());
-            themeOptionMenuItem.setOnAction(_ -> ShellFlow.setTheme(themeOption));
+            themeOptionMenuItem.setOnAction(_ -> ThemeHandler.transitionToTheme(ShellFlow.getPrimaryStage(), themeOption));
             themeOptionMenuItem.setToggleGroup(toggleGroup);
-            themeOptionMenuItem.setSelected(themeOption.getTheme().equals(ShellFlow.getSelectedThemeOption().getTheme()));
+            themeOptionMenuItem.setSelected(themeOption.getTheme().equals(ThemeHandler.getSelectedTheme().getTheme()));
             getItems().add(themeOptionMenuItem);
         }
         setText("Theme");

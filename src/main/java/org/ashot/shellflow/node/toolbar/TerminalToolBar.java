@@ -31,7 +31,6 @@ public class TerminalToolBar extends FloatingToolBar {
         disableWhenProcessFinishes(stopProcessButton);
         setContent(clearConsoleButton, stopProcessButton, findButton);
         setMaxWidth(170);
-        getStyleClass().addAll("terminal-toolBar");
         autoHiding();
     }
 
@@ -43,6 +42,7 @@ public class TerminalToolBar extends FloatingToolBar {
                 }
                 node.setDisable(true);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
         }

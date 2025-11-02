@@ -8,9 +8,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.text.Font;
 import org.ashot.shellflow.ShellFlow;
+import org.ashot.shellflow.utils.ThemeHandler;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
@@ -19,7 +18,6 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     private static final TerminalColor DEFAULT_LIGHT_MODE_BACKGROUND = new TerminalColor(255, 255, 255);
     private static final TerminalColor DEFAULT_LIGHT_MODE_FOREGROUND = new TerminalColor(16, 17, 23);
-    private static final Logger log = LoggerFactory.getLogger(ThemedSettingsProvider.class);
 
     private static String fontFamily = ShellFlow.getConfig().terminalFontFamily().getFamily();
     private static double fontSize = ShellFlow.getConfig().terminalFontSize();
@@ -27,7 +25,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public @NotNull TerminalColor getDefaultBackground() {
-        if (ShellFlow.getSelectedThemeOption().isDark()) {
+        if (ThemeHandler.getSelectedTheme().isDark()) {
             return DEFAULT_DARK_MODE_BACKGROUND;
         } else {
             return DEFAULT_LIGHT_MODE_BACKGROUND;
@@ -36,7 +34,7 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public @NotNull TerminalColor getDefaultForeground() {
-        if (ShellFlow.getSelectedThemeOption().isDark()) {
+        if (ThemeHandler.getSelectedTheme().isDark()) {
             return DEFAULT_DARK_MODE_FOREGROUND;
         } else {
             return DEFAULT_LIGHT_MODE_FOREGROUND;
@@ -55,7 +53,6 @@ public class ThemedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public int getBufferMaxLinesCount() {
-        log.info("called line count");
         return isOptimizationMode() ? 6000 : 9999;
     }
 

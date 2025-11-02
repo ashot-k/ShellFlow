@@ -1,19 +1,28 @@
 package org.ashot.shellflow.utils;
 
+import javafx.animation.Timeline;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
-import org.ashot.shellflow.data.constant.FieldType;
+import javafx.util.Duration;
+import org.ashot.shellflow.data.constant.JSONField;
 import org.ashot.shellflow.data.constant.Fonts;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FieldUtils {
     private static final double DEFAULT_FIELD_HEIGHT = 35;
+    private static final int EXPANSION_TRANSITION_DURATION = 250;
 
-    public static void setupField(TextInputControl field, FieldType fieldType, String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
+    private FieldUtils() {
+    }
+
+    public static void setupField(TextInputControl field, JSONField JSONField, String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
         if (text == null) {
             text = "";
         }
         field.setText(text);
-        field.setId(fieldType.getId());
+        field.setId(JSONField.getFieldKey());
         if (promptText != null && !promptText.isBlank()) {
             field.setPromptText(promptText);
         }
@@ -33,5 +42,20 @@ public class FieldUtils {
         }
         field.getStyleClass().add("field");
         field.setFont(Fonts.fieldText());
+    }
+
+    public static void addHeightExpansionListener(TextArea field, Double height, double multiplier) {
+        AtomicReference<Timeline> timeline = new AtomicReference<>(new Timeline());
+        field.focusedProperty().addListener((_, _, isFocused) -> {
+            if (Boolean.TRUE.equals(isFocused)) {
+                double heightGoal = field.getHeight() * multiplier;
+                timeline.set(GUIAnimations.animateHeightChange(field, heightGoal, Duration.millis(EXPANSION_TRANSITION_DURATION)));
+                timeline.get().play();
+            } else {
+                field.setMinHeight(height);
+                field.setTranslateY(0);
+                timeline.get().stop();
+            }
+        });
     }
 }

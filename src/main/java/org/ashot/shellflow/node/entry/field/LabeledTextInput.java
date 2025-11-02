@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.entry;
+package org.ashot.shellflow.node.entry.field;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

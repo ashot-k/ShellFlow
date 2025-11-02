@@ -5,28 +5,25 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import org.ashot.shellflow.node.tab.setup.VariableSetupSidePanel;
+import org.ashot.shellflow.exception.CouldNotReadFromFileException;
+import org.ashot.shellflow.exception.CouldNotWriteDataToFileException;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.variable.VariableEntry;
+import org.ashot.shellflow.node.variable.VariableSetup;
 import org.ashot.shellflow.peristence.VariableRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.List;
 
 public class VariableManagementController {
-    private static final Logger log = LoggerFactory.getLogger(VariableManagementController.class);
 
-    private final VariableSetupSidePanel view;
+    private final VariableSetup view;
     private final VariableRepository variableRepository;
-    //todo replace with TableView
     private final ObservableList<VariableEntry> variableList = FXCollections.observableArrayList();
     private final BooleanProperty saved = new SimpleBooleanProperty();
 
     public VariableManagementController(File init) {
-        view = new VariableSetupSidePanel();
+        view = new VariableSetup();
         variableRepository = new VariableRepository();
-
         variableList.addListener((ListChangeListener<VariableEntry>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -42,26 +39,26 @@ public class VariableManagementController {
 
     private void setupEvents() {
         view.getSaveAllButton().setOnAction(_ -> {
-            variableRepository.saveToFile(variableList);
-            saved.set(!saved.get());
+            try {
+                variableRepository.saveToFile(variableList);
+                saved.set(!saved.get());
+            } catch (CouldNotWriteDataToFileException e) {
+                new AlertPopup("Error while saving Variables", e.getMessage(), false).show();
+            }
         });
         view.getAddVariableButton().setOnAction(_ -> addVariableEntry());
     }
 
     private void load(File init) {
-        variableRepository.loadExisting(init).forEach(this::addVariableEntry);
+        try {
+            variableRepository.loadExisting(init).forEach(this::addVariableEntry);
+        } catch (CouldNotReadFromFileException e) {
+            new AlertPopup("Error while loading Variables", e.getMessage(), false).show();
+        }
     }
 
     private void addVariableEntry() {
-        addVariableEntry("", "");
-    }
-
-    private void addVariableEntry(String name, String value) {
-        addVariableEntry(name, value, true);
-    }
-
-    private void addVariableEntry(String name, String value, boolean enabled) {
-        VariableEntry variableEntry = new VariableEntry(name, value, enabled);
+        VariableEntry variableEntry = new VariableEntry("", "", true);
         addVariableEntry(variableEntry);
     }
 
@@ -74,15 +71,11 @@ public class VariableManagementController {
         variableList.remove(variableEntry);
     }
 
-    public List<VariableEntry> getVariables() {
+    public ObservableList<VariableEntry> getVariables() {
         return variableList;
     }
 
-    public BooleanProperty animatedProperty() {
-        return view.animatedProperty();
-    }
-
-    public VariableSetupSidePanel getView() {
+    public VariableSetup getView() {
         return view;
     }
 

@@ -5,6 +5,9 @@ import javafx.scene.layout.Region;
 
 public class NodeUtils {
 
+    private NodeUtils() {
+    }
+
     public static void setHeights(Region node, double height) {
         node.setPrefHeight(height);
         node.setMaxHeight(height);

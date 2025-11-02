@@ -11,11 +11,11 @@ import javafx.scene.layout.HeaderBar;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.mapper.EntryMapper;
+import org.ashot.shellflow.exception.CouldNotReadFromFileException;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
-import org.ashot.shellflow.utils.Animations;
+import org.ashot.shellflow.utils.GUIAnimations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +25,7 @@ import static javafx.scene.layout.HeaderDragType.DRAGGABLE_SUBTREE;
 import static org.ashot.shellflow.utils.FileUtils.getMostRecentlyOpenedFile;
 
 
+@SuppressWarnings("deprecation")
 public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     @FXML
@@ -36,19 +37,27 @@ public class Controller {
 
     private MainMenuBar mainMenuBar;
 
-
     private EntryManagementController entryManagementController;
     private ExecutionManagementController executionManagementController;
     private VariableManagementController variableManagementController;
     private BooleanProperty optimizationMode;
 
     public HeaderBar init() {
+        setupControllers();
         setupTabs();
         setupMenuBar();
-        mainModal.getStyleClass().add("modal");
         ShellFlowTray.init(executionManagementController);
         handlePerformanceMode();
         return createHeader();
+    }
+
+    public void loadInit() {
+        log.info("Initializing entries");
+        try {
+            entryManagementController.load(getMostRecentlyOpenedFile());
+        } catch (CouldNotReadFromFileException e) {
+            log.error("Could not initialize entries: {}", e.getMessage());
+        }
     }
 
     private HeaderBar createHeader() {
@@ -61,27 +70,28 @@ public class Controller {
         optimizationMode = mainMenuBar.getSettingsMenu().getPerformanceSettingMenuItem().performanceModePropertyProperty();
     }
 
-    private void setupTabs() {
+    private void setupControllers() {
         executionManagementController = new ExecutionManagementController();
         variableManagementController = new VariableManagementController(new File(ShellFlow.getConfig().variablesConfigLocation()));
-        entryManagementController = new EntryManagementController(executionManagementController, variableManagementController, new EntryMapper(variableManagementController), getMostRecentlyOpenedFile());
+        entryManagementController = new EntryManagementController(executionManagementController, variableManagementController);
+    }
+
+    private void setupTabs() {
         mainTabPane.getTabs().add(TabIndices.ENTRIES.ordinal(), entryManagementController.getView());
-        mainTabPane.getTabs().add(TabIndices.EXECUTIONS.ordinal(), executionManagementController.getView());
         mainTabPane.prefWidthProperty().bind(sceneContainer.widthProperty());
         sceneContainer.getScene().setOnKeyPressed(this::handleUserInput);
     }
 
     private void handlePerformanceMode() {
         entryManagementController.optimizationModeProperty().bind(optimizationMode);
-        variableManagementController.animatedProperty().bind(optimizationMode.not());
         ThemedSettingsProvider.optimizationModeProperty().bind(optimizationMode);
-        Animations.performanceMode.bind(optimizationMode);
+        GUIAnimations.performanceMode.bind(optimizationMode);
     }
 
     private void handleUserInput(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
-        if (executionManagementController.getView().isSelected() && keyEvent.isControlDown()) {
-            TabPane executionsTabPane = executionManagementController.getView().getExecutionsTabPane();
+        if (keyEvent.isControlDown()) {
+            TabPane executionsTabPane = executionManagementController.getView();
             if (keyEvent.isShiftDown()) {
                 Node node = executionsTabPane.getSelectionModel().getSelectedItem().getContent();
                 if (node instanceof TabPane tabPane) {
