@@ -34,7 +34,7 @@ public class VariableSetup extends VBox {
         HBox.setHgrow(variableLabelBox, Priority.ALWAYS);
         HBox.setHgrow(valueLabelBox, Priority.ALWAYS);
 
-        Insets insets = new Insets(2, 10, 2, 10);
+        Insets insets = new Insets(1.5, 10, 1.5, 10);
 
         HBox headerRow = new HBox(variableLabelBox, valueLabelBox);
         headerRow.setAlignment(Pos.CENTER_LEFT);
@@ -54,19 +54,16 @@ public class VariableSetup extends VBox {
 
         HBox variableOptions = new HBox(5, saveAllButton, addVariableButton);
         variableOptions.setAlignment(Pos.TOP_RIGHT);
-        variableOptions.setPadding(new Insets(2));
         variableOptions.getStyleClass().add("default-container");
 
         getChildren().addAll(headerRow, scrollPane, new Spacer(), variableOptions);
         setSpacing(2.5);
         setAlignment(Pos.BOTTOM_CENTER);
-        setPadding(new Insets(5, 10, 2, 10));
+        setPadding(insets);
     }
 
     private Button saveButton() {
-        Button saveButton = new Button("Save");
-        saveButton.setPrefWidth(80);
-        return saveButton;
+        return new Button("", Icons.getSaveIcon(DEFAULT_ICON_SIZE.getSize()));
     }
 
     public Button getAddVariableButton() {

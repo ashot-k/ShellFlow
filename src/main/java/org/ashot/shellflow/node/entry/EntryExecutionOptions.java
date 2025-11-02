@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.entry;
 
+import atlantafx.base.theme.Styles;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -22,16 +23,20 @@ public class EntryExecutionOptions extends HBox {
     public EntryExecutionOptions() {
         expandAllButton = new Button("", Icons.getExpandAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         expandAllButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
+        expandAllButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         collapseAllButton = new Button("", Icons.getCollapseAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         collapseAllButton.setTooltip(new Tooltip(ToolTipMessages.COLLAPSE_ALL_ENTRIES_BUTTON));
+        collapseAllButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
-        clearAllEntriesButton = new Button("Clear", Icons.getClearIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
+        clearAllEntriesButton = new Button("", Icons.getClearIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         clearAllEntriesButton.setContentDisplay(ContentDisplay.RIGHT);
         clearAllEntriesButton.setFont(Fonts.buttonText());
+        clearAllEntriesButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         addEntryButton = new Button("", Icons.getAddButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         addEntryButton.setContentDisplay(ContentDisplay.RIGHT);
+        addEntryButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         delayPerCmd = new Spinner<>(0, 50, 0, 5);
         delayPerCmd.setMaxWidth(70);
@@ -41,6 +46,7 @@ public class EntryExecutionOptions extends HBox {
         executeAllButton = new Button("Execute All", Icons.getExecuteAllButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         executeAllButton.setContentDisplay(ContentDisplay.RIGHT);
         executeAllButton.setFont(Fonts.buttonText());
+        executeAllButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         Label sequenceOptionText = new Label(" Sequence");
         sequenceOptionText.setFont(Fonts.detailText());
@@ -67,7 +73,7 @@ public class EntryExecutionOptions extends HBox {
         labeledExecutionNameField.setAlignment(Pos.BOTTOM_LEFT);
 
         setAlignment(Pos.BOTTOM_RIGHT);
-        setSpacing(10);
+        setSpacing(5);
         getChildren().addAll(addEntryButton, collapseAllButton, expandAllButton, clearAllEntriesButton, labeledDelayPerCmd, labeledExecutionNameField, runOptions);
     }
 

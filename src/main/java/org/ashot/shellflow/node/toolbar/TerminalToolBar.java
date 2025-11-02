@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.toolbar;
 
+import atlantafx.base.theme.Styles;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -19,14 +20,17 @@ public class TerminalToolBar extends FloatingToolBar {
         Button clearConsoleButton = new Button("", Icons.getClearIcon(DEFAULT_ICON_SIZE.getSize()));
         clearConsoleButton.setOnAction(_ -> terminalWidget.getTerminalPanel().clearBuffer());
         clearConsoleButton.setTooltip(new Tooltip(ToolTipMessages.CLEAR_OUTPUT_BUTTON));
+        clearConsoleButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         Button stopProcessButton = new Button("", Icons.getCloseButtonIcon(DEFAULT_ICON_SIZE.getSize()));
         stopProcessButton.setOnAction(_ -> TerminalRegistry.stopTerminal(terminalWidget.getTtyConnector()));
         stopProcessButton.setTooltip(new Tooltip(ToolTipMessages.STOP_PROCESS_BUTTON));
+        stopProcessButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         Button findButton = new Button("", Icons.getBrowseIcon(DEFAULT_ICON_SIZE.getSize()));
         findButton.setOnAction(_ -> terminalWidget.toggleFind());
         findButton.setTooltip(new Tooltip(ToolTipMessages.FIND_BUTTON));
+        findButton.getStyleClass().add(Styles.BUTTON_OUTLINED);
 
         disableWhenProcessFinishes(stopProcessButton);
         setContent(clearConsoleButton, stopProcessButton, findButton);

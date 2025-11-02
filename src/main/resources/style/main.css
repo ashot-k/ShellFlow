@@ -126,6 +126,7 @@
     -fx-background-color: -fx-solid-background;
     -fx-effect: dropshadow(one-pass-box, -fx-shadow-color, 8, 0.0, 0.0, 0);
 }
+
 .invalid-field{
   -fx-text-box-border: red;
   -fx-focus-color: red;
@@ -144,7 +145,6 @@
 .dark .bordered-container:hover{
     -fx-background-color: -fx-hover-background;
 }
-
 
 .light .bordered-container:hover {
     -fx-background-color: -fx-hover-background;

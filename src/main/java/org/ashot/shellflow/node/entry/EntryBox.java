@@ -53,8 +53,8 @@ public class EntryBox extends TitledPane {
         this.entry = entry;
 
         nameField = new NameField(
-                entry.getName(), null,
-                ToolTipMessages.NAME_FIELD, null, null, "name-field"
+                entry.getName(), null, ToolTipMessages.NAME_FIELD,
+                null, null, "name-field"
         );
         pathField = new PathField(
                 entry.getPath(), null, ToolTipMessages.PATH_FIELD,
