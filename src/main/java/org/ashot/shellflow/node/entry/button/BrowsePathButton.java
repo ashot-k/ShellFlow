@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.entry.button;
 
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -18,5 +19,6 @@ public class BrowsePathButton extends Button {
         setTooltip(new Tooltip(ToolTipMessages.PATH_BROWSE));
         setCursor(Cursor.HAND);
         setBackground(Background.EMPTY);
+        setPadding(new Insets(5));
     }
 }

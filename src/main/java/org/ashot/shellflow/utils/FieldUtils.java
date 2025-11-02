@@ -5,13 +5,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
-import org.ashot.shellflow.data.constant.JSONField;
 import org.ashot.shellflow.data.constant.Fonts;
+import org.ashot.shellflow.data.constant.JSONField;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 public class FieldUtils {
-    private static final double DEFAULT_FIELD_HEIGHT = 35;
+    private static final double DEFAULT_FIELD_HEIGHT = 30;
     private static final int EXPANSION_TRANSITION_DURATION = 250;
 
     private FieldUtils() {
@@ -40,7 +40,7 @@ public class FieldUtils {
         if (styleClass != null) {
             field.getStyleClass().add(styleClass);
         }
-        field.getStyleClass().add("field");
+        field.getStyleClass().addAll("field");
         field.setFont(Fonts.fieldText());
     }
 

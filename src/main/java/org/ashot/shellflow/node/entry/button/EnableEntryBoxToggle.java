@@ -16,12 +16,7 @@ public class EnableEntryBoxToggle extends ToggleButton {
         setPadding(Insets.EMPTY);
         setGraphic(Icons.getEnabledEntryToggleIcon(CLOSE_ICON_SIZE.getSize(), initialSelection));
         setBackground(Background.EMPTY);
-        setupEvents();
+        selectedProperty().addListener((_, _, selected) -> setGraphic(Icons.getEnabledEntryToggleIcon(CLOSE_ICON_SIZE.getSize(), selected)));
     }
 
-    private void setupEvents() {
-        selectedProperty().addListener((_, _, selected) ->
-                setGraphic(Icons.getEnabledEntryToggleIcon(CLOSE_ICON_SIZE.getSize(), selected))
-        );
-    }
 }

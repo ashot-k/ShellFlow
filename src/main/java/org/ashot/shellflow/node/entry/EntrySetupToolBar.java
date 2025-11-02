@@ -1,5 +1,6 @@
 package org.ashot.shellflow.node.entry;
 
+import atlantafx.base.theme.Styles;
 import javafx.geometry.Insets;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
@@ -14,12 +15,13 @@ public class EntrySetupToolBar extends HBox {
         super();
         tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        tabPane.getStyleClass().addAll(Styles.DENSE);
 
         HBox.setHgrow(tabPane, Priority.ALWAYS);
         VBox.setVgrow(tabPane, Priority.ALWAYS);
 
         getChildren().addAll(tabPane);
-        setPadding(new Insets(10));
+        setPadding(new Insets(0, 10, 10, 10));
         setFillHeight(true);
     }
 
