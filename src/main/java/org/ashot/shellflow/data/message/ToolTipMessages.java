@@ -12,7 +12,7 @@ public class ToolTipMessages {
 
     public static final String PATH_BROWSE = "Browse";
 
-    public static final String WSL_OPTION = "Will run inside WSL\nIn addition the path browser will attempt to translate windows paths to valid WSL paths";
+    public static final String WSL_OPTION = "Toggles between Windows and WSL execution, in addition the path browser will attempt to translate windows paths to valid WSL paths";
 
     public static final String STOP_PROCESS_BUTTON = "Attempt a graceful termination by sending a SIGINT to the current process";
 

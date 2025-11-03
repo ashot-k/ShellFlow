@@ -1,7 +1,6 @@
 package org.ashot.shellflow.node.entry.field;
 
 import javafx.scene.control.TextArea;
-import org.ashot.shellflow.data.constant.JSONField;
 import org.ashot.shellflow.utils.FieldUtils;
 
 import static org.ashot.shellflow.utils.FieldUtils.addHeightExpansionListener;
@@ -14,7 +13,7 @@ public class CommandTextArea extends TextArea {
         if (height == null) {
             height = (double) DEFAULT_TEXT_AREA_HEIGHT;
         }
-        FieldUtils.setupField(this, JSONField.COMMAND, text, promptText, toolTip, width, height, styleClass);
+        FieldUtils.setupField(this, text, promptText, toolTip, width, height, styleClass);
         setWrapText(true);
         addHeightExpansionListener(this, height, TEXT_AREA_HEIGHT_ENLARGED_MULTI);
     }

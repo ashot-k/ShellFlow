@@ -194,4 +194,12 @@ public class Icons {
         setHoverToBrighter(icon, preferredColor);
         return icon;
     }
+
+    public static Glyph getWSLOptionToggleIcon(double size, boolean toggled) {
+        Glyph icon = fontAwesome.create(toggled ? LINUX : WINDOWS);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
 }

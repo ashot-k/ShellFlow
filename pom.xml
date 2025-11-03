@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.7.8</version>
+    <version>0.7.9</version>
     <name>shellflow</name>
 
     <properties>
@@ -22,7 +22,7 @@
         <controlsfx.version>11.2.2</controlsfx.version>
         <richtextfx.version>0.11.5</richtextfx.version>
         <!-- general -->
-        <json.version>20240303</json.version>
+        <jackson.version>2.17.2</jackson.version>
         <logback.version>1.5.18</logback.version>
         <!-- test dependencies-->
         <junit.version>5.10.2</junit.version>
@@ -35,6 +35,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
@@ -114,11 +119,6 @@
             <groupId>org.ashot</groupId>
             <artifactId>jeditermfx-ui</artifactId>
             <version>${jeditermfx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${json.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

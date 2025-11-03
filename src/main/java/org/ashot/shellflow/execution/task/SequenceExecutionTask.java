@@ -28,6 +28,7 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
 
     @Override
     protected SequenceExecutionTaskState call() throws Exception {
+        //todo try catch throw if failure in single execution
         for (int i = 0; i < commandSequence.commandList().size(); i++) {
             Command currentCommand = commandSequence.commandList().get(i);
             SingleExecutionTab tab = tabsInSequence.get(i);
@@ -69,6 +70,9 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
         singleExecutionTab.updateState(state, true);
         if (!state.equals(ExecutionState.IN_PROGRESS)) {
             taskLatch.countDown();
+        }
+        if (state.equals(ExecutionState.FINISHED)) {
+            singleExecutionTab.getTabPane().getSelectionModel().selectNext();
         }
     }
 

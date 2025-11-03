@@ -1,7 +1,6 @@
 module org.ashot.shellflow {
     requires javafx.fxml;
     requires atlantafx.base;
-    requires org.json;
     requires org.slf4j;
     requires org.controlsfx.controls;
     requires org.fxmisc.richtext;
@@ -16,6 +15,7 @@ module org.ashot.shellflow {
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.base;
+    requires com.fasterxml.jackson.databind;
 
     exports org.ashot.shellflow;
     exports org.ashot.shellflow.exception;
@@ -35,7 +35,7 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.config;
     exports org.ashot.shellflow.mapper;
     exports org.ashot.shellflow.node.entry;
-    exports org.ashot.shellflow.data.entry;
+    exports org.ashot.shellflow.data.execution.entry;
     exports org.ashot.shellflow.controller;
     opens org.ashot.shellflow.controller to javafx.fxml;
     exports org.ashot.shellflow.execution.task;
@@ -46,4 +46,11 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.execution.task to javafx.base;
     exports org.ashot.shellflow.execution.tab;
     opens org.ashot.shellflow.execution.tab to javafx.base;
+    opens org.ashot.shellflow.data.execution.entry to com.fasterxml.jackson.databind;
+    opens org.ashot.shellflow.data.execution.variable to com.fasterxml.jackson.databind;
+    opens org.ashot.shellflow.data.utility to com.fasterxml.jackson.databind;
+    exports org.ashot.shellflow.data.execution;
+    opens org.ashot.shellflow.data.execution to com.fasterxml.jackson.databind;
+    exports org.ashot.shellflow.data.execution.variable;
+    opens org.ashot.shellflow.mapper to javafx.base, javafx.fxml;
 }

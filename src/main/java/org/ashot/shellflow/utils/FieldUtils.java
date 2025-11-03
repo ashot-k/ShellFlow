@@ -6,7 +6,6 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
 import org.ashot.shellflow.data.constant.Fonts;
-import org.ashot.shellflow.data.constant.JSONField;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -17,12 +16,11 @@ public class FieldUtils {
     private FieldUtils() {
     }
 
-    public static void setupField(TextInputControl field, JSONField JSONField, String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
+    public static void setupField(TextInputControl field, String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
         if (text == null) {
             text = "";
         }
         field.setText(text);
-        field.setId(JSONField.getFieldKey());
         if (promptText != null && !promptText.isBlank()) {
             field.setPromptText(promptText);
         }

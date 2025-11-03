@@ -3,13 +3,11 @@ package org.ashot.shellflow.node.menu.file.menu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.exception.FileDoesNotExistException;
+import org.ashot.shellflow.data.utility.Recent;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.utils.FileUtils;
 import org.ashot.shellflow.utils.RecentFileUtils;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +19,6 @@ import java.util.function.Consumer;
 
 public class OpenRecentMenu extends Menu {
     private static final Logger log = LoggerFactory.getLogger(OpenRecentMenu.class);
-
     private static final int MAX_ENTRIES = 15;
     private final Consumer<File> open;
 
@@ -35,8 +32,8 @@ public class OpenRecentMenu extends Menu {
     public void refreshRecentFiles() {
         try {
             getItems().clear();
-            JSONArray recentFiles = RecentFileUtils.getRecents().getJSONArray(JSONField.RECENT.getFieldKey());
-            for (Object s : recentFiles.toList().stream().limit(MAX_ENTRIES).toList()) {
+            Recent recents = RecentFileUtils.getRecents();
+            for (Object s : recents.recentlyOpenedFiles().stream().limit(MAX_ENTRIES).toList()) {
                 String recentFile = s.toString();
                 MenuItem m = createRecentMenuItemOption(recentFile);
                 getItems().add(m);
@@ -54,11 +51,13 @@ public class OpenRecentMenu extends Menu {
                 if (FileUtils.fileExists(path)) {
                     open.accept(path.toFile());
                 } else {
-                    throw new FileDoesNotExistException("File: \"" + recentFile + "\" does not exist");
+                    AlertPopup alertPopup = new AlertPopup(
+                            "Error",
+                            "Could not open file \"" + recentFile + "\" it does not exist",
+                            false
+                    );
+                    alertPopup.show();
                 }
-            } catch (FileDoesNotExistException fileDoesNotExistException) {
-                AlertPopup alertPopup = new AlertPopup("Error", "Could not open file", fileDoesNotExistException.getMessage(), false);
-                alertPopup.show();
             } catch (Exception e) {
                 log.error(e.getMessage());
             }

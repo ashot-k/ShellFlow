@@ -1,13 +1,8 @@
 package org.ashot.shellflow.utils;
 
 import javafx.stage.FileChooser;
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.exception.CouldNotCreateFileException;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
-import org.ashot.shellflow.exception.CouldNotWriteDataToFileException;
-import org.ashot.shellflow.exception.FileDoesNotExistException;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.ashot.shellflow.exception.FileReadFailureException;
+import org.ashot.shellflow.exception.FileWriteFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +22,14 @@ public class FileUtils {
     private FileUtils() {
     }
 
-    public static File createFileAndDirs(String pathString) throws CouldNotCreateFileException {
+    public static File createFileAndDirs(String pathString) throws FileWriteFailureException {
         if (pathString == null) {
-            throw new CouldNotCreateFileException("Path provided is null");
+            throw new FileWriteFailureException("Path provided is null");
         }
         Path path = Path.of(pathString);
         if (Files.exists(path)) {
             if (Files.isDirectory(path)) {
-                throw new CouldNotCreateFileException("Path provided is a directory: " + pathString);
+                throw new FileWriteFailureException("Path provided is a directory: " + pathString);
             } else {
                 return new File(path.toUri());
             }
@@ -43,10 +38,10 @@ public class FileUtils {
                 if (path.getParent() != null && createRequiredDirs(path.getParent()).isDirectory()) {
                     return createFile(path).toFile();
                 } else {
-                    throw new CouldNotCreateFileException("Path provided is at root of File System: " + pathString);
+                    throw new FileWriteFailureException("Path provided is at root of File System: " + pathString);
                 }
             } catch (IOException e) {
-                throw new CouldNotCreateFileException("Could not create file due to exception: " + e.getMessage());
+                throw new FileWriteFailureException("Could not create file due to exception: " + e.getMessage());
             }
         }
     }
@@ -58,11 +53,7 @@ public class FileUtils {
     public static File chooseFile(boolean save) {
         String initialDir = "";
         try {
-            if (save) {
-                initialDir = RecentFileUtils.getLastSavedDirectory();
-            } else {
-                initialDir = RecentFileUtils.getLastLoadedDirectory();
-            }
+            initialDir = RecentFileUtils.getLastAccessedDirectory();
         } catch (Exception e) {
             log.error("Could not get last {} directory: {}", save ? "saved" : "loaded", e.getMessage());
         }
@@ -86,34 +77,11 @@ public class FileUtils {
         }
     }
 
-    public static boolean writeJSONDataToFile(File fileToSave, JSONObject data) throws CouldNotWriteDataToFileException {
+    public static void writeJSONDataToFile(File fileToSave, String data) throws FileWriteFailureException {
         try (FileWriter fileWriter = new FileWriter(fileToSave)) {
-            data.write(fileWriter, 1, 1);
-            return true;
+            fileWriter.write(data);
         } catch (IOException e) {
-            throw new CouldNotWriteDataToFileException(e.getMessage());
-        }
-    }
-
-    public static File getMostRecentlyOpenedFile() throws CouldNotReadFromFileException {
-        File file = RecentFileUtils.loadMostRecentFile();
-        RecentFileUtils.refreshDirLocation(JSONField.LAST_LOADED, file.getParent());
-        return file;
-    }
-
-    public static JSONObject createJSONObjectFromFIle(File file) throws CouldNotReadFromFileException {
-        try {
-            if (!FileUtils.fileExists(file)) {
-                throw new FileNotFoundException();
-            }
-            String jsonContent = Files.readString(file.toPath());
-            return new JSONObject(jsonContent);
-        } catch (FileNotFoundException _) {
-            throw new FileDoesNotExistException("File at path \"" + file.toPath() + "\" does not exist");
-        } catch (IOException e) {
-            throw new CouldNotReadFromFileException(e.getMessage());
-        } catch (JSONException _) {
-            throw new CouldNotReadFromFileException("Invalid JSON in file: " + file.toPath());
+            throw new FileWriteFailureException(e.getMessage());
         }
     }
 
@@ -125,14 +93,14 @@ public class FileUtils {
         return file.exists();
     }
 
-    public static String readFileAsString(Path path) throws CouldNotReadFromFileException {
+    public static String readFileAsString(Path path) throws FileReadFailureException {
         try {
             if (!path.toFile().exists()) {
                 throw new FileNotFoundException("Could not find file: " + path);
             }
             return Files.readString(path);
         } catch (IOException e) {
-            throw new CouldNotReadFromFileException(e.getMessage());
+            throw new FileReadFailureException(e.getMessage());
         }
     }
 

@@ -8,10 +8,19 @@ import org.ashot.shellflow.ShellFlow;
 
 import static java.lang.Double.MAX_VALUE;
 
+//todo add builder instead of whatever the fuck im doing
 public class AlertPopup extends Alert {
 
     public AlertPopup(String title, String msg, boolean criticalError) {
         super(AlertType.ERROR);
+        if (criticalError) {
+            setupCriticalErrorAlert();
+        }
+        setupAlertPopup(title, msg, null);
+    }
+
+    public AlertPopup(AlertType type, String title, String msg, boolean criticalError) {
+        super(type);
         if (criticalError) {
             setupCriticalErrorAlert();
         }
@@ -23,15 +32,6 @@ public class AlertPopup extends Alert {
         if (criticalError) {
             setupCriticalErrorAlert();
         }
-        setupAlertPopup(title, msg, expendableText);
-    }
-
-    public AlertPopup(String title, String msg, AlertType alertType) {
-        this(title, msg, null, alertType);
-    }
-
-    public AlertPopup(String title, String msg, String expendableText, AlertType alertType) {
-        super(alertType);
         setupAlertPopup(title, msg, expendableText);
     }
 

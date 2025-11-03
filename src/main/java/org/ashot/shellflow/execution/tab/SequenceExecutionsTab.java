@@ -38,7 +38,7 @@ public class SequenceExecutionsTab extends Tab {
         return sequenceExecutionTabPane;
     }
 
-    public SequenceExecutionState updateState(SequenceExecutionState state) {
+    public void updateState(SequenceExecutionState state) {
         log.debug("Sequence: {}, updated state: {}", getText(), state);
         switch (state) {
             case FINISHED, EXECUTION_IN_SEQUENCE_FINISHED -> setFinished();
@@ -47,7 +47,6 @@ public class SequenceExecutionsTab extends Tab {
             case IN_PROGRESS -> setInProgress();
             default -> throw new IllegalStateException("Unexpected value: " + state);
         }
-        return state;
     }
 
     public void setInProgress() {

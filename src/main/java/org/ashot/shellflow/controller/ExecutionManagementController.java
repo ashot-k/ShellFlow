@@ -147,14 +147,15 @@ public class ExecutionManagementController {
         sequenceExecutionsTab.updateState(sequenceState);
         log.info(sequenceState.getValue());
         switch (sequenceState) {
+            case IN_PROGRESS -> {
+            }
+            case EXECUTION_IN_SEQUENCE_FINISHED -> {
+            }
             case FINISHED ->
                     ShellFlowTray.displayNotification(sequenceState.getValue(), finishedNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.SUCCESS);
             case FAILURE ->
                     ShellFlowTray.displayNotification(sequenceState.getValue(), failNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.EXECUTION_FAILURE);
-            case EXECUTION_IN_SEQUENCE_FINISHED -> {
-                if (taskState.getCurrentStep() < taskState.getTotalSteps()) {
-                    sequenceExecutionsTab.getSequenceTabPane().getSelectionModel().select(taskState.getCurrentStep());
-                }
+            case INTERNAL_FAILURE -> {
             }
             case CANCELLED -> log.info("Sequence Canceled: {}", sequenceExecutionsTab.getText());
             default -> throw new IllegalStateException("Unexpected value: " + sequenceState);

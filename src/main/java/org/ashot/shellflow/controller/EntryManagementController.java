@@ -7,7 +7,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
@@ -15,11 +14,9 @@ import javafx.scene.paint.Color;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.data.entry.Entry;
-import org.ashot.shellflow.data.entry.Execution;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
-import org.ashot.shellflow.exception.CouldNotWriteDataToFileException;
+import org.ashot.shellflow.data.execution.Execution;
+import org.ashot.shellflow.data.execution.entry.Entry;
+import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
 import org.ashot.shellflow.execution.task.SequenceExecutionTask;
 import org.ashot.shellflow.execution.task.SingularExecutionTask;
 import org.ashot.shellflow.mapper.EntryMapper;
@@ -59,7 +56,7 @@ public class EntryManagementController {
     private final IntegerProperty delay = new SimpleIntegerProperty();
     private final BooleanProperty sequenceOption = new SimpleBooleanProperty();
     private final StringProperty executionName = new SimpleStringProperty();
-    private final StringProperty currentFileAbsolutePath = new SimpleStringProperty();
+    private final StringProperty currentFileAbsolutePath = new SimpleStringProperty("");
     private final BooleanProperty optimizationMode = new SimpleBooleanProperty();
     private final ExecutionManagementController executionManagement;
     private final VariableManagementController variableManagement;
@@ -83,7 +80,6 @@ public class EntryManagementController {
                 this.view.setExecutionsSplit(this.executionManagement.getView());
             }
         });
-        this.view.setExecutionsSplit(executionManagement.getView());
         setupEvents();
     }
 
@@ -102,8 +98,11 @@ public class EntryManagementController {
                 }
             }
         });
-        view.getEntryInfoBar().hoverProperty().addListener((_, _, hovering) ->
-                view.getEntryInfoBar().setFileLoadedText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()))
+        view.getEntryInfoBar().hoverProperty().addListener((_, _, hovering) -> {
+                    if (!currentFileAbsolutePath.get().isBlank()) {
+                        view.getEntryInfoBar().setFileLoadedText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()));
+                    }
+                }
         );
         view.getFileLoadedText().setOnMouseClicked(this::handleEntryInfoTextClick);
         view.getEntryExecutionOptions().getExpandAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(true)));
@@ -137,12 +136,11 @@ public class EntryManagementController {
     }
 
     public void addEntryBox() {
-        log.debug("Adding empty Entry box");
         addEntryBox(new Entry());
     }
 
     public void addEntryBox(Entry entry) {
-        log.debug("Adding entry box with name: {}, path: {}, command: {}", entry.getName(), entry.getPath(), entry.getCommand());
+        log.debug("Adding entry box with name: {}, path: {}, command: {}", entry.name(), entry.path(), entry.command());
         EntryBox entryBox = entryMapper.entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.animatedProperty().bind(optimizationMode.not());
@@ -256,41 +254,37 @@ public class EntryManagementController {
 
     public void load(File fileToLoad) {
         try {
-            Execution execution = entryRepository.openFile(fileToLoad);
+            Execution execution = entryRepository.openFromFile(fileToLoad);
             entryBoxes.clear();
-            for (Entry entry : execution.getEntries()) {
+            for (Entry entry : execution.entries()) {
                 addEntryBox(entry);
             }
-            delay.setValue(execution.getDelay());
-            executionName.setValue(execution.getName());
-            sequenceOption.setValue(execution.isSequence());
-            handleFileOperationOccurred(fileToLoad, false);
-        } catch (CouldNotReadFromFileException e) {
+            delay.setValue(execution.delay());
+            executionName.setValue(execution.executionName());
+            sequenceOption.setValue(execution.sequence());
+            handleFileOperationOccurred(fileToLoad);
+        } catch (CouldNotCreateRequiredFile e) {
             log.error("Error while loading executions file: {}", e.getMessage());
-            runLater(() -> new AlertPopup("Error while loading executions file", e.getMessage(), Alert.AlertType.ERROR).show());
+            runLater(() -> new AlertPopup("Error while loading executions file", e.getMessage(), false).show());
         }
     }
 
-    private void handleFileOperationOccurred(File mostRecentFile, boolean saved) {
+    private void handleFileOperationOccurred(File mostRecentFile) {
         RecentFileUtils.saveRecentFile(mostRecentFile.getAbsolutePath());
-        if (saved) {
-            refreshEdited();
-            RecentFileUtils.refreshDirLocation(JSONField.LAST_SAVED, mostRecentFile.getParent());
-        } else {
-            refreshFileLoaded(mostRecentFile.getAbsolutePath());
-            RecentFileUtils.refreshDirLocation(JSONField.LAST_LOADED, mostRecentFile.getParent());
-        }
+        RecentFileUtils.refreshLastAccessedDirectory(mostRecentFile.getParent());
+        refreshFileLoaded(mostRecentFile.getAbsolutePath());
+        refreshEdited();
     }
 
     public void save(File fileToSave) {
         try {
-            entryRepository.writeToFile(fileToSave, getExecution());
-            RecentFileUtils.saveRecentFile(fileToSave.getAbsolutePath());
-            handleFileOperationOccurred(fileToSave, true);
-        } catch (CouldNotWriteDataToFileException e) {
+            entryRepository.saveToFile(fileToSave, getExecution());
+            handleFileOperationOccurred(fileToSave);
+        } catch (CouldNotCreateRequiredFile e) {
+            String exceptionMessage = e.getMessage() != null && !e.getMessage().isBlank() ? (", " + e.getMessage()) : "";
             runLater(() -> new AlertPopup(
                     "Error",
-                    "Could not save data to file: " + fileToSave.getAbsolutePath() + "\n" + (e.getMessage() != null ? e.getMessage() : ""),
+                    "Could not save data to file: \"" + fileToSave.getAbsolutePath() + "\"" + exceptionMessage,
                     "Data:\n" + getExecution(),
                     false)
                     .show());

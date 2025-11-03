@@ -6,16 +6,13 @@ import javafx.collections.ObservableList;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.data.entry.Entry;
+import org.ashot.shellflow.data.execution.entry.Entry;
 import org.ashot.shellflow.exception.InvalidCommandException;
 import org.ashot.shellflow.exception.InvalidEntryException;
 import org.ashot.shellflow.exception.InvalidEntryPathException;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.variable.VariableEntry;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +42,10 @@ public class EntryMapper {
     }
 
     public Command entryToCommand(Entry entry, boolean persistent) {
-        String name = entry.getName();
-        String command = entry.getCommand();
-        String path = entry.getPath();
-        boolean wsl = entry.isWsl();
+        String name = entry.name();
+        String command = entry.command();
+        String path = entry.path();
+        boolean wsl = entry.wsl();
         for (VariableEntry variableEntry : variables) {
             if (variableEntry.isEnabled()) {
                 command = command.replace("${" + variableEntry.getName() + "}", variableEntry.getValue());
@@ -61,37 +58,16 @@ public class EntryMapper {
         try {
             return new Command(name, path, command, wsl, persistent);
         } catch (InvalidCommandException | InvalidEntryPathException e) {
-            log.error("Entry failed validation, name: {}, path: {}, command: {}, skipping execution", entry.getName(), entry.getPath(), entry.getCommand());
+            log.error("Entry failed validation, name: {}, path: {}, command: {}, skipping execution", entry.name(), entry.path(), entry.command());
             handleError(entry, e);
             throw new InvalidEntryException("Entry failed validation: " + e.getMessage());
         }
     }
 
-    public static JSONArray createEntryJSONArray(List<Entry> entries) {
-        if (entries == null) {
-            throw new IllegalArgumentException("Entry list provided is null");
-        }
-        JSONArray jsonArray = new JSONArray();
-        for (Entry entry : entries) {
-            JSONObject jsonObject = new JSONObject();
-            entryToJSONObject(jsonObject, entry);
-            jsonArray.put(jsonObject);
-        }
-        return jsonArray;
-    }
-
-    private static void entryToJSONObject(JSONObject object, Entry entry) {
-        object.put(JSONField.NAME.getFieldKey(), entry.getName());
-        object.put(JSONField.PATH.getFieldKey(), entry.getPath());
-        object.put(JSONField.COMMAND.getFieldKey(), entry.getCommand());
-        object.put(JSONField.WSL.getFieldKey(), entry.isWsl());
-        object.put(JSONField.ENABLED.getFieldKey(), entry.isEnabled());
-    }
-
     public List<Command> buildCommands(List<Entry> entries) {
         List<Command> commandList = new ArrayList<>();
         for (Entry entry : entries) {
-            if (!entry.isEnabled()) {
+            if (!entry.enabled()) {
                 continue;
             }
             Command cmd = entryToCommand(entry, false);
@@ -115,9 +91,9 @@ public class EntryMapper {
             }
             String title = "Entry to execution conversion error";
             String expandedText = "Entry failed validation" + "\n" +
-                    "Name: " + entry.getName() + "\n" +
-                    "Path: " + entry.getPath() + "\n" +
-                    "Command: " + entry.getCommand();
+                    "Name: " + entry.name() + "\n" +
+                    "Path: " + entry.path() + "\n" +
+                    "Command: " + entry.command();
 
             AlertPopup errorPopup = new AlertPopup(title, msg, expandedText, false);
             errorPopup.setOnCloseRequest(_ -> isShowingPopup = false);

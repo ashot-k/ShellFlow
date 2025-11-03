@@ -5,14 +5,22 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
-import org.ashot.shellflow.exception.CouldNotWriteDataToFileException;
+import javafx.scene.Node;
+import org.ashot.shellflow.data.constant.SettingsFilePaths;
+import org.ashot.shellflow.data.execution.variable.Variable;
+import org.ashot.shellflow.data.execution.variable.Variables;
+import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.node.variable.VariableSetup;
 import org.ashot.shellflow.peristence.VariableRepository;
+import org.ashot.shellflow.utils.FileUtils;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VariableManagementController {
 
@@ -40,19 +48,31 @@ public class VariableManagementController {
     private void setupEvents() {
         view.getSaveAllButton().setOnAction(_ -> {
             try {
-                variableRepository.saveToFile(variableList);
+                Path pathToVariables = Paths.get(SettingsFilePaths.VARIABLES.getPath());
+                File fileToSave = FileUtils.getFile(pathToVariables);
+                variableRepository.saveToFile(fileToSave, new Variables(getVariablesList()));
                 saved.set(!saved.get());
-            } catch (CouldNotWriteDataToFileException e) {
+            } catch (CouldNotCreateRequiredFile e) {
                 new AlertPopup("Error while saving Variables", e.getMessage(), false).show();
             }
         });
         view.getAddVariableButton().setOnAction(_ -> addVariableEntry());
     }
 
+    private List<Variable> getVariablesList() {
+        List<Variable> variables = new ArrayList<>();
+        for (Node node : view.getVariableRows().getChildren()) {
+            if (node instanceof VariableEntry variableEntry) {
+                variables.add(new Variable(variableEntry.getName(), variableEntry.getValue(), variableEntry.isEnabled()));
+            }
+        }
+        return variables;
+    }
+
     private void load(File init) {
         try {
-            variableRepository.loadExisting(init).forEach(this::addVariableEntry);
-        } catch (CouldNotReadFromFileException e) {
+            variableRepository.openFromFile(init).variables().forEach(e -> addVariableEntry(new VariableEntry(e.name(), e.value(), e.enabled())));
+        } catch (CouldNotCreateRequiredFile e) {
             new AlertPopup("Error while loading Variables", e.getMessage(), false).show();
         }
     }

@@ -1,12 +1,11 @@
 package org.ashot.shellflow.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ashot.shellflow.ShellFlow;
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
+import org.ashot.shellflow.data.utility.Recent;
 import org.ashot.shellflow.exception.CriticalException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.ashot.shellflow.exception.FileReadFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,112 +19,95 @@ import java.util.List;
 
 public class RecentFileUtils {
     private static final Logger log = LoggerFactory.getLogger(RecentFileUtils.class);
+    private static final ObjectMapper mapper = new ObjectMapper();
 
-    private static String lastSavedFolderLocation;
-    private static String lastLoadedFolderLocation;
+    static {
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
+
+    private static String lastAccessedDirectory;
 
     private RecentFileUtils() {
     }
 
     public static void refreshRecentDirectories() {
         try {
-            JSONObject dirs = getRecents();
-            lastSavedFolderLocation = (String) dirs.get(JSONField.LAST_SAVED.getFieldKey());
-            lastLoadedFolderLocation = (String) dirs.get(JSONField.LAST_LOADED.getFieldKey());
+            Recent recent = getRecents();
+            lastAccessedDirectory = recent.lastAccessedDirectory();
         } catch (Exception e) {
             log.error("Could not refresh recent directories: {}", e.getMessage());
         }
     }
 
-    public static String getLastSavedDirectory() throws CouldNotReadFromFileException {
+    public static String getLastAccessedDirectory() throws FileReadFailureException {
         try {
             refreshRecentDirectories();
-            return lastSavedFolderLocation;
+            return lastAccessedDirectory;
         } catch (Exception e) {
-            throw new CouldNotReadFromFileException(e.getMessage());
+            throw new FileReadFailureException(e.getMessage());
         }
     }
 
-    public static String getLastLoadedDirectory() throws CouldNotReadFromFileException {
+    public static File getMostRecentlyOpenedFile() throws FileReadFailureException {
         try {
-            refreshRecentDirectories();
-            return lastLoadedFolderLocation;
-        } catch (Exception e) {
-            throw new CouldNotReadFromFileException(e.getMessage());
-        }
-    }
-
-    public static File loadMostRecentFile() throws CouldNotReadFromFileException {
-        JSONObject recents = getRecents();
-        try {
-            String path = recents.getJSONArray(JSONField.RECENT.getFieldKey()).optString(0);
-            Path mostRecentFilePath = Paths.get(path);
-            return FileUtils.getFile(mostRecentFilePath);
-        } catch (JSONException _) {
-            throw new CouldNotReadFromFileException("Missing json key " + JSONField.RECENT.getFieldKey() + "or not a valid json array in file");
+            Recent recent = getRecents();
+            Path pathToMostRecent = Paths.get(recent.recentlyOpenedFiles().getFirst());
+            return FileUtils.getFile(pathToMostRecent);
         } catch (InvalidPathException e) {
-            throw new CouldNotReadFromFileException("Invalid path: " + e.getMessage());
+            throw new FileReadFailureException("Invalid path: " + e.getMessage());
         }
     }
 
-    public static void refreshDirLocation(JSONField recentDirsField, String newDirLocation) {
-        if (newDirLocation == null || recentDirsField == null) {
-            return;
-        }
+    public static void refreshLastAccessedDirectory(String newDirLocation) {
         try {
-            File file = new File(ShellFlow.getConfig().recentDirsConfigLocation());
-            JSONObject jsonObject = new JSONObject(Files.readString(file.toPath()));
-            jsonObject.put(recentDirsField.getFieldKey(), newDirLocation);
-            FileUtils.writeJSONDataToFile(file, jsonObject);
+            String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
+            Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
+
+            String jsonString = FileUtils.readFileAsString(recentsConfigPath);
+            Recent recents = mapper.readValue(jsonString, Recent.class);
+
+            String jsonToWrite = mapper.writeValueAsString(new Recent(recents.recentlyOpenedFiles(), newDirLocation));
+            FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
         } catch (IOException e) {
-            log.error("Could not refresh {} dir location: {}", recentDirsField.getFieldKey(), e.getMessage());
+            log.error("Could not refresh last accessed directory location: {}", e.getMessage());
         }
     }
 
-    public static void saveRecentFile(String path) {
-        if (path == null) {
-            return;
-        }
-        JSONObject jsonObject;
+    public static void saveRecentFile(String newRecentlyOpenedFilePath) {
         try {
-            File file = new File(ShellFlow.getConfig().recentDirsConfigLocation());
-            jsonObject = new JSONObject(Files.readString(file.toPath()));
-            JSONArray recents = (JSONArray) jsonObject.get(JSONField.RECENT.getFieldKey());
-            List<Object> list = recents.toList();
-            list.removeIf(element -> element.toString().equals(path));
-            list.addFirst(path);
-            recents.clear();
-            recents.putAll(list);
-            jsonObject.put(JSONField.RECENT.getFieldKey(), recents);
-            FileUtils.writeJSONDataToFile(file, jsonObject);
+            String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
+            Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
+
+            String jsonString = FileUtils.readFileAsString(recentsConfigPath);
+            Recent recents = mapper.readValue(jsonString, Recent.class);
+
+            recents.recentlyOpenedFiles().removeIf(e -> e.equalsIgnoreCase(newRecentlyOpenedFilePath));
+            recents.recentlyOpenedFiles().addFirst(newRecentlyOpenedFilePath);
+
+            String jsonToWrite = mapper.writeValueAsString(recents);
+            FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
         } catch (IOException e) {
             log.error("Could not save file to recents: {}", e.getMessage());
         }
     }
 
-    public static JSONObject getRecents() {
+    public static Recent getRecents() {
         String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
         try {
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
             if (!FileUtils.fileExists(recentsConfigPath)) {
-                Path newConfigFilePath = Files.createFile(recentsConfigPath);
                 log.info("Could not find {}, creating new default Recents file at the same location", pathToRecentDirsConfigString);
-                JSONObject jsonObject = createDefaultRecentFilesJSON();
-                FileUtils.writeJSONDataToFile(newConfigFilePath.toFile(), jsonObject);
-                return jsonObject;
+                Path newConfigFilePath = Files.createFile(recentsConfigPath);
+                Recent recent = new Recent(List.of(), "");
+                String newRecentFileJSONString = mapper.writeValueAsString(recent);
+                FileUtils.writeJSONDataToFile(newConfigFilePath.toFile(), newRecentFileJSONString);
+                return recent;
             }
-            String jsonContent = FileUtils.readFileAsString(recentsConfigPath);
-            return new JSONObject(jsonContent);
+            String jsonString = FileUtils.readFileAsString(recentsConfigPath);
+            return mapper.readValue(jsonString, Recent.class);
         } catch (IOException e) {
             throw new CriticalException("Cannot read recents: " + e.getMessage() + ", path: " + pathToRecentDirsConfigString);
         }
     }
 
-    private static JSONObject createDefaultRecentFilesJSON() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JSONField.LAST_LOADED.getFieldKey(), ".");
-        jsonObject.put(JSONField.LAST_SAVED.getFieldKey(), ".");
-        jsonObject.put(JSONField.RECENT.getFieldKey(), new JSONArray());
-        return jsonObject;
-    }
 }

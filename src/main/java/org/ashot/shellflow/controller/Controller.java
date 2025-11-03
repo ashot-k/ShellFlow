@@ -11,18 +11,18 @@ import javafx.scene.layout.HeaderBar;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
+import org.ashot.shellflow.exception.FileReadFailureException;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.ShellFlowTray;
 import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import org.ashot.shellflow.utils.GUIAnimations;
+import org.ashot.shellflow.utils.RecentFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 import static javafx.scene.layout.HeaderDragType.DRAGGABLE_SUBTREE;
-import static org.ashot.shellflow.utils.FileUtils.getMostRecentlyOpenedFile;
 
 
 @SuppressWarnings("deprecation")
@@ -54,8 +54,8 @@ public class Controller {
     public void loadInit() {
         log.info("Initializing entries");
         try {
-            entryManagementController.load(getMostRecentlyOpenedFile());
-        } catch (CouldNotReadFromFileException e) {
+            entryManagementController.load(RecentFileUtils.getMostRecentlyOpenedFile());
+        } catch (FileReadFailureException e) {
             log.error("Could not initialize entries: {}", e.getMessage());
         }
     }

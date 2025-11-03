@@ -4,7 +4,6 @@ import atlantafx.base.controls.CustomTextField;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.stage.DirectoryChooser;
-import org.ashot.shellflow.data.constant.JSONField;
 import org.ashot.shellflow.node.entry.button.BrowsePathButton;
 import org.ashot.shellflow.utils.FieldUtils;
 import org.ashot.shellflow.utils.Utils;
@@ -15,7 +14,7 @@ public class PathField extends CustomTextField {
     private final BooleanProperty wsl = new SimpleBooleanProperty();
 
     public PathField(String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
-        FieldUtils.setupField(this, JSONField.PATH, text, promptText, toolTip, width, height, styleClass);
+        FieldUtils.setupField(this, text, promptText, toolTip, width, height, styleClass);
         setRight(new BrowsePathButton(this::onPathBrowse));
     }
 

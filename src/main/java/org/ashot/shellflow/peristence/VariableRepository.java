@@ -1,68 +1,66 @@
 package org.ashot.shellflow.peristence;
 
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
-import org.ashot.shellflow.exception.CouldNotWriteDataToFileException;
-import org.ashot.shellflow.node.variable.VariableEntry;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.scene.control.Alert;
+import org.ashot.shellflow.ShellFlow;
+import org.ashot.shellflow.data.execution.variable.Variables;
+import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.exception.FileReadFailureException;
+import org.ashot.shellflow.exception.FileWriteFailureException;
+import org.ashot.shellflow.mapper.DefaultObjectMapper;
+import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.utils.FileUtils;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.ashot.shellflow.data.constant.SettingsFilePaths.VARIABLES;
 
-public class VariableRepository {
-    public VariableRepository() {
+public class VariableRepository implements FileDataRepository<Variables> {
+    private static final ObjectMapper mapper = new DefaultObjectMapper();
+    private static final Logger log = LoggerFactory.getLogger(VariableRepository.class);
+
+    public void saveToFile(File file, @Nullable Variables variables) throws CouldNotCreateRequiredFile {
+        try {
+            String jsonString = mapper.writeValueAsString(variables);
+            FileUtils.writeJSONDataToFile(file, jsonString);
+        } catch (JsonProcessingException | FileWriteFailureException e) {
+            throw new CouldNotCreateRequiredFile(e.getMessage());
+        }
     }
 
-    public void saveToFile(@Nullable List<VariableEntry> variableEntryList) throws CouldNotWriteDataToFileException {
-        File file = new File(VARIABLES.getPath());
-        JSONObject jsonObject = new JSONObject();
-        JSONArray variables = new JSONArray();
-        if (variableEntryList != null) {
-            for (VariableEntry variable : variableEntryList) {
-                JSONObject row = createVariableJSONEntry(variable);
-                variables.put(row);
+    public Variables openFromFile(File file) throws CouldNotCreateRequiredFile {
+        try {
+            if (!file.exists()) {
+                String warningMessage = "Variables could not be found in \"" + file.getAbsolutePath() + "\", will create a new variables file in that same path";
+                log.warn(warningMessage);
+                new AlertPopup(Alert.AlertType.WARNING,
+                        "Variables could not be found",
+                        warningMessage,
+                        false)
+                        .show();
+                return createNewVariablesFile();
             }
+            String jsonString = FileUtils.readFileAsString(file.toPath());
+            return mapper.readValue(jsonString, Variables.class);
+        } catch (JsonProcessingException | FileReadFailureException e) {
+            throw new CouldNotCreateRequiredFile(e.getMessage());
         }
-        jsonObject.put(JSONField.VARIABLES.getFieldKey(), variables);
-        FileUtils.writeJSONDataToFile(file, jsonObject);
     }
 
-    public List<VariableEntry> loadExisting(File file) throws CouldNotReadFromFileException {
-        JSONObject jsonObject = FileUtils.createJSONObjectFromFIle(file);
-        JSONArray variables = jsonObject.getJSONArray(JSONField.VARIABLES.getFieldKey());
-        if (variables == null) {
-            throw new CouldNotReadFromFileException("No variables found in file: " + file.getAbsolutePath());
+    public Variables createNewVariablesFile() throws CouldNotCreateRequiredFile {
+        try {
+            String variablesDirectoryPath = ShellFlow.getConfig().variablesConfigLocation();
+            File newVariablesFile = FileUtils.createFileAndDirs(variablesDirectoryPath);
+            Variables newVariables = new Variables(List.of());
+            String jsonString = mapper.writeValueAsString(newVariables);
+            FileUtils.writeJSONDataToFile(newVariablesFile, jsonString);
+            return newVariables;
+        } catch (FileWriteFailureException | JsonProcessingException e) {
+            throw new CouldNotCreateRequiredFile(e.getMessage());
         }
-        List<VariableEntry> variableEntryList = new ArrayList<>();
-        for (int i = 0; i < variables.toList().size(); i++) {
-            JSONObject o = variables.getJSONObject(i);
-            String name = o.optString(JSONField.NAME.getFieldKey());
-            String value = o.optString(JSONField.VALUE.getFieldKey());
-            boolean enabled = o.optBoolean(JSONField.ENABLED.getFieldKey(), Boolean.parseBoolean(JSONField.ENABLED.getDefaultValue()));
-            variableEntryList.add(new VariableEntry(name, value, enabled));
-        }
-        return variableEntryList;
-    }
-
-
-    public void createNewVariablesFile(File file) throws CouldNotWriteDataToFileException {
-        JSONObject jsonObject = new JSONObject();
-        JSONArray variables = new JSONArray();
-        jsonObject.put(JSONField.VARIABLES.getFieldKey(), variables);
-        FileUtils.writeJSONDataToFile(file, jsonObject);
-    }
-
-    private JSONObject createVariableJSONEntry(VariableEntry entry) {
-        JSONObject row = new JSONObject();
-        row.put(JSONField.NAME.getFieldKey(), entry.getName());
-        row.put(JSONField.VALUE.getFieldKey(), entry.getValue());
-        row.put(JSONField.ENABLED.getFieldKey(), entry.isEnabled());
-        return row;
     }
 }

@@ -1,66 +1,42 @@
 package org.ashot.shellflow.peristence;
 
-import org.ashot.shellflow.data.constant.JSONField;
-import org.ashot.shellflow.data.entry.Entry;
-import org.ashot.shellflow.data.entry.Execution;
-import org.ashot.shellflow.exception.CouldNotReadFromFileException;
-import org.ashot.shellflow.exception.CouldNotWriteDataToFileException;
-import org.ashot.shellflow.exception.EmptyExecutionsFile;
-import org.ashot.shellflow.mapper.EntryMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ashot.shellflow.data.execution.Execution;
+import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.exception.FileReadFailureException;
+import org.ashot.shellflow.exception.FileWriteFailureException;
+import org.ashot.shellflow.mapper.DefaultObjectMapper;
 import org.ashot.shellflow.utils.FileUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class ExecutionRepository {
+
+public class ExecutionRepository implements FileDataRepository<Execution> {
     private static final Logger log = LoggerFactory.getLogger(ExecutionRepository.class);
+    private static final ObjectMapper mapper = new DefaultObjectMapper();
 
-    public void writeToFile(File file, Execution execution) throws CouldNotWriteDataToFileException {
-        JSONObject jsonObject = createJSONObject(execution);
-        log.debug("Saving file: {}", file.getAbsolutePath());
-        String executionStr = jsonObject.toString(1);
-        log.debug("Saving: {}", executionStr);
-        FileUtils.writeJSONDataToFile(file, jsonObject);
-        log.debug("Saved: {}", file.getAbsolutePath());
+    public void saveToFile(File file, Execution execution) throws CouldNotCreateRequiredFile {
+        try {
+            log.debug("Saving file: {}", file.getAbsolutePath());
+            String jsonString = mapper.writeValueAsString(execution);
+            log.debug("Saving: {}", jsonString);
+            FileUtils.writeJSONDataToFile(file, jsonString);
+        } catch (JsonProcessingException | FileWriteFailureException e) {
+            throw new CouldNotCreateRequiredFile(e.getMessage());
+        }
     }
 
-    public Execution openFile(File fileToLoad) throws CouldNotReadFromFileException {
-        log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
-        JSONObject jsonData = FileUtils.createJSONObjectFromFIle(fileToLoad);
-        if (jsonData.isEmpty()) {
-            throw new EmptyExecutionsFile("File \"" + fileToLoad.getAbsolutePath() + "\" has no data");
+    public Execution openFromFile(File fileToLoad) throws CouldNotCreateRequiredFile {
+        try {
+            log.debug("Loading file: {}", fileToLoad.getAbsolutePath());
+            String jsonString = FileUtils.readFileAsString(fileToLoad.toPath());
+            log.debug("Loaded String: {}", jsonString);
+            return mapper.readValue(jsonString, Execution.class);
+        } catch (JsonProcessingException | FileReadFailureException e) {
+            throw new CouldNotCreateRequiredFile(e.getMessage());
         }
-        String jsonToLoad = jsonData.toString(1);
-        log.debug("Loading: {}", jsonToLoad);
-        JSONArray jsonArray = jsonData.getJSONArray("entries");
-        Execution execution = new Execution();
-        for (Object object : jsonArray) {
-            if (object instanceof JSONObject entryJSON) {
-                String name = entryJSON.optString(JSONField.NAME.getFieldKey(), JSONField.NAME.getDefaultValue());
-                String path = entryJSON.optString(JSONField.PATH.getFieldKey(), JSONField.PATH.getDefaultValue());
-                String cmd = entryJSON.optString(JSONField.COMMAND.getFieldKey(), JSONField.COMMAND.getDefaultValue());
-                String wsl = entryJSON.optString(JSONField.WSL.getFieldKey(), JSONField.WSL.getDefaultValue());
-                String enabled = entryJSON.optString(JSONField.ENABLED.getFieldKey(), JSONField.ENABLED.getDefaultValue());
-                execution.getEntries().add(new Entry(name, path, cmd, Boolean.parseBoolean(wsl), Boolean.parseBoolean(enabled)));
-            }
-        }
-        execution.setDelay(jsonData.getInt(JSONField.DELAY.getFieldKey()));
-        execution.setSequence(jsonData.getBoolean(JSONField.SEQUENTIAL.getFieldKey()));
-        execution.setName(jsonData.getString(JSONField.EXECUTION_NAME.getFieldKey()));
-        log.debug("Loaded: {}", fileToLoad.getAbsolutePath());
-        return execution;
-    }
-
-    private JSONObject createJSONObject(Execution execution) {
-        JSONArray entriesArray = EntryMapper.createEntryJSONArray(execution.getEntries());
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JSONField.ENTRIES.getFieldKey(), entriesArray);
-        jsonObject.put(JSONField.DELAY.getFieldKey(), execution.getDelay());
-        jsonObject.put(JSONField.SEQUENTIAL.getFieldKey(), execution.isSequence());
-        jsonObject.put(JSONField.EXECUTION_NAME.getFieldKey(), execution.getName());
-        return jsonObject;
     }
 }

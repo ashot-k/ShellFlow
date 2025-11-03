@@ -14,9 +14,12 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.constant.Fonts;
-import org.ashot.shellflow.data.entry.Entry;
+import org.ashot.shellflow.data.execution.entry.Entry;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.entry.button.CloseButton;
 import org.ashot.shellflow.node.entry.button.EnableEntryBoxToggle;
@@ -53,22 +56,22 @@ public class EntryBox extends TitledPane {
         this.entry = entry;
 
         nameField = new NameField(
-                entry.getName(), null, ToolTipMessages.NAME_FIELD,
+                entry.name(), null, ToolTipMessages.NAME_FIELD,
                 null, null, "name-field"
         );
         pathField = new PathField(
-                entry.getPath(), null, ToolTipMessages.PATH_FIELD,
+                entry.path(), null, ToolTipMessages.PATH_FIELD,
                 null, null, "path-field"
         );
         commandField = new CommandTextArea(
-                entry.getCommand(), null, ToolTipMessages.COMMAND_FIELD,
+                entry.command(), null, ToolTipMessages.COMMAND_FIELD,
                 null, null, "command-field"
         );
 
-        wslToggle = new WSLBoxToggle("WSL", entry.isWsl());
+        wslToggle = new WSLBoxToggle(entry.wsl());
         pathField.wslProperty().bind(wslToggle.selectedProperty());
 
-        enabledToggle = new EnableEntryBoxToggle("", entry.isEnabled());
+        enabledToggle = new EnableEntryBoxToggle(entry.enabled());
         deleteEntry = new CloseButton();
 
         VBox labeledNameField = new LabeledTextInput("Name", nameField);
@@ -86,14 +89,6 @@ public class EntryBox extends TitledPane {
         GridPane.setConstraints(labeledNameField, 0, 0, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
         GridPane.setConstraints(labeledPathField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
         GridPane.setConstraints(labeledCommandField, 0, 2, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
-
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setHgrow(Priority.ALWAYS);
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setHgrow(Priority.ALWAYS);
-        ColumnConstraints col3 = new ColumnConstraints();
-        col3.setHgrow(Priority.ALWAYS);
-        entryGrid.getColumnConstraints().addAll(col1, col2, col3);
 
         entryGrid.setHgap(8);
         entryGrid.setVgap(5);
@@ -133,7 +128,7 @@ public class EntryBox extends TitledPane {
 
     private void setupInitialState() {
         refreshTitleText(nameField.getText());
-        toggleEntryBox(entry.isEnabled());
+        toggleEntryBox(entry.enabled());
         setExpanded(false);
     }
 
@@ -160,11 +155,11 @@ public class EntryBox extends TitledPane {
     }
 
     private void setupEditingTrackingEventListeners() {
-        addEditedListenerForTextProperties(nameField.textProperty(), entry.getName());
-        addEditedListenerForTextProperties(pathField.textProperty(), entry.getPath());
-        addEditedListenerForTextProperties(commandField.textProperty(), entry.getCommand());
-        addEditedListenerForCheckbox(wslToggle.selectedProperty(), entry.isWsl());
-        addEditedListenerForCheckbox(enabledToggle.selectedProperty(), entry.isEnabled());
+        addEditedListenerForTextProperties(nameField.textProperty(), entry.name());
+        addEditedListenerForTextProperties(pathField.textProperty(), entry.path());
+        addEditedListenerForTextProperties(commandField.textProperty(), entry.command());
+        addEditedListenerForCheckbox(wslToggle.selectedProperty(), entry.wsl());
+        addEditedListenerForCheckbox(enabledToggle.selectedProperty(), entry.enabled());
     }
 
     private void setupEventListeners() {
@@ -215,10 +210,10 @@ public class EntryBox extends TitledPane {
     }
 
     private boolean checkAllFieldsEdited() {
-        return nameField.getText().equals(entry.getName())
-                && pathField.getText().equals(entry.getPath())
-                && commandField.getText().equals(entry.getCommand())
-                && wslToggle.isSelected() == entry.isWsl();
+        return nameField.getText().equals(entry.name())
+                && pathField.getText().equals(entry.path())
+                && commandField.getText().equals(entry.command())
+                && wslToggle.isSelected() == entry.wsl();
     }
 
     public void setOnDeleteButtonAction(EventHandler<ActionEvent> action) {
