@@ -71,6 +71,13 @@ public class DefaultConfig implements ShellFlowConfig {
         return Boolean.parseBoolean(value);
     }
 
+    @Override
+    public boolean desktopNotifications() {
+        ConfigProperty property = ConfigProperty.DESKTOP_NOTIFICATIONS;
+        String value = getPropertyOrDefault(property.getPropertyName(), property.getDefaultPropertyValue());
+        return Boolean.parseBoolean(value);
+    }
+
     private String getPropertyOrDefault(String propertyName, String defaultValue) {
         String property = properties.getProperty(propertyName);
         if (property == null) {

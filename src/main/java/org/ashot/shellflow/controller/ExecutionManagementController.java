@@ -17,7 +17,7 @@ import org.ashot.shellflow.execution.task.SequenceExecutionTaskState;
 import org.ashot.shellflow.execution.task.SingularExecutionTask;
 import org.ashot.shellflow.execution.task.factory.SequenceTaskFactory;
 import org.ashot.shellflow.execution.task.factory.SingularTaskFactory;
-import org.ashot.shellflow.node.notification.ShellFlowTray;
+import org.ashot.shellflow.node.notification.SystemTray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,9 +136,9 @@ public class ExecutionManagementController {
     private void handleSingularExecutionState(ExecutionState state, SingleExecutionTab singleExecutionTab) {
         singleExecutionTab.updateState(state, false);
         if (state.equals(FAILURE)) {
-            ShellFlowTray.displayNotification(state.getValue(), failNotificationMessage(singleExecutionTab.getText(), singleExecutionTab.getProcess().exitValue()), NotificationType.EXECUTION_FAILURE);
+            SystemTray.displayNotification(state.getValue(), failNotificationMessage(singleExecutionTab.getText(), singleExecutionTab.getProcess().exitValue()), NotificationType.EXECUTION_FAILURE);
         } else if (state.equals(FINISHED)) {
-            ShellFlowTray.displayNotification(state.getValue(), finishedNotificationMessage(singleExecutionTab.getText()), NotificationType.SUCCESS);
+            SystemTray.displayNotification(state.getValue(), finishedNotificationMessage(singleExecutionTab.getText()), NotificationType.SUCCESS);
         }
     }
 
@@ -152,9 +152,9 @@ public class ExecutionManagementController {
             case EXECUTION_IN_SEQUENCE_FINISHED -> {
             }
             case FINISHED ->
-                    ShellFlowTray.displayNotification(sequenceState.getValue(), finishedNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.SUCCESS);
+                    SystemTray.displayNotification(sequenceState.getValue(), finishedNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.SUCCESS);
             case FAILURE ->
-                    ShellFlowTray.displayNotification(sequenceState.getValue(), failNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.EXECUTION_FAILURE);
+                    SystemTray.displayNotification(sequenceState.getValue(), failNotificationMessage(sequenceExecutionsTab.getText()), NotificationType.EXECUTION_FAILURE);
             case INTERNAL_FAILURE -> {
             }
             case CANCELLED -> log.info("Sequence Canceled: {}", sequenceExecutionsTab.getText());

@@ -16,5 +16,7 @@ public interface ShellFlowConfig {
 
     boolean optimizedMode();
 
+    boolean desktopNotifications();
+
     void saveProperty(ConfigProperty property, String value);
 }

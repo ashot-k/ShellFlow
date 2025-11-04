@@ -18,7 +18,7 @@ import org.ashot.shellflow.node.entry.misc.EntryInfoBar;
 public class EntrySetupTab extends Tab {
     private static final double MAX_ENTRIES_TOOLBAR_SPLIT_POS = 0.85;
     private static final double INIT_ENTRIES_TOOLBAR_SPLIT_POS = 0.75;
-    private static final double INIT_ENTRIES_EXECUTIONS_SPLIT_POS = 0.275;
+    private static final double INIT_ENTRIES_EXECUTIONS_SPLIT_POS = 0.260;
     private static final double MIN_ENTRIES_EXECUTIONS_SPLIT_POS = 0.15;
     private double entriesExecutionsSplitCurrentPos = 0;
     private final FlowPane entryListContainer;
@@ -26,13 +26,13 @@ public class EntrySetupTab extends Tab {
     private final EntryInfoBar entryInfoBar;
     private final StackPane stackPane;
     private final SplitPane entryListExecutionsSplitPane;
-    private final EntryExecutionOptions entryExecutionOptions;
+    private final EntrySetupOptions entrySetupOptions;
     private Node executionsPlaceHolder;
 
     public EntrySetupTab() {
         executionsPlaceHolder = createExecutionsPlaceholder();
         entryInfoBar = new EntryInfoBar();
-        entryExecutionOptions = new EntryExecutionOptions();
+        entrySetupOptions = new EntrySetupOptions();
         entrySetupToolBar = new EntrySetupToolBar();
         entryListContainer = new FlowPane();
         entryListContainer.setHgap(5);
@@ -49,8 +49,7 @@ public class EntrySetupTab extends Tab {
         entryListScrollPane.setFitToHeight(true);
         entryListScrollPane.setContent(entryListContainerContent);
 
-        VBox entryListWrapper = new VBox(entryListScrollPane);
-        entryListWrapper.setPadding(new Insets(5));
+        VBox entryListWrapper = new VBox(entryListScrollPane, entrySetupOptions);
 
         entryListExecutionsSplitPane = new SplitPane(entryListWrapper, executionsPlaceHolder);
         setupEntryListExecutionsSplitLimits();
@@ -133,7 +132,7 @@ public class EntrySetupTab extends Tab {
         setupEntryListExecutionsSplitLimits();
     }
 
-    public EntryExecutionOptions getEntryExecutionOptions() {
-        return entryExecutionOptions;
+    public EntrySetupOptions getEntryExecutionOptions() {
+        return entrySetupOptions;
     }
 }

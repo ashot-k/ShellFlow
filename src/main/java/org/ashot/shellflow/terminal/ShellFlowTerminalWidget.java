@@ -7,15 +7,12 @@ import org.ashot.shellflow.node.toolbar.TerminalToolBar;
 import org.jetbrains.annotations.NotNull;
 
 public class ShellFlowTerminalWidget extends JediTermFxWidget {
-    private TerminalToolBar terminalToolBar;
+    private final TerminalToolBar terminalToolBar;
 
     public ShellFlowTerminalWidget(@NotNull SettingsProvider settingsProvider) {
         super(settingsProvider);
         FontSelectionDialog.selectedSize.addListener((_, _, _) -> getTerminalPanel().reinitFontAndResize());
         FontSelectionDialog.selectedFont.addListener((_, _, _) -> getTerminalPanel().reinitFontAndResize());
-    }
-
-    public void createToolBar() {
         terminalToolBar = new TerminalToolBar(this);
     }
 

@@ -8,9 +8,9 @@ import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.icon.Icons;
 
 
-public class PerformanceSettingMenuItem extends CheckMenuItem {
+public class PerformanceSettingToggleMenuItem extends CheckMenuItem {
 
-    public PerformanceSettingMenuItem() {
+    public PerformanceSettingToggleMenuItem() {
         setText("Optimized Animations");
         setGraphic(Icons.getPerformanceOptionIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
         setOnAction(_ -> ShellFlow.getConfig().saveProperty(ConfigProperty.OPTIMIZED_MODE, String.valueOf(isSelected())));

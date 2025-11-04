@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.utils.GUIAnimations;
 
@@ -23,8 +24,9 @@ public class FloatingToolBar extends VBox {
         setAlignment(Pos.CENTER);
         buttonsBar = new HBox();
         buttonsBar.setAlignment(Pos.BOTTOM_CENTER);
-        buttonsBar.setSpacing(10);
-        setPadding(new Insets(5, 4, 5, 4));
+        buttonsBar.setSpacing(5);
+        HBox.setHgrow(this, Priority.NEVER);
+        setPadding(new Insets(2.5));
         getChildren().addAll(buttonsBar);
         getStyleClass().addAll("floating-toolBar");
     }

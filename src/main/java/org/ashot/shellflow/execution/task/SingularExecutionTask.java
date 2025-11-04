@@ -39,9 +39,6 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
     protected ExecutionState call() throws Exception {
         try {
             setupCancellationHandler(singleExecutionTab);
-            if (isCancelled()) {
-                return ExecutionState.CANCELLED;
-            }
             Thread.sleep(delay);
             PtyProcess process = startProcess(singleExecutionTab, buildProcess(command));
             if (process == null) {
@@ -50,14 +47,7 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
             runLater(() -> singleExecutionTab.checkTabName(command, process));
             singleExecutionTab.setProcess(process);
             updateValue(ExecutionState.IN_PROGRESS);
-            int exitValue = waitForProcess(process);
-
-            if (isCancelled()) {
-                log.debug("Destroying process: {} ({}), forcibly due to cancellation of Execution Task", singleExecutionTab.getText(), singleExecutionTab.getCommandDisplayName());
-                process.destroyForcibly();
-                return ExecutionState.CANCELLED;
-            }
-            return handleProcessExit(exitValue);
+            return handleProcessExit(process.waitFor());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("Interrupted execution of command: {}, with args: {}, with error: {}", command.getName(), command.getRawArguments(), e.getMessage());
@@ -100,23 +90,6 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         tab.getTerminal().setTtyConnector(TerminalFactory.createTtyConnector(process));
         TerminalRegistry.register(String.valueOf(process.pid()), tab.getTerminal().getTtyConnector());
         tab.startTerminal();
-    }
-
-    private int waitForProcess(Process process) {
-        while (process.isAlive()) {
-            if (isCancelled()) {
-                process.destroyForcibly();
-                return -1;
-            }
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                log.error(e.getMessage());
-                Thread.currentThread().interrupt();
-                return -1;
-            }
-        }
-        return process.exitValue();
     }
 
     public SingleExecutionTab getExecutionTab() {

@@ -24,9 +24,11 @@ import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.node.entry.EntrySetupTab;
 import org.ashot.shellflow.node.entry.EntrySetupToolBar;
 import org.ashot.shellflow.node.icon.Icons;
+import org.ashot.shellflow.node.notification.Notifications;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.peristence.ExecutionRepository;
+import org.ashot.shellflow.utils.FileUtils;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.ashot.shellflow.utils.RecentFileUtils;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,12 +71,11 @@ public class EntryManagementController {
         this.variableManagement = variableController;
         this.entryMapper = new EntryMapper(variableController.getVariables());
 
-        Tab executionOptionsTab = new Tab("Execution Options", this.view.getEntryExecutionOptions());
         Tab variablesTab = new Tab("Variables", this.variableManagement.getView());
         this.toolBar = this.view.getEntrySetupToolBar();
-        this.toolBar.getTabPane().getTabs().addAll(executionOptionsTab, variablesTab);
+        this.toolBar.getTabPane().getTabs().addAll(variablesTab);
 
-        this.executionManagement.getView().getTabs().addListener((ListChangeListener<Tab>) c -> {
+        this.executionManagement.getView().getTabs().addListener((ListChangeListener<Tab>) _ -> {
             if (this.executionManagement.getView().getTabs().isEmpty()) {
                 this.view.setPlaceHolder();
             } else {
@@ -107,11 +109,15 @@ public class EntryManagementController {
         view.getFileLoadedText().setOnMouseClicked(this::handleEntryInfoTextClick);
         view.getEntryExecutionOptions().getExpandAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(true)));
         view.getEntryExecutionOptions().getCollapseAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(false)));
-        view.getEntryExecutionOptions().getClearAllEntriesButton().setOnAction(_ -> clearEntryBoxes());
+        view.getEntryExecutionOptions().getClearAllButton().setOnAction(_ -> clearEntryBoxes());
         view.getEntryExecutionOptions().getExecuteAllButton().setOnAction(_ -> executeAll());
-        view.getEntryExecutionOptions().getAddEntryButton().setOnAction(_ -> addEntryBox());
+        view.getEntryExecutionOptions().getAddButton().setOnAction(_ -> addEntryBox());
+        view.getEntryExecutionOptions().getResetButton().setOnAction(_ -> {
+            load(FileUtils.getFile(Paths.get(currentFileAbsolutePath.get())));
+            Notifications.showNotif("Execution was reset successfully!");
+        });
         addEntryBoxChangeListener(_ -> view.getEntryExecutionOptions().getExecuteAllButton().setDisable(entryBoxes.isEmpty()));
-        addEntryBoxChangeListener(_ -> view.getEntryExecutionOptions().getClearAllEntriesButton().setDisable(entryBoxes.isEmpty()));
+        addEntryBoxChangeListener(_ -> view.getEntryExecutionOptions().getClearAllButton().setDisable(entryBoxes.isEmpty()));
     }
 
     private void handleEntryInfoTextClick(MouseEvent e) {
@@ -123,7 +129,7 @@ public class EntryManagementController {
         if (e.getButton() != MouseButton.PRIMARY || e.getClickCount() != 1 || !e.isStillSincePress()) {
             return;
         }
-        File file = new File(currentFileAbsolutePath.get());
+        File file = FileUtils.getFile(Paths.get(currentFileAbsolutePath.get()));
         if (file.exists()) {
             try {
                 Desktop.getDesktop().open(file);
@@ -280,6 +286,7 @@ public class EntryManagementController {
         try {
             entryRepository.saveToFile(fileToSave, getExecution());
             handleFileOperationOccurred(fileToSave);
+            Notifications.showNotif("Saved execution successfully!");
         } catch (CouldNotCreateRequiredFile e) {
             String exceptionMessage = e.getMessage() != null && !e.getMessage().isBlank() ? (", " + e.getMessage()) : "";
             runLater(() -> new AlertPopup(

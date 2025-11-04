@@ -1,6 +1,7 @@
 package org.ashot.shellflow.node.variable;
 
 import atlantafx.base.controls.Spacer;
+import atlantafx.base.theme.Styles;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -19,6 +20,7 @@ public class VariableSetup extends VBox {
     private final VBox variableRows;
     private final Button addVariableButton;
     private final Button saveAllButton;
+    private final Button resetButton;
 
     public VariableSetup() {
         Label variableLabel = new Label("Variable");
@@ -34,7 +36,7 @@ public class VariableSetup extends VBox {
         HBox.setHgrow(variableLabelBox, Priority.ALWAYS);
         HBox.setHgrow(valueLabelBox, Priority.ALWAYS);
 
-        Insets insets = new Insets(1.5, 10, 1.5, 10);
+        Insets insets = new Insets(2.5, 10, 0.25, 10);
 
         HBox headerRow = new HBox(variableLabelBox, valueLabelBox);
         headerRow.setAlignment(Pos.CENTER_LEFT);
@@ -49,21 +51,21 @@ public class VariableSetup extends VBox {
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         addVariableButton = new Button("", Icons.getAddButtonIcon(DEFAULT_ICON_SIZE.getSize()));
-        saveAllButton = saveButton();
-        saveAllButton.prefHeightProperty().bind(addVariableButton.heightProperty());
+        addVariableButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.FLAT);
 
-        HBox variableOptions = new HBox(5, saveAllButton, addVariableButton);
+        saveAllButton = new Button("", Icons.getSaveIcon(DEFAULT_ICON_SIZE.getSize()));
+        saveAllButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.FLAT);
+
+        resetButton = new Button("", Icons.getResetIcon(DEFAULT_ICON_SIZE.getSize()));
+        resetButton.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.FLAT);
+
+        HBox variableOptions = new HBox(5, resetButton, saveAllButton, addVariableButton);
         variableOptions.setAlignment(Pos.TOP_RIGHT);
-        variableOptions.getStyleClass().add("default-container");
 
         getChildren().addAll(headerRow, scrollPane, new Spacer(), variableOptions);
         setSpacing(2.5);
         setAlignment(Pos.BOTTOM_CENTER);
         setPadding(insets);
-    }
-
-    private Button saveButton() {
-        return new Button("", Icons.getSaveIcon(DEFAULT_ICON_SIZE.getSize()));
     }
 
     public Button getAddVariableButton() {
@@ -76,6 +78,10 @@ public class VariableSetup extends VBox {
 
     public VBox getVariableRows() {
         return variableRows;
+    }
+
+    public Button getResetButton() {
+        return resetButton;
     }
 }
 

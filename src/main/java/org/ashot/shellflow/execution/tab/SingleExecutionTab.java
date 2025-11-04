@@ -82,7 +82,6 @@ public class SingleExecutionTab extends Tab {
         if (getTerminal() != null && getTerminal().getTtyConnector() != null && getTerminal().canOpenSession()) {
             runLater(() -> {
                 this.getTerminal().start();
-                this.terminal.createToolBar();
                 TerminalToolBar terminalToolBar = this.terminal.getTerminalToolBar();
                 this.stackPane.getChildren().add(terminalToolBar);
                 StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);

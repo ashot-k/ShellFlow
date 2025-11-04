@@ -79,6 +79,14 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getResetIcon(int size) {
+        Glyph icon = fontAwesome.create(UNDO);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
     public static Glyph getSaveIcon(int size) {
         Glyph icon = fontAwesome.create(SAVE);
         icon.size(size);
@@ -181,6 +189,22 @@ public class Icons {
 
     public static Glyph getPerformanceOptionIcon(double size) {
         Glyph icon = fontAwesome.create(GEAR);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getDesktopNotificationIcon(double size) {
+        Glyph icon = fontAwesome.create(INFO);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getInfoIcon(double size) {
+        Glyph icon = fontAwesome.create(INFO_CIRCLE);
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);

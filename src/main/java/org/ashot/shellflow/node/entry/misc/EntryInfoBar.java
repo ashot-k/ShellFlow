@@ -1,6 +1,7 @@
 package org.ashot.shellflow.node.entry.misc;
 
 import atlantafx.base.controls.SelectableTextFlow;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -17,6 +18,7 @@ public class EntryInfoBar extends VBox {
         fileLoaded.setCursor(Cursor.HAND);
         SelectableTextFlow textFlow = new SelectableTextFlow(fileLoaded);
         textFlow.setTextAlignment(TextAlignment.CENTER);
+        setPadding(new Insets(15, 15, 5, 15));
         getChildren().addAll(textFlow);
     }
 

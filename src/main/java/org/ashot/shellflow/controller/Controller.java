@@ -8,12 +8,14 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HeaderBar;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.TabIndices;
 import org.ashot.shellflow.exception.FileReadFailureException;
 import org.ashot.shellflow.node.menu.MainMenuBar;
-import org.ashot.shellflow.node.notification.ShellFlowTray;
+import org.ashot.shellflow.node.notification.Notifications;
+import org.ashot.shellflow.node.notification.SystemTray;
 import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.ashot.shellflow.utils.RecentFileUtils;
@@ -28,6 +30,8 @@ import static javafx.scene.layout.HeaderDragType.DRAGGABLE_SUBTREE;
 @SuppressWarnings("deprecation")
 public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
+    @FXML
+    private StackPane mainWindowStackPane;
     @FXML
     private ModalPane mainModal;
     @FXML
@@ -46,14 +50,15 @@ public class Controller {
         setupControllers();
         setupTabs();
         setupMenuBar();
-        ShellFlowTray.init(executionManagementController);
+        SystemTray.init(executionManagementController);
+        Notifications.init(mainWindowStackPane);
         handlePerformanceMode();
         return createHeader();
     }
 
     public void loadInit() {
-        log.info("Initializing entries");
         try {
+            log.info("Initializing entries");
             entryManagementController.load(RecentFileUtils.getMostRecentlyOpenedFile());
         } catch (FileReadFailureException e) {
             log.error("Could not initialize entries: {}", e.getMessage());

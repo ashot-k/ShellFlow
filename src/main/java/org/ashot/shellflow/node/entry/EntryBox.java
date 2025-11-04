@@ -26,7 +26,7 @@ import org.ashot.shellflow.node.entry.button.EnableEntryBoxToggle;
 import org.ashot.shellflow.node.entry.button.ExecuteEntryButton;
 import org.ashot.shellflow.node.entry.button.WSLBoxToggle;
 import org.ashot.shellflow.node.entry.field.CommandTextArea;
-import org.ashot.shellflow.node.entry.field.LabeledTextInput;
+import org.ashot.shellflow.node.entry.field.LabeledControl;
 import org.ashot.shellflow.node.entry.field.NameField;
 import org.ashot.shellflow.node.entry.field.PathField;
 import org.ashot.shellflow.utils.NodeUtils;
@@ -34,7 +34,7 @@ import org.ashot.shellflow.utils.NodeUtils;
 import java.util.List;
 
 public class EntryBox extends TitledPane {
-    private static final List<String> STYLE_CLASSES = List.of("default-container", Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
+    private static final List<String> STYLE_CLASSES = List.of(Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
     private static final String EDITED_FIELD_STYLE_CLASS = "edited-field";
     public static final double MAX_WIDTH = 400;
     private final NameField nameField;
@@ -74,13 +74,13 @@ public class EntryBox extends TitledPane {
         enabledToggle = new EnableEntryBoxToggle(entry.enabled());
         deleteEntry = new CloseButton();
 
-        VBox labeledNameField = new LabeledTextInput("Name", nameField);
-        VBox labeledPathField = new LabeledTextInput("Path", pathField);
-        VBox labeledCommandField = new LabeledTextInput("Command(s)", commandField);
+        VBox labeledNameField = new LabeledControl("Name", nameField);
+        VBox labeledPathField = new LabeledControl("Path", pathField);
+        VBox labeledCommandField = new LabeledControl("Command(s)", commandField);
 
         promptMessage = new Message();
         promptMessage.setVisible(false);
-        VBox.setMargin(promptMessage, new Insets(5, 0, 0, 0));
+        VBox.setMargin(promptMessage, new Insets(25, 0, 0, 0));
 
         GridPane entryGrid = new GridPane();
         entryGrid.addRow(0, labeledNameField);

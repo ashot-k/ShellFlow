@@ -10,6 +10,7 @@ import org.ashot.shellflow.data.constant.SettingsFilePaths;
 import org.ashot.shellflow.data.execution.variable.Variable;
 import org.ashot.shellflow.data.execution.variable.Variables;
 import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.node.notification.Notifications;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.node.variable.VariableSetup;
@@ -28,6 +29,7 @@ public class VariableManagementController {
     private final VariableRepository variableRepository;
     private final ObservableList<VariableEntry> variableList = FXCollections.observableArrayList();
     private final BooleanProperty saved = new SimpleBooleanProperty();
+    private final File current;
 
     public VariableManagementController(File init) {
         view = new VariableSetup();
@@ -41,23 +43,20 @@ public class VariableManagementController {
                 }
             }
         });
+        current = init;
         load(init);
         setupEvents();
     }
 
     private void setupEvents() {
-        view.getSaveAllButton().setOnAction(_ -> {
-            try {
-                Path pathToVariables = Paths.get(SettingsFilePaths.VARIABLES.getPath());
-                File fileToSave = FileUtils.getFile(pathToVariables);
-                variableRepository.saveToFile(fileToSave, new Variables(getVariablesList()));
-                saved.set(!saved.get());
-            } catch (CouldNotCreateRequiredFile e) {
-                new AlertPopup("Error while saving Variables", e.getMessage(), false).show();
-            }
-        });
+        view.getSaveAllButton().setOnAction(_ -> save());
         view.getAddVariableButton().setOnAction(_ -> addVariableEntry());
+        view.getResetButton().setOnAction(_ -> {
+            load(current);
+            Notifications.showNotif("Variables were reset successfully!");
+        });
     }
+
 
     private List<Variable> getVariablesList() {
         List<Variable> variables = new ArrayList<>();
@@ -69,9 +68,23 @@ public class VariableManagementController {
         return variables;
     }
 
+    private void save() {
+        try {
+            Path pathToVariables = Paths.get(SettingsFilePaths.VARIABLES.getPath());
+            File fileToSave = FileUtils.getFile(pathToVariables);
+            variableRepository.saveToFile(fileToSave, new Variables(getVariablesList()));
+            saved.set(!saved.get());
+            Notifications.showNotif("Saved variables successfully!");
+        } catch (CouldNotCreateRequiredFile e) {
+            new AlertPopup("Error while saving Variables", e.getMessage(), false).show();
+        }
+    }
+
     private void load(File init) {
         try {
-            variableRepository.openFromFile(init).variables().forEach(e -> addVariableEntry(new VariableEntry(e.name(), e.value(), e.enabled())));
+            Variables variables = variableRepository.openFromFile(init);
+            variableList.clear();
+            variables.variables().forEach(e -> addVariableEntry(new VariableEntry(e.name(), e.value(), e.enabled())));
         } catch (CouldNotCreateRequiredFile e) {
             new AlertPopup("Error while loading Variables", e.getMessage(), false).show();
         }

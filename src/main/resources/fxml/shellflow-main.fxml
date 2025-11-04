@@ -4,7 +4,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.*?>
 <StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="org.ashot.shellflow.controller.Controller">
+           fx:controller="org.ashot.shellflow.controller.Controller" fx:id="mainWindowStackPane">
     <VBox fx:id="sceneContainer" prefHeight="750.0">
         <StackPane VBox.vgrow="ALWAYS">
             <VBox VBox.vgrow="ALWAYS">
