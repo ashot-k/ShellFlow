@@ -36,8 +36,8 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
             currentExecution = new SingularExecutionTask(tab, currentCommand);
             int finalI = i;
             currentExecution.valueProperty().addListener((_, _, state) -> {
-                handleSequencePartExecutionState(state, tab, taskLatch);
                 sequenceState = updateSequenceState(state, finalI);
+                handleSequencePartExecutionState(state, tab, taskLatch);
             });
             ExecutionManagementController.executeTask(currentExecution);
             taskLatch.await();
