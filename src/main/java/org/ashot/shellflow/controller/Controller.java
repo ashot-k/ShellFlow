@@ -4,6 +4,8 @@ import atlantafx.base.controls.ModalPane;
 import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionModel;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -96,23 +98,23 @@ public class Controller {
     private void handleUserInput(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyEvent.isControlDown()) {
-            TabPane executionsTabPane = executionManagementController.getView();
+            SelectionModel<Tab> tabSelectionModel = executionManagementController.getView().getSelectionModel();
             if (keyEvent.isShiftDown()) {
-                Node node = executionsTabPane.getSelectionModel().getSelectedItem().getContent();
+                Node node = tabSelectionModel.getSelectedItem().getContent();
                 if (node instanceof TabPane tabPane) {
-                    moveToAdjacentTab(keyCode, tabPane);
+                    moveToAdjacentTab(keyCode, tabPane.getSelectionModel());
                 }
             } else {
-                moveToAdjacentTab(keyCode, executionsTabPane);
+                moveToAdjacentTab(keyCode, tabSelectionModel);
             }
         }
     }
 
-    private void moveToAdjacentTab(KeyCode keyCode, TabPane tabPane) {
+    private void moveToAdjacentTab(KeyCode keyCode, SelectionModel<Tab> tabSelectionModel) {
         if (keyCode.equals(KeyCode.PERIOD)) {
-            tabPane.getSelectionModel().selectNext();
+            tabSelectionModel.selectNext();
         } else if (keyCode.equals(KeyCode.COMMA)) {
-            tabPane.getSelectionModel().selectPrevious();
+            tabSelectionModel.selectPrevious();
         }
     }
 }

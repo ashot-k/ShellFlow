@@ -1,11 +1,12 @@
 package org.ashot.shellflow.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.utility.Recent;
 import org.ashot.shellflow.exception.CriticalException;
 import org.ashot.shellflow.exception.FileReadFailureException;
+import org.ashot.shellflow.exception.FileWriteFailureException;
+import org.ashot.shellflow.mapper.DefaultObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +20,7 @@ import java.util.List;
 
 public class RecentFileUtils {
     private static final Logger log = LoggerFactory.getLogger(RecentFileUtils.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    static {
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-    }
-
+    private static final ObjectMapper mapper = new DefaultObjectMapper();
     private static String lastAccessedDirectory;
 
     private RecentFileUtils() {
@@ -58,7 +54,7 @@ public class RecentFileUtils {
         }
     }
 
-    public static void refreshLastAccessedDirectory(String newDirLocation) {
+    public static void refreshLastAccessedDirectory(String newDirLocation) throws FileWriteFailureException {
         try {
             String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
@@ -69,11 +65,11 @@ public class RecentFileUtils {
             String jsonToWrite = mapper.writeValueAsString(new Recent(recents.recentlyOpenedFiles(), newDirLocation));
             FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
         } catch (IOException e) {
-            log.error("Could not refresh last accessed directory location: {}", e.getMessage());
+            throw new FileWriteFailureException("Failed to refresh last accessed directory, " + e.getMessage());
         }
     }
 
-    public static void saveRecentFile(String newRecentlyOpenedFilePath) {
+    public static void saveRecentFile(String newRecentlyOpenedFilePath) throws FileWriteFailureException {
         try {
             String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
@@ -87,7 +83,7 @@ public class RecentFileUtils {
             String jsonToWrite = mapper.writeValueAsString(recents);
             FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
         } catch (IOException e) {
-            log.error("Could not save file to recents: {}", e.getMessage());
+            throw new FileWriteFailureException(e.getMessage());
         }
     }
 

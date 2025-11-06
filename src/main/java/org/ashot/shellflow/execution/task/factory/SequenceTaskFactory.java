@@ -1,8 +1,8 @@
 package org.ashot.shellflow.execution.task.factory;
 
 import org.ashot.shellflow.data.command.CommandSequence;
-import org.ashot.shellflow.execution.tab.SequenceExecutionsTab;
 import org.ashot.shellflow.execution.task.SequenceExecutionTask;
+import org.ashot.shellflow.node.execution.tab.SequenceExecutionsTab;
 
 public class SequenceTaskFactory extends SingularTaskFactory {
 

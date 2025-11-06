@@ -7,16 +7,16 @@ import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
-import org.ashot.shellflow.execution.tab.ExecutionsTabPane;
-import org.ashot.shellflow.execution.tab.ParallelExecutionsTab;
-import org.ashot.shellflow.execution.tab.SequenceExecutionsTab;
-import org.ashot.shellflow.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.execution.task.ExecutionTask;
 import org.ashot.shellflow.execution.task.SequenceExecutionTask;
 import org.ashot.shellflow.execution.task.SequenceExecutionTaskState;
 import org.ashot.shellflow.execution.task.SingularExecutionTask;
 import org.ashot.shellflow.execution.task.factory.SequenceTaskFactory;
 import org.ashot.shellflow.execution.task.factory.SingularTaskFactory;
+import org.ashot.shellflow.node.execution.tab.ExecutionsPanel;
+import org.ashot.shellflow.node.execution.tab.ParallelExecutionsTab;
+import org.ashot.shellflow.node.execution.tab.SequenceExecutionsTab;
+import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.node.notification.SystemTray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,22 +29,22 @@ import static org.ashot.shellflow.data.constant.ExecutionState.FAILURE;
 import static org.ashot.shellflow.data.constant.ExecutionState.FINISHED;
 import static org.ashot.shellflow.data.message.NotificationMessages.failNotificationMessage;
 import static org.ashot.shellflow.data.message.NotificationMessages.finishedNotificationMessage;
-import static org.ashot.shellflow.execution.tab.SingleExecutionTab.constructSequencePartOutputTab;
+import static org.ashot.shellflow.node.execution.tab.SingleExecutionTab.constructSequencePartOutputTab;
 import static org.ashot.shellflow.utils.TabUtils.setCancelled;
 
 public class ExecutionManagementController {
     private final Logger log = LoggerFactory.getLogger(ExecutionManagementController.class);
-    private final ExecutionsTabPane view;
+    private final ExecutionsPanel view;
     private final SingularTaskFactory singularTaskFactory;
     private final SequenceTaskFactory sequenceTaskFactory;
 
     public ExecutionManagementController() {
-        this.view = new ExecutionsTabPane();
+        this.view = new ExecutionsPanel();
         this.singularTaskFactory = new SingularTaskFactory();
         this.sequenceTaskFactory = new SequenceTaskFactory();
     }
 
-    public ExecutionsTabPane getView() {
+    public ExecutionsPanel getView() {
         return view;
     }
 
@@ -127,10 +127,9 @@ public class ExecutionManagementController {
         event.consume();
     }
 
-    public static Thread executeTask(ExecutionTask executionTask) {
+    public static void executeTask(ExecutionTask executionTask) {
         Thread thread = new Thread(executionTask);
         thread.start();
-        return thread;
     }
 
     private void handleSingularExecutionState(ExecutionState state, SingleExecutionTab singleExecutionTab) {

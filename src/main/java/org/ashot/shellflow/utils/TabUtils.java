@@ -1,6 +1,6 @@
 package org.ashot.shellflow.utils;
 
-import org.ashot.shellflow.execution.tab.SingleExecutionTab;
+import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.node.icon.Icons;
 import org.controlsfx.glyphfont.Glyph;
 

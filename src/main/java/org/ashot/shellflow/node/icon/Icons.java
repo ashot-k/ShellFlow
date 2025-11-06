@@ -171,6 +171,15 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getDetachExecutionsIcon(double size, boolean detached) {
+        Glyph icon = fontAwesome.create(EXTERNAL_LINK);
+        icon.setRotate(detached ? 180 : 0);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
     public static Glyph getCollapseAllEntriesIcon(double size) {
         Glyph icon = fontAwesome.create(TOGGLE_UP);
         icon.size(size);

@@ -29,7 +29,6 @@ import org.ashot.shellflow.node.entry.field.CommandTextArea;
 import org.ashot.shellflow.node.entry.field.LabeledControl;
 import org.ashot.shellflow.node.entry.field.NameField;
 import org.ashot.shellflow.node.entry.field.PathField;
-import org.ashot.shellflow.utils.NodeUtils;
 
 import java.util.List;
 
@@ -110,7 +109,6 @@ public class EntryBox extends TitledPane {
         HBox header = new HBox(10, stateButtonsContainer, title, new Spacer(), executionButtonsContainer);
         header.setAlignment(Pos.CENTER);
         header.setPadding(new Insets(1, 10, 1, 1));
-        NodeUtils.setWidths(this, MAX_WIDTH);
 
         setGraphic(header);
 
@@ -119,6 +117,7 @@ public class EntryBox extends TitledPane {
         content.setPadding(new Insets(1));
 
         setContent(content);
+        setPrefWidth(MAX_WIDTH);
 
         setupInitialState();
         setupEventListeners();

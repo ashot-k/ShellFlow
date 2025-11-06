@@ -1,8 +1,8 @@
 package org.ashot.shellflow.execution.task.factory;
 
 import org.ashot.shellflow.data.command.Command;
-import org.ashot.shellflow.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.execution.task.SingularExecutionTask;
+import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -44,8 +44,8 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.node.entry.field;
     opens org.ashot.shellflow.node.entry.field to javafx.base;
     opens org.ashot.shellflow.execution.task to javafx.base;
-    exports org.ashot.shellflow.execution.tab;
-    opens org.ashot.shellflow.execution.tab to javafx.base;
+    exports org.ashot.shellflow.node.execution.tab;
+    opens org.ashot.shellflow.node.execution.tab to javafx.base;
     opens org.ashot.shellflow.data.execution.entry to com.fasterxml.jackson.databind;
     opens org.ashot.shellflow.data.execution.variable to com.fasterxml.jackson.databind;
     opens org.ashot.shellflow.data.utility to com.fasterxml.jackson.databind;

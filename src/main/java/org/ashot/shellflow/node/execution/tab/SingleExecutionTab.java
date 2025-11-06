@@ -1,4 +1,4 @@
-package org.ashot.shellflow.execution.tab;
+package org.ashot.shellflow.node.execution.tab;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;

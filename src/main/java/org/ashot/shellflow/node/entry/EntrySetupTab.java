@@ -1,18 +1,15 @@
 package org.ashot.shellflow.node.entry;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.node.entry.misc.EntryInfoBar;
+import org.ashot.shellflow.node.execution.tab.ExecutionsPanel;
 
 
 public class EntrySetupTab extends Tab {
@@ -27,10 +24,10 @@ public class EntrySetupTab extends Tab {
     private final StackPane stackPane;
     private final SplitPane entryListExecutionsSplitPane;
     private final EntrySetupOptions entrySetupOptions;
-    private Node executionsPlaceHolder;
+    private final Pane panel;
 
-    public EntrySetupTab() {
-        executionsPlaceHolder = createExecutionsPlaceholder();
+    public EntrySetupTab(ExecutionsPanel executionsPanel) {
+        panel = executionsPanel;
         entryInfoBar = new EntryInfoBar();
         entrySetupOptions = new EntrySetupOptions();
         entrySetupToolBar = new EntrySetupToolBar();
@@ -51,7 +48,7 @@ public class EntrySetupTab extends Tab {
 
         VBox entryListWrapper = new VBox(entryListScrollPane, entrySetupOptions);
 
-        entryListExecutionsSplitPane = new SplitPane(entryListWrapper, executionsPlaceHolder);
+        entryListExecutionsSplitPane = new SplitPane(entryListWrapper, executionsPanel);
         setupEntryListExecutionsSplitLimits();
 
         SplitPane splitPane = new SplitPane(entryListExecutionsSplitPane, entrySetupToolBar);
@@ -87,17 +84,6 @@ public class EntrySetupTab extends Tab {
         });
     }
 
-    public void setPlaceHolder() {
-        setExecutionsSplit(createExecutionsPlaceholder());
-    }
-
-    private Node createExecutionsPlaceholder() {
-        Label label = new Label("No executions");
-        label.setPadding(new Insets(10));
-        label.setFont(Fonts.title());
-        return new HBox(label);
-    }
-
     public Text getFileLoadedText() {
         return entryInfoBar.getFileLoaded();
     }
@@ -120,16 +106,8 @@ public class EntrySetupTab extends Tab {
         return entryInfoBar;
     }
 
-    public SplitPane getEntryListExecutionsSplitPane() {
-        return entryListExecutionsSplitPane;
-    }
-
-    public void setExecutionsSplit(Node node) {
-        entryListExecutionsSplitPane.getItems().remove(executionsPlaceHolder);
-
-        executionsPlaceHolder = node;
-        entryListExecutionsSplitPane.getItems().add(executionsPlaceHolder);
-        setupEntryListExecutionsSplitLimits();
+    public Pane getPanel() {
+        return panel;
     }
 
     public EntrySetupOptions getEntryExecutionOptions() {

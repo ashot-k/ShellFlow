@@ -28,9 +28,9 @@ public class FieldUtils {
             field.setPrefWidth(width);
         }
         if (height != null) {
-            NodeUtils.setHeights(field, height);
+            field.setPrefHeight(height);
         } else {
-            NodeUtils.setHeights(field, DEFAULT_FIELD_HEIGHT);
+            field.setPrefHeight(DEFAULT_FIELD_HEIGHT);
         }
         if (toolTip != null) {
             field.setTooltip(new Tooltip(toolTip));

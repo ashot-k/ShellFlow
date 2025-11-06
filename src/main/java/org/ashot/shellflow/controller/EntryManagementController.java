@@ -17,6 +17,7 @@ import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.execution.Execution;
 import org.ashot.shellflow.data.execution.entry.Entry;
 import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.exception.FileWriteFailureException;
 import org.ashot.shellflow.execution.task.SequenceExecutionTask;
 import org.ashot.shellflow.execution.task.SingularExecutionTask;
 import org.ashot.shellflow.mapper.EntryMapper;
@@ -65,7 +66,7 @@ public class EntryManagementController {
     private final VariableManagementController variableManagement;
 
     public EntryManagementController(ExecutionManagementController executionManagement, VariableManagementController variableController) {
-        this.view = new EntrySetupTab();
+        this.view = new EntrySetupTab(executionManagement.getView());
         this.entryRepository = new ExecutionRepository();
         this.executionManagement = executionManagement;
         this.variableManagement = variableController;
@@ -74,14 +75,6 @@ public class EntryManagementController {
         Tab variablesTab = new Tab("Variables", this.variableManagement.getView());
         this.toolBar = this.view.getEntrySetupToolBar();
         this.toolBar.getTabPane().getTabs().addAll(variablesTab);
-
-        this.executionManagement.getView().getTabs().addListener((ListChangeListener<Tab>) _ -> {
-            if (this.executionManagement.getView().getTabs().isEmpty()) {
-                this.view.setPlaceHolder();
-            } else {
-                this.view.setExecutionsSplit(this.executionManagement.getView());
-            }
-        });
         setupEvents();
     }
 
@@ -193,7 +186,7 @@ public class EntryManagementController {
         }
     }
 
-    public void showPromptForErrors(String fieldName, EntryBox entryBox, List<String> errors) {
+    private void showPromptForErrors(String fieldName, EntryBox entryBox, List<String> errors) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(fieldName).append(" ").append("contains unknown variables: ");
         for (int i = 0; i < errors.size(); i++) {
@@ -207,7 +200,7 @@ public class EntryManagementController {
         entryBox.showPromptMessageToField(null, stringBuilder.toString(), Styles.DANGER, Icons.getErrorIcon(IconSizeDefaults.ENTRY_VALIDATION_MESSAGE_ICON.getSize()));
     }
 
-    public List<String> validateFieldForVariables(String fieldValue) {
+    private List<String> validateFieldForVariables(String fieldValue) {
         List<String> errors = new ArrayList<>();
         Pattern pattern = Pattern.compile("\\$\\{([^}]+)}");
         Matcher matcher = pattern.matcher(fieldValue);
@@ -235,7 +228,7 @@ public class EntryManagementController {
         entryBoxes.clear();
     }
 
-    public void addEntryBoxChangeListener(ListChangeListener<Node> changeListener) {
+    private void addEntryBoxChangeListener(ListChangeListener<Node> changeListener) {
         entryBoxes.addListener(changeListener);
     }
 
@@ -276,9 +269,13 @@ public class EntryManagementController {
     }
 
     private void handleFileOperationOccurred(File mostRecentFile) {
-        RecentFileUtils.saveRecentFile(mostRecentFile.getAbsolutePath());
-        RecentFileUtils.refreshLastAccessedDirectory(mostRecentFile.getParent());
-        refreshFileLoaded(mostRecentFile.getAbsolutePath());
+        try {
+            RecentFileUtils.saveRecentFile(mostRecentFile.getAbsolutePath());
+            RecentFileUtils.refreshLastAccessedDirectory(mostRecentFile.getParent());
+            refreshFileLoaded(mostRecentFile.getAbsolutePath());
+        } catch (FileWriteFailureException e) {
+            log.error("Could not refresh recents: {}", e.getMessage());
+        }
         refreshEdited();
     }
 
@@ -298,7 +295,7 @@ public class EntryManagementController {
         }
     }
 
-    public void refreshEdited() {
+    private void refreshEdited() {
         log.debug("Reset edited state for all entries");
         entryBoxes.forEach(EntryBox::refreshEdited);
         entryBoxes.forEach(this::handleVariableValidation);
@@ -309,7 +306,7 @@ public class EntryManagementController {
         view.getEntryInfoBar().setFileLoadedText(getFileName(path));
     }
 
-    public static String getFileName(String path) {
+    private static String getFileName(String path) {
         String delimiter = checkIfWindows() ? "\\\\" : "/";
         String[] splitPath = path.split(delimiter);
         return splitPath[splitPath.length - 1];
@@ -319,7 +316,7 @@ public class EntryManagementController {
         return new Execution(getEntries(), getExecutionName(), getDelayPerCmd(), getSequenceOption());
     }
 
-    public List<Entry> getEntries() {
+    private List<Entry> getEntries() {
         List<Entry> entries = new ArrayList<>();
         for (Node node : view.getEntryListContainer().getChildren()) {
             if (node instanceof EntryBox entryBox) {

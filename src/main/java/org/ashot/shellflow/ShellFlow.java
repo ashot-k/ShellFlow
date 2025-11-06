@@ -28,6 +28,7 @@ import java.net.URL;
 public class ShellFlow extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(ShellFlow.class);
+    public static final String WINDOW_TITLE = "ShellFlow";
     private static final boolean RESIZABLE = true;
     public static final int SIZE_X = 1600;
     public static final int MIN_SIZE_X = 800;
@@ -36,14 +37,14 @@ public class ShellFlow extends Application {
     public static final double MAIN_APP_FONT_SIZE = 14;
     public static final String JAVA_VERSION = System.getProperty("java.version");
     public static final String JAVAFX_VERSION = System.getProperty("javafx.runtime.version");
-    public static final String WINDOW_TITLE = "ShellFlow";
-
     private static final ThemeOption selectedTheme = ThemeOption.DARK_MODE;
-    private static Font applicationFont;
+    private static final Font APPLICATION_FONT = Font.getDefault();
+    private static Image APPLICATION_ICON;
+    private static String STYLE_SHEET;
     private static Stage primaryStage;
     private static ShellFlowConfig shellFlowConfig;
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         handleJVMArgs(args);
         launch();
     }
@@ -53,28 +54,27 @@ public class ShellFlow extends Application {
         try {
             Application.setUserAgentStylesheet(ThemeOption.DARK_MODE.getTheme().getUserAgentStylesheet());
             primaryStage = stage;
-            applicationFont = Font.getDefault();
             shellFlowConfig = new DefaultConfig();
             loadAdditionalFonts();
 
             URL url = ShellFlow.class.getResource("/fxml/shellflow-main.fxml");
             URL styleSheetURL = ShellFlow.class.getResource("/style/main.css");
             validateResources(url, styleSheetURL);
-            String styleSheet = styleSheetURL.toExternalForm();
+            STYLE_SHEET = styleSheetURL.toExternalForm();
 
-            BorderPane header = new BorderPane();
-            Scene scene = new Scene(header, SIZE_X, SIZE_Y, Color.BLACK);
+            BorderPane content = new BorderPane();
+            Scene scene = new Scene(content, SIZE_X, SIZE_Y, Color.BLACK);
 
-            configurePrimaryScene(scene, styleSheet, header);
-            configurePrimaryStage(primaryStage, scene, applicationFont.getFamily());
+            configurePrimaryScene(scene, STYLE_SHEET);
+            configurePrimaryStage(primaryStage, scene, APPLICATION_FONT.getFamily());
 
             FXMLLoader fxmlLoader = new FXMLLoader(url);
             fxmlLoader.load();
-            configureHeader(header, fxmlLoader.getController(), fxmlLoader.getRoot());
+            configureHeader(content, fxmlLoader.getController(), fxmlLoader.getRoot());
             ThemeHandler.transitionToTheme(primaryStage, getThemeFromConfig());
 
             log.info("Java Version: {}, JavaFX Version: {}", JAVA_VERSION, JAVAFX_VERSION);
-            log.debug("Loaded\n FXML: {}\n CSS: {}\n Theme: {}", url, styleSheet, selectedTheme);
+            log.debug("Loaded\n FXML: {}\n CSS: {}\n Theme: {}", url, STYLE_SHEET, selectedTheme);
             log.debug("Resizable: {}", RESIZABLE);
             primaryStage.show();
         } catch (Exception e) {
@@ -103,16 +103,16 @@ public class ShellFlow extends Application {
         System.exit(0);
     }
 
-    private void configurePrimaryScene(Scene scene, String styleSheet, BorderPane header) {
+    private void configurePrimaryScene(Scene scene, String styleSheet) {
         scene.setFill(selectedTheme.isDark() ? Color.BLACK : Color.WHITE);
         scene.getStylesheets().add(styleSheet);
-        scene.setRoot(header);
     }
 
     @SuppressWarnings("deprecation")
     private void configurePrimaryStage(Stage stage, Scene scene, String fontFamily) {
         stage.setScene(scene);
-        stage.getIcons().add(new Image("icon.png"));
+        APPLICATION_ICON = new Image("icon.png");
+        stage.getIcons().add(APPLICATION_ICON);
         stage.setTitle(WINDOW_TITLE);
         stage.setResizable(RESIZABLE);
         stage.setMinWidth(MIN_SIZE_X);
@@ -122,10 +122,10 @@ public class ShellFlow extends Application {
         stage.getScene().getRoot().setStyle("-fx-font-family: '" + fontFamily + "'; -fx-font-size: " + ShellFlow.MAIN_APP_FONT_SIZE + "px;");
     }
 
-    private void configureHeader(BorderPane header, Controller controller, Parent baseRoot) {
-        header.setCenter(baseRoot);
-        header.setTop(controller.init());
-        header.getStyleClass().add(getThemeFromConfig().isDark() ? ThemeHandler.DARK_CLASS : ThemeHandler.LIGHT_CLASS);
+    private void configureHeader(BorderPane content, Controller controller, Parent baseRoot) {
+        content.setCenter(baseRoot);
+        content.setTop(controller.init());
+        content.getStyleClass().add(getThemeFromConfig().isDark() ? ThemeHandler.DARK_CLASS : ThemeHandler.LIGHT_CLASS);
         controller.loadInit();
     }
 
@@ -159,6 +159,14 @@ public class ShellFlow extends Application {
     }
 
     public static Font getApplicationFont() {
-        return applicationFont;
+        return APPLICATION_FONT;
+    }
+
+    public static String getStyleSheet() {
+        return STYLE_SHEET;
+    }
+
+    public static Image getApplicationIcon() {
+        return APPLICATION_ICON;
     }
 }

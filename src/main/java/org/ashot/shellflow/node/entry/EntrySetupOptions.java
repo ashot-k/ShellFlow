@@ -68,6 +68,7 @@ public class EntrySetupOptions extends HBox {
         quickActionBar.setAlignment(Pos.TOP_RIGHT);
         HBox runActionBar = new HBox(10, executionName, delayPerCmd, runOptions);
         runActionBar.setAlignment(Pos.CENTER);
+        runActionBar.setPadding(new Insets(0, 5, 0, 5));
 
         HBox.setHgrow(executionName, Priority.ALWAYS);
         executionName.setMaxWidth(300);
@@ -116,5 +117,4 @@ public class EntrySetupOptions extends HBox {
     public TextField getExecutionNameField() {
         return executionNameField;
     }
-
 }

@@ -6,7 +6,7 @@ import javafx.concurrent.Task;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.exception.ExecutionStartupException;
-import org.ashot.shellflow.execution.tab.SingleExecutionTab;
+import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;

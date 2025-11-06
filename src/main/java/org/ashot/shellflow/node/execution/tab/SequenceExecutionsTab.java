@@ -1,4 +1,4 @@
-package org.ashot.shellflow.execution.tab;
+package org.ashot.shellflow.node.execution.tab;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -53,7 +53,6 @@ public class SequenceExecutionsTab extends Tab {
         Glyph icon = Icons.getExecutionInProgressIcon(TAB_ICON_SIZE);
         setGraphic(icon);
         setDisable(false);
-        GUIAnimations.rotateInAndWobble(icon);
     }
 
     public void setFailed() {
