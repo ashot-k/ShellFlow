@@ -5,14 +5,18 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.ashot.shellflow.utils.TabUtils;
 
+import java.util.List;
+
 public class ParallelExecutionsTab extends Tab {
     private final TabPane parallelExecutionTabPane;
 
-    public ParallelExecutionsTab() {
+    public ParallelExecutionsTab(String name) {
         parallelExecutionTabPane = new TabPane();
         parallelExecutionTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         parallelExecutionTabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+        parallelExecutionTabPane.setTabMaxWidth(300);
         setContent(parallelExecutionTabPane);
+        setText(name.isBlank() ? "Execution - Unknown" : name);
         setOnClosed(_ -> {
             for (Tab tab : parallelExecutionTabPane.getTabs()) {
                 if (tab instanceof SingleExecutionTab singleExecutionTab) {
@@ -28,11 +32,11 @@ public class ParallelExecutionsTab extends Tab {
         });
     }
 
-    public TabPane getParallelExecutionTabPane() {
-        return parallelExecutionTabPane;
+    public List<SingleExecutionTab> getSingularExecutionTabs() {
+        return parallelExecutionTabPane.getTabs().stream().filter(SingleExecutionTab.class::isInstance).map(o -> (SingleExecutionTab) o).toList();
     }
 
-    public void setName(String name) {
-        setText(name.isBlank() ? "Execution - Unknown" : name);
+    public TabPane getParallelExecutionTabPane() {
+        return parallelExecutionTabPane;
     }
 }

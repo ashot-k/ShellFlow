@@ -18,5 +18,4 @@ public class ProcessUtils {
                 setCommand(command.getArgumentList()).
                 setDirectory(command.isWsl() ? "/" : command.getPath());
     }
-
 }

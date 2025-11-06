@@ -41,7 +41,7 @@ public class EntryMapper {
                 entryBox.getEnabledToggle().isSelected());
     }
 
-    public Command entryToCommand(Entry entry, boolean persistent) {
+    public Command entryToCommand(Entry entry) {
         String name = entry.name();
         String command = entry.command();
         String path = entry.path();
@@ -56,7 +56,7 @@ public class EntryMapper {
             }
         }
         try {
-            return new Command(name, path, command, wsl, persistent);
+            return new Command(name, path, command, wsl);
         } catch (InvalidCommandException | InvalidEntryPathException e) {
             log.error("Entry failed validation, name: {}, path: {}, command: {}, skipping execution", entry.name(), entry.path(), entry.command());
             handleError(entry, e);
@@ -70,7 +70,7 @@ public class EntryMapper {
             if (!entry.enabled()) {
                 continue;
             }
-            Command cmd = entryToCommand(entry, false);
+            Command cmd = entryToCommand(entry);
             commandList.add(cmd);
         }
         return commandList;

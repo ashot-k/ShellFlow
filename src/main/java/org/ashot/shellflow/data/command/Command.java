@@ -13,48 +13,34 @@ import java.util.List;
 
 
 public class Command {
+    public static final List<String> DEFAULT_POWERSHELL_ARGS = List.of("powershell.exe", "-Command");
+    public static final List<String> DEFAULT_WSL_ARGS = List.of("wsl", "sh", "-c");
+    public static final List<String> DEFAULT_LINUX_SHELL_ARGS = List.of("$SHELL", "-c");
     private static final Logger log = LoggerFactory.getLogger(Command.class);
     private String name;
     private String path;
     private boolean wsl;
     private boolean nameSet;
-    private final boolean persistent;
     private final List<String> argumentList = new ArrayList<>();
     private final String rawArguments;
-    private String argumentsString = "";
 
-    public Command(String name, String path, String arguments, boolean wsl, boolean persistent) throws InvalidCommandException, InvalidEntryPathException {
+    public Command(String name, String path, String arguments, boolean wsl) throws InvalidCommandException, InvalidEntryPathException {
         this.rawArguments = arguments;
-        this.persistent = persistent;
         validateArguments(arguments);
-        if (persistent) {
-            constructCommandPersistentSession(name, path, arguments, wsl);
-        } else {
-            constructCommand(name, path, arguments, wsl);
-        }
-    }
-
-    private void constructCommandPersistentSession(String name, String path, String arguments, boolean wsl) throws InvalidEntryPathException {
-        if (Utils.checkIfLinux() || wsl) {
-            arguments += "; exec $SHELL";
-        } else if (Utils.checkIfWindows()) {
-            arguments += "; powershell";
-        }
         constructCommand(name, path, arguments, wsl);
     }
 
     private void constructCommand(String name, String path, String arguments, boolean wsl) throws InvalidEntryPathException {
         this.wsl = wsl;
         this.path = path;
+        this.name = formatName(name);
         if (wsl) {
             arguments = adjustWslArguments(arguments);
         } else {
             validatePath();
         }
         prefixForOperatingEnvironment();
-        this.argumentsString = arguments;
-        this.argumentList.add(arguments);
-        this.name = formatName(name);
+        argumentList.add(arguments);
         log.info("Created command: { name: {}, path: {}, arguments: {}, WSL: {} }", this.name, this.path, arguments, this.wsl);
     }
 
@@ -85,14 +71,14 @@ public class Command {
 
     private void prefixForOperatingEnvironment() {
         if (Utils.checkIfLinux()) {
-            this.argumentList.addAll(0, List.of("$SHELL", "-c"));
+            this.argumentList.addAll(0, DEFAULT_LINUX_SHELL_ARGS);
             log.debug("Adjusting command for linux OS {}", this.argumentList);
         } else if (Utils.checkIfWindows()) {
             if (wsl) {
-                this.argumentList.addAll(0, List.of("wsl", "sh", "-c"));
+                this.argumentList.addAll(0, DEFAULT_WSL_ARGS);
                 log.debug("Adjusting command for WSL OS {}", this.argumentList);
             } else {
-                this.argumentList.addAll(0, List.of("powershell.exe", "-Command"));
+                this.argumentList.addAll(0, DEFAULT_POWERSHELL_ARGS);
                 log.debug("Adjusting command for Windows OS {}", this.argumentList);
             }
         }
@@ -108,7 +94,11 @@ public class Command {
     }
 
     public String getArgumentsString() {
-        return argumentsString;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : argumentList) {
+            stringBuilder.append(s).append(" ");
+        }
+        return stringBuilder.toString().trim();
     }
 
     public String getRawArguments() {
@@ -129,10 +119,6 @@ public class Command {
 
     public boolean isWsl() {
         return wsl;
-    }
-
-    public boolean isPersistent() {
-        return persistent;
     }
 
 }

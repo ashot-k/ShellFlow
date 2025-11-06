@@ -1,6 +1,9 @@
 package org.ashot.shellflow.node.icon;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.controlsfx.glyphfont.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -234,5 +237,17 @@ public class Icons {
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
         return icon;
+    }
+
+    public static ImageView getPowershellIcon(double size) {
+        return new ImageView(new Image(ShellFlow.class.getResource("/icons/powershell.png").toExternalForm(), size, size, true, true));
+    }
+
+    public static ImageView getCMDIcon(double size) {
+        return new ImageView(new Image(ShellFlow.class.getResource("/icons/cmd.png").toExternalForm(), size, size, true, true));
+    }
+
+    public static ImageView getBashIcon(double size) {
+        return new ImageView(new Image(ShellFlow.class.getResource("/icons/bash.png").toExternalForm(), size, size, true, true));
     }
 }

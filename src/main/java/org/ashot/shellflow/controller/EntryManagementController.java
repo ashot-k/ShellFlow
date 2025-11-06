@@ -145,7 +145,7 @@ public class EntryManagementController {
         entryBox.animatedProperty().bind(optimizationMode.not());
         entryBox.setOnExecuteButtonAction(_ -> {
             GUIAnimations.shakeY(entryBox.getExecuteButton(), 2.5).play();
-            Command command = entryMapper.entryToCommand(entryMapper.entryBoxToEntry(entryBox), false);
+            Command command = entryMapper.entryToCommand(entryMapper.entryBoxToEntry(entryBox));
             SingularExecutionTask singularExecutionTask = executionManagement.createExecutionTask(command);
             ExecutionManagementController.executeTask(singularExecutionTask);
         });

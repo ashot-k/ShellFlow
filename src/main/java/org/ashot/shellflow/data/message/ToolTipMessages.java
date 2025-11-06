@@ -30,4 +30,6 @@ public class ToolTipMessages {
     public static final String EXPAND_ALL_ENTRIES_BUTTON = "Expand all entries";
 
     public static final String COLLAPSE_ALL_ENTRIES_BUTTON = "Collapse all entries";
+
+    public static final String DETACH_EXECUTIONS_BUTTON = "Detach executions in a separate window";
 }

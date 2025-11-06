@@ -31,16 +31,20 @@ public class ExecutionsPanel extends HBox {
     private final DetachableStage stage;
 
     private final Button detachExecutionsButton;
+    private final Button addNewTabButton;
 
     public ExecutionsPanel() {
         detachExecutionsButton = new Button("", Icons.getDetachExecutionsIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize(), false));
-        detachExecutionsButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
+        detachExecutionsButton.setTooltip(new Tooltip(ToolTipMessages.DETACH_EXECUTIONS_BUTTON));
         detachExecutionsButton.getStyleClass().addAll(Styles.FLAT);
 
-        toolBar = new HBox(detachExecutionsButton);
+        addNewTabButton = new Button("", Icons.getAddButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
+        addNewTabButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
+        addNewTabButton.getStyleClass().addAll(Styles.FLAT);
+
+        toolBar = new HBox(detachExecutionsButton, addNewTabButton);
         content = new HBox(createExecutionsPlaceholder(NO_EXECUTIONS_TEXT));
         contentWrapper = new VBox(toolBar, content);
-
 
         tabPane = new TabPane();
         tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
@@ -108,11 +112,21 @@ public class ExecutionsPanel extends HBox {
         MenuItem closeAllMenuItem = new MenuItem("Close all", Icons.getClearIcon(IconSizeDefaults.CLOSE_ICON_SIZE.getSize()));
         closeAllMenuItem.setOnAction(_ -> closeAll());
 
-        tabPane.setContextMenu(new ContextMenu(stopAllMenuItem, closeAllMenuItem));
-        tabPane.setOnContextMenuRequested(e -> {
-            if (tabPane.getTabs().stream().anyMatch(tab -> tab.getContent().isHover())) {
+        TextField textField = new TextField();
+        CustomMenuItem editTabName = new CustomMenuItem(textField);
+        editTabName.setHideOnClick(false);
+        closeAllMenuItem.setOnAction(_ -> closeAll());
+
+        tabPane.setContextMenu(new ContextMenu(editTabName, stopAllMenuItem, closeAllMenuItem));
+        tabPane.setOnContextMenuRequested(menuRequestEvent -> {
+            if (tabPane.getTabs().stream().anyMatch(e -> e.getContent().isHover())) {
                 tabPane.getContextMenu().hide();
-                e.consume();
+                menuRequestEvent.consume();
+            }
+        });
+        tabPane.getContextMenu().showingProperty().addListener((_, _, showing) -> {
+            if (!showing) {
+                tabPane.getTabs().forEach(e -> e.textProperty().unbind());
             }
         });
     }
@@ -134,5 +148,9 @@ public class ExecutionsPanel extends HBox {
 
     public SelectionModel<Tab> getSelectionModel() {
         return tabPane.getSelectionModel();
+    }
+
+    public Button getAddNewTabButton() {
+        return addNewTabButton;
     }
 }

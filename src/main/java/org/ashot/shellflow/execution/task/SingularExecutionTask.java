@@ -6,7 +6,7 @@ import javafx.concurrent.Task;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.exception.ExecutionStartupException;
-import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
+import org.ashot.shellflow.execution.container.TerminalContainer;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.TerminalFactory;
@@ -20,17 +20,17 @@ import static org.ashot.shellflow.utils.ProcessUtils.buildProcess;
 
 public class SingularExecutionTask extends Task<ExecutionState> implements ExecutionTask {
     private final Logger log = LoggerFactory.getLogger(SingularExecutionTask.class);
-    private final SingleExecutionTab singleExecutionTab;
+    private final TerminalContainer terminalContainer;
     private final Command command;
     private final long delay;
 
-    public SingularExecutionTask(SingleExecutionTab singleExecutionTab, Command command) {
-        this(singleExecutionTab, command, 0);
+    public SingularExecutionTask(TerminalContainer terminalContainer, Command command) {
+        this(terminalContainer, command, 0);
     }
 
-    public SingularExecutionTask(SingleExecutionTab singleExecutionTab, Command command, long delay) {
+    public SingularExecutionTask(TerminalContainer terminalContainer, Command command, long delay) {
         super();
-        this.singleExecutionTab = singleExecutionTab;
+        this.terminalContainer = terminalContainer;
         this.command = command;
         this.delay = delay;
     }
@@ -38,16 +38,12 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
     @Override
     protected ExecutionState call() throws Exception {
         try {
-            setupCancellationHandler(singleExecutionTab);
+            setupCancellationHandler(terminalContainer);
             Thread.sleep(delay);
-            PtyProcess process = startProcess(singleExecutionTab, buildProcess(command));
-            if (process == null) {
-                return ExecutionState.INTERNAL_FAILURE;
-            }
-            runLater(() -> singleExecutionTab.checkTabName(command, process));
-            singleExecutionTab.setProcess(process);
+            PtyProcess process = startProcess(terminalContainer, buildProcess(command));
             updateValue(ExecutionState.IN_PROGRESS);
-            return handleProcessExit(process.waitFor());
+            int exitCode = process.waitFor();
+            return handleProcessExit(exitCode);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("Interrupted execution of command: {}, with args: {}, with error: {}", command.getName(), command.getRawArguments(), e.getMessage());
@@ -66,7 +62,7 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         };
     }
 
-    private void setupCancellationHandler(SingleExecutionTab tab) {
+    private void setupCancellationHandler(TerminalContainer tab) {
         Thread current = Thread.currentThread();
         tab.stateProperty().addListener((_, _, state) -> {
             if (state.equals(ExecutionState.CANCELLED)) {
@@ -75,7 +71,7 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         });
     }
 
-    protected PtyProcess startProcess(SingleExecutionTab tab, PtyProcessBuilder processBuilder) {
+    protected PtyProcess startProcess(TerminalContainer tab, PtyProcessBuilder processBuilder) {
         try {
             PtyProcess process = processBuilder.start();
             runLater(() -> attachTerminal(tab, process));
@@ -86,13 +82,15 @@ public class SingularExecutionTask extends Task<ExecutionState> implements Execu
         }
     }
 
-    private void attachTerminal(SingleExecutionTab tab, PtyProcess process) {
+    private void attachTerminal(TerminalContainer tab, PtyProcess process) {
         tab.getTerminal().setTtyConnector(TerminalFactory.createTtyConnector(process));
         TerminalRegistry.register(String.valueOf(process.pid()), tab.getTerminal().getTtyConnector());
+        tab.setProcess(process);
         tab.startTerminal();
     }
 
-    public SingleExecutionTab getExecutionTab() {
-        return singleExecutionTab;
+    @Override
+    public TerminalContainer getContainer() {
+        return terminalContainer;
     }
 }

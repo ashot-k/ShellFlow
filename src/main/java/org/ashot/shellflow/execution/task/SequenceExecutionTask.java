@@ -6,6 +6,8 @@ import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
+import org.ashot.shellflow.execution.container.ExecutionContainer;
+import org.ashot.shellflow.node.execution.tab.SequenceExecutionsTab;
 import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
 
 import java.util.List;
@@ -14,28 +16,29 @@ import java.util.concurrent.CountDownLatch;
 import static org.ashot.shellflow.data.constant.SequenceExecutionState.EXECUTION_IN_SEQUENCE_FINISHED;
 import static org.ashot.shellflow.data.constant.SequenceExecutionState.FINISHED;
 
-public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> implements ExecutionTask {
+public class SequenceExecutionTask extends Task<SequenceExecutionState> implements ExecutionTask {
 
     private final CommandSequence commandSequence;
     private final List<SingleExecutionTab> tabsInSequence;
+    private final SequenceExecutionsTab sequenceExecutionsTab;
     private SingularExecutionTask currentExecution;
-    private SequenceExecutionTaskState sequenceState;
+    private SequenceExecutionState sequenceState;
 
-    public SequenceExecutionTask(CommandSequence commandSequence, List<SingleExecutionTab> sequenceTabs) {
+    public SequenceExecutionTask(CommandSequence commandSequence, SequenceExecutionsTab sequenceExecutionsTab) {
         this.commandSequence = commandSequence;
-        this.tabsInSequence = sequenceTabs;
+        this.sequenceExecutionsTab = sequenceExecutionsTab;
+        this.tabsInSequence = sequenceExecutionsTab.getTabsInSequence();
     }
 
     @Override
-    protected SequenceExecutionTaskState call() throws Exception {
+    protected SequenceExecutionState call() throws Exception {
         for (int i = 0; i < commandSequence.commandList().size(); i++) {
             Command currentCommand = commandSequence.commandList().get(i);
             SingleExecutionTab tab = tabsInSequence.get(i);
             CountDownLatch taskLatch = new CountDownLatch(1);
             currentExecution = new SingularExecutionTask(tab, currentCommand);
-            int finalI = i;
             currentExecution.valueProperty().addListener((_, _, state) -> {
-                sequenceState = updateSequenceState(state, finalI);
+                sequenceState = updateSequenceState(state);
                 handleSequencePartExecutionState(state, tab, taskLatch);
             });
             ExecutionManagementController.executeTask(currentExecution);
@@ -44,18 +47,14 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
                 break;
             }
         }
-        if (sequenceState.getSequenceState().equals(EXECUTION_IN_SEQUENCE_FINISHED)) {
-            sequenceState.setSequenceState(FINISHED);
+        if (sequenceState.equals(EXECUTION_IN_SEQUENCE_FINISHED)) {
+            sequenceState = FINISHED;
         }
-        return new SequenceExecutionTaskState(
-                sequenceState.getExecutionTaskState(),
-                sequenceState.getSequenceState(),
-                sequenceState.getCurrentStep(),
-                sequenceState.getTotalSteps());
+        return sequenceState;
     }
 
     private boolean sequenceShouldContinue() {
-        switch (sequenceState.getSequenceState()) {
+        switch (sequenceState) {
             case INTERNAL_FAILURE, FAILURE, CANCELLED -> {
                 return false;
             }
@@ -75,21 +74,19 @@ public class SequenceExecutionTask extends Task<SequenceExecutionTaskState> impl
         }
     }
 
-    private SequenceExecutionTaskState updateSequenceState(ExecutionState executionTaskState, int index) {
-        int currentStep = index + 1;
-        int totalSteps = commandSequence.commandList().size();
+    private SequenceExecutionState updateSequenceState(ExecutionState executionTaskState) {
         switch (executionTaskState) {
-            case FINISHED ->
-                    sequenceState = new SequenceExecutionTaskState(executionTaskState, EXECUTION_IN_SEQUENCE_FINISHED, currentStep, totalSteps);
-            case CANCELLED ->
-                    sequenceState = new SequenceExecutionTaskState(executionTaskState, SequenceExecutionState.CANCELLED, currentStep, totalSteps);
-            case FAILURE ->
-                    sequenceState = new SequenceExecutionTaskState(executionTaskState, SequenceExecutionState.FAILURE, currentStep, totalSteps);
-            case INTERNAL_FAILURE ->
-                    sequenceState = new SequenceExecutionTaskState(executionTaskState, SequenceExecutionState.INTERNAL_FAILURE, currentStep, totalSteps);
-            case IN_PROGRESS ->
-                    sequenceState = new SequenceExecutionTaskState(executionTaskState, SequenceExecutionState.IN_PROGRESS, currentStep, totalSteps);
+            case FINISHED -> sequenceState = EXECUTION_IN_SEQUENCE_FINISHED;
+            case CANCELLED -> sequenceState = SequenceExecutionState.CANCELLED;
+            case FAILURE -> sequenceState = SequenceExecutionState.FAILURE;
+            case INTERNAL_FAILURE -> sequenceState = SequenceExecutionState.INTERNAL_FAILURE;
+            case IN_PROGRESS -> sequenceState = SequenceExecutionState.IN_PROGRESS;
         }
         return sequenceState;
+    }
+
+    @Override
+    public ExecutionContainer getContainer() {
+        return sequenceExecutionsTab;
     }
 }

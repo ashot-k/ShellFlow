@@ -3,6 +3,7 @@ package org.ashot.shellflow.node.execution.tab;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
+import org.ashot.shellflow.execution.container.ExecutionContainer;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.controlsfx.glyphfont.Glyph;
@@ -13,14 +14,15 @@ import java.util.List;
 
 import static org.ashot.shellflow.utils.TabUtils.TAB_ICON_SIZE;
 
-public class SequenceExecutionsTab extends Tab {
+public class SequenceExecutionsTab extends Tab implements ExecutionContainer {
     private final Logger log = LoggerFactory.getLogger(SequenceExecutionsTab.class);
     private final TabPane sequenceExecutionTabPane;
 
     public SequenceExecutionsTab(String text) {
-        super(text.isEmpty() ? "Sequence - Unknown" : text);
-        this.sequenceExecutionTabPane = new TabPane();
+        sequenceExecutionTabPane = new TabPane();
+        sequenceExecutionTabPane.setTabMaxWidth(300);
         setContent(sequenceExecutionTabPane);
+        setText(text.isEmpty() ? "Sequence - Unknown" : text);
         setOnClosed(_ -> {
             for (Tab tab : sequenceExecutionTabPane.getTabs()) {
                 if (tab instanceof SingleExecutionTab singleExecutionTab) {

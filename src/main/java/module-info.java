@@ -53,4 +53,6 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.data.execution to com.fasterxml.jackson.databind;
     exports org.ashot.shellflow.data.execution.variable;
     opens org.ashot.shellflow.mapper to javafx.base, javafx.fxml;
+    exports org.ashot.shellflow.execution.container;
+    opens org.ashot.shellflow.execution.container to javafx.base;
 }

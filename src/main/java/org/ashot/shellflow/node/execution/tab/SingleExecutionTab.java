@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.ExecutionState;
+import org.ashot.shellflow.execution.container.TerminalContainer;
 import org.ashot.shellflow.node.toolbar.TerminalToolBar;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
@@ -23,9 +24,8 @@ import org.slf4j.LoggerFactory;
 import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.constant.ExecutionState.*;
 
-public class SingleExecutionTab extends Tab {
+public class SingleExecutionTab extends Tab implements TerminalContainer {
     private static final Logger log = LoggerFactory.getLogger(SingleExecutionTab.class);
-    private String commandDisplayName;
     private ShellFlowTerminalWidget terminal;
     private final VBox terminalWrapper = new VBox();
     private final SimpleObjectProperty<ExecutionState> state = new SimpleObjectProperty<>();
@@ -33,71 +33,59 @@ public class SingleExecutionTab extends Tab {
     private Process process;
 
     private SingleExecutionTab(OutputTabBuilder outputTabBuilder) {
-        this.commandDisplayName = outputTabBuilder.commandDisplayName;
-        this.setTooltip(outputTabBuilder.tooltip);
-        this.setText(outputTabBuilder.tabName);
-        this.setDisable(outputTabBuilder.disabled);
-        this.setClosable(outputTabBuilder.closable);
+        setTooltip(outputTabBuilder.tooltip);
+        setText(outputTabBuilder.tabName);
+        setDisable(outputTabBuilder.disabled);
+        setClosable(outputTabBuilder.closable);
         setTerminal(outputTabBuilder.terminal);
         runLater(this::setupOutputTab);
     }
 
     public void setupOutputTab() {
-        this.terminalWrapper.setFillWidth(true);
-        this.terminalWrapper.setPadding(new Insets(5));
-        this.terminalWrapper.getStyleClass().addAll(ThemeHandler.getSelectedTheme().isDark() ? "dark" : "light", "terminal-wrapper");
-        this.stackPane.getChildren().add(terminalWrapper);
-        this.setContent(stackPane);
-    }
-
-    public void checkTabName(Command command, Process process) {
-        setText(command.isNameSet() ? command.getName() : "Process - " + process.pid());
+        terminalWrapper.setFillWidth(true);
+        terminalWrapper.setPadding(new Insets(5));
+        terminalWrapper.getStyleClass().addAll(ThemeHandler.getSelectedTheme().isDark() ? "dark" : "light", "terminal-wrapper");
+        stackPane.getChildren().add(terminalWrapper);
+        setContent(stackPane);
     }
 
     public static SingleExecutionTab constructTabFromCommand(Command command) {
         return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
-                .setTabName(command.isNameSet() ? command.getName() : "")
-                .setCommandDisplayName(command.getArgumentsString())
+                .setTabName(command.isNameSet() ? command.getName() : command.getArgumentsString())
                 .setTooltip(command.getArgumentsString())
                 .build();
     }
 
     public static SingleExecutionTab constructSequencePartOutputTab(Command command) {
         return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
-                .setTabName(command.getName())
+                .setTabName(command.isNameSet() ? command.getName() : command.getArgumentsString())
                 .setTooltip(command.getArgumentsString())
-                .setCommandDisplayName(command.getArgumentsString())
                 .setDisabled(true)
                 .setClosable(false)
                 .build();
     }
 
+    @Override
     public void shutDownTerminal() {
         if (getTerminal() != null) {
             this.getTerminal().close();
         }
     }
 
+    @Override
     public void startTerminal() {
         if (getTerminal() != null && getTerminal().getTtyConnector() != null && getTerminal().canOpenSession()) {
             runLater(() -> {
-                this.getTerminal().start();
-                TerminalToolBar terminalToolBar = this.terminal.getTerminalToolBar();
-                this.stackPane.getChildren().add(terminalToolBar);
+                getTerminal().start();
+                TerminalToolBar terminalToolBar = terminal.getTerminalToolBar();
+                stackPane.getChildren().add(terminalToolBar);
                 StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
                 StackPane.setMargin(terminalToolBar, new Insets(0, 25, 15, 0));
             });
         }
     }
 
-    public void setCommandDisplayName(String commandDisplayName) {
-        this.commandDisplayName = commandDisplayName;
-    }
-
-    public String getCommandDisplayName() {
-        return commandDisplayName;
-    }
-
+    @Override
     public ShellFlowTerminalWidget getTerminal() {
         return terminal;
     }
@@ -114,7 +102,7 @@ public class SingleExecutionTab extends Tab {
     }
 
     public void updateState(ExecutionState state, boolean sequence) {
-        log.debug("Execution: {} ({}), updated state: {}", getText(), getCommandDisplayName(), state);
+        log.debug("Execution: {} ({}), updated state: {}", getText(), getTooltip().getText(), state);
         switch (state) {
             case IN_PROGRESS -> TabUtils.setInProgress(this);
             case INTERNAL_FAILURE, FAILURE -> TabUtils.setFailed(this, sequence);
@@ -135,6 +123,7 @@ public class SingleExecutionTab extends Tab {
         });
     }
 
+    @Override
     public SimpleObjectProperty<ExecutionState> stateProperty() {
         return state;
     }
@@ -185,7 +174,6 @@ public class SingleExecutionTab extends Tab {
 
         private String tabName;
         private final Tooltip tooltip = new Tooltip();
-        private String commandDisplayName;
         private boolean disabled = false;
         private boolean closable = true;
 
@@ -195,11 +183,6 @@ public class SingleExecutionTab extends Tab {
 
         public OutputTabBuilder setTabName(String tabName) {
             this.tabName = tabName;
-            return this;
-        }
-
-        public OutputTabBuilder setCommandDisplayName(String commandDisplayName) {
-            this.commandDisplayName = commandDisplayName;
             return this;
         }
 
