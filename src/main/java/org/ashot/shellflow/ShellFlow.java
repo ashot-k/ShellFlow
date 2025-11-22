@@ -15,7 +15,7 @@ import org.ashot.shellflow.config.DefaultConfig;
 import org.ashot.shellflow.config.ShellFlowConfig;
 import org.ashot.shellflow.controller.Controller;
 import org.ashot.shellflow.data.constant.ThemeOption;
-import org.ashot.shellflow.exception.CriticalException;
+import org.ashot.shellflow.exception.app.CriticalException;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.ThemeHandler;

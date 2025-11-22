@@ -1,4 +1,4 @@
-package org.ashot.shellflow.exception;
+package org.ashot.shellflow.exception.entry;
 
 public class InvalidEntryPathException extends RuntimeException {
     private String path = "";

@@ -1,4 +1,4 @@
-package org.ashot.shellflow.exception;
+package org.ashot.shellflow.exception.app;
 
 public class StartupException extends RuntimeException {
     public StartupException(String message) {

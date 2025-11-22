@@ -6,7 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
-import org.ashot.shellflow.exception.StartupException;
+import org.ashot.shellflow.exception.app.StartupException;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.utils.GUIAnimations;
 

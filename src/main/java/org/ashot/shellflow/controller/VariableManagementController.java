@@ -9,7 +9,7 @@ import javafx.scene.Node;
 import org.ashot.shellflow.data.constant.SettingsFilePaths;
 import org.ashot.shellflow.data.execution.variable.Variable;
 import org.ashot.shellflow.data.execution.variable.Variables;
-import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.exception.io.CouldNotCreateRequiredFile;
 import org.ashot.shellflow.node.notification.Notifications;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.node.variable.VariableEntry;
@@ -32,8 +32,9 @@ public class VariableManagementController {
     private final File current;
 
     public VariableManagementController(File init) {
-        view = new VariableSetup();
-        variableRepository = new VariableRepository();
+        this.view = new VariableSetup();
+        this.variableRepository = new VariableRepository();
+        this.current = init;
         variableList.addListener((ListChangeListener<VariableEntry>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -43,7 +44,6 @@ public class VariableManagementController {
                 }
             }
         });
-        current = init;
         load(init);
         setupEvents();
     }

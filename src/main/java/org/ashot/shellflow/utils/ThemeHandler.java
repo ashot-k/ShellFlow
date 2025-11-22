@@ -20,6 +20,8 @@ public class ThemeHandler {
 
     public static void transitionToTheme(Stage stage, ThemeOption option) {
         selectedTheme = option;
+        ShellFlow.getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
+
         boolean isDark = selectedTheme.isDark();
         if (stage != null && stage.getScene() != null) {
             Pane root = (Pane) stage.getScene().getRoot();
@@ -30,7 +32,6 @@ public class ThemeHandler {
                 root.getChildren().remove(imageView);
                 root.getStyleClass().removeAll(DARK_CLASS, LIGHT_CLASS);
                 root.getStyleClass().add(isDark ? DARK_CLASS : LIGHT_CLASS);
-                ShellFlow.getConfig().saveProperty(ConfigProperty.THEME, selectedTheme.getTheme().getName());
                 Application.setUserAgentStylesheet(selectedTheme.getTheme().getUserAgentStylesheet());
                 GUIAnimations.fadeIn(root).play();
                 stage.getScene().setFill(isDark ? Color.BLACK : Color.WHITE);

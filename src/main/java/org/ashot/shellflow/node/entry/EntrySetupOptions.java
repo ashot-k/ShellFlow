@@ -64,11 +64,10 @@ public class EntrySetupOptions extends HBox {
         LabeledControl runOptions = new LabeledControl("", sequenceOptionCheckbox, executeAllButton, new Insets(5, 0, 2.5, 1));
         LabeledControl executionName = new LabeledControl("Execution name", executionNameField);
 
-        HBox quickActionBar = new HBox(2.5, addButton, expandAllButton, collapseAllButton, resetButton, clearAllButton);
+        HBox quickActionBar = new HBox(2.5, addButton, collapseAllButton, expandAllButton, resetButton, clearAllButton);
         quickActionBar.setAlignment(Pos.TOP_RIGHT);
         HBox runActionBar = new HBox(10, executionName, delayPerCmd, runOptions);
         runActionBar.setAlignment(Pos.CENTER);
-        runActionBar.setPadding(new Insets(0, 5, 0, 5));
 
         HBox.setHgrow(executionName, Priority.ALWAYS);
         executionName.setMaxWidth(300);

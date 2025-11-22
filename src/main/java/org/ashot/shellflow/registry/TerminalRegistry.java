@@ -1,42 +1,50 @@
 package org.ashot.shellflow.registry;
 
-import com.techsenger.jeditermfx.core.TtyConnector;
+import com.pty4j.PtyProcess;
 import org.ashot.shellflow.node.popup.AlertPopup;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static javafx.application.Platform.runLater;
+
 public class TerminalRegistry {
-    private static final Map<String, TtyConnector> ttyConnectors = new HashMap<>();
+    private static final Map<String, PtyProcess> ptyProcesses = new HashMap<>();
 
     private TerminalRegistry() {
     }
 
-    public static void register(String key, TtyConnector process) {
-        ttyConnectors.put(key, process);
+    public static void register(String key, PtyProcess process) {
+        ptyProcesses.put(key, process);
+    }
+
+    public static void remove(String key) {
+        ptyProcesses.remove(key);
     }
 
     public static <T> T get(String key, Class<T> type) {
-        return type.cast(ttyConnectors.get(key));
+        return type.cast(ptyProcesses.get(key));
     }
 
-    public static Map<String, TtyConnector> getAllTerminalProcesses() {
-        return ttyConnectors;
+    public static Map<String, PtyProcess> getAllTerminalProcesses() {
+        return ptyProcesses;
     }
 
     public static void stopAllTerminals() {
-        ttyConnectors.values().forEach(TerminalRegistry::stopTerminal);
+        ptyProcesses.values().forEach(TerminalRegistry::stopTerminal);
     }
 
-    public static void stopTerminal(TtyConnector ttyConnector) {
+    public static void stopTerminal(PtyProcess ptyProcess) {
         new Thread(() -> {
-            try {
-                ttyConnector.write("\u0003");
-                ttyConnector.waitFor();
-            } catch (IOException | InterruptedException e) {
+            try (BufferedWriter writer = ptyProcess.outputWriter()) {
+                writer.write("\u0003");
+                writer.flush();
+                remove(String.valueOf(ptyProcess.pid()));
+            } catch (IOException e) {
                 Thread.currentThread().interrupt();
-                new AlertPopup("Termination Error", "Could not termiate process: " + e.getMessage(), false);
+                runLater(() -> new AlertPopup("Termination Error", "Could not terminate process: " + e.getMessage(), false).show());
             }
         }).start();
     }

@@ -239,6 +239,14 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getExtrasIcon(double size) {
+        Glyph icon = fontAwesome.create(ELLIPSIS_H);
+        icon.size(size);
+        icon.color(preferredColor);
+        setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
     public static ImageView getPowershellIcon(double size) {
         return new ImageView(new Image(ShellFlow.class.getResource("/icons/powershell.png").toExternalForm(), size, size, true, true));
     }
@@ -250,4 +258,5 @@ public class Icons {
     public static ImageView getBashIcon(double size) {
         return new ImageView(new Image(ShellFlow.class.getResource("/icons/bash.png").toExternalForm(), size, size, true, true));
     }
+
 }

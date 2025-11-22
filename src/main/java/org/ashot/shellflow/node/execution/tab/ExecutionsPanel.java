@@ -1,6 +1,5 @@
 package org.ashot.shellflow.node.execution.tab;
 
-import atlantafx.base.theme.Styles;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -10,7 +9,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
-import org.ashot.shellflow.data.message.ToolTipMessages;
+import org.ashot.shellflow.node.execution.button.AddNewTabButton;
+import org.ashot.shellflow.node.execution.button.DetachButton;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.popup.DetachableStage;
 import org.ashot.shellflow.registry.TerminalRegistry;
@@ -30,17 +30,12 @@ public class ExecutionsPanel extends HBox {
     private final VBox detachedSceneRoot;
     private final DetachableStage stage;
 
-    private final Button detachExecutionsButton;
-    private final Button addNewTabButton;
+    private final DetachButton detachExecutionsButton;
+    private final AddNewTabButton addNewTabButton;
 
     public ExecutionsPanel() {
-        detachExecutionsButton = new Button("", Icons.getDetachExecutionsIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize(), false));
-        detachExecutionsButton.setTooltip(new Tooltip(ToolTipMessages.DETACH_EXECUTIONS_BUTTON));
-        detachExecutionsButton.getStyleClass().addAll(Styles.FLAT);
-
-        addNewTabButton = new Button("", Icons.getAddButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
-        addNewTabButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
-        addNewTabButton.getStyleClass().addAll(Styles.FLAT);
+        detachExecutionsButton = new DetachButton();
+        addNewTabButton = new AddNewTabButton();
 
         toolBar = new HBox(detachExecutionsButton, addNewTabButton);
         content = new HBox(createExecutionsPlaceholder(NO_EXECUTIONS_TEXT));
@@ -48,6 +43,7 @@ public class ExecutionsPanel extends HBox {
 
         tabPane = new TabPane();
         tabPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
+        tabPane.setTabMaxWidth(300);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
 
         HBox.setHgrow(tabPane, Priority.ALWAYS);
@@ -70,7 +66,7 @@ public class ExecutionsPanel extends HBox {
         getChildren().setAll(contentWrapper);
     }
 
-    private static HeaderBar createDetachHeaderNode(String detachTitle) {
+    private HeaderBar createDetachHeaderNode(String detachTitle) {
         Label label = new Label(detachTitle);
         label.setFont(Fonts.title());
         label.setPadding(new Insets(8, 10, 0, 12.5));
@@ -79,16 +75,17 @@ public class ExecutionsPanel extends HBox {
     }
 
     private void setupDetachableWindow() {
-        stage.detachedProperty().addListener((_, _, newDetachedValue) -> detachExecutionsButton.setGraphic(Icons.getDetachExecutionsIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize(), newDetachedValue)));
+        detachExecutionsButton.detachedProperty().bind(stage.detachedProperty());
         stage.setOnCloseRequest(_ -> contentWrapper.getChildren().setAll(toolBar, content));
         detachExecutionsButton.setOnAction(_ -> {
             if (stage.isDetached()) {
                 detachedSceneRoot.getChildren().clear();
                 contentWrapper.getChildren().setAll(toolBar, content);
+                getScene().getWindow().requestFocus();
                 stage.hide();
             } else {
-                contentWrapper.getChildren().setAll(toolBar, createExecutionsPlaceholder(DETACHED_TEXT));
-                detachedSceneRoot.getChildren().setAll(content);
+                contentWrapper.getChildren().setAll(createExecutionsPlaceholder(DETACHED_TEXT));
+                detachedSceneRoot.getChildren().setAll(toolBar, content);
                 stage.show();
             }
         });
@@ -117,7 +114,7 @@ public class ExecutionsPanel extends HBox {
         editTabName.setHideOnClick(false);
         closeAllMenuItem.setOnAction(_ -> closeAll());
 
-        tabPane.setContextMenu(new ContextMenu(editTabName, stopAllMenuItem, closeAllMenuItem));
+        tabPane.setContextMenu(new ContextMenu(stopAllMenuItem, closeAllMenuItem));
         tabPane.setOnContextMenuRequested(menuRequestEvent -> {
             if (tabPane.getTabs().stream().anyMatch(e -> e.getContent().isHover())) {
                 tabPane.getContextMenu().hide();

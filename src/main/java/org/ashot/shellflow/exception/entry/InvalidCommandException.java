@@ -1,4 +1,4 @@
-package org.ashot.shellflow.exception;
+package org.ashot.shellflow.exception.entry;
 
 public class InvalidCommandException extends RuntimeException {
     public InvalidCommandException(String message) {

@@ -1,4 +1,4 @@
-package org.ashot.shellflow.exception;
+package org.ashot.shellflow.exception.io;
 
 import java.io.IOException;
 

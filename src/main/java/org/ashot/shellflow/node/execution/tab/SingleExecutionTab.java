@@ -1,88 +1,65 @@
 package org.ashot.shellflow.node.execution.tab;
 
+import atlantafx.base.controls.Popover;
+import com.pty4j.PtyProcess;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tab;
-import javafx.scene.control.Tooltip;
+import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.execution.container.TerminalContainer;
+import org.ashot.shellflow.execution.task.manager.TerminalSession;
+import org.ashot.shellflow.node.icon.Icons;
+import org.ashot.shellflow.node.toolbar.ExecutionTabToolbar;
 import org.ashot.shellflow.node.toolbar.TerminalToolBar;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
-import org.ashot.shellflow.terminal.TerminalFactory;
-import org.ashot.shellflow.utils.TabUtils;
+import org.ashot.shellflow.terminal.tty.PtyProcessTtyConnector;
+import org.ashot.shellflow.utils.GUIAnimations;
 import org.ashot.shellflow.utils.ThemeHandler;
+import org.controlsfx.glyphfont.Glyph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static javafx.application.Platform.runLater;
 import static org.ashot.shellflow.data.constant.ExecutionState.*;
 
-public class SingleExecutionTab extends Tab implements TerminalContainer {
+public class SingleExecutionTab extends ExecutionTab implements TerminalContainer {
     private static final Logger log = LoggerFactory.getLogger(SingleExecutionTab.class);
     private ShellFlowTerminalWidget terminal;
     private final VBox terminalWrapper = new VBox();
     private final SimpleObjectProperty<ExecutionState> state = new SimpleObjectProperty<>();
     private final StackPane stackPane = new StackPane();
-    private Process process;
 
-    private SingleExecutionTab(OutputTabBuilder outputTabBuilder) {
-        setTooltip(outputTabBuilder.tooltip);
-        setText(outputTabBuilder.tabName);
-        setDisable(outputTabBuilder.disabled);
-        setClosable(outputTabBuilder.closable);
-        setTerminal(outputTabBuilder.terminal);
-        runLater(this::setupOutputTab);
+    public SingleExecutionTab() {
+        super();
     }
 
-    public void setupOutputTab() {
-        terminalWrapper.setFillWidth(true);
-        terminalWrapper.setPadding(new Insets(5));
-        terminalWrapper.getStyleClass().addAll(ThemeHandler.getSelectedTheme().isDark() ? "dark" : "light", "terminal-wrapper");
-        stackPane.getChildren().add(terminalWrapper);
-        setContent(stackPane);
-    }
-
-    public static SingleExecutionTab constructTabFromCommand(Command command) {
-        return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
-                .setTabName(command.isNameSet() ? command.getName() : command.getArgumentsString())
-                .setTooltip(command.getArgumentsString())
-                .build();
-    }
-
-    public static SingleExecutionTab constructSequencePartOutputTab(Command command) {
-        return new OutputTabBuilder(TerminalFactory.createTerminalWidget())
-                .setTabName(command.isNameSet() ? command.getName() : command.getArgumentsString())
-                .setTooltip(command.getArgumentsString())
-                .setDisabled(true)
-                .setClosable(false)
-                .build();
+    public void setupTerminalWidget(TerminalSession terminalSession) {
+        if (terminal == null) {
+            terminal = terminalSession.terminalWidget();
+            terminalWrapper.setFillWidth(true);
+            terminalWrapper.setPadding(new Insets(5));
+            terminalWrapper.getStyleClass().addAll(ThemeHandler.getSelectedTheme().isDark() ? "dark" : "light", "terminal-wrapper");
+            setContent(stackPane);
+        }
+        terminal = terminalSession.terminalWidget();
+        TerminalToolBar terminalToolBar = terminal.getTerminalToolBar();
+        stackPane.getChildren().setAll(terminalWrapper, terminalToolBar);
+        StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(terminalToolBar, new Insets(0, 25, 15, 0));
+        terminalWrapper.getChildren().setAll(terminal.getPane());
+        VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
     }
 
     @Override
-    public void shutDownTerminal() {
-        if (getTerminal() != null) {
-            this.getTerminal().close();
-        }
-    }
-
-    @Override
-    public void startTerminal() {
-        if (getTerminal() != null && getTerminal().getTtyConnector() != null && getTerminal().canOpenSession()) {
-            runLater(() -> {
-                getTerminal().start();
-                TerminalToolBar terminalToolBar = terminal.getTerminalToolBar();
-                stackPane.getChildren().add(terminalToolBar);
-                StackPane.setAlignment(terminalToolBar, Pos.BOTTOM_RIGHT);
-                StackPane.setMargin(terminalToolBar, new Insets(0, 25, 15, 0));
-            });
-        }
+    public void attachSession(TerminalSession session) {
+        setupTerminalWidget(session);
     }
 
     @Override
@@ -90,25 +67,70 @@ public class SingleExecutionTab extends Tab implements TerminalContainer {
         return terminal;
     }
 
-    public void setTerminal(ShellFlowTerminalWidget terminal) {
-        this.terminal = terminal;
-        if (terminal != null) {
-            setOnClose(null);
-            runLater(() -> {
-                terminalWrapper.getChildren().add(terminal.getPane());
-                VBox.setVgrow(terminal.getPane(), Priority.ALWAYS);
-            });
+    public void updateState(ExecutionState newState, boolean sequence) {
+        log.debug("Execution: {} [{}], updated state: {}", getText(), getTooltip().getText(), newState);
+        switch (newState) {
+            case IN_PROGRESS -> setInProgress(sequence);
+            case INTERNAL_FAILURE, FAILURE -> setFailed(sequence);
+            case FINISHED -> setFinished(sequence);
+            case CANCELLED -> setCancelled(sequence);
         }
     }
 
-    public void updateState(ExecutionState state, boolean sequence) {
-        log.debug("Execution: {} ({}), updated state: {}", getText(), getTooltip().getText(), state);
-        switch (state) {
-            case IN_PROGRESS -> TabUtils.setInProgress(this);
-            case INTERNAL_FAILURE, FAILURE -> TabUtils.setFailed(this, sequence);
-            case FINISHED -> TabUtils.setFinished(this, sequence);
-            case CANCELLED -> TabUtils.setCancelled(this, sequence);
+    private Node createTabGraphic(Glyph icon, boolean sequence, Node... content) {
+        Popover popoverToolbar = new ExecutionTabToolbar();
+        HBox popoverContent = new HBox(10);
+
+        Hyperlink toolbarLink = new Hyperlink("", Icons.getExtrasIcon(TAB_ICON_SIZE));
+        toolbarLink.setOnAction(_ -> popoverToolbar.show(toolbarLink));
+        HBox toolBarButtons = new HBox(5);
+
+        if (!sequence) {
+            toolBarButtons.getChildren().addAll(restartButton, renameField);
+            popoverContent.getChildren().addAll(toolbarLink);
         }
+
+        toolBarButtons.getChildren().addAll(content);
+        toolBarButtons.setAlignment(Pos.CENTER);
+        popoverToolbar.setContentNode(toolBarButtons);
+        popoverContent.setPadding(new Insets(1));
+        popoverContent.getChildren().add(icon);
+        return popoverContent;
+    }
+
+    public void setInProgress(boolean sequence) {
+        Glyph icon = Icons.getExecutionInProgressIcon(TAB_ICON_SIZE);
+        setGraphic(createTabGraphic(icon, sequence));
+        setDisable(false);
+        setClosable(!sequence);
+        state.setValue(IN_PROGRESS);
+    }
+
+    public void setFailed(boolean sequence) {
+        Glyph icon = Icons.getExecutionErrorIcon(TAB_ICON_SIZE);
+        setGraphic(createTabGraphic(icon, sequence));
+        setDisable(false);
+        setClosable(!sequence);
+        GUIAnimations.rotateInAndWobble(icon);
+        state.setValue(FAILURE);
+    }
+
+    public void setFinished(boolean sequence) {
+        Glyph icon = Icons.getExecutionFinishedIcon(TAB_ICON_SIZE);
+        setGraphic(createTabGraphic(icon, sequence));
+        setClosable(!sequence);
+        setDisable(false);
+        GUIAnimations.rotateInAndWobble(icon);
+        state.setValue(FINISHED);
+    }
+
+    public void setCancelled(boolean sequence) {
+        Glyph icon = Icons.getExecutionCancelledIcon(TAB_ICON_SIZE);
+        setGraphic(createTabGraphic(icon, sequence));
+        setDisable(false);
+        setClosable(!sequence);
+        GUIAnimations.rotateInAndWobble(icon);
+        state.setValue(CANCELLED);
     }
 
     public void setOnClose(EventHandler<Event> event) {
@@ -144,65 +166,8 @@ public class SingleExecutionTab extends Tab implements TerminalContainer {
         return state.get().equals(FAILURE);
     }
 
-    public void setCancelled() {
-        state.setValue(CANCELLED);
+    public PtyProcess getProcess() {
+        return (PtyProcess) ((PtyProcessTtyConnector) terminal.getTtyConnector()).getProcess();
     }
 
-    public void setInProgress() {
-        state.setValue(IN_PROGRESS);
-    }
-
-    public void setFinished() {
-        state.setValue(FINISHED);
-    }
-
-    public void setFailed() {
-        state.setValue(FAILURE);
-    }
-
-    public Process getProcess() {
-        return process;
-    }
-
-    public void setProcess(Process process) {
-        this.process = process;
-    }
-
-    public static class OutputTabBuilder {
-
-        private final ShellFlowTerminalWidget terminal;
-
-        private String tabName;
-        private final Tooltip tooltip = new Tooltip();
-        private boolean disabled = false;
-        private boolean closable = true;
-
-        public OutputTabBuilder(ShellFlowTerminalWidget terminal) {
-            this.terminal = terminal;
-        }
-
-        public OutputTabBuilder setTabName(String tabName) {
-            this.tabName = tabName;
-            return this;
-        }
-
-        public OutputTabBuilder setTooltip(String tooltipText) {
-            this.tooltip.setText(tooltipText);
-            return this;
-        }
-
-        public OutputTabBuilder setDisabled(boolean disabled) {
-            this.disabled = disabled;
-            return this;
-        }
-
-        public OutputTabBuilder setClosable(boolean closable) {
-            this.closable = closable;
-            return this;
-        }
-
-        public SingleExecutionTab build() {
-            return new SingleExecutionTab(this);
-        }
-    }
 }

@@ -1,6 +1,6 @@
 package org.ashot.shellflow.peristence;
 
-import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.exception.io.CouldNotCreateRequiredFile;
 
 import java.io.File;
 

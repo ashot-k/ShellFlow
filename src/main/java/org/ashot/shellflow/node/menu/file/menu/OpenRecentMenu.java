@@ -53,10 +53,11 @@ public class OpenRecentMenu extends Menu {
                 } else {
                     AlertPopup alertPopup = new AlertPopup(
                             "Error",
-                            "Could not open file \"" + recentFile + "\" it does not exist",
+                            "Could not open file \"" + recentFile + "\", it does not exist",
                             false
                     );
                     alertPopup.show();
+                    RecentFileUtils.removeRecentFile(recentFile);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage());

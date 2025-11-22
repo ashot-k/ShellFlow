@@ -5,7 +5,7 @@ import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.controller.ExecutionManagementController;
 import org.ashot.shellflow.data.constant.NotificationType;
-import org.ashot.shellflow.exception.StartupException;
+import org.ashot.shellflow.exception.app.StartupException;
 
 public class SystemTray {
     private static FXTrayIcon trayIcon;

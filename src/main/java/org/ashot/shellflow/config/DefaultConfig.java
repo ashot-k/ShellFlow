@@ -3,7 +3,7 @@ package org.ashot.shellflow.config;
 import javafx.scene.text.Font;
 import org.ashot.shellflow.data.constant.ConfigProperty;
 import org.ashot.shellflow.data.constant.ThemeOption;
-import org.ashot.shellflow.exception.CriticalException;
+import org.ashot.shellflow.exception.app.CriticalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,15 +78,6 @@ public class DefaultConfig implements ShellFlowConfig {
         return Boolean.parseBoolean(value);
     }
 
-    private String getPropertyOrDefault(String propertyName, String defaultValue) {
-        String property = properties.getProperty(propertyName);
-        if (property == null) {
-            log.debug("Property: [{}] not found using default value: [{}]", propertyName, defaultValue);
-            return defaultValue;
-        }
-        return property;
-    }
-
     @Override
     public void saveProperty(ConfigProperty property, String value) {
         properties.setProperty(property.getPropertyName(), value);
@@ -95,5 +86,14 @@ public class DefaultConfig implements ShellFlowConfig {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private String getPropertyOrDefault(String propertyName, String defaultValue) {
+        String property = properties.getProperty(propertyName);
+        if (property == null) {
+            log.debug("Property: [{}] not found using default value: [{}]", propertyName, defaultValue);
+            return defaultValue;
+        }
+        return property;
     }
 }

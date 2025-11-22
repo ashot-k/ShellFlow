@@ -1,8 +1,8 @@
 package org.ashot.shellflow.data.command;
 
 import org.ashot.shellflow.data.message.ExceptionMessages;
-import org.ashot.shellflow.exception.InvalidCommandException;
-import org.ashot.shellflow.exception.InvalidEntryPathException;
+import org.ashot.shellflow.exception.entry.InvalidCommandException;
+import org.ashot.shellflow.exception.entry.InvalidEntryPathException;
 import org.ashot.shellflow.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,6 @@ public class Command {
 
     private void validateArguments(String arguments) throws InvalidCommandException {
         if (arguments == null || arguments.isBlank()) {
-            log.error("Arguments are blank");
             throw new InvalidCommandException(ExceptionMessages.INVALID_ARGUMENTS);
         }
     }

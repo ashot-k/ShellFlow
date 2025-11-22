@@ -1,7 +1,6 @@
 package org.ashot.shellflow.node.entry;
 
 import atlantafx.base.controls.Message;
-import atlantafx.base.controls.Spacer;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.theme.Tweaks;
 import javafx.beans.property.BooleanProperty;
@@ -19,7 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.data.constant.Fonts;
-import org.ashot.shellflow.data.execution.entry.Entry;
+import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.entry.button.CloseButton;
 import org.ashot.shellflow.node.entry.button.EnableEntryBoxToggle;
@@ -35,7 +34,7 @@ import java.util.List;
 public class EntryBox extends TitledPane {
     private static final List<String> STYLE_CLASSES = List.of(Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
     private static final String EDITED_FIELD_STYLE_CLASS = "edited-field";
-    public static final double MAX_WIDTH = 350;
+    private static final double MAX_WIDTH = 380;
     private final NameField nameField;
     private final PathField pathField;
     private final CommandTextArea commandField;
@@ -54,18 +53,9 @@ public class EntryBox extends TitledPane {
     public EntryBox(Entry entry) {
         this.entry = entry;
 
-        nameField = new NameField(
-                entry.name(), null, ToolTipMessages.NAME_FIELD,
-                null, null, "name-field"
-        );
-        pathField = new PathField(
-                entry.path(), null, ToolTipMessages.PATH_FIELD,
-                null, null, "path-field"
-        );
-        commandField = new CommandTextArea(
-                entry.command(), null, ToolTipMessages.COMMAND_FIELD,
-                null, null, "command-field"
-        );
+        nameField = new NameField(entry.name(), null, ToolTipMessages.NAME_FIELD, "name-field");
+        pathField = new PathField(entry.path(), null, ToolTipMessages.PATH_FIELD, "path-field");
+        commandField = new CommandTextArea(entry.command(), null, ToolTipMessages.COMMAND_FIELD, "command-field");
 
         wslToggle = new WSLBoxToggle(entry.wsl());
         pathField.wslProperty().bind(wslToggle.selectedProperty());
@@ -94,34 +84,32 @@ public class EntryBox extends TitledPane {
 
         title = new Label();
         title.setFont(Fonts.nameFieldDisplay());
-        title.setEllipsisString("...");
-        title.setMaxWidth(MAX_WIDTH * 0.50);
+        title.setTextOverrun(OverrunStyle.ELLIPSIS);
+        title.setMaxWidth(MAX_WIDTH * 0.55);
 
         executeButton = new ExecuteEntryButton();
 
         HBox stateButtonsContainer = new HBox(10, deleteEntry, enabledToggle);
         stateButtonsContainer.setAlignment(Pos.CENTER_LEFT);
-        stateButtonsContainer.setMinWidth(MAX_WIDTH * 0.08);
         HBox executionButtonsContainer = new HBox(10, wslToggle, executeButton);
         executionButtonsContainer.setAlignment(Pos.CENTER_RIGHT);
-        executionButtonsContainer.setMinWidth(MAX_WIDTH * 0.12);
 
-        HBox header = new HBox(10, stateButtonsContainer, title, new Spacer(), executionButtonsContainer);
-        header.setAlignment(Pos.CENTER);
+        GridPane header = new GridPane();
+        header.addRow(0, stateButtonsContainer, title, executionButtonsContainer);
+        GridPane.setConstraints(title, 1, 0, 1, 1, HPos.LEFT, VPos.CENTER, Priority.NEVER, Priority.NEVER);
+        GridPane.setConstraints(executionButtonsContainer, 2, 0, 1, 1, HPos.RIGHT, VPos.CENTER, Priority.ALWAYS, Priority.NEVER);
+        header.setHgap(10);
         header.setPadding(new Insets(1, 10, 1, 1));
 
-        setGraphic(header);
-
         content = new VBox(0, entryGrid);
-        content.setFillWidth(true);
-        content.setPadding(new Insets(1));
+        content.setPadding(new Insets(5));
 
-        setContent(content);
-
+        setMaxWidth(MAX_WIDTH);
         setMinWidth(MAX_WIDTH);
         setPrefWidth(MAX_WIDTH);
-        setMaxWidth(MAX_WIDTH);
 
+        setGraphic(header);
+        setContent(content);
         setupInitialState();
         setupEventListeners();
         getStyleClass().addAll(STYLE_CLASSES);

@@ -9,6 +9,10 @@ public class CommandTextArea extends TextArea {
     public static final int DEFAULT_TEXT_AREA_HEIGHT = 40;
     private static final double TEXT_AREA_HEIGHT_ENLARGED_MULTI = 2.5;
 
+    public CommandTextArea(String text, String promptText, String toolTip, String styleClass) {
+        this(text, promptText, toolTip, null, null, styleClass);
+    }
+
     public CommandTextArea(String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
         if (height == null) {
             height = (double) DEFAULT_TEXT_AREA_HEIGHT;

@@ -18,7 +18,6 @@ module org.ashot.shellflow {
     requires com.fasterxml.jackson.databind;
 
     exports org.ashot.shellflow;
-    exports org.ashot.shellflow.exception;
     exports org.ashot.shellflow.node.popup;
     opens org.ashot.shellflow to javafx.fxml;
     opens org.ashot.shellflow.node.popup to javafx.fxml;
@@ -35,18 +34,15 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.config;
     exports org.ashot.shellflow.mapper;
     exports org.ashot.shellflow.node.entry;
-    exports org.ashot.shellflow.data.execution.entry;
+    exports org.ashot.shellflow.data.entry;
     exports org.ashot.shellflow.controller;
     opens org.ashot.shellflow.controller to javafx.fxml;
-    exports org.ashot.shellflow.execution.task;
-    exports org.ashot.shellflow.execution.task.factory;
     opens org.ashot.shellflow.node.entry to javafx.base;
     exports org.ashot.shellflow.node.entry.field;
     opens org.ashot.shellflow.node.entry.field to javafx.base;
-    opens org.ashot.shellflow.execution.task to javafx.base;
     exports org.ashot.shellflow.node.execution.tab;
     opens org.ashot.shellflow.node.execution.tab to javafx.base;
-    opens org.ashot.shellflow.data.execution.entry to com.fasterxml.jackson.databind;
+    opens org.ashot.shellflow.data.entry to com.fasterxml.jackson.databind;
     opens org.ashot.shellflow.data.execution.variable to com.fasterxml.jackson.databind;
     opens org.ashot.shellflow.data.utility to com.fasterxml.jackson.databind;
     exports org.ashot.shellflow.data.execution;
@@ -55,4 +51,12 @@ module org.ashot.shellflow {
     opens org.ashot.shellflow.mapper to javafx.base, javafx.fxml;
     exports org.ashot.shellflow.execution.container;
     opens org.ashot.shellflow.execution.container to javafx.base;
+    exports org.ashot.shellflow.execution.task.manager;
+    opens org.ashot.shellflow.execution.task.manager to javafx.base;
+    exports org.ashot.shellflow.execution.task.ui;
+    opens org.ashot.shellflow.execution.task.ui to javafx.base;
+    exports org.ashot.shellflow.exception.io;
+    exports org.ashot.shellflow.exception.execution;
+    exports org.ashot.shellflow.exception.app;
+    exports org.ashot.shellflow.exception.entry;
 }

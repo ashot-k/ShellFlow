@@ -13,6 +13,10 @@ import java.io.File;
 public class PathField extends CustomTextField {
     private final BooleanProperty wsl = new SimpleBooleanProperty();
 
+    public PathField(String text, String promptText, String toolTip, String styleClass) {
+        this(text, promptText, toolTip, null, null, styleClass);
+    }
+
     public PathField(String text, String promptText, String toolTip, Double width, Double height, String styleClass) {
         FieldUtils.setupField(this, text, promptText, toolTip, width, height, styleClass);
         setRight(new BrowsePathButton(this::onPathBrowse));

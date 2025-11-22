@@ -1,8 +1,8 @@
 package org.ashot.shellflow.utils;
 
 import javafx.stage.FileChooser;
-import org.ashot.shellflow.exception.FileReadFailureException;
-import org.ashot.shellflow.exception.FileWriteFailureException;
+import org.ashot.shellflow.exception.io.FileReadFailureException;
+import org.ashot.shellflow.exception.io.FileWriteFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

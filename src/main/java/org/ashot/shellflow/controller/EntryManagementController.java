@@ -14,12 +14,11 @@ import javafx.scene.paint.Color;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
+import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.execution.Execution;
-import org.ashot.shellflow.data.execution.entry.Entry;
-import org.ashot.shellflow.exception.CouldNotCreateRequiredFile;
-import org.ashot.shellflow.exception.FileWriteFailureException;
-import org.ashot.shellflow.execution.task.SequenceExecutionTask;
-import org.ashot.shellflow.execution.task.SingularExecutionTask;
+import org.ashot.shellflow.exception.entry.InvalidEntryException;
+import org.ashot.shellflow.exception.io.CouldNotCreateRequiredFile;
+import org.ashot.shellflow.exception.io.FileWriteFailureException;
 import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.node.entry.EntrySetupTab;
@@ -32,6 +31,7 @@ import org.ashot.shellflow.peristence.ExecutionRepository;
 import org.ashot.shellflow.utils.FileUtils;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.ashot.shellflow.utils.RecentFileUtils;
+import org.ashot.shellflow.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static javafx.application.Platform.runLater;
-import static org.ashot.shellflow.utils.Utils.checkIfWindows;
 
 public class EntryManagementController {
     private static final Logger log = LoggerFactory.getLogger(EntryManagementController.class);
@@ -145,9 +144,12 @@ public class EntryManagementController {
         entryBox.animatedProperty().bind(optimizationMode.not());
         entryBox.setOnExecuteButtonAction(_ -> {
             GUIAnimations.shakeY(entryBox.getExecuteButton(), 2.5).play();
-            Command command = entryMapper.entryToCommand(entryMapper.entryBoxToEntry(entryBox));
-            SingularExecutionTask singularExecutionTask = executionManagement.createExecutionTask(command);
-            ExecutionManagementController.executeTask(singularExecutionTask);
+            try {
+                Command command = entryMapper.entryToCommand(entryMapper.entryBoxToEntry(entryBox));
+                executionManagement.beginSingularExecution(command);
+            } catch (InvalidEntryException e) {
+                handleInvalidEntryException(e);
+            }
         });
 
         setupDragging(entryBox);
@@ -236,19 +238,43 @@ public class EntryManagementController {
         log.debug("Executing all entries, sequence: {}", sequenceOption.get());
         runLater(() -> {
             if (sequenceOption.get()) {
-                CommandSequence commandSequence = entryMapper.buildSequence(getEntries(), executionName.get());
-                if (!commandSequence.commandList().isEmpty()) {
-                    SequenceExecutionTask sequenceExecutionTask = executionManagement.createSequenceExecutionTask(commandSequence);
-                    ExecutionManagementController.executeTask(sequenceExecutionTask);
-                }
+                executeSequence();
             } else {
-                List<Command> commandList = entryMapper.buildCommands(getEntries());
-                if (!commandList.isEmpty()) {
-                    List<SingularExecutionTask> task = executionManagement.createExecutionTasks(commandList, executionName.get(), getDelayPerCmd());
-                    task.forEach(ExecutionManagementController::executeTask);
-                }
+                executeParallel();
             }
         });
+    }
+
+    private void executeSequence() {
+        try {
+            CommandSequence commandSequence = entryMapper.buildSequence(getEntries(), executionName.get());
+            if (!commandSequence.commandList().isEmpty()) {
+                executionManagement.beginSequenceExecutionTask(commandSequence);
+            }
+        } catch (InvalidEntryException e) {
+            handleInvalidEntryException(e);
+        }
+    }
+
+    private void executeParallel() {
+        try {
+            List<Command> commandList = entryMapper.buildCommands(getEntries());
+            if (!commandList.isEmpty()) {
+                executionManagement.beginParallelExecutions(commandList, executionName.get(), getDelayPerCmd());
+            }
+        } catch (InvalidEntryException e) {
+            handleInvalidEntryException(e);
+        }
+    }
+
+    private void handleInvalidEntryException(InvalidEntryException invalidEntryException) {
+        Entry entry = invalidEntryException.getEntry();
+        if (invalidEntryException.getCause() != null) {
+            Throwable cause = invalidEntryException.getCause();
+            log.error("Invalid entry: name [{}], command [{}],  path [{}], exception [{}]: {}", entry.name(), entry.command(), entry.path(), cause.getClass().getSimpleName(), cause.getMessage());
+        } else {
+            log.error("Invalid entry: name [{}], command [{}],  path [{}], exception : {}", entry.name(), entry.command(), entry.path(), invalidEntryException.getMessage());
+        }
     }
 
     public void load(File fileToLoad) {
@@ -283,7 +309,7 @@ public class EntryManagementController {
         try {
             entryRepository.saveToFile(fileToSave, getExecution());
             handleFileOperationOccurred(fileToSave);
-            Notifications.showNotif("Saved execution successfully!");
+            Notifications.showNotif("Saved execution " + fileToSave.getName());
         } catch (CouldNotCreateRequiredFile e) {
             String exceptionMessage = e.getMessage() != null && !e.getMessage().isBlank() ? (", " + e.getMessage()) : "";
             runLater(() -> new AlertPopup(
@@ -307,7 +333,7 @@ public class EntryManagementController {
     }
 
     private static String getFileName(String path) {
-        String delimiter = checkIfWindows() ? "\\\\" : "/";
+        String delimiter = Utils.checkIfWindows() ? "\\\\" : "/";
         String[] splitPath = path.split(delimiter);
         return splitPath[splitPath.length - 1];
     }

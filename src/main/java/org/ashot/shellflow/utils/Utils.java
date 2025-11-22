@@ -7,7 +7,7 @@ public class Utils {
     private Utils() {
     }
 
-    public static int calculateDelay(int multiplier, int delayPerCmd) {
+    public static long calculateDelay(int multiplier, long delayPerCmd) {
         if (delayPerCmd == 0) {
             delayPerCmd = 1;
         }

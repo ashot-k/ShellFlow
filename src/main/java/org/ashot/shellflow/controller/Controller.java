@@ -14,7 +14,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.constant.TabIndices;
-import org.ashot.shellflow.exception.FileReadFailureException;
+import org.ashot.shellflow.exception.io.FileReadFailureException;
 import org.ashot.shellflow.node.menu.MainMenuBar;
 import org.ashot.shellflow.node.notification.Notifications;
 import org.ashot.shellflow.node.notification.SystemTray;

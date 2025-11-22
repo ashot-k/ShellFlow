@@ -1,10 +1,15 @@
 package org.ashot.shellflow.node.execution.tab;
 
-import javafx.scene.control.Tab;
+import atlantafx.base.controls.Popover;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.HBox;
 import org.ashot.shellflow.data.constant.SequenceExecutionState;
-import org.ashot.shellflow.execution.container.ExecutionContainer;
 import org.ashot.shellflow.node.icon.Icons;
+import org.ashot.shellflow.node.toolbar.ExecutionTabToolbar;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.controlsfx.glyphfont.Glyph;
 import org.slf4j.Logger;
@@ -12,24 +17,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static org.ashot.shellflow.utils.TabUtils.TAB_ICON_SIZE;
 
-public class SequenceExecutionsTab extends Tab implements ExecutionContainer {
+public class SequenceExecutionsTab extends ExecutionTab {
     private final Logger log = LoggerFactory.getLogger(SequenceExecutionsTab.class);
     private final TabPane sequenceExecutionTabPane;
 
     public SequenceExecutionsTab(String text) {
         sequenceExecutionTabPane = new TabPane();
-        sequenceExecutionTabPane.setTabMaxWidth(300);
+        sequenceExecutionTabPane.setTabMaxWidth(TAB_NAME_MAX_WIDTH);
         setContent(sequenceExecutionTabPane);
         setText(text.isEmpty() ? "Sequence - Unknown" : text);
-        setOnClosed(_ -> {
-            for (Tab tab : sequenceExecutionTabPane.getTabs()) {
-                if (tab instanceof SingleExecutionTab singleExecutionTab) {
-                    singleExecutionTab.shutDownTerminal();
-                }
-            }
-        });
     }
 
     public List<SingleExecutionTab> getTabsInSequence() {
@@ -38,6 +35,16 @@ public class SequenceExecutionsTab extends Tab implements ExecutionContainer {
 
     public TabPane getSequenceTabPane() {
         return sequenceExecutionTabPane;
+    }
+
+    public void reset() {
+        getTabsInSequence().forEach(tabInSequence -> {
+            tabInSequence.setGraphic(null);
+            tabInSequence.setDisable(true);
+            tabInSequence.setClosable(false);
+        });
+        getSequenceTabPane().getSelectionModel().selectFirst();
+        updateState(SequenceExecutionState.IN_PROGRESS);
     }
 
     public void updateState(SequenceExecutionState state) {
@@ -51,22 +58,42 @@ public class SequenceExecutionsTab extends Tab implements ExecutionContainer {
         }
     }
 
+    private Node createTabGraphic(Glyph icon, Node... content) {
+        Popover popoverToolbar = new ExecutionTabToolbar();
+        HBox popoverContent = new HBox(10);
+
+        Hyperlink toolbarLink = new Hyperlink("", Icons.getExtrasIcon(TAB_ICON_SIZE));
+        toolbarLink.setOnAction(_ -> popoverToolbar.show(toolbarLink));
+
+        HBox toolBarButtons = new HBox(5);
+
+        toolBarButtons.getChildren().addAll(restartButton, renameField);
+        popoverContent.getChildren().add(toolbarLink);
+
+        toolBarButtons.getChildren().addAll(content);
+        popoverToolbar.setContentNode(toolBarButtons);
+        toolBarButtons.setAlignment(Pos.CENTER);
+        popoverContent.setPadding(new Insets(1));
+        popoverContent.getChildren().add(icon);
+        return popoverContent;
+    }
+
     public void setInProgress() {
         Glyph icon = Icons.getExecutionInProgressIcon(TAB_ICON_SIZE);
-        setGraphic(icon);
+        setGraphic(createTabGraphic(icon));
         setDisable(false);
     }
 
     public void setFailed() {
         Glyph icon = Icons.getExecutionErrorIcon(TAB_ICON_SIZE);
-        setGraphic(icon);
+        setGraphic(createTabGraphic(icon));
         setDisable(false);
         GUIAnimations.rotateInAndWobble(icon);
     }
 
     public void setFinished() {
         Glyph icon = Icons.getExecutionFinishedIcon(TAB_ICON_SIZE);
-        setGraphic(icon);
+        setGraphic(createTabGraphic(icon));
         setDisable(false);
         GUIAnimations.rotateInAndWobble(icon);
     }

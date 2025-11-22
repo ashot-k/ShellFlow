@@ -1,11 +1,12 @@
 package org.ashot.shellflow.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.utility.Recent;
-import org.ashot.shellflow.exception.CriticalException;
-import org.ashot.shellflow.exception.FileReadFailureException;
-import org.ashot.shellflow.exception.FileWriteFailureException;
+import org.ashot.shellflow.exception.app.CriticalException;
+import org.ashot.shellflow.exception.io.FileReadFailureException;
+import org.ashot.shellflow.exception.io.FileWriteFailureException;
 import org.ashot.shellflow.mapper.DefaultObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,7 @@ public class RecentFileUtils {
             String jsonString = FileUtils.readFileAsString(recentsConfigPath);
             Recent recents = mapper.readValue(jsonString, Recent.class);
 
-            String jsonToWrite = mapper.writeValueAsString(new Recent(recents.recentlyOpenedFiles(), newDirLocation));
-            FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
+            writeRecents(new Recent(recents.recentlyOpenedFiles(), newDirLocation), recentsConfigPath);
         } catch (IOException e) {
             throw new FileWriteFailureException("Failed to refresh last accessed directory, " + e.getMessage());
         }
@@ -80,11 +80,31 @@ public class RecentFileUtils {
             recents.recentlyOpenedFiles().removeIf(e -> e.equalsIgnoreCase(newRecentlyOpenedFilePath));
             recents.recentlyOpenedFiles().addFirst(newRecentlyOpenedFilePath);
 
-            String jsonToWrite = mapper.writeValueAsString(recents);
-            FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
+            writeRecents(recents, recentsConfigPath);
         } catch (IOException e) {
             throw new FileWriteFailureException(e.getMessage());
         }
+    }
+
+    public static void removeRecentFile(String recentToRemove) throws FileWriteFailureException {
+        try {
+            String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
+            Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
+
+            String jsonString = FileUtils.readFileAsString(recentsConfigPath);
+            Recent recents = mapper.readValue(jsonString, Recent.class);
+
+            recents.recentlyOpenedFiles().removeIf(e -> e.equalsIgnoreCase(recentToRemove));
+
+            writeRecents(recents, recentsConfigPath);
+        } catch (IOException e) {
+            throw new FileWriteFailureException(e.getMessage());
+        }
+    }
+
+    private static void writeRecents(Recent recents, Path recentsConfigPath) throws JsonProcessingException, FileWriteFailureException {
+        String jsonToWrite = mapper.writeValueAsString(recents);
+        FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
     }
 
     public static Recent getRecents() {
@@ -95,8 +115,7 @@ public class RecentFileUtils {
                 log.info("Could not find {}, creating new default Recents file at the same location", pathToRecentDirsConfigString);
                 Path newConfigFilePath = Files.createFile(recentsConfigPath);
                 Recent recent = new Recent(List.of(), "");
-                String newRecentFileJSONString = mapper.writeValueAsString(recent);
-                FileUtils.writeJSONDataToFile(newConfigFilePath.toFile(), newRecentFileJSONString);
+                writeRecents(recent, newConfigFilePath);
                 return recent;
             }
             String jsonString = FileUtils.readFileAsString(recentsConfigPath);

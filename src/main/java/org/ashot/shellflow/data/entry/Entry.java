@@ -1,4 +1,4 @@
-package org.ashot.shellflow.data.execution.entry;
+package org.ashot.shellflow.data.entry;
 
 
 public record Entry(String name, String path, String command, boolean wsl, boolean enabled) {

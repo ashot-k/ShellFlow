@@ -1,6 +1,6 @@
 package org.ashot.shellflow.data.execution;
 
-import org.ashot.shellflow.data.execution.entry.Entry;
+import org.ashot.shellflow.data.entry.Entry;
 
 import java.util.List;
 
