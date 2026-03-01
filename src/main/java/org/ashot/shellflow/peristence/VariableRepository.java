@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.Alert;
 import org.ashot.shellflow.ShellFlow;
-import org.ashot.shellflow.data.execution.variable.Variables;
+import org.ashot.shellflow.data.variable.Variables;
 import org.ashot.shellflow.exception.io.CouldNotCreateRequiredFile;
 import org.ashot.shellflow.exception.io.FileReadFailureException;
 import org.ashot.shellflow.exception.io.FileWriteFailureException;

@@ -2,9 +2,10 @@ package org.ashot.shellflow.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import org.ashot.shellflow.ShellFlow;
-import org.ashot.shellflow.data.utility.Recent;
-import org.ashot.shellflow.exception.app.CriticalException;
+import org.ashot.shellflow.data.util.Recents;
 import org.ashot.shellflow.exception.io.FileReadFailureException;
 import org.ashot.shellflow.exception.io.FileWriteFailureException;
 import org.ashot.shellflow.mapper.DefaultObjectMapper;
@@ -20,8 +21,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class RecentFileUtils {
-    private static final Logger log = LoggerFactory.getLogger(RecentFileUtils.class);
-    private static final ObjectMapper mapper = new DefaultObjectMapper();
+    private static final Logger LOG = LoggerFactory.getLogger(RecentFileUtils.class);
+    private static final ObjectMapper MAPPER = new DefaultObjectMapper();
+    private static final StringProperty PATH_TO_CURRENT_FILE = new SimpleStringProperty("");
     private static String lastAccessedDirectory;
 
     private RecentFileUtils() {
@@ -29,10 +31,10 @@ public class RecentFileUtils {
 
     public static void refreshRecentDirectories() {
         try {
-            Recent recent = getRecents();
-            lastAccessedDirectory = recent.lastAccessedDirectory();
+            Recents recents = getRecents();
+            lastAccessedDirectory = recents.lastAccessedDirectory();
         } catch (Exception e) {
-            log.error("Could not refresh recent directories: {}", e.getMessage());
+            LOG.error("Could not refresh recent directories: {}", e.getMessage());
         }
     }
 
@@ -47,9 +49,8 @@ public class RecentFileUtils {
 
     public static File getMostRecentlyOpenedFile() throws FileReadFailureException {
         try {
-            Recent recent = getRecents();
-            Path pathToMostRecent = Paths.get(recent.recentlyOpenedFiles().getFirst());
-            return FileUtils.getFile(pathToMostRecent);
+            Recents recents = getRecents();
+            return Paths.get(recents.recentlyOpenedFiles().getFirst()).toFile();
         } catch (InvalidPathException e) {
             throw new FileReadFailureException("Invalid path: " + e.getMessage());
         }
@@ -61,11 +62,11 @@ public class RecentFileUtils {
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
 
             String jsonString = FileUtils.readFileAsString(recentsConfigPath);
-            Recent recents = mapper.readValue(jsonString, Recent.class);
+            Recents recents = MAPPER.readValue(jsonString, Recents.class);
 
-            writeRecents(new Recent(recents.recentlyOpenedFiles(), newDirLocation), recentsConfigPath);
+            writeRecents(new Recents(recents.recentlyOpenedFiles(), newDirLocation), recentsConfigPath);
         } catch (IOException e) {
-            throw new FileWriteFailureException("Failed to refresh last accessed directory, " + e.getMessage());
+            throw new FileWriteFailureException("Failed to refresh last accessed directory, " + Utils.generateIOExceptionMessage(e));
         }
     }
 
@@ -75,14 +76,14 @@ public class RecentFileUtils {
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
 
             String jsonString = FileUtils.readFileAsString(recentsConfigPath);
-            Recent recents = mapper.readValue(jsonString, Recent.class);
+            Recents recents = MAPPER.readValue(jsonString, Recents.class);
 
             recents.recentlyOpenedFiles().removeIf(e -> e.equalsIgnoreCase(newRecentlyOpenedFilePath));
             recents.recentlyOpenedFiles().addFirst(newRecentlyOpenedFilePath);
 
             writeRecents(recents, recentsConfigPath);
         } catch (IOException e) {
-            throw new FileWriteFailureException(e.getMessage());
+            throw new FileWriteFailureException(Utils.generateIOExceptionMessage(e));
         }
     }
 
@@ -92,37 +93,40 @@ public class RecentFileUtils {
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
 
             String jsonString = FileUtils.readFileAsString(recentsConfigPath);
-            Recent recents = mapper.readValue(jsonString, Recent.class);
+            Recents recents = MAPPER.readValue(jsonString, Recents.class);
 
             recents.recentlyOpenedFiles().removeIf(e -> e.equalsIgnoreCase(recentToRemove));
 
             writeRecents(recents, recentsConfigPath);
         } catch (IOException e) {
-            throw new FileWriteFailureException(e.getMessage());
+            throw new FileWriteFailureException(Utils.generateIOExceptionMessage(e));
         }
     }
 
-    private static void writeRecents(Recent recents, Path recentsConfigPath) throws JsonProcessingException, FileWriteFailureException {
-        String jsonToWrite = mapper.writeValueAsString(recents);
+    private static void writeRecents(Recents recents, Path recentsConfigPath) throws JsonProcessingException, FileWriteFailureException {
+        String jsonToWrite = MAPPER.writeValueAsString(recents);
         FileUtils.writeJSONDataToFile(recentsConfigPath.toFile(), jsonToWrite);
     }
 
-    public static Recent getRecents() {
+    public static Recents getRecents() throws FileReadFailureException {
         String pathToRecentDirsConfigString = ShellFlow.getConfig().recentDirsConfigLocation();
         try {
             Path recentsConfigPath = Paths.get(pathToRecentDirsConfigString);
             if (!FileUtils.fileExists(recentsConfigPath)) {
-                log.info("Could not find {}, creating new default Recents file at the same location", pathToRecentDirsConfigString);
+                LOG.info("Could not find {}, creating new default Recents file at the same location", pathToRecentDirsConfigString);
                 Path newConfigFilePath = Files.createFile(recentsConfigPath);
-                Recent recent = new Recent(List.of(), "");
-                writeRecents(recent, newConfigFilePath);
-                return recent;
+                Recents recents = new Recents(List.of(), "");
+                writeRecents(recents, newConfigFilePath);
+                return recents;
             }
             String jsonString = FileUtils.readFileAsString(recentsConfigPath);
-            return mapper.readValue(jsonString, Recent.class);
+            return MAPPER.readValue(jsonString, Recents.class);
         } catch (IOException e) {
-            throw new CriticalException("Cannot read recents: " + e.getMessage() + ", path: " + pathToRecentDirsConfigString);
+            throw new FileReadFailureException("Cannot read recents: " + e.getMessage() + ", path: " + pathToRecentDirsConfigString);
         }
     }
 
+    public static StringProperty getPathToCurrentFile() {
+        return PATH_TO_CURRENT_FILE;
+    }
 }

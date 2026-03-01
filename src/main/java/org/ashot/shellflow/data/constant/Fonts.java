@@ -6,7 +6,6 @@ import org.ashot.shellflow.ShellFlow;
 
 public class Fonts {
     private Fonts() {
-
     }
 
     private static Font getApplicationFont() {

@@ -33,7 +33,7 @@ public class Notifications {
             throw new StartupException("Notification already initialized");
         }
         mainAppWindow = stackPane;
-        executorService.scheduleWithFixedDelay(Notifications::checkQueue, 0, 250, TimeUnit.MILLISECONDS);
+        executorService.scheduleWithFixedDelay(Notifications::checkQueue, 0, 750, TimeUnit.MILLISECONDS);
     }
 
     private static void checkQueue() {

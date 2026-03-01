@@ -28,12 +28,12 @@ public class SystemTray {
     }
 
     public static void displayNotification(String title, String message, NotificationType type) {
-        if (!ShellFlow.getConfig().desktopNotifications()) {
+        if (!ShellFlow.getConfig().desktopNotifications() || ShellFlow.getPrimaryStage().isFocused()) {
             return;
         }
         switch (type) {
             case INFO, SUCCESS -> trayIcon.showInfoMessage(title, message);
-            case ERROR, EXECUTION_FAILURE -> trayIcon.showErrorMessage(title, message);
+            case ERROR, EXECUTION_FAILURE, INTERNAL_FAILURE -> trayIcon.showErrorMessage(title, message);
         }
     }
 }

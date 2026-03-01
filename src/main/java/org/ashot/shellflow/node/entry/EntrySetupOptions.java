@@ -11,9 +11,11 @@ import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.message.ToolTipMessages;
 import org.ashot.shellflow.node.entry.field.LabeledControl;
+import org.ashot.shellflow.node.entry.misc.EntryInfoBar;
 import org.ashot.shellflow.node.icon.Icons;
 
 public class EntrySetupOptions extends HBox {
+    private final EntryInfoBar infoBar;
     private final Button expandAllButton;
     private final Button resetButton;
     private final Button collapseAllButton;
@@ -25,6 +27,8 @@ public class EntrySetupOptions extends HBox {
     private final TextField executionNameField;
 
     public EntrySetupOptions() {
+        infoBar = new EntryInfoBar();
+
         expandAllButton = new Button("", Icons.getExpandAllEntriesIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
         expandAllButton.setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
         expandAllButton.getStyleClass().addAll(Styles.FLAT);
@@ -66,19 +70,25 @@ public class EntrySetupOptions extends HBox {
 
         HBox quickActionBar = new HBox(2.5, addButton, collapseAllButton, expandAllButton, resetButton, clearAllButton);
         quickActionBar.setAlignment(Pos.TOP_RIGHT);
+
         HBox runActionBar = new HBox(10, executionName, delayPerCmd, runOptions);
         runActionBar.setAlignment(Pos.CENTER);
 
         HBox.setHgrow(executionName, Priority.ALWAYS);
         executionName.setMaxWidth(300);
 
-        VBox actions = new VBox(10, quickActionBar, runActionBar);
+        VBox actions = new VBox(10, quickActionBar, runActionBar, infoBar);
 
         HBox.setHgrow(actions, Priority.ALWAYS);
+        HBox.setHgrow(infoBar, Priority.ALWAYS);
 
-        setPadding(new Insets(2.5, 5, 8, 5));
+        setPadding(new Insets(2, 5, 2, 5));
         getChildren().addAll(actions);
         getStyleClass().add("default-container");
+    }
+
+    public EntryInfoBar getInfoBar() {
+        return infoBar;
     }
 
     public Button getExpandAllButton() {

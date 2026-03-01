@@ -1,7 +1,6 @@
 package org.ashot.shellflow.execution;
 
-import org.ashot.shellflow.execution.task.manager.TerminalSession;
-import org.ashot.shellflow.execution.task.ui.SingularExecutionUITask;
+import org.ashot.shellflow.execution.manager.TerminalSession;
 
-public record SingularExecution(SingularExecutionUITask uiTask, TerminalSession session) {
+public record SingularExecution(TerminalSession session) {
 }

@@ -7,9 +7,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
-import org.ashot.shellflow.data.constant.SequenceExecutionState;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import org.ashot.shellflow.data.constant.ExecutionState;
+import org.ashot.shellflow.data.constant.NotificationType;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.node.toolbar.ExecutionTabToolbar;
+import org.ashot.shellflow.node.notification.SystemTray;
+import org.ashot.shellflow.node.toolbar.ExecutionTabPopover;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.controlsfx.glyphfont.Glyph;
 import org.slf4j.Logger;
@@ -17,10 +21,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static org.ashot.shellflow.data.message.NotificationMessages.failNotificationMessage;
+import static org.ashot.shellflow.data.message.NotificationMessages.finishedNotificationMessage;
+
 
 public class SequenceExecutionsTab extends ExecutionTab {
     private final Logger log = LoggerFactory.getLogger(SequenceExecutionsTab.class);
     private final TabPane sequenceExecutionTabPane;
+
+    public SequenceExecutionsTab(String name, List<SingleExecutionTab> placeholders) {
+        this(name);
+        this.sequenceExecutionTabPane.getTabs().addAll(placeholders);
+    }
 
     public SequenceExecutionsTab(String text) {
         sequenceExecutionTabPane = new TabPane();
@@ -44,13 +56,13 @@ public class SequenceExecutionsTab extends ExecutionTab {
             tabInSequence.setClosable(false);
         });
         getSequenceTabPane().getSelectionModel().selectFirst();
-        updateState(SequenceExecutionState.IN_PROGRESS);
+        updateState(ExecutionState.IN_PROGRESS);
     }
 
-    public void updateState(SequenceExecutionState state) {
-        log.debug("Sequence: {}, updated state: {}", getText(), state);
+    public void updateState(ExecutionState state) {
+        log.debug("Sequence: {}, state: {}", getText(), state);
         switch (state) {
-            case FINISHED, EXECUTION_IN_SEQUENCE_FINISHED -> setFinished();
+            case FINISHED -> setFinished();
             case FAILURE, INTERNAL_FAILURE -> setFailed();
             case CANCELLED -> setCancelled();
             case IN_PROGRESS -> setInProgress();
@@ -59,7 +71,7 @@ public class SequenceExecutionsTab extends ExecutionTab {
     }
 
     private Node createTabGraphic(Glyph icon, Node... content) {
-        Popover popoverToolbar = new ExecutionTabToolbar();
+        Popover popoverToolbar = new ExecutionTabPopover();
         HBox popoverContent = new HBox(10);
 
         Hyperlink toolbarLink = new Hyperlink("", Icons.getExtrasIcon(TAB_ICON_SIZE));
@@ -103,5 +115,52 @@ public class SequenceExecutionsTab extends ExecutionTab {
         setGraphic(icon);
         setDisable(false);
         GUIAnimations.rotateInAndWobble(icon);
+    }
+
+    @Override
+    public void triggerErrorMode(String errorMessage) {
+        Text errorText = new Text(errorMessage);
+        errorText.setTextAlignment(TextAlignment.CENTER);
+        HBox hbox = new HBox(errorText);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setFillHeight(true);
+        hbox.setPadding(new Insets(5));
+        setContent(hbox);
+
+        getTabPane().widthProperty().addListener((_, _, newValue) -> errorText.setWrappingWidth(newValue.doubleValue() - 50));
+        setFailed();
+    }
+
+    public void handleSequenceState(ExecutionState sequenceState) {
+        updateState(sequenceState);
+        switch (sequenceState) {
+            case IN_PROGRESS -> log.info("Sequence in progress: {}", getText());
+            case FINISHED ->
+                    SystemTray.displayNotification(sequenceState.getValue(), finishedNotificationMessage(getText()), NotificationType.SUCCESS);
+            case FAILURE ->
+                    SystemTray.displayNotification(sequenceState.getValue(), failNotificationMessage(getText()), NotificationType.EXECUTION_FAILURE);
+            case INTERNAL_FAILURE ->
+                    SystemTray.displayNotification(sequenceState.getValue(), failNotificationMessage(getText()), NotificationType.INTERNAL_FAILURE);
+            case CANCELLED -> log.info("Sequence Canceled: {}", getText());
+            default -> throw new IllegalStateException("Unexpected value: " + sequenceState);
+        }
+    }
+
+    public void handleSequencePartState(ExecutionState sequenceState) {
+        log.debug("Sequence part state: {}", sequenceState.getValue());
+        switch (sequenceState) {
+            case IN_PROGRESS -> handleSequenceState(ExecutionState.IN_PROGRESS);
+            case FINISHED -> getSequenceTabPane().getSelectionModel().selectNext();
+            case FAILURE -> {
+                handleSequenceState(ExecutionState.FAILURE);
+                SystemTray.displayNotification(sequenceState.getValue(), failNotificationMessage(getText()), NotificationType.EXECUTION_FAILURE);
+            }
+            case INTERNAL_FAILURE -> {
+                handleSequenceState(ExecutionState.INTERNAL_FAILURE);
+                SystemTray.displayNotification(sequenceState.getValue(), failNotificationMessage(getText()), NotificationType.INTERNAL_FAILURE);
+            }
+            case CANCELLED -> handleSequenceState(ExecutionState.CANCELLED);
+            default -> throw new IllegalStateException("Unexpected value: " + sequenceState);
+        }
     }
 }

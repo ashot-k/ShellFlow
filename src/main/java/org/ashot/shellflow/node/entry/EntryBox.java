@@ -34,7 +34,6 @@ import java.util.List;
 public class EntryBox extends TitledPane {
     private static final List<String> STYLE_CLASSES = List.of(Tweaks.ALT_ICON, Styles.DENSE, Styles.INTERACTIVE);
     private static final String EDITED_FIELD_STYLE_CLASS = "edited-field";
-    private static final double MAX_WIDTH = 380;
     private final NameField nameField;
     private final PathField pathField;
     private final CommandTextArea commandField;
@@ -85,7 +84,7 @@ public class EntryBox extends TitledPane {
         title = new Label();
         title.setFont(Fonts.nameFieldDisplay());
         title.setTextOverrun(OverrunStyle.ELLIPSIS);
-        title.setMaxWidth(MAX_WIDTH * 0.55);
+        title.maxWidthProperty().bind(widthProperty().multiply(0.55));
 
         executeButton = new ExecuteEntryButton();
 
@@ -104,16 +103,13 @@ public class EntryBox extends TitledPane {
         content = new VBox(0, entryGrid);
         content.setPadding(new Insets(5));
 
-        setMaxWidth(MAX_WIDTH);
-        setMinWidth(MAX_WIDTH);
-        setPrefWidth(MAX_WIDTH);
-
         setGraphic(header);
         setContent(content);
         setupInitialState();
         setupEventListeners();
         getStyleClass().addAll(STYLE_CLASSES);
         setInvalid(commandField, commandField.getText().isBlank());
+        HBox.setHgrow(this, Priority.ALWAYS);
     }
 
     private void setupInitialState() {

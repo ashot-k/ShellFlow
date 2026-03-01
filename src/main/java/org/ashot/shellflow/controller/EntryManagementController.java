@@ -7,7 +7,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Tab;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
@@ -16,19 +15,18 @@ import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.data.entry.Entry;
 import org.ashot.shellflow.data.execution.Execution;
+import org.ashot.shellflow.data.variable.VariableEntry;
+import org.ashot.shellflow.exception.app.ActionFailureException;
 import org.ashot.shellflow.exception.entry.InvalidEntryException;
 import org.ashot.shellflow.exception.io.CouldNotCreateRequiredFile;
 import org.ashot.shellflow.exception.io.FileWriteFailureException;
 import org.ashot.shellflow.mapper.EntryMapper;
 import org.ashot.shellflow.node.entry.EntryBox;
-import org.ashot.shellflow.node.entry.EntrySetupTab;
-import org.ashot.shellflow.node.entry.EntrySetupToolBar;
+import org.ashot.shellflow.node.entry.EntrySetup;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.notification.Notifications;
 import org.ashot.shellflow.node.popup.AlertPopup;
-import org.ashot.shellflow.node.variable.VariableEntry;
 import org.ashot.shellflow.peristence.ExecutionRepository;
-import org.ashot.shellflow.utils.FileUtils;
 import org.ashot.shellflow.utils.GUIAnimations;
 import org.ashot.shellflow.utils.RecentFileUtils;
 import org.ashot.shellflow.utils.Utils;
@@ -50,30 +48,25 @@ import java.util.stream.Stream;
 import static javafx.application.Platform.runLater;
 
 public class EntryManagementController {
-    private static final Logger log = LoggerFactory.getLogger(EntryManagementController.class);
-    private final EntrySetupTab view;
+    private static final Logger LOG = LoggerFactory.getLogger(EntryManagementController.class);
+    private final EntrySetup view;
     private final ExecutionRepository entryRepository;
     private final EntryMapper entryMapper;
     private final ObservableList<EntryBox> entryBoxes = FXCollections.observableArrayList();
-    private final EntrySetupToolBar toolBar;
     private final IntegerProperty delay = new SimpleIntegerProperty();
     private final BooleanProperty sequenceOption = new SimpleBooleanProperty();
     private final StringProperty executionName = new SimpleStringProperty();
-    private final StringProperty currentFileAbsolutePath = new SimpleStringProperty("");
     private final BooleanProperty optimizationMode = new SimpleBooleanProperty();
     private final ExecutionManagementController executionManagement;
     private final VariableManagementController variableManagement;
 
     public EntryManagementController(ExecutionManagementController executionManagement, VariableManagementController variableController) {
-        this.view = new EntrySetupTab(executionManagement.getView());
+        this.view = new EntrySetup(executionManagement.getView());
         this.entryRepository = new ExecutionRepository();
         this.executionManagement = executionManagement;
         this.variableManagement = variableController;
         this.entryMapper = new EntryMapper(variableController.getVariables());
 
-        Tab variablesTab = new Tab("Variables", this.variableManagement.getView());
-        this.toolBar = this.view.getEntrySetupToolBar();
-        this.toolBar.getTabPane().getTabs().addAll(variablesTab);
         setupEvents();
     }
 
@@ -93,11 +86,11 @@ public class EntryManagementController {
             }
         });
         view.getEntryInfoBar().hoverProperty().addListener((_, _, hovering) -> {
-                    if (!currentFileAbsolutePath.get().isBlank()) {
-                        view.getEntryInfoBar().setFileLoadedText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()));
-                    }
-                }
-        );
+            StringProperty currentFileAbsolutePath = RecentFileUtils.getPathToCurrentFile();
+            if (!currentFileAbsolutePath.get().isBlank()) {
+                view.getEntryInfoBar().setFileLoadedText(hovering ? currentFileAbsolutePath.get() : getFileName(currentFileAbsolutePath.get()));
+            }
+        });
         view.getFileLoadedText().setOnMouseClicked(this::handleEntryInfoTextClick);
         view.getEntryExecutionOptions().getExpandAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(true)));
         view.getEntryExecutionOptions().getCollapseAllButton().setOnAction(_ -> entryBoxes.forEach(e -> e.setExpanded(false)));
@@ -105,7 +98,7 @@ public class EntryManagementController {
         view.getEntryExecutionOptions().getExecuteAllButton().setOnAction(_ -> executeAll());
         view.getEntryExecutionOptions().getAddButton().setOnAction(_ -> addEntryBox());
         view.getEntryExecutionOptions().getResetButton().setOnAction(_ -> {
-            load(FileUtils.getFile(Paths.get(currentFileAbsolutePath.get())));
+            load(Paths.get(RecentFileUtils.getPathToCurrentFile().get()).toFile());
             Notifications.showNotif("Execution was reset successfully!");
         });
         addEntryBoxChangeListener(_ -> view.getEntryExecutionOptions().getExecuteAllButton().setDisable(entryBoxes.isEmpty()));
@@ -115,13 +108,13 @@ public class EntryManagementController {
     private void handleEntryInfoTextClick(MouseEvent e) {
         if (e.getButton() == MouseButton.SECONDARY) {
             ClipboardContent content = new ClipboardContent();
-            content.putString(currentFileAbsolutePath.get());
+            content.putString(RecentFileUtils.getPathToCurrentFile().get());
             Clipboard.getSystemClipboard().setContent(content);
         }
         if (e.getButton() != MouseButton.PRIMARY || e.getClickCount() != 1 || !e.isStillSincePress()) {
             return;
         }
-        File file = FileUtils.getFile(Paths.get(currentFileAbsolutePath.get()));
+        File file = Paths.get(RecentFileUtils.getPathToCurrentFile().get()).toFile();
         if (file.exists()) {
             try {
                 Desktop.getDesktop().open(file);
@@ -138,7 +131,7 @@ public class EntryManagementController {
     }
 
     public void addEntryBox(Entry entry) {
-        log.debug("Adding entry box with name: {}, path: {}, command: {}", entry.name(), entry.path(), entry.command());
+        LOG.debug("Adding EntryBox with [name: {}, path: {}, command: {}]", entry.name(), entry.path(), entry.command());
         EntryBox entryBox = entryMapper.entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
         entryBox.animatedProperty().bind(optimizationMode.not());
@@ -146,7 +139,7 @@ public class EntryManagementController {
             GUIAnimations.shakeY(entryBox.getExecuteButton(), 2.5).play();
             try {
                 Command command = entryMapper.entryToCommand(entryMapper.entryBoxToEntry(entryBox));
-                executionManagement.beginSingularExecution(command);
+                executionManagement.beginSingular(command);
             } catch (InvalidEntryException e) {
                 handleInvalidEntryException(e);
             }
@@ -235,7 +228,7 @@ public class EntryManagementController {
     }
 
     public void executeAll() {
-        log.debug("Executing all entries, sequence: {}", sequenceOption.get());
+        LOG.debug("Executing all entries, sequence: {}", sequenceOption.get());
         runLater(() -> {
             if (sequenceOption.get()) {
                 executeSequence();
@@ -246,21 +239,23 @@ public class EntryManagementController {
     }
 
     private void executeSequence() {
-        try {
-            CommandSequence commandSequence = entryMapper.buildSequence(getEntries(), executionName.get());
-            if (!commandSequence.commandList().isEmpty()) {
-                executionManagement.beginSequenceExecutionTask(commandSequence);
+        new Thread(() -> {
+            try {
+                CommandSequence commandSequence = entryMapper.buildSequence(getEntries(), executionName.get());
+                if (!commandSequence.commandList().isEmpty()) {
+                    executionManagement.beginSequence(commandSequence);
+                }
+            } catch (InvalidEntryException e) {
+                handleInvalidEntryException(e);
             }
-        } catch (InvalidEntryException e) {
-            handleInvalidEntryException(e);
-        }
+        }).start();
     }
 
     private void executeParallel() {
         try {
             List<Command> commandList = entryMapper.buildCommands(getEntries());
             if (!commandList.isEmpty()) {
-                executionManagement.beginParallelExecutions(commandList, executionName.get(), getDelayPerCmd());
+                executionManagement.beginParallel(commandList, executionName.get(), getDelayPerCmd());
             }
         } catch (InvalidEntryException e) {
             handleInvalidEntryException(e);
@@ -271,9 +266,9 @@ public class EntryManagementController {
         Entry entry = invalidEntryException.getEntry();
         if (invalidEntryException.getCause() != null) {
             Throwable cause = invalidEntryException.getCause();
-            log.error("Invalid entry: name [{}], command [{}],  path [{}], exception [{}]: {}", entry.name(), entry.command(), entry.path(), cause.getClass().getSimpleName(), cause.getMessage());
+            LOG.error("Invalid entry: name [{}], command [{}],  path [{}], exception [{}]: {}", entry.name(), entry.command(), entry.path(), cause.getClass().getSimpleName(), cause.getMessage());
         } else {
-            log.error("Invalid entry: name [{}], command [{}],  path [{}], exception : {}", entry.name(), entry.command(), entry.path(), invalidEntryException.getMessage());
+            LOG.error("Invalid entry: name [{}], command [{}],  path [{}], exception : {}", entry.name(), entry.command(), entry.path(), invalidEntryException.getMessage());
         }
     }
 
@@ -289,7 +284,7 @@ public class EntryManagementController {
             sequenceOption.setValue(execution.sequence());
             handleFileOperationOccurred(fileToLoad);
         } catch (CouldNotCreateRequiredFile e) {
-            log.error("Error while loading executions file: {}", e.getMessage());
+            LOG.error("Error while loading executions file: {}", e.getMessage());
             runLater(() -> new AlertPopup("Error while loading executions file", e.getMessage(), false).show());
         }
     }
@@ -300,7 +295,7 @@ public class EntryManagementController {
             RecentFileUtils.refreshLastAccessedDirectory(mostRecentFile.getParent());
             refreshFileLoaded(mostRecentFile.getAbsolutePath());
         } catch (FileWriteFailureException e) {
-            log.error("Could not refresh recents: {}", e.getMessage());
+            LOG.error("Could not refresh recents: {}", e.getMessage());
         }
         refreshEdited();
     }
@@ -311,24 +306,34 @@ public class EntryManagementController {
             handleFileOperationOccurred(fileToSave);
             Notifications.showNotif("Saved execution " + fileToSave.getName());
         } catch (CouldNotCreateRequiredFile e) {
-            String exceptionMessage = e.getMessage() != null && !e.getMessage().isBlank() ? (", " + e.getMessage()) : "";
-            runLater(() -> new AlertPopup(
-                    "Error",
-                    "Could not save data to file: \"" + fileToSave.getAbsolutePath() + "\"" + exceptionMessage,
-                    "Data:\n" + getExecution(),
-                    false)
-                    .show());
+            StringBuilder exceptionMsgBuilder = new StringBuilder();
+            exceptionMsgBuilder.append("Could not save data to file: \"").append(fileToSave.getAbsolutePath()).append("\"");
+            if (e.getMessage() != null) {
+                exceptionMsgBuilder.append(", ");
+                if (e.getMessage().isBlank()) {
+                    Throwable cause = e.getCause();
+                    exceptionMsgBuilder.append(cause.getClass().getSimpleName());
+                    if (!cause.getMessage().isBlank()) {
+                        exceptionMsgBuilder.append(": ").append(cause.getMessage());
+                    }
+                } else {
+                    exceptionMsgBuilder.append(e.getMessage());
+                }
+            }
+            String exceptionMsg = exceptionMsgBuilder.toString();
+            runLater(() -> new AlertPopup("Error", exceptionMsg, "Data:\n" + getExecution(), false).show());
+            throw new ActionFailureException(exceptionMsg, e.getCause());
         }
     }
 
     private void refreshEdited() {
-        log.debug("Reset edited state for all entries");
+        LOG.debug("Reset edited state for all entries");
         entryBoxes.forEach(EntryBox::refreshEdited);
         entryBoxes.forEach(this::handleVariableValidation);
     }
 
     private void refreshFileLoaded(String path) {
-        currentFileAbsolutePath.set(path);
+        RecentFileUtils.getPathToCurrentFile().set(path);
         view.getEntryInfoBar().setFileLoadedText(getFileName(path));
     }
 
@@ -401,12 +406,8 @@ public class EntryManagementController {
         return view.getEntryExecutionOptions().getSequenceOptionCheckbox().isSelected();
     }
 
-    public EntrySetupTab getView() {
+    public EntrySetup getView() {
         return view;
-    }
-
-    public StringProperty getCurrentFileAbsolutePathProperty() {
-        return currentFileAbsolutePath;
     }
 
     public BooleanProperty optimizationModeProperty() {

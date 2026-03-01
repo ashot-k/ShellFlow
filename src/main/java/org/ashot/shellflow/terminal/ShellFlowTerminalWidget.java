@@ -13,14 +13,20 @@ public class ShellFlowTerminalWidget extends JediTermFxWidget {
         super(settingsProvider);
         FontSelectionDialog.selectedSize.addListener((_, _, _) -> getTerminalPanel().reinitFontAndResize());
         FontSelectionDialog.selectedFont.addListener((_, _, _) -> getTerminalPanel().reinitFontAndResize());
-        terminalToolBar = new TerminalToolBar(this);
+        this.terminalToolBar = new TerminalToolBar();
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        terminalToolBar.setTerminalWidget(this);
     }
 
     public void toggleFind() {
-        if (super.isShowingFind()) {
-            super.hideFindComponent();
+        if (isShowingFind()) {
+            hideFindComponent();
         } else {
-            super.showFindComponent();
+            showFindComponent();
         }
     }
 

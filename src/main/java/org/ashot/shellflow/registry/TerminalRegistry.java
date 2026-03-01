@@ -37,6 +37,9 @@ public class TerminalRegistry {
     }
 
     public static void stopTerminal(PtyProcess ptyProcess) {
+        if (ptyProcess == null || !ptyProcess.isAlive()) {
+            return;
+        }
         new Thread(() -> {
             try (BufferedWriter writer = ptyProcess.outputWriter()) {
                 writer.write("\u0003");
