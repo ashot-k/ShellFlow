@@ -4,10 +4,9 @@ import atlantafx.base.theme.Styles;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import org.ashot.shellflow.execution.container.ExecutionContainer;
 import org.ashot.shellflow.node.icon.Icons;
 
-public abstract class ExecutionTab extends Tab implements ExecutionContainer {
+public abstract class ExecutionTab extends Tab {
     protected static final int TAB_NAME_MAX_WIDTH = 500;
     protected static final int TAB_ICON_SIZE = 18;
     protected final Button restartButton;
@@ -24,7 +23,15 @@ public abstract class ExecutionTab extends Tab implements ExecutionContainer {
         return restartButton;
     }
 
-    public TextField getRenameField() {
-        return renameField;
+    public abstract void triggerErrorMode(String errorMessage);
+
+    public void handleExecutionManagerException(ExecutionTab tab, Throwable e) {
+        String text;
+        if (e.getCause() != null) {
+            text = "Exception [" + e.getClass().getSimpleName() + "], with cause [" + e.getCause().getClass().getSimpleName() + "] when starting execution: " + e.getMessage();
+        } else {
+            text = "Exception [" + e.getClass().getSimpleName() + "] when starting execution: " + e.getMessage();
+        }
+        tab.triggerErrorMode(text);
     }
 }

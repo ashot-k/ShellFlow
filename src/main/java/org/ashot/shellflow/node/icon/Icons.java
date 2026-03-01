@@ -16,6 +16,7 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.*;
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
     private static final Color preferredColor = Color.SLATEBLUE;
+//    private static final Color preferredColor = Color.SLATEBLUE;
 
     private Icons() {
     }
@@ -113,6 +114,13 @@ public class Icons {
         return icon;
     }
 
+    public static Glyph getToolbarToggleIcon(int size, boolean toggled) {
+        Glyph icon = fontAwesome.create(INFO);
+        icon.size(size);
+        icon.color(toggled ? Color.WHITE : preferredColor);
+        return icon;
+    }
+
     public static Glyph getBrowseIcon(double size) {
         Glyph icon = fontAwesome.create(SEARCH);
         icon.size(size);
@@ -126,6 +134,13 @@ public class Icons {
         icon.size(size);
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
+        return icon;
+    }
+
+    public static Glyph getExecutionInitializingIcon(double size) {
+        Glyph icon = fontAwesome.create(GEARS);
+        icon.size(size);
+        icon.color(preferredColor);
         return icon;
     }
 
@@ -237,6 +252,10 @@ public class Icons {
         icon.color(preferredColor);
         setHoverToBrighter(icon, preferredColor);
         return icon;
+    }
+
+    public static Glyph getWSLIcon(double size) {
+        return getWSLOptionToggleIcon(size, true);
     }
 
     public static Glyph getExtrasIcon(double size) {

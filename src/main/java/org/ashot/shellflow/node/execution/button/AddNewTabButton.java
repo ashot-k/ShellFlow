@@ -10,7 +10,7 @@ import org.ashot.shellflow.node.icon.Icons;
 public class AddNewTabButton extends Button {
     public AddNewTabButton() {
         setGraphic(Icons.getAddButtonIcon(IconSizeDefaults.DEFAULT_ICON_SIZE.getSize()));
-        setTooltip(new Tooltip(ToolTipMessages.EXPAND_ALL_ENTRIES_BUTTON));
+        setTooltip(new Tooltip(ToolTipMessages.ADD_NEW_TAB));
         getStyleClass().addAll(Styles.FLAT);
     }
 }

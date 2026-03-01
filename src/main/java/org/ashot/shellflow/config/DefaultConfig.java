@@ -13,7 +13,7 @@ import java.util.Properties;
 
 public class DefaultConfig implements ShellFlowConfig {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfig.class);
-    private static final Path PATH_TO_PROPERTIES_FILE = Path.of("application.properties");
+    private static final Path PATH_TO_PROPERTIES_FILE = Path.of("settings/application.properties");
     private static final String PROPERTIES_FILE_NOT_FOUND_MSG = "Error while loading properties: \n" + "Could not find: " + PATH_TO_PROPERTIES_FILE.toAbsolutePath();
     private final Properties properties = new Properties();
 

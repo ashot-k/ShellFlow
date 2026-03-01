@@ -16,6 +16,7 @@ import org.ashot.shellflow.config.ShellFlowConfig;
 import org.ashot.shellflow.controller.Controller;
 import org.ashot.shellflow.data.constant.ThemeOption;
 import org.ashot.shellflow.exception.app.CriticalException;
+import org.ashot.shellflow.exception.app.StartupException;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.utils.ThemeHandler;
@@ -28,15 +29,16 @@ import java.net.URL;
 public class ShellFlow extends Application {
 
     private static final Logger log = LoggerFactory.getLogger(ShellFlow.class);
-    public static final String WINDOW_TITLE = "ShellFlow";
+    private static final String WINDOW_TITLE = "ShellFlow";
+    private static final long START_TIME = System.currentTimeMillis();
     private static final boolean RESIZABLE = true;
-    public static final int SIZE_X = 1600;
-    public static final int MIN_SIZE_X = 800;
-    public static final int SIZE_Y = 900;
-    public static final int MIN_SIZE_Y = 600;
-    public static final double MAIN_APP_FONT_SIZE = 14;
-    public static final String JAVA_VERSION = System.getProperty("java.version");
-    public static final String JAVAFX_VERSION = System.getProperty("javafx.runtime.version");
+    private static final int SIZE_X = 1600;
+    private static final int MIN_SIZE_X = 800;
+    private static final int SIZE_Y = 900;
+    private static final int MIN_SIZE_Y = 600;
+    private static final double MAIN_APP_FONT_SIZE = 14;
+    private static final String JAVA_VERSION = System.getProperty("java.version");
+    private static final String JAVAFX_VERSION = System.getProperty("javafx.runtime.version");
     private static final ThemeOption selectedTheme = ThemeOption.DARK_MODE;
     private static final Font APPLICATION_FONT = Font.getDefault();
     private static Image APPLICATION_ICON;
@@ -44,7 +46,7 @@ public class ShellFlow extends Application {
     private static Stage primaryStage;
     private static ShellFlowConfig shellFlowConfig;
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         handleJVMArgs(args);
         launch();
     }
@@ -70,21 +72,31 @@ public class ShellFlow extends Application {
 
             FXMLLoader fxmlLoader = new FXMLLoader(url);
             fxmlLoader.load();
-            configureHeader(content, fxmlLoader.getController(), fxmlLoader.getRoot());
             ThemeHandler.transitionToTheme(primaryStage, getThemeFromConfig());
 
-            log.info("Java Version: {}, JavaFX Version: {}", JAVA_VERSION, JAVAFX_VERSION);
+            Controller controller = fxmlLoader.getController();
+            setupHeader(content, controller, fxmlLoader.getRoot());
+
+            initializeController(controller);
+
+            log.debug("Java Version: {}, JavaFX Version: {}", JAVA_VERSION, JAVAFX_VERSION);
             log.debug("Loaded\n FXML: {}\n CSS: {}\n Theme: {}", url, STYLE_SHEET, selectedTheme);
             log.debug("Resizable: {}", RESIZABLE);
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            if (e instanceof CriticalException criticalException) {
-                AlertPopup alertPopup = new AlertPopup("Critical Error", criticalException.getMessage(), true);
-                alertPopup.setOnCloseRequest(_ -> stop());
-                alertPopup.show();
-            }
+            boolean critical = e instanceof CriticalException || e instanceof StartupException;
+            AlertPopup alertPopup = new AlertPopup("Error", e.getMessage(), critical);
+            alertPopup.setOnCloseRequest(_ -> stop());
+            alertPopup.show();
         }
+
+        String startupTime = String.valueOf((System.currentTimeMillis() - START_TIME / 1000.0)).substring(0, 4);
+        log.debug("Time elapsed to initialize {}s", startupTime);
+    }
+
+    private void initializeController(Controller controller) {
+        controller.init();
     }
 
     private void validateResources(URL url, URL styleSheet) {
@@ -122,11 +134,10 @@ public class ShellFlow extends Application {
         stage.getScene().getRoot().setStyle("-fx-font-family: '" + fontFamily + "'; -fx-font-size: " + ShellFlow.MAIN_APP_FONT_SIZE + "px;");
     }
 
-    private void configureHeader(BorderPane content, Controller controller, Parent baseRoot) {
+    private void setupHeader(BorderPane content, Controller controller, Parent baseRoot) {
         content.setCenter(baseRoot);
-        content.setTop(controller.init());
+        content.setTop(controller.createHeader());
         content.getStyleClass().add(getThemeFromConfig().isDark() ? ThemeHandler.DARK_CLASS : ThemeHandler.LIGHT_CLASS);
-        controller.loadInit();
     }
 
     private static void handleJVMArgs(String[] args) {

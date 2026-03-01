@@ -7,20 +7,17 @@ import org.ashot.shellflow.ShellFlow;
 import org.ashot.shellflow.data.command.Command;
 import org.ashot.shellflow.data.command.CommandSequence;
 import org.ashot.shellflow.data.entry.Entry;
+import org.ashot.shellflow.data.variable.VariableEntry;
 import org.ashot.shellflow.exception.entry.InvalidCommandException;
 import org.ashot.shellflow.exception.entry.InvalidEntryException;
 import org.ashot.shellflow.exception.entry.InvalidEntryPathException;
 import org.ashot.shellflow.node.entry.EntryBox;
 import org.ashot.shellflow.node.popup.AlertPopup;
-import org.ashot.shellflow.node.variable.VariableEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntryMapper {
-    private static final Logger log = LoggerFactory.getLogger(EntryMapper.class);
     private boolean isShowingPopup = false;
     private final ListProperty<VariableEntry> variables;
 
@@ -48,13 +45,8 @@ public class EntryMapper {
         String path = entry.path();
         boolean wsl = entry.wsl();
         for (VariableEntry variableEntry : variables) {
-            if (variableEntry.isEnabled()) {
-                command = command.replace("${" + variableEntry.getName() + "}", variableEntry.getValue());
-                path = path.replace("${" + variableEntry.getName() + "}", variableEntry.getValue());
-            } else {
-                command = command.replace("${" + variableEntry.getName() + "}", "");
-                path = path.replace("${" + variableEntry.getName() + "}", "");
-            }
+            command = replaceWithVariable(variableEntry, command);
+            path = replaceWithVariable(variableEntry, path);
         }
         try {
             return new Command(name, path, command, wsl);
@@ -62,6 +54,13 @@ public class EntryMapper {
             handleError(entry, e);
             throw new InvalidEntryException(e, entry);
         }
+    }
+
+    public String replaceWithVariable(VariableEntry variableEntry, String target) {
+        if (variableEntry.isEnabled()) {
+            return target.replace("${" + variableEntry.getName() + "}", variableEntry.getValue());
+        }
+        return target.replace("${" + variableEntry.getName() + "}", "");
     }
 
     public List<Command> buildCommands(List<Entry> entries) throws InvalidEntryException {
@@ -104,5 +103,4 @@ public class EntryMapper {
             isShowingPopup = true;
         }
     }
-
 }

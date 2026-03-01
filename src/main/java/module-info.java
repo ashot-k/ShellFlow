@@ -3,9 +3,6 @@ module org.ashot.shellflow {
     requires atlantafx.base;
     requires org.slf4j;
     requires org.controlsfx.controls;
-    requires org.fxmisc.richtext;
-    requires org.fxmisc.flowless;
-    requires reactfx;
     requires com.techsenger.jeditermfx.ui;
     requires com.techsenger.jeditermfx.core;
     requires pty4j;
@@ -16,6 +13,7 @@ module org.ashot.shellflow {
     requires javafx.controls;
     requires javafx.base;
     requires com.fasterxml.jackson.databind;
+    requires jdk.management;
 
     exports org.ashot.shellflow;
     exports org.ashot.shellflow.node.popup;
@@ -43,20 +41,24 @@ module org.ashot.shellflow {
     exports org.ashot.shellflow.node.execution.tab;
     opens org.ashot.shellflow.node.execution.tab to javafx.base;
     opens org.ashot.shellflow.data.entry to com.fasterxml.jackson.databind;
-    opens org.ashot.shellflow.data.execution.variable to com.fasterxml.jackson.databind;
-    opens org.ashot.shellflow.data.utility to com.fasterxml.jackson.databind;
+    opens org.ashot.shellflow.data.variable to com.fasterxml.jackson.databind;
+    opens org.ashot.shellflow.data.util to com.fasterxml.jackson.databind;
     exports org.ashot.shellflow.data.execution;
     opens org.ashot.shellflow.data.execution to com.fasterxml.jackson.databind;
-    exports org.ashot.shellflow.data.execution.variable;
+    exports org.ashot.shellflow.data.variable;
     opens org.ashot.shellflow.mapper to javafx.base, javafx.fxml;
     exports org.ashot.shellflow.execution.container;
     opens org.ashot.shellflow.execution.container to javafx.base;
-    exports org.ashot.shellflow.execution.task.manager;
-    opens org.ashot.shellflow.execution.task.manager to javafx.base;
-    exports org.ashot.shellflow.execution.task.ui;
-    opens org.ashot.shellflow.execution.task.ui to javafx.base;
+    exports org.ashot.shellflow.execution.manager;
+    opens org.ashot.shellflow.execution.manager to javafx.base;
     exports org.ashot.shellflow.exception.io;
     exports org.ashot.shellflow.exception.execution;
     exports org.ashot.shellflow.exception.app;
     exports org.ashot.shellflow.exception.entry;
+    exports org.ashot.shellflow.execution.task.single;
+    opens org.ashot.shellflow.execution.task.single to javafx.base;
+    exports org.ashot.shellflow.execution.task.sequence;
+    opens org.ashot.shellflow.execution.task.sequence to javafx.base;
+    exports org.ashot.shellflow.node.execution;
+    opens org.ashot.shellflow.node.execution to javafx.base;
 }

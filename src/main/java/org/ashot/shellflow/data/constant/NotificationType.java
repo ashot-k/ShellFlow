@@ -1,5 +1,9 @@
 package org.ashot.shellflow.data.constant;
 
 public enum NotificationType {
-    INFO, SUCCESS, ERROR, EXECUTION_FAILURE
+    INFO,
+    SUCCESS,
+    ERROR,
+    EXECUTION_FAILURE,
+    INTERNAL_FAILURE,
 }

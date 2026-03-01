@@ -25,7 +25,7 @@ public class ExecutionRepository implements FileDataRepository<Execution> {
             log.debug("Saving: {}", jsonString);
             FileUtils.writeJSONDataToFile(file, jsonString);
         } catch (JsonProcessingException | FileWriteFailureException e) {
-            throw new CouldNotCreateRequiredFile(e.getMessage());
+            throw new CouldNotCreateRequiredFile(e.getMessage(), e);
         }
     }
 
@@ -36,7 +36,7 @@ public class ExecutionRepository implements FileDataRepository<Execution> {
             log.debug("Loaded String: {}", jsonString);
             return mapper.readValue(jsonString, Execution.class);
         } catch (JsonProcessingException | FileReadFailureException e) {
-            throw new CouldNotCreateRequiredFile(e.getMessage());
+            throw new CouldNotCreateRequiredFile(e.getMessage(), e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.ashot.shellflow.data.execution.variable;
+package org.ashot.shellflow.data.variable;
 
 import java.util.List;
 

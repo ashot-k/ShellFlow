@@ -23,7 +23,7 @@ import org.ashot.shellflow.terminal.settings.ThemedSettingsProvider;
 import java.util.List;
 
 public class FontSelectionDialog extends VBox {
-    public static final List<Font> fontList = List.of(
+    public static final List<Font> FONTS = List.of(
             Font.font("Cascadia Mono"),
             Font.font("Consolas"),
             Font.font("Courier New")
@@ -32,8 +32,7 @@ public class FontSelectionDialog extends VBox {
 
     public static final SimpleObjectProperty<Font> selectedFont = new SimpleObjectProperty<>(shellFlowConfig.terminalFontFamily());
     public static final SimpleDoubleProperty selectedSize = new SimpleDoubleProperty(shellFlowConfig.terminalFontSize());
-    private final ComboBox<Double> fontSizeComboBox = new ComboBox<>();
-    private final ListView<Text> list = new ListView<>();
+    private final ListView<Text> fontList = new ListView<>();
 
     public FontSelectionDialog(Runnable closeHandler) {
         this((int) (ShellFlow.getPrimaryStage().getWidth() / 2), (int) (ShellFlow.getPrimaryStage().getHeight() / 3), closeHandler);
@@ -47,28 +46,30 @@ public class FontSelectionDialog extends VBox {
 
         Text fontFamilySectionTitle = new Text("Font family");
         fontFamilySectionTitle.setFont(Fonts.subTitle());
-        List<Font> fonts = FXCollections.observableArrayList(fontList);
+        List<Font> fonts = FXCollections.observableArrayList(FONTS);
         for (Font f : fonts) {
-            list.getItems().add(new Text(f.getFamily()));
+            fontList.getItems().add(new Text(f.getFamily()));
         }
-        list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        Text initialSelection = list.getItems().stream().filter(e -> e.getText().equals(selectedFont.get().getFamily())).toList().getFirst();
-        list.getSelectionModel().select(initialSelection);
-        list.getSelectionModel().selectedItemProperty().addListener((_, _, item) -> {
+        fontList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        Text initialSelection = fontList.getItems().stream().filter(e -> e.getText().equals(selectedFont.get().getFamily())).toList().getFirst();
+        fontList.getSelectionModel().select(initialSelection);
+        fontList.getSelectionModel().selectedItemProperty().addListener((_, _, item) -> {
             if (item instanceof Text t) {
-                Font newSelection = fontList.stream().filter(font -> font.getFamily().equals(t.getText())).toList().getFirst();
+                Font newSelection = FONTS.stream().filter(font -> font.getFamily().equals(t.getText())).toList().getFirst();
                 ThemedSettingsProvider.updateFont(newSelection.getFamily(), selectedSize.get());
                 selectedFont.set(newSelection);
                 shellFlowConfig.saveProperty(ConfigProperty.TERMINAL_FONT_FAMILY, selectedFont.get().getFamily());
             }
         });
-        list.setMinHeight(250);
-        VBox.setVgrow(list, Priority.ALWAYS);
+        fontList.setMinHeight(250);
+        VBox.setVgrow(fontList, Priority.ALWAYS);
 
         Text fontSizeSectionTitle = new Text("Font size");
         fontSizeSectionTitle.setFont(Fonts.subTitle());
         List<Double> sizes = List.of(9.0, 11.0, 12.0, 14.0, 16.0, 20.0, 22.0, 24.0);
         double sizeOptionSelected = sizes.stream().filter(e -> e.equals(selectedSize.get())).toList().getFirst();
+        ComboBox<Double> fontSizeComboBox = new ComboBox<>();
+        fontSizeComboBox.setVisibleRowCount(3);
         fontSizeComboBox.getItems().addAll(sizes);
         fontSizeComboBox.valueProperty().addListener((_, _, newValue) -> {
             ThemedSettingsProvider.updateFont(selectedFont.get().getFamily(), newValue);
@@ -84,18 +85,17 @@ public class FontSelectionDialog extends VBox {
         Separator separator = new Separator(Orientation.HORIZONTAL);
         separator.setPadding(Insets.EMPTY);
 
-        VBox fontFamilySectionContainer = new VBox(5, fontFamilySectionTitle, list);
+        VBox fontFamilySectionContainer = new VBox(5, fontFamilySectionTitle, fontList);
         VBox fontSizeSectionContainer = new VBox(5, fontSizeSectionTitle, fontSizeComboBox);
         VBox titleSectionContainer = new VBox(5, titleContainer, separator);
 
         getChildren().setAll(titleSectionContainer, fontFamilySectionContainer, fontSizeSectionContainer);
-        setMinWidth(width);
         setMaxSize(width, height);
         setSpacing(10);
         getStyleClass().addAll("custom-dialog");
     }
 
-    public ListView<Text> getList() {
-        return list;
+    public ListView<Text> getFontList() {
+        return fontList;
     }
 }

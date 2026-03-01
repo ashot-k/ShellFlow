@@ -1,13 +1,11 @@
 package org.ashot.shellflow.data.command;
 
-import org.ashot.shellflow.data.message.ExceptionMessages;
 import org.ashot.shellflow.exception.entry.InvalidCommandException;
 import org.ashot.shellflow.exception.entry.InvalidEntryPathException;
 import org.ashot.shellflow.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,35 +48,29 @@ public class Command {
 
 
     private void validatePath() throws InvalidEntryPathException {
-        String pathStr;
         if (path.isBlank()) {
-            pathStr = "/";
-        } else {
-            pathStr = path.replace("~", System.getProperty("user.home"));
+            path = "/";
         }
-        File f = new File(pathStr);
-        if (!f.exists() || !f.isDirectory()) {
-            throw new InvalidEntryPathException(ExceptionMessages.INVALID_PATH, path);
-        }
+        path = path.replace("~", System.getProperty("user.home"));
     }
 
     private void validateArguments(String arguments) throws InvalidCommandException {
         if (arguments == null || arguments.isBlank()) {
-            throw new InvalidCommandException(ExceptionMessages.INVALID_ARGUMENTS);
+            throw new InvalidCommandException("Command fields must not be empty.");
         }
     }
 
     private void prefixForOperatingEnvironment() {
         if (Utils.checkIfLinux()) {
-            this.argumentList.addAll(0, DEFAULT_LINUX_SHELL_ARGS);
-            log.debug("Adjusting command for linux OS {}", this.argumentList);
+            argumentList.addAll(0, DEFAULT_LINUX_SHELL_ARGS);
+            log.debug("Adjusting command for linux OS {}", argumentList);
         } else if (Utils.checkIfWindows()) {
             if (wsl) {
-                this.argumentList.addAll(0, DEFAULT_WSL_ARGS);
-                log.debug("Adjusting command for WSL OS {}", this.argumentList);
+                argumentList.addAll(0, DEFAULT_WSL_ARGS);
+                log.debug("Adjusting command for WSL OS {}", argumentList);
             } else {
-                this.argumentList.addAll(0, DEFAULT_POWERSHELL_ARGS);
-                log.debug("Adjusting command for Windows OS {}", this.argumentList);
+                argumentList.addAll(0, DEFAULT_POWERSHELL_ARGS);
+                log.debug("Adjusting command for Windows OS {}", argumentList);
             }
         }
     }
@@ -120,4 +112,15 @@ public class Command {
         return wsl;
     }
 
+
+    @Override
+    public String toString() {
+        return "Command{" +
+                "name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", wsl=" + wsl +
+                ", argumentList=" + argumentList +
+                ", rawArguments='" + rawArguments + '\'' +
+                '}';
+    }
 }

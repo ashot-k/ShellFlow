@@ -1,4 +1,4 @@
-package org.ashot.shellflow.execution.task.manager;
+package org.ashot.shellflow.execution.manager;
 
 import com.pty4j.PtyProcess;
 import com.pty4j.PtyProcessBuilder;
@@ -8,13 +8,10 @@ import org.ashot.shellflow.registry.TerminalRegistry;
 import org.ashot.shellflow.terminal.ShellFlowTerminalWidget;
 import org.ashot.shellflow.terminal.TerminalFactory;
 import org.ashot.shellflow.utils.ProcessUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
 public class TerminalService {
-    private static final Logger log = LoggerFactory.getLogger(TerminalService.class);
 
     public TerminalSession createSession(Command command) {
         PtyProcessBuilder ptyProcessBuilder = ProcessUtils.buildProcess(command);
@@ -32,5 +29,4 @@ public class TerminalService {
         session.kill();
         TerminalRegistry.remove(String.valueOf(session.ptyProcess().pid()));
     }
-
 }

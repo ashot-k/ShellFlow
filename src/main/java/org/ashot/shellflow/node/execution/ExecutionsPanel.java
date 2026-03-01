@@ -1,4 +1,4 @@
-package org.ashot.shellflow.node.execution.tab;
+package org.ashot.shellflow.node.execution;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -11,6 +11,7 @@ import org.ashot.shellflow.data.constant.Fonts;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
 import org.ashot.shellflow.node.execution.button.AddNewTabButton;
 import org.ashot.shellflow.node.execution.button.DetachButton;
+import org.ashot.shellflow.node.execution.button.TerminalToolbarToggleButton;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.popup.DetachableStage;
 import org.ashot.shellflow.registry.TerminalRegistry;
@@ -32,12 +33,15 @@ public class ExecutionsPanel extends HBox {
 
     private final DetachButton detachExecutionsButton;
     private final AddNewTabButton addNewTabButton;
+    private final ToggleButton toggleTerminalToolbarButton;
 
     public ExecutionsPanel() {
         detachExecutionsButton = new DetachButton();
         addNewTabButton = new AddNewTabButton();
+        toggleTerminalToolbarButton = new TerminalToolbarToggleButton();
 
-        toolBar = new HBox(detachExecutionsButton, addNewTabButton);
+        toolBar = new HBox(detachExecutionsButton, toggleTerminalToolbarButton, addNewTabButton);
+        toolBar.setPadding(new Insets(2.5, 0, 2.5, 0));
         content = new HBox(createExecutionsPlaceholder(NO_EXECUTIONS_TEXT));
         contentWrapper = new VBox(toolBar, content);
 
@@ -149,5 +153,9 @@ public class ExecutionsPanel extends HBox {
 
     public Button getAddNewTabButton() {
         return addNewTabButton;
+    }
+
+    public ToggleButton getToggleTerminalToolbarButton() {
+        return toggleTerminalToolbarButton;
     }
 }

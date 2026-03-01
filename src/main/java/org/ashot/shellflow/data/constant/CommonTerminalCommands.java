@@ -1,9 +1,12 @@
-package org.ashot.shellflow.data.command;
+package org.ashot.shellflow.data.constant;
 
-public class CommandFactory {
+import org.ashot.shellflow.data.command.Command;
 
-    private CommandFactory() {
+public final class CommonTerminalCommands {
+
+    private CommonTerminalCommands() {
     }
+
 
     public static Command defaultPowerShellTerminal() {
         return new Command("Powershell", "", "powershell.exe", false);

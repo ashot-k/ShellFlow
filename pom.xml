@@ -6,7 +6,7 @@
 
     <groupId>org.ashot</groupId>
     <artifactId>shellflow</artifactId>
-    <version>0.7.14</version>
+    <version>0.7.15</version>
     <name>shellflow</name>
 
     <properties>
@@ -19,8 +19,7 @@
         <jeditermfx.version>1.2.1</jeditermfx.version>
         <atlantafx.themes.version>2.1.0</atlantafx.themes.version>
         <fxtrayicon.version>4.2.3</fxtrayicon.version>
-        <controlsfx.version>11.2.2</controlsfx.version>
-        <richtextfx.version>0.11.5</richtextfx.version>
+        <controlsfx.version>11.2.3</controlsfx.version>
         <!-- general -->
         <jackson.version>2.17.2</jackson.version>
         <logback.version>1.5.18</logback.version>
@@ -71,12 +70,6 @@
             <version>${logback.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.testfx</groupId>
-            <artifactId>testfx-junit5</artifactId>
-            <version>${testfx.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
@@ -86,11 +79,6 @@
             <groupId>io.github.mkpaz</groupId>
             <artifactId>atlantafx-base</artifactId>
             <version>${atlantafx.themes.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.fxmisc.richtext</groupId>
-            <artifactId>richtextfx</artifactId>
-            <version>${richtextfx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.dustinredmond.fxtrayicon</groupId>
@@ -135,6 +123,12 @@
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
+            <version>${testfx.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
             <version>${testfx.version}</version>
             <scope>test</scope>
         </dependency>

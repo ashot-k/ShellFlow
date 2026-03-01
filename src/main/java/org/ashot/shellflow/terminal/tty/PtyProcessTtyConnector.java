@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.util.List;
 
-/**
- * @author traff
- */
+
 public class PtyProcessTtyConnector extends ProcessTtyConnector {
 
     private final PtyProcess myProcess;

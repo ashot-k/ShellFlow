@@ -2,8 +2,8 @@ package org.ashot.shellflow.node.toolbar;
 
 import atlantafx.base.controls.Popover;
 
-public class ExecutionTabToolbar extends Popover {
-    public ExecutionTabToolbar() {
+public class ExecutionTabPopover extends Popover {
+    public ExecutionTabPopover() {
         setHeaderAlwaysVisible(false);
         setDetachable(false);
         setCornerRadius(5);

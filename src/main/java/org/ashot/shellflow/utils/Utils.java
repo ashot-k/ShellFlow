@@ -21,5 +21,19 @@ public class Utils {
     public static boolean checkIfLinux() {
         return System.getProperty(OS_NAME_PROPERTY).toLowerCase().contains("linux");
     }
+
+    public static String generateIOExceptionMessage(Throwable ioException) {
+        if (ioException.getMessage().isBlank()) {
+            Throwable cause = ioException.getCause();
+            if (cause != null) {
+                if (!cause.getMessage().isBlank()) {
+                    return cause.getMessage();
+                }
+                return cause.getClass().getSimpleName();
+            }
+            return ioException.getClass().getSimpleName();
+        }
+        return ioException.getMessage();
+    }
 }
 

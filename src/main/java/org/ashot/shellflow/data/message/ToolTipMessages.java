@@ -16,8 +16,9 @@ public class ToolTipMessages {
 
     public static final String STOP_PROCESS_BUTTON = "Attempt a graceful termination by sending a SIGINT to the current process";
 
-    public static final String DELAY_PER_COMMAND_SLIDER = "Delay per entry executed";
+    public static final String RESTART_PROCESS_BUTTON = "Restart the process";
 
+    public static final String DELAY_PER_COMMAND_SLIDER = "Delay per entry executed";
 
     public static final String FIND_BUTTON = "Open the find component";
 
@@ -29,7 +30,11 @@ public class ToolTipMessages {
 
     public static final String EXPAND_ALL_ENTRIES_BUTTON = "Expand all entries";
 
+    public static final String ADD_NEW_TAB = "Open a common execution";
+
     public static final String COLLAPSE_ALL_ENTRIES_BUTTON = "Collapse all entries";
+
+    public static final String TOGGLE_TERMINAL_TOOLBAR = "Toggle terminal toolbars";
 
     public static final String DETACH_EXECUTIONS_BUTTON = "Detach executions in a separate window";
 }

@@ -3,7 +3,8 @@ package org.ashot.shellflow.node.menu.file.menu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import org.ashot.shellflow.data.constant.IconSizeDefaults;
-import org.ashot.shellflow.data.utility.Recent;
+import org.ashot.shellflow.data.util.Recents;
+import org.ashot.shellflow.misc.ButtonActionCallback;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.popup.AlertPopup;
 import org.ashot.shellflow.utils.FileUtils;
@@ -14,15 +15,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Consumer;
 
 
 public class OpenRecentMenu extends Menu {
     private static final Logger log = LoggerFactory.getLogger(OpenRecentMenu.class);
     private static final int MAX_ENTRIES = 15;
-    private final Consumer<File> open;
+    private final ButtonActionCallback<File> open;
 
-    public OpenRecentMenu(Consumer<File> open, Menu parentMenu) {
+    public OpenRecentMenu(ButtonActionCallback<File> open, Menu parentMenu) {
         this.open = open;
         setText("Open Recent");
         setGraphic(Icons.getOpenRecentIcon(IconSizeDefaults.MENU_ITEM_SIZE.getSize()));
@@ -32,7 +32,7 @@ public class OpenRecentMenu extends Menu {
     public void refreshRecentFiles() {
         try {
             getItems().clear();
-            Recent recents = RecentFileUtils.getRecents();
+            Recents recents = RecentFileUtils.getRecents();
             for (Object s : recents.recentlyOpenedFiles().stream().limit(MAX_ENTRIES).toList()) {
                 String recentFile = s.toString();
                 MenuItem m = createRecentMenuItemOption(recentFile);
@@ -43,21 +43,21 @@ public class OpenRecentMenu extends Menu {
         }
     }
 
-    private MenuItem createRecentMenuItemOption(String recentFile) {
-        MenuItem m = new MenuItem(recentFile);
+    private MenuItem createRecentMenuItemOption(String recentFilePath) {
+        MenuItem m = new MenuItem(recentFilePath);
         m.setOnAction(_ -> {
             try {
-                Path path = Paths.get(recentFile);
+                Path path = Paths.get(recentFilePath);
                 if (FileUtils.fileExists(path)) {
                     open.accept(path.toFile());
                 } else {
                     AlertPopup alertPopup = new AlertPopup(
                             "Error",
-                            "Could not open file \"" + recentFile + "\", it does not exist",
+                            "Could not open file \"" + recentFilePath + "\", it does not exist",
                             false
                     );
                     alertPopup.show();
-                    RecentFileUtils.removeRecentFile(recentFile);
+                    RecentFileUtils.removeRecentFile(recentFilePath);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage());

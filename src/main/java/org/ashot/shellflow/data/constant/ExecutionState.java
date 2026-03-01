@@ -1,11 +1,12 @@
 package org.ashot.shellflow.data.constant;
 
 public enum ExecutionState {
-    IN_PROGRESS("In progress"),
-    FINISHED("Finished"),
-    FAILURE("Failure"),
-    INTERNAL_FAILURE("Internal Failure"),
-    CANCELLED("Cancelled"),
+    INITIALIZING("Execution is initializing"),
+    IN_PROGRESS("Execution in progress"),
+    FINISHED("Execution finished"),
+    FAILURE("Execution failure"),
+    INTERNAL_FAILURE("Encountered Internal Failure"),
+    CANCELLED("Execution cancelled"),
     ;
 
     private final String value;

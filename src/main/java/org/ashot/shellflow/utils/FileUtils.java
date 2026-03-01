@@ -41,7 +41,7 @@ public class FileUtils {
                     throw new FileWriteFailureException("Path provided is at root of File System: " + pathString);
                 }
             } catch (IOException e) {
-                throw new FileWriteFailureException("Could not create file due to exception: " + e.getMessage());
+                throw new FileWriteFailureException("Could not create file due to exception: " + Utils.generateIOExceptionMessage(e), e);
             }
         }
     }
@@ -54,8 +54,8 @@ public class FileUtils {
         String initialDir = "";
         try {
             initialDir = RecentFileUtils.getLastAccessedDirectory();
-        } catch (Exception e) {
-            log.error("Could not get last {} directory: {}", save ? "saved" : "loaded", e.getMessage());
+        } catch (FileReadFailureException e) {
+            log.error("Could not get last {} directory: {}", save ? "saved" : "loaded", Utils.generateIOExceptionMessage(e));
         }
         return chooseFile(save, initialDir);
     }
@@ -81,16 +81,12 @@ public class FileUtils {
         try (FileWriter fileWriter = new FileWriter(fileToSave)) {
             fileWriter.write(data);
         } catch (IOException e) {
-            throw new FileWriteFailureException(e.getMessage());
+            throw new FileWriteFailureException(Utils.generateIOExceptionMessage(e), e);
         }
     }
 
     public static boolean fileExists(Path path) {
         return path.toFile().exists();
-    }
-
-    public static boolean fileExists(File file) {
-        return file.exists();
     }
 
     public static String readFileAsString(Path path) throws FileReadFailureException {
@@ -100,11 +96,7 @@ public class FileUtils {
             }
             return Files.readString(path);
         } catch (IOException e) {
-            throw new FileReadFailureException(e.getMessage());
+            throw new FileReadFailureException(e.getMessage(), e);
         }
-    }
-
-    public static File getFile(Path path) {
-        return path.toFile();
     }
 }
