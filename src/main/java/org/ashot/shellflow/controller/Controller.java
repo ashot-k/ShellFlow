@@ -37,7 +37,7 @@ public class Controller {
     private static final double INIT_ENTRIES_VARIABLES_SPLIT_POS = 0.77;
     private static final double INIT_ENTRIES_EXECUTIONS_SPLIT_POS = 0.30;
     private static final double MIN_ENTRIES_EXECUTIONS_SPLIT_POS = 0.15;
-    private static final double MIN_ENTRIES_VARIABLES_SPLIT_POS = 0.80;
+    private static final double MIN_ENTRIES_VARIABLES_SPLIT_POS = 0.85;
     private double entriesExecutionsSplitCurrentPos = 0;
 
     @FXML

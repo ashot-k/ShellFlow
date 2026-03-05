@@ -39,15 +39,19 @@ public class TerminalRegistry {
     public static void stopTerminal(PtyProcess ptyProcess) {
         if (ptyProcess == null || !ptyProcess.isAlive()) {
             return;
+        } else {
+            ptyProcess.destroy();
         }
         new Thread(() -> {
-            try (BufferedWriter writer = ptyProcess.outputWriter()) {
-                writer.write("\u0003");
-                writer.flush();
-                remove(String.valueOf(ptyProcess.pid()));
-            } catch (IOException e) {
-                Thread.currentThread().interrupt();
-                runLater(() -> new AlertPopup("Termination Error", "Could not terminate process: " + e.getMessage(), false).show());
+            if (ptyProcess.isAlive()) {
+                try (BufferedWriter writer = ptyProcess.outputWriter()) {
+                    writer.write("\u0003");
+                    writer.flush();
+                    remove(String.valueOf(ptyProcess.pid()));
+                } catch (IOException e) {
+                    Thread.currentThread().interrupt();
+                    runLater(() -> new AlertPopup("Termination Error", "Could not terminate process: " + e.getMessage(), false).show());
+                }
             }
         }).start();
     }

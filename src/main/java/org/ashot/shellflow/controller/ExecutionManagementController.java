@@ -32,16 +32,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class ExecutionManagementController {
     private final Logger log = LoggerFactory.getLogger(ExecutionManagementController.class);
     private final ExecutionsPanel view;
     private final ExecutionManager executionManager;
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public ExecutionManagementController() {
         this.view = new ExecutionsPanel();
@@ -130,14 +128,14 @@ public class ExecutionManagementController {
             long delay = Utils.calculateDelay(i, delayPerCmd);
             singleExecutionTabs.get(i).setInitializing(delay);
             int finalI = i;
-            ScheduledFuture<?> scheduledFuture = executor.schedule(() -> {
-                ExecutionInitTask executionInitTask = startSingularExecution(commands.get(finalI), singleExecutionTabs.get(finalI));
-                executionInitTask.stateProperty().addListener((_, _, e) -> {
-                    if (e.equals(Worker.State.SUCCEEDED)) {
-                        executions.add(executionInitTask.getValue());
-                    }
-                });
-            }, delay, TimeUnit.MILLISECONDS);
+            ScheduledFuture<?> scheduledFuture = scheduler.schedule(() -> executor.submit(() -> {
+                    ExecutionInitTask executionInitTask = startSingularExecution(commands.get(finalI), singleExecutionTabs.get(finalI));
+                    executionInitTask.stateProperty().addListener((_, _, e) -> {
+                        if (e.equals(Worker.State.SUCCEEDED)) {
+                            executions.add(executionInitTask.getValue());
+                        }
+                    });
+                }), delay, TimeUnit.MILLISECONDS);
             scheduledExecutions.add(scheduledFuture);
         }
 
