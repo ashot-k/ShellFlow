@@ -52,7 +52,7 @@ public class VariableSetup extends VBox {
         valueColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getValue()));
         valueColumn.setOnEditCommit(commit -> commit.getRowValue().setValue(commit.getNewValue()));
 
-        variablesTable.setPadding(new Insets(2.5, 5, 2.5, 5));
+        variablesTable.setPadding(new Insets(2.5, 5, 0.5, 5));
         variablesTable.getColumns().setAll(enabledColumn, nameColumn, valueColumn);
         variablesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         variablesTable.getSelectionModel().selectFirst();
@@ -64,7 +64,7 @@ public class VariableSetup extends VBox {
         Styles.toggleStyleClass(variablesTable, Styles.DENSE);
         Styles.toggleStyleClass(variablesTable, Tweaks.EDGE_TO_EDGE);
 
-        container = new VBox(10, variablesTable);
+        container = new VBox(variablesTable);
         ScrollPane scrollPane = new ScrollPane(container);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
@@ -85,7 +85,7 @@ public class VariableSetup extends VBox {
 
         HBox variableOptions = new HBox(5, deleteRowButton, resetButton, saveAllButton, addVariableButton);
         variableOptions.setAlignment(Pos.TOP_RIGHT);
-        variableOptions.setPadding(new Insets(2.5, 5, 5, 5));
+        variableOptions.setPadding(new Insets(0.5, 5, 5, 5));
 
         getChildren().addAll(scrollPane, new Spacer(Orientation.HORIZONTAL), variableOptions);
         setSpacing(2.5);

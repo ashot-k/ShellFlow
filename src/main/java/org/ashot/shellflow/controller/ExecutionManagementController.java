@@ -24,7 +24,6 @@ import org.ashot.shellflow.node.execution.tab.ParallelExecutionsTab;
 import org.ashot.shellflow.node.execution.tab.SequenceExecutionsTab;
 import org.ashot.shellflow.node.execution.tab.SingleExecutionTab;
 import org.ashot.shellflow.node.icon.Icons;
-import org.ashot.shellflow.node.notification.Notifications;
 import org.ashot.shellflow.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -39,7 +38,7 @@ public class ExecutionManagementController {
     private final ExecutionsPanel view;
     private final ExecutionManager executionManager;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     public ExecutionManagementController() {
         this.view = new ExecutionsPanel();
@@ -99,7 +98,6 @@ public class ExecutionManagementController {
                         startSingularExecution(command, tab);
                     }
                 });
-                Notifications.showNotif("Execution: " + command.getName() + " has started");
             });
             execTask.setOnSucceeded(_ -> log.info("Finished execution of {}", command));
             execTask.setOnFailed(_ -> tab.handleExecutionManagerException(tab, execTask.getException()));
@@ -128,7 +126,7 @@ public class ExecutionManagementController {
             long delay = Utils.calculateDelay(i, delayPerCmd);
             singleExecutionTabs.get(i).setInitializing(delay);
             int finalI = i;
-            ScheduledFuture<?> scheduledFuture = scheduler.schedule(() -> executor.submit(() -> {
+            ScheduledFuture<?> scheduledFuture = scheduler.schedule(() -> executor.execute(() -> {
                     ExecutionInitTask executionInitTask = startSingularExecution(commands.get(finalI), singleExecutionTabs.get(finalI));
                     executionInitTask.stateProperty().addListener((_, _, e) -> {
                         if (e.equals(Worker.State.SUCCEEDED)) {

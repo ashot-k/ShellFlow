@@ -25,7 +25,7 @@ public class Fonts {
     }
 
     public static Font nameFieldDisplay() {
-        return Font.font(getFontFamily(), FontWeight.BOLD, 14);
+        return Font.font(getFontFamily(), FontWeight.BOLD, 12);
     }
 
     public static Font subTitle() {

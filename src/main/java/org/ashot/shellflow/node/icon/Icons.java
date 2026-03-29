@@ -15,7 +15,7 @@ import static org.controlsfx.glyphfont.FontAwesome.Glyph.*;
 
 public class Icons {
     private static final GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
-    private static final Color preferredColor = Color.SLATEBLUE;
+    private static final Color preferredColor = Color.SLATEBLUE.brighter();
 //    private static final Color preferredColor = Color.SLATEBLUE;
 
     private Icons() {

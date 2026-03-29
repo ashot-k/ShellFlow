@@ -20,7 +20,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.ashot.shellflow.data.constant.ExecutionState;
 import org.ashot.shellflow.data.constant.NotificationType;
-import org.ashot.shellflow.execution.container.TerminalContainer;
 import org.ashot.shellflow.execution.manager.TerminalSession;
 import org.ashot.shellflow.node.icon.Icons;
 import org.ashot.shellflow.node.notification.SystemTray;
@@ -41,7 +40,7 @@ import static org.ashot.shellflow.data.constant.ExecutionState.*;
 import static org.ashot.shellflow.data.message.NotificationMessages.failNotificationMessage;
 import static org.ashot.shellflow.data.message.NotificationMessages.finishedNotificationMessage;
 
-public class SingleExecutionTab extends ExecutionTab implements TerminalContainer {
+public class SingleExecutionTab extends ExecutionTab {
     private static final Logger log = LoggerFactory.getLogger(SingleExecutionTab.class);
 
     private ShellFlowTerminalWidget terminal;
@@ -76,12 +75,10 @@ public class SingleExecutionTab extends ExecutionTab implements TerminalContaine
         setContent(stackPane);
     }
 
-    @Override
     public void attachSession(TerminalSession session) {
         setupTerminalWidget(session);
     }
 
-    @Override
     public ShellFlowTerminalWidget getTerminal() {
         return terminal;
     }
@@ -127,7 +124,6 @@ public class SingleExecutionTab extends ExecutionTab implements TerminalContaine
     public void setInitializing(long delay) {
         LocalTime end = LocalTime.now().plusSeconds(delay / 1000);
         AnimationTimer timer = new AnimationTimer() {
-            @Override
             public void handle(long now) {
                 if (Duration.between(LocalTime.now(), end).isNegative()) {
                     stop();
@@ -190,7 +186,6 @@ public class SingleExecutionTab extends ExecutionTab implements TerminalContaine
         });
     }
 
-    @Override
     public void triggerErrorMode(String errorMessage) {
         Text errorText = new Text(errorMessage);
         errorText.setTextAlignment(TextAlignment.CENTER);
@@ -204,7 +199,6 @@ public class SingleExecutionTab extends ExecutionTab implements TerminalContaine
         setFailed();
     }
 
-    @Override
     public SimpleObjectProperty<ExecutionState> stateProperty() {
         return state;
     }

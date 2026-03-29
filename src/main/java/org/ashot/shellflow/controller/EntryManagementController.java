@@ -134,7 +134,6 @@ public class EntryManagementController {
         LOG.debug("Adding EntryBox with [name: {}, path: {}, command: {}]", entry.name(), entry.path(), entry.command());
         EntryBox entryBox = entryMapper.entryToEntryBox(entry);
         entryBox.setOnDeleteButtonAction(_ -> removeEntryBox(entryBox));
-        entryBox.animatedProperty().bind(optimizationMode.not());
         entryBox.setOnExecuteButtonAction(_ -> {
             GUIAnimations.shakeY(entryBox.getExecuteButton(), 2.5).play();
             try {

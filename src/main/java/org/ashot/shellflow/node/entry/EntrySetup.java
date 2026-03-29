@@ -19,10 +19,8 @@ public class EntrySetup extends StackPane {
         entrySetupOptions = new EntrySetupOptions();
         entryListContainer = new VBox();
         entryListContainer.setAlignment(Pos.TOP_CENTER);
-        entryListContainer.setSpacing(10);
 
-        VBox entryListContainerContent = new VBox(10, entryListContainer);
-        entryListContainerContent.setPadding(new Insets(10));
+        VBox entryListContainerContent = new VBox(entryListContainer);
         entryListContainerContent.setAlignment(Pos.TOP_CENTER);
 
         ScrollPane entryListScrollPane = new ScrollPane();
@@ -33,7 +31,7 @@ public class EntrySetup extends StackPane {
         VBox entryListWrapper = new VBox(entryListScrollPane, entrySetupOptions);
         entryListWrapper.setFillWidth(true);
         entryListWrapper.setAlignment(Pos.TOP_CENTER);
-        entryListWrapper.setPadding(new Insets(8));
+        entryListWrapper.setPadding(new Insets(10, 5, 5, 5));
         VBox.setVgrow(entryListScrollPane, Priority.ALWAYS);
         getChildren().add(new HBox(entryListWrapper));
         HBox.setHgrow(entryListWrapper, Priority.ALWAYS);

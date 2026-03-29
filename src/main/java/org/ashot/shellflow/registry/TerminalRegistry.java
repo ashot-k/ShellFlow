@@ -24,10 +24,6 @@ public class TerminalRegistry {
         ptyProcesses.remove(key);
     }
 
-    public static <T> T get(String key, Class<T> type) {
-        return type.cast(ptyProcesses.get(key));
-    }
-
     public static Map<String, PtyProcess> getAllTerminalProcesses() {
         return ptyProcesses;
     }

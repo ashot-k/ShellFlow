@@ -63,7 +63,7 @@ public class Command {
     private void prefixForOperatingEnvironment() {
         if (Utils.checkIfLinux()) {
             argumentList.addAll(0, DEFAULT_LINUX_SHELL_ARGS);
-            log.debug("Adjusting command for linux OS {}", argumentList);
+            log.debug("Adjusting command for Linux OS {}", argumentList);
         } else if (Utils.checkIfWindows()) {
             if (wsl) {
                 argumentList.addAll(0, DEFAULT_WSL_ARGS);

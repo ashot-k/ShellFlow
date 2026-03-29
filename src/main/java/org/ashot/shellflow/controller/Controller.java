@@ -34,8 +34,8 @@ import static javafx.scene.layout.HeaderDragType.DRAGGABLE_SUBTREE;
 public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     private static final double MAX_ENTRIES_VARIABLES_SPLIT_POS = 0.85;
-    private static final double INIT_ENTRIES_VARIABLES_SPLIT_POS = 0.77;
-    private static final double INIT_ENTRIES_EXECUTIONS_SPLIT_POS = 0.30;
+    private static final double INIT_ENTRIES_VARIABLES_SPLIT_POS = 0.78;
+    private static final double INIT_ENTRIES_EXECUTIONS_SPLIT_POS = 0.25;
     private static final double MIN_ENTRIES_EXECUTIONS_SPLIT_POS = 0.15;
     private static final double MIN_ENTRIES_VARIABLES_SPLIT_POS = 0.85;
     private double entriesExecutionsSplitCurrentPos = 0;

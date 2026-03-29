@@ -9,7 +9,7 @@ public final class CommonTerminalCommands {
 
 
     public static Command defaultPowerShellTerminal() {
-        return new Command("Powershell", "", "powershell.exe", false);
+        return new Command("PowerShell", "", "powershell.exe", false);
     }
 
     public static Command defaultCMDTerminal() {

@@ -78,8 +78,7 @@ public class EntryBox extends TitledPane {
         GridPane.setConstraints(labeledPathField, 0, 1, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
         GridPane.setConstraints(labeledCommandField, 0, 2, 1, 1, HPos.LEFT, VPos.BASELINE, Priority.ALWAYS, Priority.NEVER);
 
-        entryGrid.setHgap(8);
-        entryGrid.setVgap(5);
+        entryGrid.setHgap(5);
 
         title = new Label();
         title.setFont(Fonts.nameFieldDisplay());
@@ -98,10 +97,9 @@ public class EntryBox extends TitledPane {
         GridPane.setConstraints(title, 1, 0, 1, 1, HPos.LEFT, VPos.CENTER, Priority.NEVER, Priority.NEVER);
         GridPane.setConstraints(executionButtonsContainer, 2, 0, 1, 1, HPos.RIGHT, VPos.CENTER, Priority.ALWAYS, Priority.NEVER);
         header.setHgap(10);
-        header.setPadding(new Insets(1, 10, 1, 1));
+        header.setPadding(new Insets(0, 10, 0, 1));
 
-        content = new VBox(0, entryGrid);
-        content.setPadding(new Insets(5));
+        content = new VBox(entryGrid);
 
         setGraphic(header);
         setContent(content);
@@ -129,6 +127,7 @@ public class EntryBox extends TitledPane {
         pathField.setDisable(!enable);
         commandField.setDisable(!enable);
         wslToggle.setDisable(!enable);
+        setAnimated(false);
         if (enable) {
             getStyleClass().remove("disabled-entry");
         } else {
